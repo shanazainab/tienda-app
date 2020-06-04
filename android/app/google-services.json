@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "874733787854",
+    "firebase_url": "https://tienda-b2527.firebaseio.com",
+    "project_id": "tienda-b2527",
+    "storage_bucket": "tienda-b2527.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874733787854:android:1bc4119dff9a5c82374e9f",
+        "android_client_info": {
+          "package_name": "com.beuniquegroup.tienda"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "874733787854-fk8kgcrq19j03ddp71kiklheff3gsd6g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.beuniquegroup.tienda",
+            "certificate_hash": "e31304aee6ab5dd5f2a6bc7c48a6984a1ff72863"
+          }
+        },
+        {
+          "client_id": "874733787854-76ovj4aoc6h1m8bsu860b72t6230kvv7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaINY1SX8D-_A1XWZehxGYsVztxZ7FugY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "874733787854-76ovj4aoc6h1m8bsu860b72t6230kvv7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
