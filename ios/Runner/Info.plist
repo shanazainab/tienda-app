@@ -2,8 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict><key>CFBundleURLTypes</key>
-       <array>
-       	<dict>
+ <array>
+    	<dict>
        		<key>CFBundleTypeRole</key>
        		<string>Editor</string>
        		<key>CFBundleURLSchemes</key>
@@ -13,7 +13,34 @@
        			<string>com.googleusercontent.apps.874733787854-t0qffsmrc4impkqgd31b3e1h053l59ke</string>
        		</array>
        	</dict>
-       </array>
+    <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <!--
+              Replace "000000000000" with your Facebook App ID here.
+              **NOTE**: The scheme needs to start with `fb` and then your ID.
+            -->
+            <string>fb3900420976697721</string>
+        </array>
+    </dict>
+</array>
+
+<key>FacebookAppID</key>
+
+<!-- Replace "000000000000" with your Facebook App ID here. -->
+<string>3900420976697721</string>
+<key>FacebookDisplayName</key>
+
+<!-- Replace "YOUR_APP_NAME" with your Facebook App name. -->
+<string>tienda</string>
+
+<key>LSApplicationQueriesSchemes</key>
+<array>
+    <string>fbapi</string>
+    <string>fb-messenger-share-api</string>
+    <string>fbauth2</string>
+    <string>fbshareextension</string>
+</array>
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
