@@ -10,4 +10,8 @@ abstract class CustomerProfileApiClient {
 
   @POST("/phone_register/")
   Future<String> registerCustomerDetails(@Body() Customer customer);
+
+  @GET("/get_profile/")
+  Future<String> getCustomerProfile();
+
 }

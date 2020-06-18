@@ -9,21 +9,24 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+          child: Stack(
         children: <Widget>[
-          Text(
-            'Welcome-screen',
-            style: TextStyle(fontSize: 24),
+          Center(
+            child: Text(
+              'Intro Slides',
+              style: TextStyle(fontSize: 24),
+            ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: RaisedButton(
-              onPressed: () {
-                handleNext(context);
-              },
-              child: Text("NEXT"),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom:20.0),
+              child: RaisedButton(
+                onPressed: () {
+                  handleNext(context);
+                },
+                child: Text("GET STARTED"),
+              ),
             ),
           ),
         ],
@@ -35,6 +38,6 @@ class WelcomeScreen extends StatelessWidget {
     BlocProvider.of<StartupBloc>(context)
         .add(UpdatePreferenceFlow("/welcomeScreen"));
 
-    Navigator.pushNamed(context, '/countryChoosePage');
+    Navigator.pushNamed(context, '/languagePreferencePage');
   }
 }

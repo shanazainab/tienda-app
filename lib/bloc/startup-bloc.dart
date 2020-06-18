@@ -4,10 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
+import 'package:tienda/controller/login-controller.dart';
 
 import 'events/startup-events.dart';
 
 class StartupBloc extends Bloc<StartupEvents, StartupStates> {
+  LoginController loginController;
+  StartupBloc() {
+    loginController = new LoginController();
+  }
   @override
   StartupStates get initialState => Initialized();
 
@@ -19,6 +24,9 @@ class StartupBloc extends Bloc<StartupEvents, StartupStates> {
     if (event is UpdatePreferenceFlow) {
       _updateThePreferenceFlow(event.route);
     }
+    if (event is CheckLogInStatus) {
+     yield* _mapCheckLoginStatusToState();
+    }
   }
 
   Stream<StartupStates> _mapAppStartedToState() async* {
@@ -27,9 +35,9 @@ class StartupBloc extends Bloc<StartupEvents, StartupStates> {
     ///   "/languagePreferencePage":false,
     ///   "/categorySelectionPage":false }
 
-    print("######## CHECKING LOGIN AND PREFERENCE FLOW");
+    ///CHECK LOGIN STATUS
 
-    ///TODO:CHECK LOGIN STATUS
+    await loginController.checkLoginStatus();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String route = '/welcomeScreen';
@@ -53,6 +61,20 @@ class StartupBloc extends Bloc<StartupEvents, StartupStates> {
     }
 
     yield PreferenceFlowFetchComplete(route);
+  }
+
+  Stream<StartupStates> _mapCheckLoginStatusToState() async* {
+    bool isLoggedIn = await loginController.checkLoginStatus();
+
+    print("#########LOGIN-STATUS: $isLoggedIn");
+    switch (isLoggedIn) {
+      case true:
+        yield LogInStatusResponse(isLoggedIn: true);
+        break;
+      case false:
+        yield LogInStatusResponse(isLoggedIn: false);
+        break;
+    }
   }
 
   Future<void> _updateThePreferenceFlow(String route) async {

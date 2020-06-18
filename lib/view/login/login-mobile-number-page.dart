@@ -8,8 +8,6 @@ import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/model/login-request.dart';
 import 'package:tienda/view/login/otp-verification-page.dart';
 
-import 'login-status-message.dart';
-
 class LoginWithMobileNumber extends StatefulWidget {
   @override
   _LoginWithMobileNumberState createState() => _LoginWithMobileNumberState();
@@ -18,8 +16,6 @@ class LoginWithMobileNumber extends StatefulWidget {
 class _LoginWithMobileNumberState extends State<LoginWithMobileNumber> {
   TextEditingController mobileNumberTextController =
       new TextEditingController();
-
-  LoginBloc _loginBloc = new LoginBloc();
 
   bool _showTick = false;
   @override
@@ -43,104 +39,101 @@ class _LoginWithMobileNumberState extends State<LoginWithMobileNumber> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) => _loginBloc,
-      child: BlocListener<LoginBloc, LoginStates>(
-          listener: (context, state) {
-            if (state is LoginSendOTPSuccess) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => OTPVerificationPage(
-                          mobileNumber:
-                              "+971" + mobileNumberTextController.text,
-                        )),
+    return BlocListener<LoginBloc, LoginStates>(
+        listener: (context, state) {
+          if (state is LoginSendOTPSuccess) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => OTPVerificationPage(
+                        mobileNumber: "+971" + mobileNumberTextController.text,
+                      )),
+            );
+          } else if (state is LoginSendOTPError) {
+            Fluttertoast.showToast(
+                msg: state.error,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          }
+        },
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          bottomNavigationBar:
+              BlocBuilder<LoginBloc, LoginStates>(builder: (context, state) {
+            if (state is LoginInProgress)
+              return LinearProgressIndicator();
+            else
+              return Container(
+                height: 0,
               );
-            } else if (state is LoginSendOTPError) {
-              Fluttertoast.showToast(
-                  msg: state.error,
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Colors.red,
-                  textColor: Colors.white,
-                  fontSize: 16.0);
-            }
-          },
-          child: Scaffold(
-                          resizeToAvoidBottomInset: false,
-
-            bottomNavigationBar:
-                BlocBuilder<LoginBloc, LoginStates>(builder: (context, state) {
-              if (state is LoginInProgress)
-                return LinearProgressIndicator();
-              else
-                return Container(
-                  height: 0,
-                );
-            }),
-            body: Container(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                  padding: const EdgeInsets.only(top:100,left: 16.0, right: 16),
-                child: Column(
-                  children: <Widget>[
-                    ListTile(
-                        leading: Container(
-                          width: 70,
-                          child: Row(
-                            children: <Widget>[
-                              Image.asset(
-                                "assets/flags/ae.png",
-                                height: 30,
-                                width: 30,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Text("+971"),
-                              )
-                            ],
-                          ),
-                        ),
-                        title: Padding(
-                          padding: const EdgeInsets.only(top: 0.0),
-                          child: new TextFormField(
-                            controller: mobileNumberTextController,
-                            keyboardType: TextInputType.number,
-                            maxLength: 10,
-                            decoration: new InputDecoration(
-                              counterText: '',
-                              border: InputBorder.none,
+          }),
+          body: Container(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 100, left: 16.0, right: 16),
+              child: Column(
+                children: <Widget>[
+                  ListTile(
+                      leading: Container(
+                        width: 70,
+                        child: Row(
+                          children: <Widget>[
+                            Image.asset(
+                              "assets/flags/ae.png",
+                              height: 30,
+                              width: 30,
                             ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text("+971"),
+                            )
+                          ],
+                        ),
+                      ),
+                      title: Padding(
+                        padding: const EdgeInsets.only(top: 0.0),
+                        child: new TextFormField(
+                          controller: mobileNumberTextController,
+                          keyboardType: TextInputType.number,
+                          maxLength: 10,
+                          decoration: new InputDecoration(
+                            counterText: '',
+                            border: InputBorder.none,
                           ),
                         ),
-                        trailing: Visibility(
-                          visible: _showTick,
-                          child: Icon(
-                            Icons.done,
-                            color: Colors.green,
-                          ),
-                        )),
-                    Divider(color: Colors.grey[200], thickness: 2),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    RaisedButton(
-                      color: mobileNumberTextController.text.length!=10?Colors.grey:Colors.black,
-                      onPressed: () {
-                        handleLogin();
-                      },
-                      child: Text("NEXT"),
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                  ],
-                ),
+                      ),
+                      trailing: Visibility(
+                        visible: _showTick,
+                        child: Icon(
+                          Icons.done,
+                          color: Colors.green,
+                        ),
+                      )),
+                  Divider(color: Colors.grey[200], thickness: 2),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  RaisedButton(
+                    color: mobileNumberTextController.text.length != 10
+                        ? Colors.grey
+                        : Colors.black,
+                    onPressed: () {
+                      handleLogin();
+                    },
+                    child: Text("NEXT"),
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                ],
               ),
             ),
-          )),
-    );
+          ),
+        ));
   }
 
   void handleLogin() {
@@ -159,9 +152,8 @@ class _LoginWithMobileNumberState extends State<LoginWithMobileNumber> {
         loginRequest: new LoginRequest(
             mobileNumber: "+971" + mobileNumberTextController.text)));*/
 
-     _loginBloc.add(SendOTP(
+    BlocProvider.of<LoginBloc>(context).add(SendOTP(
         loginRequest: new LoginRequest(
             mobileNumber: "+971" + mobileNumberTextController.text)));
   }
-
 }

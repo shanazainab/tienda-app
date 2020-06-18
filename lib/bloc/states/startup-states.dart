@@ -14,6 +14,10 @@ class PreferenceFlowFetchComplete extends StartupStates {
   final String route;
   PreferenceFlowFetchComplete(this.route) : super();
 }
+class LogInStatusResponse extends StartupStates {
+  final bool isLoggedIn;
+  LogInStatusResponse({this.isLoggedIn}) : super();
+}
 
 class DataReady extends StartupStates {
   DataReady() : super();

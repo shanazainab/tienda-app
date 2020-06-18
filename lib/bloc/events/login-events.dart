@@ -18,6 +18,7 @@ class SendOTP extends LoginEvents {
   @override
   List<Object> get props => [loginRequest];
 }
+
 class VerifyOTP extends LoginEvents {
   final LoginVerifyRequest loginVerifyRequest;
 
@@ -26,11 +27,33 @@ class VerifyOTP extends LoginEvents {
   @override
   List<Object> get props => [loginVerifyRequest];
 }
-class CustomerRegister extends LoginEvents {
+
+class DoGoogleSignIn extends LoginEvents {
+  DoGoogleSignIn() : super();
+
+  @override
+  List<Object> get props => [];
+}
+
+class DoFacebookSignIn extends LoginEvents {
+  DoFacebookSignIn() : super();
+
+  @override
+  List<Object> get props => [];
+}
+
+class RegisterCustomer extends LoginEvents {
   final Customer customer;
 
-  CustomerRegister({this.customer}) : super();
+  RegisterCustomer({this.customer}) : super();
 
   @override
   List<Object> get props => [customer];
+}
+
+class Logout extends LoginEvents {
+  Logout() : super();
+
+  @override
+  List<Object> get props => [];
 }

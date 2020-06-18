@@ -14,13 +14,6 @@ class AppStarted extends StartupEvents {
   List<Object> get props => null;
 }
 
-class CheckPreferenceFlow extends StartupEvents {
-  CheckPreferenceFlow() : super();
-
-  @override
-  List<Object> get props => null;
-}
-
 class UpdatePreferenceFlow extends StartupEvents {
   final String route;
   UpdatePreferenceFlow(this.route) : super();
@@ -31,6 +24,13 @@ class UpdatePreferenceFlow extends StartupEvents {
 
 class DataFetch extends StartupEvents {
   DataFetch() : super();
+
+  @override
+  List<Object> get props => null;
+}
+
+class CheckLogInStatus extends StartupEvents {
+  CheckLogInStatus() : super();
 
   @override
   List<Object> get props => null;

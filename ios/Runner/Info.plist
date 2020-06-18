@@ -85,3 +85,6 @@
 	<false/>
 </dict>
 </plist>
+
+NSLocationWhenInUseUsageDescription
+NSLocationAlwaysUsageDescription

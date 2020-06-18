@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/loginMainPage');
-        },
-        child: Icon(Icons.account_circle),
+    return Container(
+      height: double.infinity,
+      width: double.infinity,
+      child: Center(
+        child: Text(
+          "HOME PAGE",
+          style: TextStyle(fontSize: 24),
+        ),
       ),
-      backgroundColor: Colors.white,
-      body: Center(
-          child: Text(
-        'Home Page',
-        style: TextStyle(fontSize: 24),
-      )),
     );
   }
 }

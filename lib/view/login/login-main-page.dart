@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tienda/bloc/events/login-events.dart';
+import 'package:tienda/bloc/login-bloc.dart';
+import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/controller/login-controller.dart';
+import 'package:tienda/view/home/home-page.dart';
+import 'package:tienda/view/home/main-page.dart';
 import 'package:tienda/view/login/login-mobile-number-page.dart';
 
 class LoginMainPage extends StatelessWidget {
@@ -8,7 +15,26 @@ class LoginMainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocListener<LoginBloc, LoginStates>(
+        listener: (context, state) {
+          if (state is GoogleSignInResponse && state.response == GoogleSignInResponse.SUCCESS) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MainPage()),
+            );
+          } else if (state is GoogleSignInResponse && state.response == GoogleSignInResponse.FAILED) {
+            Fluttertoast.showToast(
+                msg: "Something Went Wrong!!",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          }
+        },
+        child: Scaffold(
       body: Container(
         alignment: Alignment.bottomCenter,
         child: Padding(
@@ -44,7 +70,7 @@ class LoginMainPage extends StatelessWidget {
               ),
               RaisedButton(
                 onPressed: () {
-                  loginController.signInWithGoogle();
+                  BlocProvider.of<LoginBloc>(context).add(DoGoogleSignIn());
                 },
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -66,7 +92,7 @@ class LoginMainPage extends StatelessWidget {
               ),
               RaisedButton(
                 onPressed: () {
-                  loginController.signInWithFacebook();
+                  BlocProvider.of<LoginBloc>(context).add(DoFacebookSignIn());
                 },
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -87,6 +113,6 @@ class LoginMainPage extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }

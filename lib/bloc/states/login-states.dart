@@ -54,6 +54,32 @@ class LoginVerifyOTPError extends LoginStates {
   List<Object> get props => [error];
 }
 
+class GoogleSignInResponse extends LoginStates {
+  static const int SUCCESS = 0;
+  static const int CANCELLED = 1;
+  static const int FAILED = 2;
+
+  final int response;
+
+  GoogleSignInResponse({this.response}) : super();
+
+  @override
+  List<Object> get props => [response];
+}
+
+class FacebookSignInResponse extends LoginStates {
+  static const int SUCCESS = 0;
+  static const int CANCELLED = 1;
+  static const int FAILED = 2;
+
+  final int response;
+
+  FacebookSignInResponse({this.response}) : super();
+
+  @override
+  List<Object> get props => [response];
+}
+
 class CustomerRegistrationInProgress extends LoginStates {
   CustomerRegistrationInProgress() : super();
 
@@ -66,4 +92,20 @@ class CustomerRegistrationSuccess extends LoginStates {
 
   @override
   List<Object> get props => null;
+}
+
+class LogoutSuccess extends LoginStates {
+  LogoutSuccess() : super();
+
+  @override
+  List<Object> get props => [];
+}
+
+class LogoutError extends LoginStates {
+  final String error;
+
+  LogoutError({this.error}) : super();
+
+  @override
+  List<Object> get props => [error];
 }
