@@ -7,6 +7,9 @@
         android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="tienda">
+<meta-data android:name="com.mapbox.token" android:value="YOUR_TOKEN_HERE" />
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyDBMARSuk2l-TxaUBlHY3m5RVb7bN2C08c"/>
         <activity
             android:name=".SampleActivity"
             android:label="@string/title_activity_sample"
@@ -73,6 +76,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
     </application>
 
 </manifest>

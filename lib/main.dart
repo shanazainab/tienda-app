@@ -11,10 +11,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/app-settings.config.dart';
 import 'package:tienda/bloc-delegate.dart';
+import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/events/startup-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
+import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/view/home/main-page.dart';
 import 'package:tienda/view/startup/country-choose-page.dart';
@@ -63,6 +65,12 @@ Future<void> main() async {
       ),
       BlocProvider<LoginBloc>(
         create: (BuildContext context) => LoginBloc(),
+      ),
+       BlocProvider<WishListBloc>(
+        create: (BuildContext context) => WishListBloc(),
+      ),
+       BlocProvider<CartBloc>(
+        create: (BuildContext context) => CartBloc(),
       ),
     ],
     child: App(

@@ -10,27 +10,15 @@ import 'package:tienda/controller/login-controller.dart';
 import 'package:tienda/model/customer.dart';
 import 'package:tienda/view/home/main-page.dart';
 
-class CustomerDetailsPage extends StatefulWidget {
+class CustomerDetailsPage extends StatelessWidget {
   final String mobileNumber;
-
-  CustomerDetailsPage({this.mobileNumber});
-
-  @override
-  _CustomerDetailsPageState createState() => _CustomerDetailsPageState();
-}
-
-class _CustomerDetailsPageState extends State<CustomerDetailsPage> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController dobTextEditingController = new TextEditingController();
-  Customer customer = new Customer();
+  final TextEditingController dobTextEditingController =
+      new TextEditingController();
+  final Customer customer = new Customer();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
+  CustomerDetailsPage({this.mobileNumber});
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginStates>(
@@ -104,7 +92,7 @@ class _CustomerDetailsPageState extends State<CustomerDetailsPage> {
                       padding: const EdgeInsets.only(top: 16.0),
                       child: new TextFormField(
                         enabled: false,
-                        initialValue: widget.mobileNumber,
+                        initialValue: mobileNumber,
                         keyboardType: TextInputType.number,
                         decoration: new InputDecoration(
                           border: UnderlineInputBorder(
@@ -133,7 +121,7 @@ class _CustomerDetailsPageState extends State<CustomerDetailsPage> {
                           hintText: "DOB",
                         ),
                         onTap: () {
-                          _showDatePicker();
+                          _showDatePicker(context);
                         },
                         validator: (value) {
                           if (value.isEmpty)
@@ -157,7 +145,7 @@ class _CustomerDetailsPageState extends State<CustomerDetailsPage> {
                         child: RaisedButton(
                           color: Color(0xFF2A2E43),
                           onPressed: () {
-                            handleNext();
+                            handleNext(context);
                           },
                           child: Text("NEXT",
                               style: TextStyle(color: Color(0xFFF4E600))),
@@ -172,7 +160,7 @@ class _CustomerDetailsPageState extends State<CustomerDetailsPage> {
         ));
   }
 
-  void _showDatePicker() {
+  void _showDatePicker(context) {
     DatePicker.showDatePicker(
       context,
       onMonthChangeStartWithFirstDate: true,
@@ -199,10 +187,10 @@ class _CustomerDetailsPageState extends State<CustomerDetailsPage> {
     );
   }
 
-  void handleNext() {
+  void handleNext(context) {
     if (_formKey.currentState.validate()) {
-       BlocProvider.of<LoginBloc>(context).add(RegisterCustomer(
-       customer: customer));
+      BlocProvider.of<LoginBloc>(context)
+          .add(RegisterCustomer(customer: customer));
     }
   }
 }

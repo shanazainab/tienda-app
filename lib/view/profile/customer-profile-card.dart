@@ -15,12 +15,12 @@ class CustomerProfileCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Padding(
+        /*  Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: CircleAvatar(
               maxRadius: 30,
             ),
-          ),
+          ),*/
           Padding(
             padding: const EdgeInsets.only(left: 16.0),
             child: Text(customerDetails.name),

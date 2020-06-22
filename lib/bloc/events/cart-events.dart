@@ -14,7 +14,13 @@ class FetchCartData extends CartEvents {
   @override
   List<Object> get props => [];
 }
+class AddCartItem extends CartEvents {
+  final CartItem cartItem;
+  AddCartItem({this.cartItem}) : super();
 
+  @override
+  List<Object> get props => [cartItem];
+}
 class EditCartItem extends CartEvents {
   final CartItem cartItem;
   EditCartItem({this.cartItem}) : super();

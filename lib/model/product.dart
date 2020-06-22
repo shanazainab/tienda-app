@@ -8,6 +8,7 @@ class Product {
   String sellerId;
   String subCategoryId;
   String thumbnail;
+  double discount ;
 
   Product(
       {this.categoryId,
@@ -18,20 +19,21 @@ class Product {
       this.price,
       this.sellerId,
       this.subCategoryId,
-      this.thumbnail});
+      this.thumbnail,
+      this.discount});
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      categoryId: json['category_id'],
-      id: json['id'],
-      isAvailable: json['is_available'],
-      nameArabic: json['name_ar'],
-      nameEnglish: json['name_en'],
-      price: json['price'],
-      sellerId: (json['seller_id']),
-      subCategoryId: json['sub_category_id'],
-      thumbnail: json['thumbnail'],
-    );
+        categoryId: json['category_id'],
+        id: json['id'],
+        isAvailable: json['is_available'],
+        nameArabic: json['name_ar'],
+        nameEnglish: json['name_en'],
+        price: json['price'],
+        sellerId: (json['seller_id']),
+        subCategoryId: json['sub_category_id'],
+        thumbnail: json['thumbnail'],
+        discount: json['discount']);
   }
 
   Map<String, dynamic> toJson() {
@@ -46,6 +48,7 @@ class Product {
     data['seller_id'] = this.sellerId;
 
     data['sub_category_id'] = this.subCategoryId;
+    data['discount'] = this.discount;
 
     return data;
   }

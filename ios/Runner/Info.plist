@@ -24,8 +24,15 @@
         </array>
     </dict>
 </array>
+<key>io.flutter.embedded_views_preview</key>
+<true/>
 
-<key>FacebookAppID</key>
+
+
+<key>io.flutter.embedded_views_preview</key>
+<string>YES</string>
+
+
 
 <!-- Replace "000000000000" with your Facebook App ID here. -->
 <string>3900420976697721</string>

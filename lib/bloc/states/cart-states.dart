@@ -40,6 +40,14 @@ class EmptyCart extends CartStates {
   List<Object> get props => [];
 }
 
+class AddToCartSuccess extends CartStates {
+  final Cart addedCart;
+  AddToCartSuccess({this.addedCart}) : super();
+
+  @override
+  List<Object> get props => [addedCart];
+}
+
 class EditCartItemSuccess extends CartStates {
   EditCartItemSuccess() : super();
 
@@ -48,7 +56,8 @@ class EditCartItemSuccess extends CartStates {
 }
 
 class DeleteCartItemSuccess extends CartStates {
-  DeleteCartItemSuccess() : super();
+  final Cart cart;
+  DeleteCartItemSuccess({this.cart}) : super();
 
   @override
   List<Object> get props => [];

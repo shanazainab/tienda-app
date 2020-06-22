@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:ansicolor/ansicolor.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +10,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tienda/api/cart-api-client.dart';
 import 'package:tienda/api/customer-profile-api-client.dart';
 import 'package:tienda/api/login-api-client.dart';
+import 'package:tienda/model/cart.dart';
 import 'package:tienda/model/customer.dart';
 import 'package:tienda/model/login-request.dart';
 import 'package:dio/dio.dart';
@@ -74,15 +77,18 @@ class LoginController {
       print("#########");
       print("LOGIN-VERIFY-OTP-RESPONSE:$response");
 
-      String body = response['body'];
-      switch (json.decode(body)['status']) {
+      dynamic body = response['body'];
+      switch (body['status']) {
         case 200:
-          status =
-              json.decode(body)['registered'] ? "Existing User" : "New User";
+          print("equal");
+
+          status = body['registered'] ? "Existing User" : "New User";
           await _secureStorage.write(
               key: "session-id", value: response['headers']['set-cookie'][0]);
 
           String value = await _secureStorage.read(key: "session-id");
+
+          updateCartAtTheBackend();
 
           break;
         case 400:
@@ -99,6 +105,7 @@ class LoginController {
       }
     });
 
+    print("status:   $status");
     return status;
   }
 
@@ -258,14 +265,16 @@ class LoginController {
           }
         });
       } else {
-
         print("GUEST CUSTOMER");
       }
     } else {
-      print("REGISTERED CUSTOMER");
+      AnsiPen pen = new AnsiPen()
+        ..white()
+        ..rgb(r: 1.0, g: 0.8, b: 0.2);
+      print(pen("REGISTERED CUSTOMER"));
       isLoggedIn = true;
     }
-    if(currentUser != null) isLoggedIn = true;
+    if (currentUser != null) isLoggedIn = true;
     return isLoggedIn;
   }
 
@@ -346,6 +355,8 @@ class LoginController {
 
           print("SESSION ID FOR GOOGLE SIGN IN: $value");
           status = "success";
+          updateCartAtTheBackend();
+
           break;
       }
     }).catchError((err) {
@@ -384,6 +395,8 @@ class LoginController {
 
           print("SESSION ID FOR FACEBOOK SIGN IN: $value");
           status = "success";
+          updateCartAtTheBackend();
+
           break;
       }
     }).catchError((err) {
@@ -401,5 +414,42 @@ class LoginController {
     });
 
     return status;
+  }
+
+  Future<void> updateCartAtTheBackend() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    Cart cart;
+    if (sharedPreferences.containsKey("cart")) {
+      cart = Cart.fromJson(json.decode(sharedPreferences.getString('cart')));
+      for (final cartItem in cart.cartItems) {
+        callAddToCartApi(cartItem.product.id);
+      }
+    }
+  }
+
+  callAddToCartApi(productId) {
+    final dio = Dio();
+    final client =
+        CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
+    client.addToCart(productId).then((response) {
+      print("#########");
+      print("ADD-TO-CART-AFTER-LOGIN-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          break;
+        case 407:
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+        print('%%%%%%%%%');
+        print("ADD-TO-CART-AFTER-LOGIN-ERROR:${error.response}");
+
+        print("ADD-TO-CART-AFTER-LOGIN-ERROR:${error.response?.data}");
+        print('%%%%%REQUEST%%%%');
+
+        print("ADD-TO-CART-AFTER-LOGIN-ERROR:${error.request?.data}");
+      }
+    });
   }
 }

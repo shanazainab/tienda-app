@@ -12,6 +12,7 @@ import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/profile-states.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
+import 'package:tienda/view/address/choose-address-page.dart';
 import 'package:tienda/view/home/main-page.dart';
 import 'package:tienda/view/profile/customer-profile-card.dart';
 
@@ -78,7 +79,8 @@ class _CustomerProfileState extends State<CustomerProfile> {
                             : BlocBuilder<ProfileBloc, ProfileStates>(
                                 builder: (context, state) {
                                 if (state is LoadCustomerProfileSuccess)
-                                  return CustomerProfileCard(state.customerDetails);
+                                  return CustomerProfileCard(
+                                      state.customerDetails);
                                 else
                                   return Container();
                               }),
@@ -86,22 +88,87 @@ class _CustomerProfileState extends State<CustomerProfile> {
                           height: 50,
                         ),
                         ListTile(
-                          title: Text("Orders"),
+                          leading: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.format_list_bulleted,
+                              ),
+                            ],
+                          ),
+                          title: Text(
+                            "Orders",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           onTap: () {},
+                          trailing: Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                          ),
                         ),
                         ListTile(
-                          title: Text("Returns"),
+                          leading: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(Icons.sync),
+                            ],
+                          ),
+                          title: Text(
+                            "Returns",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           onTap: () {},
+                          trailing: Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                          ),
                         ),
                         ListTile(
-                          title: Text("Wishlist"),
+                          leading: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(Icons.bookmark),
+                            ],
+                          ),
+                          title: Text(
+                            "Wishlist",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           onTap: () {},
+                          trailing: Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                          ),
                         ),
                         ListTile(
+                          leading: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(Icons.location_on),
+                            ],
+                          ),
                           title: Text("Address"),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ChooseAddressPage()),
+                            );
+                          },
                         ),
                         ListTile(
+                          leading: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(Icons.credit_card),
+                            ],
+                          ),
                           title: Text("Payments"),
                           onTap: () {},
                         ),

@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tienda/model/product.dart';
 part 'cart.g.dart';
@@ -10,7 +11,7 @@ class Cart {
   @JsonKey(name: "cart-price")
   CartPrice cartPrice;
 
-  Cart(this.cartItems, this.cartPrice);
+  Cart({this.cartItems, this.cartPrice});
 
   factory Cart.fromJson(Map<String, dynamic> json) => _$CartFromJson(json);
 
@@ -18,37 +19,42 @@ class Cart {
 }
 
 @JsonSerializable()
-class CartItem {
+class CartItem extends Equatable{
   Product product;
   int quantity;
   String color;
   String size;
 
-  CartItem(this.product, this.quantity, this.color, this.size);
+  CartItem({this.product, this.quantity, this.color, this.size});
 
   factory CartItem.fromJson(Map<String, dynamic> json) =>
       _$CartItemFromJson(json);
 
   Map<String, dynamic> toJson() => _$CartItemToJson(this);
+
+  @override
+  List<Object> get props => [product.id];
 }
 
 @JsonSerializable()
 class CartPrice {
   @JsonKey(name: "cart-total")
   double cartTotal;
-  double discount;
-  @JsonKey(name: "order-total")
-  double orderTotal;
+  @JsonKey(name: "discount-total")
+  double discountTotal;
   @JsonKey(name: "deliver-charge")
   double deliverCharge;
-  @JsonKey(name: "checkout-total")
-  double checkoutTotal;
 
-  CartPrice(this.cartTotal, this.discount, this.orderTotal, this.deliverCharge,
-      this.checkoutTotal);
+
+  CartPrice({this.cartTotal, this.discountTotal, this.deliverCharge});
 
   factory CartPrice.fromJson(Map<String, dynamic> json) =>
       _$CartPriceFromJson(json);
 
   Map<String, dynamic> toJson() => _$CartPriceToJson(this);
+
+  @override
+  String toString() {
+    return 'CartPrice{cartTotal: $cartTotal, discountTotal: $discountTotal, deliverCharge: $deliverCharge}';
+  }
 }

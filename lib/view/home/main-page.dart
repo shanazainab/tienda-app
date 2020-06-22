@@ -1,5 +1,9 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tienda/bloc/cart-bloc.dart';
+import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/view/cart/cart-page.dart';
 import 'package:tienda/view/home/fab-bottom-app-bar.dart';
 import 'package:tienda/view/home/home-page.dart';
@@ -64,24 +68,49 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
           IconButton(
-            padding: EdgeInsets.all(0),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CartPage()),
-              );
-            },
-            icon: Icon(
-              Icons.shopping_cart,
-              size: 20,
-            ),
-          )
+              padding: EdgeInsets.all(0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CartPage()),
+                );
+              },
+              icon:
+                  BlocBuilder<CartBloc, CartStates>(builder: (context, state) {
+                if (state is AddToCartSuccess) {
+                  return Badge(
+                    badgeContent: Text(
+                      state.addedCart.cartItems.length.toString(),
+                      style: TextStyle(fontSize: 10, color: Colors.white),
+                    ),
+                    child: Icon(
+                      Icons.shopping_basket,
+                      size: 20,
+                    ),
+                  );
+                } else if (state is LoadCartSuccess) {
+                  return Badge(
+                    badgeContent: Text(
+                      state.cart.cartItems.length.toString(),
+                      style: TextStyle(fontSize: 10, color: Colors.white),
+                    ),
+                    child: Icon(
+                      Icons.shopping_basket,
+                      size: 20,
+                    ),
+                  );
+                } else
+                  return Icon(
+                    Icons.shopping_basket,
+                    size: 20,
+                  );
+              }))
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        child: Icon(FontAwesomeIcons.playCircle),
+        child: Icon(Icons.shop),
         elevation: 2.0,
       ),
       bottomNavigationBar: FABBottomAppBar(
@@ -103,7 +132,12 @@ class _MainPageState extends State<MainPage> {
       backgroundColor: Colors.white,
       body: IndexedStack(
         index: _selectedIndex,
-        children: [HomePage(), ProductListPage(), TestPage(), CustomerProfile()],
+        children: [
+          HomePage(),
+          ProductListPage(),
+          TestPage(),
+          CustomerProfile()
+        ],
       ),
     );
   }
