@@ -1,18 +1,18 @@
 import 'package:equatable/equatable.dart';
 import 'package:tienda/model/customer.dart';
 
-abstract class ProfileStates extends Equatable {
-  ProfileStates();
+abstract class CustomerProfileStates extends Equatable {
+  CustomerProfileStates();
 
   @override
   List<Object> get props => null;
 }
 
-class Loading extends ProfileStates {
+class Loading extends CustomerProfileStates {
   Loading() : super();
 }
 
-class LoadCustomerProfileSuccess extends ProfileStates {
+class LoadCustomerProfileSuccess extends CustomerProfileStates {
   final Customer customerDetails;
 
   LoadCustomerProfileSuccess({this.customerDetails}) : super();
@@ -21,7 +21,7 @@ class LoadCustomerProfileSuccess extends ProfileStates {
   List<Object> get props => [customerDetails];
 }
 
-class LoadCustomerProfileFail extends ProfileStates {
+class LoadCustomerProfileFail extends CustomerProfileStates {
   final dynamic error;
 
   LoadCustomerProfileFail(this.error) : super();

@@ -5,6 +5,12 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
+import "package:google_maps_webservice/geocoding.dart";
+
+import 'package:tienda/model/address.dart';
+import 'package:http/http.dart' as http;
+import 'package:tienda/model/reverse-geocoded-mapbox-data.dart';
+import 'package:tienda/view/address/add-address-page.dart';
 
 class ChooseAddressPage extends StatefulWidget {
   @override
@@ -13,7 +19,11 @@ class ChooseAddressPage extends StatefulWidget {
 
 class _ChooseAddressPageState extends State<ChooseAddressPage> {
   Completer<GoogleMapController> _controller = Completer();
-GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "AIzaSyDBMARSuk2l-TxaUBlHY3m5RVb7bN2C08c");
+  GoogleMapsPlaces _places =
+      GoogleMapsPlaces(apiKey: "AIzaSyDBMARSuk2l-TxaUBlHY3m5RVb7bN2C08c");
+
+  final geocoding = new GoogleMapsGeocoding(
+      apiKey: "AIzaSyDBMARSuk2l-TxaUBlHY3m5RVb7bN2C08c");
 
   static CameraPosition initialPosition = CameraPosition(
     target: LatLng(25.1247178, 55.4083117),
@@ -22,12 +32,15 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "AIzaSyDBMARSuk2l-TxaUBlHY3m
 
   LatLng chosenLocation;
   String address;
+
+  DeliveryAddress deliveryAddress;
+
   bool _mapLoading = true;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getCurrentLocation();
   }
 
   @override
@@ -55,25 +68,26 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "AIzaSyDBMARSuk2l-TxaUBlHY3m
                   setState(() {});
                 },
                 onCameraIdle: () async {
-                  List<Placemark> placemark = await Geolocator()
-                      .placemarkFromCoordinates(
-                          chosenLocation.latitude, chosenLocation.longitude);
-                  setState(() {
-                    address = placemark[0].name +
-                        " " +
-                        placemark[0].locality +
-                        ' ' +
-                        placemark[0].subLocality;
-                  });
+                  if (chosenLocation != null) {
+                    address = await reverseGeocodeTheLatLng(chosenLocation);
+
+                    setState(() {
+                      _mapLoading = false;
+                    });
+                  }
                 },
                 initialCameraPosition: initialPosition,
                 onMapCreated: (GoogleMapController controller) {
                   _controller.complete(controller);
-                  setState(() {
-                    _mapLoading = false;
-                  });
+                  getCurrentLocation();
                 },
               )),
+          _mapLoading
+              ? Container(
+                  height: MediaQuery.of(context).size.height - 60,
+                  color: Color(0xfffcfcfb),
+                )
+              : Container(),
           Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Align(
@@ -105,9 +119,7 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "AIzaSyDBMARSuk2l-TxaUBlHY3m
                                         ? "fetching address.."
                                         : address,
                                     style: TextStyle(
-                                        color: Color(0xFF2A2E43),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14),
+                                        color: Color(0xFF2A2E43), fontSize: 14),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -127,7 +139,7 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "AIzaSyDBMARSuk2l-TxaUBlHY3m
                       child: RaisedButton(
                         color: Colors.grey,
                         onPressed: () {
-                          //   handleNext(context);
+                          handleConfirmAddress();
                         },
                         child: Text(
                           "CONFIRM LOCATION",
@@ -159,19 +171,22 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "AIzaSyDBMARSuk2l-TxaUBlHY3m
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
+    LatLng latLng = new LatLng(position.latitude, position.longitude);
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: new LatLng(position.latitude, position.longitude), zoom: 18)));
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: latLng, zoom: 18)));
+  }
 
-    List<Placemark> placemark = await Geolocator()
-        .placemarkFromCoordinates(position.latitude, position.longitude);
-    setState(() {
-      address = placemark[0].name +
-          " " +
-          placemark[0].locality +
-          ' ' +
-          placemark[0].subLocality;
-    });
+  Future<String> reverseGeocodeTheLatLng(latLng) async {
+    print(latLng.longitude);
+    print(latLng.latitude);
+
+    GeocodingResponse response = await geocoding
+        .searchByLocation(new Location(latLng.latitude, latLng.longitude));
+
+    deliveryAddress = new DeliveryAddress(
+        latLng: latLng, address: response.results[0].formattedAddress);
+    return response.results[0].formattedAddress;
   }
 
   Future<void> showPrediction() async {
@@ -180,18 +195,28 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "AIzaSyDBMARSuk2l-TxaUBlHY3m
         apiKey: "AIzaSyDBMARSuk2l-TxaUBlHY3m5RVb7bN2C08c",
         mode: Mode.fullscreen);
 
-    displayPrediction(p);
-
+    await displayPrediction(p);
   }
 
   Future<Null> displayPrediction(Prediction p) async {
     if (p != null) {
-
       PlacesDetailsResponse detail =
           await _places.getDetailsByPlaceId(p.placeId);
       final lat = detail.result.geometry.location.lat;
       final lng = detail.result.geometry.location.lng;
 
+      print("SELECTED LAT: $lat $lng");
+
+      setState(() {
+        address = detail.result.formattedAddress;
+      });
     }
+  }
+
+  void handleConfirmAddress() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddAddressPage(deliveryAddress: deliveryAddress,)),
+    );
   }
 }

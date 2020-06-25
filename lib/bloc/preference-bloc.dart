@@ -5,12 +5,15 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:tienda/api/preference-api-client.dart';
 import 'package:tienda/bloc/states/preference-states.dart';
 import 'package:dio/dio.dart';
+import 'package:tienda/console-logger.dart';
 import 'package:tienda/model/category.dart';
 import 'package:tienda/model/country.dart';
 
 import 'events/preference-events.dart';
 
 class PreferenceBloc extends Bloc<PreferenceEvents, PreferenceStates> {
+  ConsoleLogger consoleLogger = new ConsoleLogger();
+
   @override
   PreferenceStates get initialState => Loading();
 
@@ -19,7 +22,7 @@ class PreferenceBloc extends Bloc<PreferenceEvents, PreferenceStates> {
     if (event is FetchCountryList) {
       yield* _mapFetchCountryListToStates(event);
     }
-     if (event is FetchCategoryList) {
+    if (event is FetchCategoryList) {
       yield* _mapFetchCategoryListToStates(event);
     }
   }
@@ -28,57 +31,45 @@ class PreferenceBloc extends Bloc<PreferenceEvents, PreferenceStates> {
       FetchCountryList event) async* {
     String status;
     List<Country> countries = new List();
-    print("FETCH TEST");
     final dio = Dio();
     final client = PreferenceApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.getCountriesList().then((response) {
-      print("#########");
-      print("LOGIN-SEND-OTP-RESPONSE:$response");
+      consoleLogger.printResponse("LIST-COUNTRY-RESPONSE:$response");
       for (final item in json.decode(response)['countries']) {
         countries.add(Country.fromJson(item));
       }
 
-      print("#########COUNTRY LIST: $countries ");
+      consoleLogger.printResponse("#########COUNTRY LIST: $countries ");
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        print('%%%%%%%%%');
-        print("COUNTRY LIST-ERROR:${error.response}");
+        consoleLogger.printDioError("COUNTRY LIST-ERROR:",error);
 
-        print("COUNTRY LIST-ERROR:${error.response?.data}");
-        print('%%%%%REQUEST%%%%');
 
-        print("COUNTRY LIST-ERROR:${error.request?.data}");
       }
     });
     yield LoadCountryListSuccess(countries: countries);
   }
 
-  Stream<PreferenceStates> _mapFetchCategoryListToStates(FetchCategoryList event) async* {
+  Stream<PreferenceStates> _mapFetchCategoryListToStates(
+      FetchCategoryList event) async* {
     List<Category> categories = new List();
-    print("FETCH TEST");
     final dio = Dio();
     final client = PreferenceApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.getCategoriesList().then((response) {
-      print("#########");
-      print("CATEGORY-RESPONSE:$response");
+      consoleLogger.printResponse("CATEGORY-RESPONSE:$response");
       for (final item in json.decode(response)['categories']) {
         categories.add(Category.fromJson(item));
       }
 
-      print("#########CATEGORY LIST: $categories ");
+      consoleLogger.printResponse("#########CATEGORY LIST: $categories ");
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        print('%%%%%%%%%');
-        print("CATEGORY LIST-ERROR:${error.response}");
+        consoleLogger.printDioError("CATEGORY LIST-ERROR:",error);
 
-        print("CATEGORY LIST-ERROR:${error.response?.data}");
-        print('%%%%%REQUEST%%%%');
-
-        print("CATEGORY LIST-ERROR:${error.request?.data}");
       }
     });
     yield LoadCategoryListSuccess(categories: categories);

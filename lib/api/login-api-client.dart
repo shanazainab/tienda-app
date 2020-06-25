@@ -24,6 +24,9 @@ abstract class LoginApiClient {
   @POST("/get_cookie/")
   Future<Map<String, dynamic>> getGuestLoginSessionId(@Body() String deviceId);
 
+   @GET("/check_cookie/")
+  Future<String> checkCookie();
+
   @GET("/customer_logout/")
   Future<String> logout();
 }

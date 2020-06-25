@@ -10,8 +10,7 @@ import 'package:tienda/bloc/preference-bloc.dart';
 import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/preference-states.dart';
 import 'package:tienda/model/category.dart';
-import 'package:tienda/view/home/graph-page.dart';
-import 'package:tienda/view/home/main-page.dart';
+import 'package:tienda/view/home/home-page.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 
 class CategorySelectionPage extends StatefulWidget {
@@ -148,7 +147,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => MainPage()),
+      MaterialPageRoute(builder: (context) => HomePage()),
     );
   }
 }

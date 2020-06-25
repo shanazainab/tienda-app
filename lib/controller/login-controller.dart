@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:ansicolor/ansicolor.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -13,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/api/cart-api-client.dart';
 import 'package:tienda/api/customer-profile-api-client.dart';
 import 'package:tienda/api/login-api-client.dart';
+import 'package:tienda/console-logger.dart';
 import 'package:tienda/model/cart.dart';
 import 'package:tienda/model/customer.dart';
 import 'package:tienda/model/login-request.dart';
@@ -20,6 +19,8 @@ import 'package:dio/dio.dart';
 import 'package:tienda/model/login-verify-request.dart';
 
 class LoginController {
+  ConsoleLogger consoleLogger = new ConsoleLogger();
+
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
   final FacebookLogin _facebookLogin;
@@ -42,8 +43,7 @@ class LoginController {
     final client = LoginApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.sendOTP(loginRequest).then((response) {
-      print("#########");
-      print("LOGIN-SEND-OTP-RESPONSE:$response");
+      consoleLogger.printResponse("LOGIN-SEND-OTP-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           status = "success";
@@ -54,13 +54,7 @@ class LoginController {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        print('%%%%%%%%%');
-        print("LOGIN-SEND-OTP-ERROR:${error.response}");
-
-        print("LOGIN-SEND-OTP-ERROR:${error.response?.data}");
-        print('%%%%%REQUEST%%%%');
-
-        print("LOGIN-SEND-OTP-ERROR:${error.request?.data}");
+        consoleLogger.printDioError("LOGIN-SEND-OTP-ERROR", error);
       }
     });
 
@@ -74,8 +68,7 @@ class LoginController {
     final client = LoginApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.verifyOTP(loginVerifyRequest).then((response) async {
-      print("#########");
-      print("LOGIN-VERIFY-OTP-RESPONSE:$response");
+      consoleLogger.printResponse("LOGIN-VERIFY-OTP-RESPONSE:$response");
 
       dynamic body = response['body'];
       switch (body['status']) {
@@ -97,11 +90,7 @@ class LoginController {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        print('%%%%%%%%%');
-        print("LOGIN-VERIFY-OTP-ERROR:${error}");
-        print('%%%%%REQUEST%%%%');
-
-        print("LOGIN-VERIFY-OTP-ERROR:${error.request.data}");
+        consoleLogger.printDioError("LOGIN-VERIFY-OTP-ERROR", error);
       }
     });
 
@@ -123,8 +112,6 @@ class LoginController {
       if (credential != null)
         await _firebaseAuth.signInWithCredential(credential);
       final FirebaseUser currentUser = await _firebaseAuth.currentUser();
-
-      print("######## FIREBASE PROVIDER ID: ${currentUser.providerId}");
 
       ///Connect with tienda session id
       status = await connectGoogleAccountWithSession(googleAuth?.idToken);
@@ -154,8 +141,6 @@ class LoginController {
       assert(!user.isAnonymous);
       assert(await user.getIdToken() != null);
       final FirebaseUser currentUser = await _firebaseAuth.currentUser();
-
-      print("######## FIREBASE PROVIDER ID: ${currentUser.providerId}");
 
       ///Connect with tienda session id
       status =
@@ -189,8 +174,7 @@ class LoginController {
     final client = LoginApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.logout().then((response) async {
-      print("#########");
-      print("LOGOUT-RESPONSE:$response");
+      consoleLogger.printResponse("LOGOUT-RESPONSE $response");
       switch (json.decode(response)['status']) {
         case 200:
           await _secureStorage.delete(key: "session-id");
@@ -200,12 +184,8 @@ class LoginController {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        print('%%%%%%%%%');
-        print("LOGOUT-DIO-RESPONSE-ERROR:$error");
-        print("LOGOUT-DIO-REQUEST:${error.request.data}");
-      } else {
-        print("LOGOUT-ERROR:$err");
-      }
+        consoleLogger.printDioError("LOGOUT-DIO-RESPONSE-ERROR:", error);
+      } else {}
       status = "failed";
     });
     await _firebaseAuth.signOut();
@@ -236,9 +216,7 @@ class LoginController {
 
         String deviceId = await getDeviceId();
         await client.getGuestLoginSessionId(deviceId).then((response) async {
-          print("#########");
-          print("GUEST-LOGIN-SESSION-RESPONSE:$response");
-          print("#########");
+          consoleLogger.printResponse("GUEST-LOGIN-SESSION-RESPONSE:$response");
           String body = response['body'];
           switch (json.decode(body)['status']) {
             case 200:
@@ -248,7 +226,8 @@ class LoginController {
 
               String guestSessionId =
                   await _secureStorage.read(key: "guest-session-id");
-              print("GUEST-LOGIN-SESSION-ID:$guestSessionId");
+              consoleLogger
+                  .printResponse("GUEST-LOGIN-SESSION-ID:$guestSessionId");
 
               break;
             default:
@@ -257,21 +236,17 @@ class LoginController {
         }).catchError((err) {
           if (err is DioError) {
             DioError error = err;
-            print('%%%%%%%%%');
-            print("GUEST-LOGIN-SESSION-ERROR:${error.response}");
-            print("REGISTER-CUSTOMER-ERROR-DATA:${error.response?.data}");
-            print("REGISTER-CUSTOMER-REQUEST:${error.request?.data}");
-            print('%%%%%%%%%');
+            consoleLogger.printDioError("GUEST-LOGIN-SESSION-ERROR:", error);
           }
         });
       } else {
         print("GUEST CUSTOMER");
       }
     } else {
-      AnsiPen pen = new AnsiPen()
-        ..white()
-        ..rgb(r: 1.0, g: 0.8, b: 0.2);
-      print(pen("REGISTERED CUSTOMER"));
+      consoleLogger.printResponse("REGISTERED CUSTOMER");
+
+      checkCookie();
+
       isLoggedIn = true;
     }
     if (currentUser != null) isLoggedIn = true;
@@ -291,8 +266,7 @@ class LoginController {
     final client = CustomerProfileApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.registerCustomerDetails(customer).then((response) {
-      print("#########");
-      print("REGISTER-CUSTOMER-RESPONSE:$response");
+      consoleLogger.printResponse("REGISTER-CUSTOMER-RESPONSE:$response");
       /* switch (json.decode(response)['status']) {
         case 201:
           status = "success";
@@ -303,13 +277,7 @@ class LoginController {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        print('%%%%%%%%%');
-        print("REGISTER-CUSTOMER-ERROR:${error.response}");
-
-        print("REGISTER-CUSTOMER-ERROR-DATA:${error.response?.data}");
-        print('%%%%%REQUEST%%%%');
-
-        print("REGISTER-CUSTOMER-REQUEST:${error.request?.data}");
+        consoleLogger.printDioError("REGISTER-CUSTOMER-ERROR", error);
       }
     });
 
@@ -341,9 +309,7 @@ class LoginController {
     final client = LoginApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.checkGoogleToken(accessToken).then((response) async {
-      print("#########");
-
-      print("GOOGLE-TOKEN-RESPONSE:$response");
+      consoleLogger.printResponse("GOOGLE-TOKEN-RESPONSE:$response");
 
       String body = response['body'];
       switch (json.decode(body)['status']) {
@@ -362,13 +328,8 @@ class LoginController {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        print('%%%%%%%%%');
-        print("GOOGLE-TOKEN-ERROR:${error.response}");
 
-        print("GOOGLE-TOKEN-ERROR:${error.response?.data}");
-        print('%%%%%REQUEST%%%%');
-
-        print("GOOGLE-TOKEN-ERROR:${error.request?.data}");
+        consoleLogger.printDioError("GOOGLE-TOKEN-ERROR:", error);
         status = "failed";
       }
     });
@@ -383,8 +344,6 @@ class LoginController {
     final client = LoginApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.checkFacebookToken(token).then((response) async {
-      print("#########");
-      print("FACEBOOK-TOKEN-RESPONSE:$response");
       String body = response['body'];
       switch (json.decode(body)['status']) {
         case 200:
@@ -393,7 +352,8 @@ class LoginController {
 
           String value = await _secureStorage.read(key: "session-id");
 
-          print("SESSION ID FOR FACEBOOK SIGN IN: $value");
+          consoleLogger
+              .printResponse("SESSION ID FOR FACEBOOK SIGN IN: $value");
           status = "success";
           updateCartAtTheBackend();
 
@@ -402,13 +362,7 @@ class LoginController {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        print('%%%%%%%%%');
-        print("FACEBOOK-TOKEN-ERROR:${error.response}");
-
-        print("FACEBOOK-TOKEN-ERROR:${error.response?.data}");
-        print('%%%%%REQUEST%%%%');
-
-        print("FACEBOOK-TOKEN-ERROR:${error.request?.data}");
+        consoleLogger.printDioError("FACEBOOK-TOKEN-ERROR:", error);
         status = "failed";
       }
     });
@@ -432,8 +386,7 @@ class LoginController {
     final client =
         CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
     client.addToCart(productId).then((response) {
-      print("#########");
-      print("ADD-TO-CART-AFTER-LOGIN-RESPONSE:$response");
+      consoleLogger.printResponse("ADD-TO-CART-AFTER-LOGIN-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           break;
@@ -442,14 +395,35 @@ class LoginController {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        print('%%%%%%%%%');
-        print("ADD-TO-CART-AFTER-LOGIN-ERROR:${error.response}");
-
-        print("ADD-TO-CART-AFTER-LOGIN-ERROR:${error.response?.data}");
-        print('%%%%%REQUEST%%%%');
-
-        print("ADD-TO-CART-AFTER-LOGIN-ERROR:${error.request?.data}");
+        consoleLogger.printDioError("ADD-TO-CART-AFTER-LOGIN-ERROR:", error);
       }
     });
+  }
+
+  Future<void> checkCookie() async {
+    String status;
+
+    final dio = Dio();
+    String value = await _secureStorage.read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
+    final client = LoginApiClient(dio,
+        baseUrl: GlobalConfiguration().getString("baseURL"));
+    await client.checkCookie().then((response) {
+      consoleLogger.printResponse("CHECK-COOKIE-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          status = "success";
+          break;
+        case 407:
+          status = "Enter Valid Number";
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+        consoleLogger.printDioError("LOGIN-SEND-OTP-ERROR:", error);
+      }
+    });
+
+    return status;
   }
 }

@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
 
-abstract class ProfileEvents extends Equatable {
-  ProfileEvents();
+abstract class CustomerProfileEvents extends Equatable {
+  CustomerProfileEvents();
 
   @override
   List<Object> get props => null;
 }
 
-class FetchCustomerProfile extends ProfileEvents {
+class FetchCustomerProfile extends CustomerProfileEvents {
   FetchCustomerProfile() : super();
 
   @override

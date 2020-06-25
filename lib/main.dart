@@ -12,13 +12,14 @@ import 'package:tienda/app-language.dart';
 import 'package:tienda/app-settings.config.dart';
 import 'package:tienda/bloc-delegate.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
+import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/startup-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/localization.dart';
-import 'package:tienda/view/home/main-page.dart';
+import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/startup/country-choose-page.dart';
 import 'package:tienda/view/startup/language-preference-page.dart';
 import 'package:tienda/view/startup/splash-screen.dart';
@@ -34,14 +35,14 @@ import 'package:tienda/view/login/otp-verification-page.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  /*SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  /* SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   sharedPreferences.clear();*/
 
   ///Enable firebase crash analytics
   // Crashlytics.instance.enableInDevMode = true;
 
   ///To track bloc pattern states and transitions
- // BlocSupervisor.delegate = await HydratedBlocDelegate.build();
+  // BlocSupervisor.delegate = await HydratedBlocDelegate.build();
   BlocSupervisor.delegate = TrackBlocDelegate();
 
   ///load global app settings
@@ -66,11 +67,11 @@ Future<void> main() async {
       BlocProvider<LoginBloc>(
         create: (BuildContext context) => LoginBloc(),
       ),
-       BlocProvider<WishListBloc>(
+      BlocProvider<WishListBloc>(
         create: (BuildContext context) => WishListBloc(),
       ),
-       BlocProvider<CartBloc>(
-        create: (BuildContext context) => CartBloc(),
+      BlocProvider<CartBloc>(
+        create: (BuildContext context) => CartBloc()..add(FetchCartData()),
       ),
     ],
     child: App(
@@ -141,15 +142,16 @@ class App extends StatelessWidget {
 
           ///App wide theme
           theme: ThemeData(
-            appBarTheme: AppBarTheme(
-              color: Colors.white,
-              iconTheme: IconThemeData(
-                color: Colors.grey
-              ),
               textTheme: TextTheme(
-
-              )
-            ),
+                  headline1: TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              )),
+              appBarTheme: AppBarTheme(
+                  color: Colors.white,
+                  iconTheme: IconThemeData(color: Colors.grey),
+                  textTheme: TextTheme(title: TextStyle(color: Colors.grey))),
               accentColor: Colors.blue,
               buttonTheme: ButtonThemeData(
                 buttonColor: Colors.black,
@@ -176,7 +178,7 @@ class App extends StatelessWidget {
               if (state is PreferenceFlowFetchComplete) {
                 switch (state.route) {
                   case '/homePage':
-                    return MainPage();
+                    return HomePage();
                     break;
                   case '/welcomeScreen':
                     return WelcomeScreen();

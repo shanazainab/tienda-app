@@ -1,15 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tienda/api/graphql-client.dart';
 import 'package:tienda/bloc/states/home-states.dart';
 
 import 'events/home-events.dart';
 
 class HomeBloc extends Bloc<HomeEvents, HomeStates> {
-  GraphQLService service;
 
-  HomeBloc() {
-    service = GraphQLService();
-  }
 
   @override
   HomeStates get initialState => Loading();
@@ -22,22 +17,8 @@ class HomeBloc extends Bloc<HomeEvents, HomeStates> {
   }
 
   Stream<HomeStates> _mapFetchHomeDataToStates(FetchHomeData event) async* {
-    final query = event.query;
-    final variables = event.variables ?? null;
 
-    try {
-      final result = await service.performQuery(query, variables: variables);
+      yield LoadDataFail("");
 
-      if (result.hasException) {
-        print('graphQLErrors: ${result.exception.graphqlErrors.toString()}');
-        print('clientErrors: ${result.exception.clientException.toString()}');
-        yield LoadDataFail(result.exception.graphqlErrors[0]);
-      } else {
-        yield LoadDataSuccess(result.data);
-      }
-    } catch (e) {
-      print(e);
-      yield LoadDataFail(e.toString());
-    }
   }
 }

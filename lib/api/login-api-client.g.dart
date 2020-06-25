@@ -112,7 +112,7 @@ class _LoginApiClient implements LoginApiClient {
     ArgumentError.checkNotNull(deviceId, 'deviceId');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = deviceId;
+    final _data = {"device-id":deviceId};
     final Response<Map<String, dynamic>> _result = await _dio.request(
         '/get_cookie/',
         queryParameters: queryParameters,
@@ -135,6 +135,23 @@ class _LoginApiClient implements LoginApiClient {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final Response<String> _result = await _dio.request('/customer_logout/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
+    return value;
+  }
+
+  @override
+  Future<String> checkCookie() async {
+     const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final Response<String> _result = await _dio.request('/check_cookie/',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',

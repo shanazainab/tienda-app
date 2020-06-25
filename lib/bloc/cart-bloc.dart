@@ -7,10 +7,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/api/cart-api-client.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
+import 'package:tienda/console-logger.dart';
 import 'package:tienda/controller/login-controller.dart';
 import 'package:tienda/model/cart.dart';
 
 class CartBloc extends Bloc<CartEvents, CartStates> {
+  ConsoleLogger consoleLogger = new ConsoleLogger();
+
   @override
   CartStates get initialState => Initialized();
 
@@ -104,6 +107,7 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
     cart.cartItems.removeWhere((item) => item == event.cartItem);
     sharedPreferences.setString("cart", json.encode(cart.toJson()));
     yield DeleteCartItemSuccess(cart: cart);
+    yield LoadCartSuccess(cart: cart);
   }
 
   callAddCartApi(CartItem cartItem) async {
@@ -113,8 +117,7 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
     final client =
         CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.addToCart(cartItem.product.id).then((response) {
-      print("#########");
-      print("ADD-CART-RESPONSE:$response");
+      consoleLogger.printResponse("ADD-CART-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           status = "success";
@@ -125,13 +128,7 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        print('%%%%%%%%%');
-        print("ADD-CART-ERROR:${error.response}");
-
-        print("ADD-CART-ERROR:${error.response?.data}");
-        print('%%%%%REQUEST%%%%');
-
-        print("ADD-CART-ERROR:${error.request?.data}");
+        consoleLogger.printDioError("ADD-CART-ERROR:", error);
       }
     });
 

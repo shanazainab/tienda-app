@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
+import 'package:tienda/console-logger.dart';
 import 'package:tienda/controller/login-controller.dart';
 
 import 'events/startup-events.dart';
 
 class StartupBloc extends Bloc<StartupEvents, StartupStates> {
+  ConsoleLogger consoleLogger = new ConsoleLogger();
   LoginController loginController;
   StartupBloc() {
     loginController = new LoginController();
@@ -66,7 +68,7 @@ class StartupBloc extends Bloc<StartupEvents, StartupStates> {
   Stream<StartupStates> _mapCheckLoginStatusToState() async* {
     bool isLoggedIn = await loginController.checkLoginStatus();
 
-    print("#########LOGIN-STATUS: $isLoggedIn");
+    consoleLogger.printResponse("#########LOGIN-STATUS: $isLoggedIn");
     switch (isLoggedIn) {
       case true:
         yield LogInStatusResponse(isLoggedIn: true);

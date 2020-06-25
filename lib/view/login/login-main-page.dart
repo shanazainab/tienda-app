@@ -6,8 +6,8 @@ import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/controller/login-controller.dart';
+import 'package:tienda/view/home/tienda-home-page.dart';
 import 'package:tienda/view/home/home-page.dart';
-import 'package:tienda/view/home/main-page.dart';
 import 'package:tienda/view/login/login-mobile-number-page.dart';
 
 class LoginMainPage extends StatelessWidget {
@@ -21,7 +21,7 @@ class LoginMainPage extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => MainPage()),
+                  builder: (context) => HomePage()),
             );
           } else if (state is GoogleSignInResponse && state.response == GoogleSignInResponse.FAILED) {
             Fluttertoast.showToast(

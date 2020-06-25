@@ -9,7 +9,11 @@ import 'package:tienda/bloc/states/product-states.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/product.dart';
 
+import '../console-logger.dart';
+
 class ProductBloc extends Bloc<ProductEvents, ProductStates> {
+    ConsoleLogger consoleLogger = new ConsoleLogger();
+
   @override
   ProductStates get initialState => Loading();
 
@@ -31,8 +35,7 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
     ProductApiClient productApiClient = ProductApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await productApiClient.getDummyProducts().then((response) {
-      print("#########");
-      print("GET-PRODUCT-LIST-RESPONSE:$response");
+      consoleLogger.printResponse("GET-PRODUCT-LIST-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           for (final product in json.decode(response)['products'])
@@ -42,13 +45,8 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        print('%%%%%%%%%');
-        print("GET-PRODUCT-LIST-ERROR:${error.response}");
+        consoleLogger.printDioError("GET-PRODUCT-LIST-ERROR:",error);
 
-        print("GET-PRODUCT-LIST-ERROR:${error.response?.data}");
-        print('%%%%%REQUEST%%%%');
-
-        print("GET-PRODUCT-LIST-ERROR:${error.request?.data}");
       }
     });
 

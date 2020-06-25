@@ -9,7 +9,7 @@ import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/model/login-verify-request.dart';
-import 'package:tienda/view/home/main-page.dart';
+import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/login/customer-details-page.dart';
 
 class OTPVerificationPage extends StatefulWidget {
@@ -47,7 +47,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
             else
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MainPage()),
+                MaterialPageRoute(builder: (context) => HomePage()),
               );
           } else if (state is LogoutError) {
             Fluttertoast.showToast(

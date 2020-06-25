@@ -4,23 +4,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:tienda/api/customer-profile-api-client.dart';
-import 'package:tienda/bloc/events/profile-events.dart';
-import 'package:tienda/bloc/states/profile-states.dart';
+import 'package:tienda/bloc/events/customer-profile-events.dart';
+import 'package:tienda/bloc/states/customer-profile-states.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/customer.dart';
 
-class ProfileBloc extends Bloc<ProfileEvents, ProfileStates> {
-  @override
-  ProfileStates get initialState => Loading();
+import '../console-logger.dart';
+
+class CustomerProfileBloc extends Bloc<CustomerProfileEvents, CustomerProfileStates> {
+  ConsoleLogger consoleLogger = new ConsoleLogger();
 
   @override
-  Stream<ProfileStates> mapEventToState(ProfileEvents event) async* {
+  CustomerProfileStates get initialState => Loading();
+
+  @override
+  Stream<CustomerProfileStates> mapEventToState(CustomerProfileEvents event) async* {
     if (event is FetchCustomerProfile) {
       yield* _mapFetchCustomerProfileToStates(event);
     }
   }
 
-  Stream<ProfileStates> _mapFetchCustomerProfileToStates(
+  Stream<CustomerProfileStates> _mapFetchCustomerProfileToStates(
       FetchCustomerProfile event) async* {
     final dio = new Dio();
     String value = await FlutterSecureStorage().read(key: "session-id");
@@ -32,8 +36,7 @@ class ProfileBloc extends Bloc<ProfileEvents, ProfileStates> {
         CustomerProfileApiClient(dio,
             baseUrl: GlobalConfiguration().getString("baseURL"));
     await customerProfileApiClient.getCustomerProfile().then((response) {
-      print("#########");
-      print("GET-CUSTOMER-PROFILE-RESPONSE:$response");
+      consoleLogger.printResponse("GET-CUSTOMER-PROFILE-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           customer = Customer.fromJson(json.decode(response)['profile']);
@@ -42,16 +45,12 @@ class ProfileBloc extends Bloc<ProfileEvents, ProfileStates> {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        print('%%%%%%%%%');
-        print("GET-CUSTOMER-PROFILE-ERROR:${error.response}");
 
-        print("GET-CUSTOMER-PROFILE-ERROR:${error.response?.data}");
-        print('%%%%%REQUEST%%%%');
-
-        print("GET-CUSTOMER-PROFILE-ERROR:${error.request?.data}");
+        consoleLogger.printDioError("GET-CUSTOMER-PROFILE-ERROR:", error);
       }
     });
 
-    if (customer != null) yield LoadCustomerProfileSuccess(customerDetails: customer);
+    if (customer != null)
+      yield LoadCustomerProfileSuccess(customerDetails: customer);
   }
 }

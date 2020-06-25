@@ -8,7 +8,7 @@ import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/controller/login-controller.dart';
 import 'package:tienda/model/customer.dart';
-import 'package:tienda/view/home/main-page.dart';
+import 'package:tienda/view/home/home-page.dart';
 
 class CustomerDetailsPage extends StatelessWidget {
   final String mobileNumber;
@@ -26,7 +26,7 @@ class CustomerDetailsPage extends StatelessWidget {
           if (state is CustomerRegistrationSuccess) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MainPage()),
+              MaterialPageRoute(builder: (context) => HomePage()),
             );
           }
 
@@ -143,12 +143,10 @@ class CustomerDetailsPage extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(05)),
                         child: RaisedButton(
-                          color: Color(0xFF2A2E43),
                           onPressed: () {
                             handleNext(context);
                           },
-                          child: Text("NEXT",
-                              style: TextStyle(color: Color(0xFFF4E600))),
+                          child: Text("NEXT"),
                         ),
                       ),
                     ),

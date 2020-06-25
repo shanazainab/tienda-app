@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tienda/api/login-api-client.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/controller/login-controller.dart';
@@ -67,6 +68,8 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
 
   Stream<LoginStates> _doLogout(Logout event) async* {
     String status = await loginController.logOut();
+
+
 
     switch (status) {
       case "success":
