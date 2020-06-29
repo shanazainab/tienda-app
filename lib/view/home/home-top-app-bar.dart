@@ -7,7 +7,7 @@ import 'package:tienda/view/cart/cart-page.dart';
 import 'package:tienda/view/search/search-page.dart';
 import 'package:tienda/view/wishlist/wishlist-page.dart';
 
-class HomePageAppbar extends StatelessWidget {
+class HomeTopAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(

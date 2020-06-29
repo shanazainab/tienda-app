@@ -3,11 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:tienda/view/categories/categories-page.dart';
 import 'package:tienda/view/home/home-bottom-app-bar.dart';
-import 'package:tienda/view/home/home-page-appbar.dart';
 import 'package:tienda/view/home/tienda-home-page.dart';
-
-import 'package:tienda/view/products/product-list-page.dart';
 import 'package:tienda/view/customer-profile/profile-menu.dart';
+import 'package:tienda/view/seller-profile/seller-list-main.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -16,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+
   void _selectedTab(int index) {
     setState(() {
       _selectedIndex = index;
@@ -61,7 +60,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           TiendaHomePage(),
           CategoriesPage(),
-          ProductListPage(),
+          SellerListMainPage(),
           CustomerProfile()
         ],
       ),

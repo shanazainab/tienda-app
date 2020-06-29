@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:tienda/view/order/order-details-page.dart';
 import 'package:tienda/view/order/order-tracking-time-line.dart';
 
 class OrdersPage extends StatelessWidget {
@@ -22,73 +23,83 @@ class OrdersPage extends StatelessWidget {
                   ],
                 ),
                 Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    CachedNetworkImage(
-                      imageUrl: "https://picsum.photos/250?image=9",
-                      width: 150,
-                      height: 150,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: Color(0xfff2f2e4),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => OrdersDetailsPage()),
+                    );
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      CachedNetworkImage(
+                        imageUrl: "https://picsum.photos/250?image=9",
+                        width: 150,
+                        height: 150,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          color: Color(0xfff2f2e4),
+                        ),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Text("Brand name"),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text("Description"),
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Text('Qty: 1'),
-                              Text(" | "),
-                              Text('Size: 39')
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text("AED 500"),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Text("Brand name"),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text("Description"),
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Text('Qty: 1'),
+                                Text(" | "),
+                                Text('Size: 39')
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text("AED 500"),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-
-                Row(
-                  children: <Widget>[
-                    Container(
-                      width: 100,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[Text("Ordered"), Text("18 Jun")],
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width - (24 * 2),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[Text("Ordered"), Text("18 Jun")],
+                        ),
+                        OrderTrackingTimeLine(
+                          expand: false,
+                          topRowItems: ["", "", ""],
+                          numberOfTrackLines: 3,
+                          bottomRowItems: ["", "", ""],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[Text("Delivery"), Text("05 Jul")],
+                        ),
+                      ],
                     ),
-                    Container(
-                      width: MediaQuery.of(context).size.width - 400,
-                      child: OrderTrackingTimeLine(
-                        orderStatus: "Packed",
-                      ),
-                    ),
-                    Container(
-                      width: 100,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[Text("Delivery"), Text("05 Jul")],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),

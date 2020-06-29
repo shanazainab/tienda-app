@@ -17,6 +17,7 @@ import 'package:tienda/view/customer-profile/login-bar.dart';
 import 'package:tienda/view/customer-profile/profile-card.dart';
 import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/order/orders-main-page.dart';
+import 'package:tienda/view/returns/returns-page.dart';
 import 'package:tienda/view/wishlist/wishlist-page.dart';
 
 class CustomerProfile extends StatefulWidget {
@@ -130,7 +131,12 @@ class _CustomerProfileState extends State<CustomerProfile> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ReturnsPage()),
+              );
+            },
             trailing: Icon(
               Icons.arrow_forward_ios,
               size: 16,
@@ -175,51 +181,8 @@ class _CustomerProfileState extends State<CustomerProfile> {
               );
             },
           ),
-          ListTile(
-            leading: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.location_on),
-              ],
-            ),
-            title: Text("Address"),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SavedAddressPage()),
-              );
-            },
-          ),
-          ListTile(
-            leading: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.location_on),
-              ],
-            ),
-            title: Text("Address"),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SavedAddressPage()),
-              );
-            },
-          ),
-          ListTile(
-            leading: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.location_on),
-              ],
-            ),
-            title: Text("Address"),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SavedAddressPage()),
-              );
-            },
-          ),
+
+
           ListTile(
             leading: Column(
               mainAxisAlignment: MainAxisAlignment.center,
