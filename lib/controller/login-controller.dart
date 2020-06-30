@@ -245,7 +245,7 @@ class LoginController {
     } else {
       consoleLogger.printResponse("REGISTERED CUSTOMER");
 
-      checkCookie();
+    //  checkCookie();
 
       isLoggedIn = true;
     }

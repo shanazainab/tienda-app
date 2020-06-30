@@ -1,7 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:tienda/view/order/order-tracking-time-line.dart';
+import 'dart:math' as math;
 
-class OrdersDetailsPage extends StatelessWidget {
+class OrdersDetailsPage extends StatefulWidget {
+  @override
+  _OrdersDetailsPageState createState() => _OrdersDetailsPageState();
+}
+
+class _OrdersDetailsPageState extends State<OrdersDetailsPage>
+    with SingleTickerProviderStateMixin {
+  AnimationController _controller;
+
+  double height = 150;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controller =
+        AnimationController(vsync: this, duration: Duration(seconds: 2));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,18 +70,21 @@ class OrdersDetailsPage extends StatelessWidget {
                                   ),
                                   Align(
                                     alignment: Alignment.bottomLeft,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: <Widget>[
-                                        Text("Product"),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 8.0),
-                                          child: Text("AED XXX"),
-                                        )
-                                      ],
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text("Product"),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 8.0),
+                                            child: Text("AED XXX"),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -101,36 +123,69 @@ class OrdersDetailsPage extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            Container(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          "Order Status",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "Track Now",
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: OrderTrackingTimeLine(
-                        expand: true,
-                        topRowItems: ["", "", ""],
-                        numberOfTrackLines: 3,
-                        bottomRowItems: ["", "", ""],
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  height = 150;
+                });
+                _controller.reverse();
+              },
+              child: AnimatedContainer(
+                duration: Duration(seconds: 2),
+                color: Colors.white,
+                height: height,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            "Order Status",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          FlatButton(
+                            onPressed: () {
+                              setState(() {
+                                height = 400;
+                              });
+                              _controller.forward();
+                            },
+                            child: Text(
+                              "Track Now",
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                        ],
                       ),
-                    )
-                  ],
+                      AnimatedBuilder(
+                        animation: _controller,
+                        builder: (_, child) {
+                          return Transform.translate(
+                            offset: Offset(0.0, _controller.value * 100.0),
+                            child: Transform.rotate(
+                              angle: _controller.value * math.pi / 2,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 16.0),
+                            child: OrderTrackingTimeLine(
+                              expand: true,
+                              topRowItems: ["", "", ""],
+                              numberOfTrackLines: 3,
+                              bottomRowItems: ["", "", ""],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -138,6 +193,7 @@ class OrdersDetailsPage extends StatelessWidget {
               height: 20,
             ),
             Container(
+              width: MediaQuery.of(context).size.width,
               color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
@@ -170,6 +226,7 @@ class OrdersDetailsPage extends StatelessWidget {
               height: 20,
             ),
             Container(
+              width: MediaQuery.of(context).size.width,
               color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(24.0),

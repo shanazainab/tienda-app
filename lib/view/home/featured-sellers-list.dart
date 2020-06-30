@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 
-class FeaturedProductList extends StatelessWidget {
+class FeaturedSellersList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text("Featured Products",
+              child: Text("Featured Sellers",
                   style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold))),
+                      color: Colors.lightBlue,
+                      fontSize: 20))),
           SizedBox(
-            height: 225,
+            height: 300,
             child: ListView.builder(
                 itemCount: 5,
                 scrollDirection: Axis.horizontal,
@@ -35,11 +36,11 @@ class FeaturedProductList extends StatelessWidget {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: Text("Product"),
+                          child: Text("Seller Name"),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: Text("AED XXX"),
+                          child: Text("position"),
                         )
                       ],
                     ),

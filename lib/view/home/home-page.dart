@@ -5,7 +5,7 @@ import 'package:tienda/view/categories/categories-page.dart';
 import 'package:tienda/view/home/home-bottom-app-bar.dart';
 import 'package:tienda/view/home/tienda-home-page.dart';
 import 'package:tienda/view/customer-profile/profile-menu.dart';
-import 'package:tienda/view/seller-profile/seller-list-main.dart';
+import 'package:tienda/view/seller-profile/profiles-view-main.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           TiendaHomePage(),
           CategoriesPage(),
-          SellerListMainPage(),
+          SellerProfileViewsMain(),
           CustomerProfile()
         ],
       ),

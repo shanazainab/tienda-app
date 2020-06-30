@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:tienda/view/seller-profile/seller-profiles-grid-view.dart';
-import 'package:tienda/view/seller-profile/seller-profiles-list-view.dart';
+import 'package:tienda/view/seller-profile/profiles-view-grid.dart';
+import 'package:tienda/view/seller-profile/profiles-view-list.dart';
 
-class SellerListMainPage extends StatefulWidget {
+class SellerProfileViewsMain extends StatefulWidget {
   @override
-  _SellerListMainPageState createState() => _SellerListMainPageState();
+  _SellerProfileViewsMainState createState() => _SellerProfileViewsMainState();
 }
 
-class _SellerListMainPageState extends State<SellerListMainPage> {
+class _SellerProfileViewsMainState extends State<SellerProfileViewsMain> {
   List<bool> isSelected = [true, false];
 
   @override

@@ -12,9 +12,11 @@ import 'events/startup-events.dart';
 class StartupBloc extends Bloc<StartupEvents, StartupStates> {
   ConsoleLogger consoleLogger = new ConsoleLogger();
   LoginController loginController;
+
   StartupBloc() {
     loginController = new LoginController();
   }
+
   @override
   StartupStates get initialState => Initialized();
 
@@ -27,7 +29,7 @@ class StartupBloc extends Bloc<StartupEvents, StartupStates> {
       _updateThePreferenceFlow(event.route);
     }
     if (event is CheckLogInStatus) {
-     yield* _mapCheckLoginStatusToState();
+      yield* _mapCheckLoginStatusToState();
     }
   }
 

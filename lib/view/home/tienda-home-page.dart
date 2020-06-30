@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:page_indicator/page_indicator.dart';
+import 'package:tienda/view/home/banner-bottom.dart';
 import 'package:tienda/view/home/category-block.dart';
-import 'package:tienda/view/home/deals-bloc.dart';
+import 'package:tienda/view/home/deals-block.dart';
+import 'package:tienda/view/home/featured-brands.dart';
+import 'package:tienda/view/home/featured-sellers-list.dart';
 import 'package:tienda/view/home/home-top-app-bar.dart';
+import 'package:tienda/view/home/new-arrivals-list.dart';
+import 'package:tienda/view/home/recommended-list.dart';
+import 'package:tienda/view/home/top-categories.dart';
 import 'package:tienda/view/live-stream/video-stream-full-screen.dart';
 
 class TiendaHomePage extends StatelessWidget {
@@ -17,7 +23,6 @@ class TiendaHomePage extends StatelessWidget {
           child: HomeTopAppBar()),
       body: Container(
         child: ListView(
-          shrinkWrap: true,
           children: <Widget>[
             Container(
               height: 400,
@@ -101,6 +106,35 @@ class TiendaHomePage extends StatelessWidget {
               padding: const EdgeInsets.only(top:20.0),
               child: DealsBlock(),
             ),
+
+            Padding(
+              padding: const EdgeInsets.only(top:20.0),
+              child: FeaturedSellersList(),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(top:20.0),
+              child: RecommendedList(),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(top:20.0),
+              child: BannerBottom(),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(top:20.0),
+              child: NewArrivalList(),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(top:20.0),
+              child: TopCategories(),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top:20.0),
+              child: FeaturedBrands(),
+            )
           ],
         ),
       ),

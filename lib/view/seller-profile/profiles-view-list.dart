@@ -39,12 +39,39 @@ class SellerProfilesListView extends StatelessWidget {
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: Container(
-                                height: 100,
-                                width: 80,
-                                color: Colors.grey[200],
+                            Container(
+                              height: 110,
+                              width: 80,
+                              child: Stack(
+                                children: <Widget>[
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey[200],
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: index == 0
+                                            ? Border.all(color: Colors.lightBlue)
+                                            : null),
+                                    height: 100,
+                                    width: 80,
+                                  ),
+                                  index == 0?Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(2)
+                                      ),
+                                      color: Colors.lightBlue,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: Text("LIVE",
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.white
+                                        ),),
+                                      ),
+                                    ),
+                                  ):Container()
+                                ],
                               ),
                             ),
                             Padding(

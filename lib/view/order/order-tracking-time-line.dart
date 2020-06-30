@@ -12,7 +12,7 @@ class OrderTrackingTimeLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100,
+      height: 60,
       alignment: Alignment.center,
       child: new ListView.builder(
           shrinkWrap: true,
@@ -38,7 +38,7 @@ class OrderTrackingTimeLine extends StatelessWidget {
                           ? Colors.lightBlue
                           : Colors.grey,
                       height: 2,
-                      width: expand?100:50,
+                      width: expand?80:50,
                     ),
                     index == numberOfTrackLines - 1
                         ? CircleAvatar(

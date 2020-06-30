@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:tienda/view/seller-profile/seller-profile-page.dart';
+import 'package:tienda/view/seller-profile/seller-profile-main-page.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 
 class SellerProfilesGridView extends StatelessWidget {
