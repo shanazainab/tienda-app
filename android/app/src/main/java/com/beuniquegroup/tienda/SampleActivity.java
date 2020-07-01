@@ -9,22 +9,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.View;
+import android.widget.Button;
+
+import zendesk.answerbot.AnswerBot;
+import zendesk.answerbot.AnswerBotEngine;
+import zendesk.chat.Chat;
+import zendesk.chat.ChatEngine;
+import zendesk.core.AnonymousIdentity;
+import zendesk.core.Zendesk;
+import zendesk.messaging.Engine;
+import zendesk.messaging.MessagingActivity;
+import zendesk.support.Support;
+import zendesk.support.SupportEngine;
 
 public class SampleActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        Button mChatButton;
+        mChatButton = (Button) findViewById(R.id.chat_button);
+        mChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v){
+
             }
         });
     }

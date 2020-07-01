@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -12,9 +13,11 @@ import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/customer-profile-states.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
+import 'package:tienda/console-logger.dart';
 import 'package:tienda/view/address/saved-address-page.dart';
 import 'package:tienda/view/customer-profile/login-bar.dart';
 import 'package:tienda/view/customer-profile/profile-card.dart';
+import 'package:tienda/view/customer-profile/refer-and-earn.dart';
 import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/order/orders-main-page.dart';
 import 'package:tienda/view/returns/returns-page.dart';
@@ -29,6 +32,8 @@ class _CustomerProfileState extends State<CustomerProfile> {
   final StartupBloc startupBloc = new StartupBloc();
 
   final CustomerProfileBloc profileBloc = new CustomerProfileBloc();
+
+  static const platform = const MethodChannel('tienda.dev/zendesk');
 
   @override
   void initState() {
@@ -103,9 +108,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
             ),
             title: Text(
               "Orders",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(),
             ),
             onTap: () {
               Navigator.push(
@@ -127,9 +130,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
             ),
             title: Text(
               "Returns",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(),
             ),
             onTap: () {
               Navigator.push(
@@ -151,9 +152,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
             ),
             title: Text(
               "Wishlist",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(),
             ),
             onTap: () {
               Navigator.push(
@@ -174,6 +173,10 @@ class _CustomerProfileState extends State<CustomerProfile> {
               ],
             ),
             title: Text("Address"),
+            trailing: Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+            ),
             onTap: () {
               Navigator.push(
                 context,
@@ -181,8 +184,6 @@ class _CustomerProfileState extends State<CustomerProfile> {
               );
             },
           ),
-
-
           ListTile(
             leading: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -190,7 +191,52 @@ class _CustomerProfileState extends State<CustomerProfile> {
                 Icon(Icons.credit_card),
               ],
             ),
+            trailing: Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+            ),
             title: Text("Payments"),
+            onTap: () {},
+          ),
+          Container(
+            height: 50,
+            color: Colors.grey[200],
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16.0, top: 16),
+              child: Text("EXPLORE"),
+            ),
+          ),
+          ListTile(
+            leading: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(Icons.credit_card),
+              ],
+            ),
+            title: Text("Refer & Earn"),
+            trailing: Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ReferAndEarn()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(Icons.credit_card),
+              ],
+            ),
+            trailing: Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+            ),
+            title: Text("Memberships"),
             onTap: () {},
           ),
           Container(
@@ -216,22 +262,6 @@ class _CustomerProfileState extends State<CustomerProfile> {
                   : Locale('en'));
             },
           ),
-          Container(
-            height: 50,
-            color: Colors.grey[200],
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16.0, top: 16),
-              child: Text("EXPLORE"),
-            ),
-          ),
-          ListTile(
-            title: Text("Refer & Earn"),
-            onTap: () {},
-          ),
-          ListTile(
-            title: Text("Memberships"),
-            onTap: () {},
-          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
@@ -244,12 +274,14 @@ class _CustomerProfileState extends State<CustomerProfile> {
             ),
           ),
           ListTile(
-            title: Text("WhatsApp Us"),
+            title: Text("Call"),
             onTap: () {},
           ),
           ListTile(
-            title: Text("Call"),
-            onTap: () {},
+            title: Text("Chat To Us"),
+            onTap: () {
+              handleChat();
+            },
           ),
           SizedBox(
             height: 20,
@@ -263,7 +295,11 @@ class _CustomerProfileState extends State<CustomerProfile> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          FaIcon(FontAwesomeIcons.signOutAlt),
+                          FaIcon(
+                            FontAwesomeIcons.signOutAlt,
+                            color: Colors.grey[200],
+                            size: 16,
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: Text("Logout"),
@@ -291,5 +327,20 @@ class _CustomerProfileState extends State<CustomerProfile> {
 
   void handleLogin(context) {
     Navigator.pushNamed(context, '/loginMainPage');
+  }
+
+  void handleChat() {
+    _getBatteryLevel();
+  }
+
+  Future<void> _getBatteryLevel() async {
+    String result;
+    try {
+      result = await platform.invokeMethod('getChat');
+    } on PlatformException catch (e) {
+      result = "Platform Method Error: '${e.message}'.";
+    }
+
+    new ConsoleLogger().printResponse("******$result");
   }
 }

@@ -11,6 +11,7 @@ import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/view/cart/cart-page.dart';
 import 'package:tienda/view/live-stream/add-to-cart-popup.dart';
 import 'package:tienda/view/live-stream/cart-checkout-pop-up.dart';
+import 'package:tienda/view/live-stream/live-comment-box.dart';
 import 'package:tienda/view/wishlist/wishlist-page.dart';
 import 'package:video_player/video_player.dart';
 
@@ -21,7 +22,8 @@ class VideoStreamFullScreenView extends StatefulWidget {
 }
 
 class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
-  PanelController panelController = new PanelController();
+  PanelController addToCartPanelController = new PanelController();
+  PanelController checkoutPanelController = new PanelController();
 
   @override
   Widget build(BuildContext context) {
@@ -86,10 +88,9 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
           IconButton(
               padding: EdgeInsets.all(0),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CartPage()),
-                );
+                if (addToCartPanelController.isPanelOpen)
+                  addToCartPanelController.close();
+                checkoutPanelController.open();
               },
               icon:
                   BlocBuilder<CartBloc, CartStates>(builder: (context, state) {
@@ -159,7 +160,9 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
                     itemBuilder: (BuildContext context, int index) =>
                         GestureDetector(
                           onTap: () {
-                            panelController.open();
+                            if (checkoutPanelController.isPanelOpen)
+                              checkoutPanelController.close();
+                            addToCartPanelController.open();
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -173,6 +176,20 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
                             ),
                           ),
                         )),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom:60.0),
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Container(
+                height: 200,
+                width: MediaQuery.of(context).size.width/4 + 100,
+/*
+                color: Colors.black.withOpacity(0.1),
+*/
+                child: LiveCommentBox(),
               ),
             ),
           ),
@@ -225,18 +242,18 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
             ),
           ),
           SlidingUpPanel(
-              maxHeight: 300,
+              maxHeight: 320,
               backdropTapClosesPanel: true,
               defaultPanelState: PanelState.CLOSED,
               minHeight: 0,
-              controller: panelController,
+              controller: addToCartPanelController,
               panel: AddToCartPopUp()),
           SlidingUpPanel(
-              maxHeight: 300,
+              maxHeight: 320,
               backdropTapClosesPanel: true,
-              defaultPanelState: PanelState.OPEN,
-              minHeight: 300,
-              controller: panelController,
+              defaultPanelState: PanelState.CLOSED,
+              minHeight: 0,
+              controller: checkoutPanelController,
               panel: CartCheckOutPopUp()),
         ],
       ),

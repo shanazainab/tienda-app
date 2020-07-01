@@ -9,45 +9,59 @@ class CustomerProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 100.0),
-      child: Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
+    return Container(
+      height: 150,
+      child: Stack(
+        children: <Widget>[
+          Container(
+            height: 120,
+            alignment: Alignment.bottomCenter,
+            color: Colors.grey[200],
+            child: Padding(
+              padding: const EdgeInsets.only(left:80.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left:20.0),
+                    child: Text("${customerDetails.name}",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18.0,
+                        )),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditCustomerProfilePage()),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.edit,
+                        size: 16,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
               padding: const EdgeInsets.only(left: 16.0),
               child: CircleAvatar(
                 radius: 35,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left:20.0),
-              child: Text("${customerDetails.name}",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20.0,
-                  )),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EditCustomerProfilePage()),
-                  );
-                },
-                icon: Icon(
-                  Icons.edit,
-                  size: 16,
-                ),
-              ),
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

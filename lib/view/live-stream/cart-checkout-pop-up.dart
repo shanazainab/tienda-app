@@ -22,48 +22,96 @@ class CartCheckOutPopUp extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(
-              "Cart",
-              style: TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  "Cart",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey),
+                ),
+                RaisedButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)
+                  ),
+                  color: Colors.lightBlue,
+                  onPressed: () {},
+                  child: Text("Checkout",
+                  style: TextStyle(
+                    color: Colors.white
+                  ),),
+                )
+              ],
             ),
           ),
           Expanded(
             child: ListView.builder(
-              shrinkWrap: true,
+                padding: EdgeInsets.all(4),
+                shrinkWrap: true,
                 itemCount: 3,
                 itemBuilder: (BuildContext context, int index) => Container(
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            color: Colors.grey[200],
-                            height: 50,
-                            width: 40,
-                          ),
-                          Column(
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Column(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Spacer(
+                              flex: 2,
+                            ),
+                            Container(
+                              color: Colors.grey[200],
+                              height: 100,
+                              width: 80,
+                            ),
+                            Spacer(
+                              flex: 1,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Text("Product Name"),
+                                Text("Description"),
+                                Text("Size: M"),
+                                Text("Color: Red"),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Row(
                                     children: <Widget>[
-                                      Text("Product Name"),
-                                      Text("Description"),
-                                      Text("Size: M"),
-                                      Text("Color: Red")
+                                      Text(
+                                        "Delete",
+                                        style: TextStyle(
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          "Move to Wishlist",
+                                          style: TextStyle(
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                  Text("X")
-                                ],
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text("Delete"),
-                                  Text("Move to Wishlist")
-                                ],
-                              )
-                            ],
-                          )
-                        ],
+                                )
+                              ],
+                            ),
+                            Spacer(
+                              flex: 1,
+                            ),
+                            Text("AED XXX"),
+                            Spacer(
+                              flex: 2,
+                            ),
+                          ],
+                        ),
                       ),
                     )),
           )

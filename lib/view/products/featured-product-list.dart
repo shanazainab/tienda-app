@@ -14,7 +14,7 @@ class FeaturedProductList extends StatelessWidget {
                       fontSize: 20,
                       fontWeight: FontWeight.bold))),
           SizedBox(
-            height: 225,
+            height: 230,
             child: ListView.builder(
                 itemCount: 5,
                 scrollDirection: Axis.horizontal,

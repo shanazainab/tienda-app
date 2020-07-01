@@ -15,7 +15,7 @@ class RecommendedList extends StatelessWidget {
                       color: Colors.black,
                       fontSize: 20))),
           SizedBox(
-            height: 185,
+            height: 190,
             child: ListView.builder(
                 itemCount: 5,
                 scrollDirection: Axis.horizontal,
