@@ -24,6 +24,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
   String message = "Category Preference";
 
   Map<Category, bool> categoryPreferences = new HashMap();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -66,7 +67,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                         child: Center(
                             child: Padding(
                           padding:
-                              const EdgeInsets.only(top: 500.0, bottom: 300),
+                              const EdgeInsets.only(top: 500.0, bottom: 200),
                           child: StaggeredGridView.countBuilder(
                             crossAxisCount: 6,
                             itemCount: state.categories.length,
@@ -86,23 +87,39 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                                   });
 
                                   if (count == 5) {
-                                   handleNext(context);
+                                    handleNext(context);
                                   }
                                   message = "Choose ${5 - count} more";
                                 });
                               },
                               child: Column(
                                 children: <Widget>[
-                                  CircleAvatar(
-                                    maxRadius: 120,
-                                    backgroundColor: categoryPreferences[
+                                  Card(
+                                    elevation: categoryPreferences[
                                                     state.categories[index]] !=
                                                 null &&
                                             categoryPreferences[
                                                 state.categories[index]]
-                                        ? Colors.lightBlue
-                                        : Colors.grey[200],
+                                        ? 8
+                                        : 0,
+                                    clipBehavior: Clip.antiAlias,
+                                    child: CircleAvatar(
+                                      maxRadius: 120.0,
+                                      backgroundImage: NetworkImage(
+                                          state.categories[index].thumbnail),
+                                    ),
+                                    shape: CircleBorder(),
                                   ),
+//                                  CircleAvatar(
+//                                    maxRadius: 120,
+//                                    backgroundImage: categoryPreferences[
+//                                                    state.categories[index]] !=
+//                                                null &&
+//                                            categoryPreferences[
+//                                                state.categories[index]]
+//                                        ? state.categories[index].thumbnail
+//                                        : Colors.grey[200],
+//                                  ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 16.0),
                                     child: new Text(
@@ -117,9 +134,9 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                             ),
                             staggeredTileBuilder: (int index) =>
                                 new StaggeredTile.count(
-                                    2, index.isEven ? 2 : 3),
-                            mainAxisSpacing: 50.0,
-                            crossAxisSpacing: 50.0,
+                                    2, index.isEven ? 3: 2),
+                            mainAxisSpacing: 20.0,
+                            crossAxisSpacing: 20.0,
                           ),
                         )));
                   else

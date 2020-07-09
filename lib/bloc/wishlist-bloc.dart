@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:ansicolor/ansicolor.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:logger/logger.dart';
 import 'package:tienda/api/wishlist-api-client.dart';
+import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/events/wishlist-events.dart';
-import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/bloc/states/wishlist-states.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/product.dart';
@@ -39,29 +39,33 @@ class WishListBloc extends Bloc<WishListEvents, WishListStates> {
     final client = WishListApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.addToWishList(event.wishListItem.product.id).then((response) {
-      AnsiPen pen = new AnsiPen()..green();
-      print(pen("ADD-TO-WISH-LIST-RESPONSE:$response"));
+      Logger().d("ADD-TO-WISH-LIST-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           status = "success";
           break;
-        case 407:
-          status = "Enter Valid Number";
+        case 401:
+          status = "Not Authorized";
       }
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        AnsiPen pen = new AnsiPen()..green();
-        print(pen("ADD-TO-WISH-LIST-ERROR:${error.response}"));
-        print(pen("ADD-TO-WISH-LIST-ERROR-DATA:${error.response?.data}"));
-        print(pen("ADD-TO-WISH-LIST-ERROR-REQUEST:${error.request?.data}"));
+        Logger().e("ADD-TO-WISH-LIST-ERROR:${error.response}");
+        Logger().e("ADD-TO-WISH-LIST-ERROR-DATA:${error.response?.data}");
+        Logger().e("ADD-TO-WISH-LIST-ERROR-REQUEST:${error.request?.data}");
       }
     });
-    if (status == "success") yield DeleteWishListItemSuccess();
+    if (status == "success") yield AddWishListSuccess();
+    if (status == "Not Authorized") yield AuthorizationFailed();
   }
 
   Stream<WishListStates> _mapDeleteWishListItemToStates(
       DeleteWishListItem event) async* {
+    if (event.wishList != null) {
+      event.wishList.wishListItems.remove(event.wishListItem);
+      yield DeleteWishListItemSuccess(wishList: event.wishList);
+    }
+
     final dio = Dio();
     String status;
     String value = await _secureStorage.read(key: "session-id");
@@ -71,8 +75,7 @@ class WishListBloc extends Bloc<WishListEvents, WishListStates> {
     await client
         .deleteFromWishList(event.wishListItem.product.id)
         .then((response) {
-      AnsiPen pen = new AnsiPen()..green();
-      print(pen("DELETE-FROM-WISH-LIST-RESPONSE:$response"));
+      Logger().d("DELETE-FROM-WISH-LIST-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           status = "success";
@@ -83,18 +86,18 @@ class WishListBloc extends Bloc<WishListEvents, WishListStates> {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        AnsiPen pen = new AnsiPen()..green();
-        print(pen("DELETE-FROM-WISH-LIST-ERROR:${error.response}"));
-        print(pen("DELETE-FROM-WISH-LIST-ERROR-DATA:${error.response?.data}"));
-        print(
-            pen("DELETE-FROM-WISH-LIST-ERROR-REQUEST:${error.request?.data}"));
+        Logger().d("DELETE-FROM-WISH-LIST-ERROR:${error.response}");
+        Logger().d("DELETE-FROM-WISH-LIST-ERROR-DATA:${error.response?.data}");
+        Logger()
+            .d("DELETE-FROM-WISH-LIST-ERROR-REQUEST:${error.request?.data}");
       }
     });
-    if (status == "success") yield DeleteWishListItemSuccess();
+//    if (status == "success")
   }
 
   Stream<WishListStates> _mapLoadWishListProductsToStates(
       LoadWishListProducts event) async* {
+    yield Loading();
     String status;
     WishList wishList = new WishList(wishListItems: new List());
     final dio = Dio();
@@ -103,8 +106,7 @@ class WishListBloc extends Bloc<WishListEvents, WishListStates> {
     final client = WishListApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.fetchWishList().then((response) {
-      AnsiPen pen = new AnsiPen()..green();
-      print(pen("FETCH-WISH-LIST-RESPONSE:$response"));
+      Logger().d("FETCH-WISH-LIST-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           if (json.decode(response)['wishlist'].isNotEmpty) {
@@ -116,19 +118,22 @@ class WishListBloc extends Bloc<WishListEvents, WishListStates> {
           } else
             status = "empty";
           break;
-        case 400:
+        case 401:
+          status = 'Not Authorized';
+          break;
+        default:
           status = 'failed';
       }
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        AnsiPen pen = new AnsiPen()..green();
-        print(pen("FETCH-WISH-LIST-ERROR:${error.response}"));
-        print(pen("FETCH-WISH-LIST-ERROR-DATA:${error.response?.data}"));
-        print(pen("FETCH-WISH-LIST-ERROR-REQUEST:${error.request?.data}"));
+        Logger().e("FETCH-WISH-LIST-ERROR:${error.response}");
+        Logger().e("FETCH-WISH-LIST-ERROR-DATA:${error.response?.data}");
+        Logger().e("FETCH-WISH-LIST-ERROR-REQUEST:${error.request?.data}");
       }
     });
 
     if (status == "success") yield LoadWishListSuccess(wishList: wishList);
+    if (status == "Not Authorized") yield AuthorizationFailed();
   }
 }

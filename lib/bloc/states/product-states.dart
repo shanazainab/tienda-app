@@ -1,11 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:tienda/model/product.dart';
 
-abstract class ProductStates extends Equatable {
+abstract class ProductStates {
   ProductStates();
 
-  @override
-  List<Object> get props => null;
+
 }
 
 class Loading extends ProductStates {
@@ -17,8 +16,7 @@ class LoadProductListSuccess extends ProductStates {
 
   LoadProductListSuccess(this.products) : super();
 
-  @override
-  List<Object> get props => [products];
+
 }
 
 class LoadProductListFail extends ProductStates {
@@ -26,6 +24,19 @@ class LoadProductListFail extends ProductStates {
 
   LoadProductListFail(this.error) : super();
 
-  @override
-  List<Object> get props => error;
+
 }
+class UpdateProductListSuccess extends ProductStates {
+  final List<Product> products;
+
+  UpdateProductListSuccess(this.products) : super();
+
+  @override
+  bool operator ==(Object other) =>
+      false;
+
+  @override
+  int get hashCode => products.hashCode;
+}
+
+

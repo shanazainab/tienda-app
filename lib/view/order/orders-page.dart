@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:tienda/localization.dart';
 import 'package:tienda/view/order/order-details-page.dart';
 import 'package:tienda/view/order/order-tracking-time-line.dart';
 
@@ -12,14 +13,15 @@ class OrdersPage extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return Container(
             child: ListView(
+              physics: NeverScrollableScrollPhysics(),
               padding: EdgeInsets.all(16),
               shrinkWrap: true,
               children: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text("Order No: 1118979880"),
-                    Text("DELIVERED"),
+                    Text("${AppLocalizations.of(context).translate("order-number")}: 1118979880"),
+                    Text(AppLocalizations.of(context).translate("delivered")),
                   ],
                 ),
                 Divider(),
@@ -84,7 +86,7 @@ class OrdersPage extends StatelessWidget {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[Text("Ordered"), Text("18 Jun")],
+                          children: <Widget>[Text(AppLocalizations.of(context).translate("ordered")), Text("18 Jun")],
                         ),
                         OrderTrackingTimeLine(
                           expand: false,
@@ -95,7 +97,7 @@ class OrdersPage extends StatelessWidget {
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[Text("Delivery"), Text("05 Jul")],
+                          children: <Widget>[Text(AppLocalizations.of(context).translate("delivery")), Text("05 Jul")],
                         ),
                       ],
                     ),

@@ -1,7 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:logger/logger.dart';
+import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/events/preference-events.dart';
 import 'package:tienda/bloc/events/startup-events.dart';
@@ -21,6 +25,10 @@ class _CountryChoosePageState extends State<CountryChoosePage> {
   String currentCountry = "";
   PreferenceBloc preferenceBloc = new PreferenceBloc();
   bool viewCountryList = false;
+  final GlobalKey key = new GlobalKey();
+
+  PanelController panelController = new PanelController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -59,71 +67,79 @@ class _CountryChoosePageState extends State<CountryChoosePage> {
               }
             },
             child: Scaffold(
+              resizeToAvoidBottomInset: false,
               backgroundColor: Colors.white,
-              body: InkWell(
-                onTap: () {
-                  print("TAPPED");
-                  setState(() {
-                    viewCountryList = !viewCountryList;
-                  });
-                },
-                child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: Stack(
-                    children: <Widget>[
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
+              key: key,
+              body: Stack(
+                children: <Widget>[
+                  InkWell(
+                    onTap: () {
+                      panelController.isPanelOpen
+                          ? panelController.close()
+                          : panelController.open();
+                    },
+                    child: Container(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: <Widget>[
+                          Spacer(
+                            flex: 1,
+                          ),
+                          Container(
+                            child: Text(
                               AppLocalizations.of(context)
                                   .translate('country-message'),
-                              style: TextStyle(fontSize: 24),
+                              style: TextStyle(fontSize: 16),
                             ),
-                            SizedBox(
-                              height: 50,
-                            ),
-                            Text(
-                              currentCountry,
-                              style: TextStyle(fontSize: 24),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: RaisedButton(
-                            onPressed: () {
-                              handleNext(context);
-                            },
-                            child: Text("CONTINUE"),
                           ),
-                        ),
+                          Spacer(
+                            flex: 2,
+                          ),
+                          currentCountry.length > 0
+                              ? Text(
+                                  currentCountry,
+                                  style: TextStyle(fontSize: 24),
+                                )
+                              : FadingText('fetching your location...'),
+                          Spacer(
+                            flex: 2,
+                          ),
+                          RaisedButton(
+                              onPressed: () {
+                                handleNext(context);
+                              },
+                              child: Text("CONTINUE")),
+                          Spacer(
+                            flex: 1,
+                          ),
+                        ],
                       ),
-                      Visibility(
-                        visible: viewCountryList,
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: BlocBuilder<PreferenceBloc, PreferenceStates>(
-                              builder: (context, state) {
-                            if (state is LoadCountryListSuccess)
-                              return CountryListCard(
-                                countries: state.countries,
-                              );
-                            else
-                              return Container(
-                                height: 0,
-                              );
-                          }),
-                        ),
-                      )
-                    ],
+                    ),
                   ),
-                ),
+                  SlidingUpPanel(
+                      controller: panelController,
+                      defaultPanelState: PanelState.CLOSED,
+                      minHeight: 0,
+                      maxHeight: 400,
+                      panel: BlocBuilder<PreferenceBloc, PreferenceStates>(
+                          builder: (context, state) {
+                        if (state is LoadCountryListSuccess)
+                          return CountryListCard(
+                            countries: state.countries,
+                            function: (selectedCountry) {
+                              setState(() {
+                                currentCountry = selectedCountry;
+                                panelController.close();
+                              });
+                            },
+                          );
+                        else
+                          return Container(
+                            height: 0,
+                          );
+                      }))
+                ],
               ),
             )));
   }
@@ -135,10 +151,15 @@ class _CountryChoosePageState extends State<CountryChoosePage> {
   }
 
   Future<String> getTheCurrentLocation() async {
+    Logger().d("GET LOCATION");
+
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     List<Placemark> placeMark = await Geolocator()
         .placemarkFromCoordinates(position.latitude, position.longitude);
+
+    Logger().d("CURRENT:::LOCATION::${placeMark[0].country}");
+
     return placeMark[0].country;
   }
 }

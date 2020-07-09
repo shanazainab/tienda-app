@@ -20,3 +20,10 @@ class FetchCategoryList extends PreferenceEvents {
   @override
   List<Object> get props => [];
 }
+
+class GetCountryPreference extends PreferenceEvents {
+  GetCountryPreference() : super();
+
+  @override
+  List<Object> get props => [];
+}

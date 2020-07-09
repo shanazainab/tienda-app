@@ -1,3 +1,4 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 
@@ -8,6 +9,8 @@ class ReferAndEarn extends StatelessWidget {
         length: 3,
         child: Scaffold(
           appBar: AppBar(
+            brightness: Brightness.light,
+            title: Text("Refer & Earn"),
             bottom: TabBar(
               unselectedLabelColor: Colors.grey[200],
               indicatorColor: Colors.lightBlue,
@@ -98,10 +101,25 @@ class Invite extends StatelessWidget {
     );
   }
 
-  void handleReferralShare(context) {
+  Future<void> handleReferralShare(context) async {
+    ///create dynamic link for referral
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      uriPrefix: 'https://beuniquegroup.page.link/amTC',
+
+      link: Uri.parse('https://tienda.ae/'),
+      androidParameters: AndroidParameters(
+        packageName: 'com.beuniquegroup.tienda',
+      ),
+      iosParameters: IosParameters(
+        bundleId: 'com.beuniquegroup.tienda',
+      ),
+    );
+
+    final Uri dynamicUrl = await parameters.buildUrl();
+
     final RenderBox box = context.findRenderObject();
-    Share.share("code",
-        subject: "referral",
+    Share.share("$dynamicUrl",
+        subject: "It doesn't get better than this! Download Tienda App Now !!",
         sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
   }
 }

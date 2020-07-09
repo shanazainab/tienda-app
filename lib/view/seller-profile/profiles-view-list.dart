@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tienda/localization.dart';
+import 'package:tienda/view/live-stream/video-stream-full-screen.dart';
+import 'package:tienda/view/message/seller-chat-message.dart';
 import 'package:tienda/view/seller-profile/seller-product-video-page.dart';
 
 class SellerProfilesListView extends StatelessWidget {
@@ -18,6 +21,7 @@ class SellerProfilesListView extends StatelessWidget {
         length: myTabs.length,
         child: Scaffold(
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             elevation: 0,
             bottom: TabBar(
               unselectedLabelStyle: TextStyle(color: Colors.lightBlue),
@@ -63,7 +67,7 @@ class SellerProfilesListView extends StatelessWidget {
                                       color: Colors.lightBlue,
                                       child: Padding(
                                         padding: const EdgeInsets.all(2.0),
-                                        child: Text("LIVE",
+                                        child: Text(AppLocalizations.of(context).translate("live").toUpperCase(),
                                         style: TextStyle(
                                           fontSize: 10,
                                           color: Colors.white
@@ -75,7 +79,7 @@ class SellerProfilesListView extends StatelessWidget {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
+                              padding: const EdgeInsets.only(left: 8.0,right:8.0),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,25 +101,32 @@ class SellerProfilesListView extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4)),
                                 onPressed: () {
+
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            SellerProductVideoPage()),
+                                        builder: (context) => VideoStreamFullScreenView()),
                                   );
+
                                 },
                                 color: Colors.blue,
-                                child: Text('JOIN',
+                                child: Text(AppLocalizations.of(context).translate("join").toUpperCase(),
                                     style: TextStyle(
                                         fontSize: 12, color: Colors.white)),
                               )
                             : RaisedButton(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4)),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SellerDirectMessage()),
+                                  );
+                                },
                                 color: Colors.grey,
                                 child: Text(
-                                  'MESSAGE',
+                                  AppLocalizations.of(context).translate("message").toUpperCase(),
                                   style: TextStyle(
                                       fontSize: 12, color: Colors.white),
                                 ),

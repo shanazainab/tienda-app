@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tienda/localization.dart';
+
+import '../../app-language.dart';
 
 class DealsBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var appLanguage = Provider.of<AppLanguage>(context);
+
     return Container(
       color: Colors.grey[100],
       child: Column(
@@ -11,7 +17,7 @@ class DealsBlock extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text("Deals Of The Day",
+            child: Text(AppLocalizations.of(context).translate('deals-of-the-day'),
             style: TextStyle(
               fontSize: 20
             ),),
@@ -20,7 +26,8 @@ class DealsBlock extends StatelessWidget {
              height: 4,
           ),
           Container(
-            height: 120,
+    height: appLanguage.appLocal == Locale('en')?120:145,
+
             child:ListView.builder(
                 itemCount: 10,
                 scrollDirection: Axis.horizontal,

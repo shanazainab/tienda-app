@@ -2,18 +2,18 @@ import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:logger/logger.dart';
+import 'package:share/share.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/api/preference-api-client.dart';
 import 'package:tienda/bloc/states/preference-states.dart';
 import 'package:dio/dio.dart';
-import 'package:tienda/console-logger.dart';
 import 'package:tienda/model/category.dart';
 import 'package:tienda/model/country.dart';
 
 import 'events/preference-events.dart';
 
 class PreferenceBloc extends Bloc<PreferenceEvents, PreferenceStates> {
-  ConsoleLogger consoleLogger = new ConsoleLogger();
-
   @override
   PreferenceStates get initialState => Loading();
 
@@ -25,6 +25,19 @@ class PreferenceBloc extends Bloc<PreferenceEvents, PreferenceStates> {
     if (event is FetchCategoryList) {
       yield* _mapFetchCategoryListToStates(event);
     }
+    if (event is GetCountryPreference) {
+      yield* _mapGetCountryPreferenceToStates(event);
+    }
+  }
+
+  Stream<PreferenceStates> _mapGetCountryPreferenceToStates(
+      GetCountryPreference event) async* {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+    if (sharedPreferences.containsKey("country")) {
+      var country = Country.fromJson(sharedPreferences.get("country"));
+      yield FetchCountryPreferenceSuccess(country: country);
+    }
   }
 
   Stream<PreferenceStates> _mapFetchCountryListToStates(
@@ -35,18 +48,16 @@ class PreferenceBloc extends Bloc<PreferenceEvents, PreferenceStates> {
     final client = PreferenceApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.getCountriesList().then((response) {
-      consoleLogger.printResponse("LIST-COUNTRY-RESPONSE:$response");
+      Logger().d("LIST-COUNTRY-RESPONSE:$response");
       for (final item in json.decode(response)['countries']) {
         countries.add(Country.fromJson(item));
       }
 
-      consoleLogger.printResponse("#########COUNTRY LIST: $countries ");
+      Logger().d("#########COUNTRY LIST: $countries ");
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        consoleLogger.printDioError("COUNTRY LIST-ERROR:",error);
-
-
+        Logger().e("COUNTRY LIST-ERROR:", error);
       }
     });
     yield LoadCountryListSuccess(countries: countries);
@@ -59,17 +70,16 @@ class PreferenceBloc extends Bloc<PreferenceEvents, PreferenceStates> {
     final client = PreferenceApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.getCategoriesList().then((response) {
-      consoleLogger.printResponse("CATEGORY-RESPONSE:$response");
+      Logger().d("CATEGORY-RESPONSE:$response");
       for (final item in json.decode(response)['categories']) {
         categories.add(Category.fromJson(item));
       }
 
-      consoleLogger.printResponse("#########CATEGORY LIST: $categories ");
+      Logger().d("#########CATEGORY LIST: $categories ");
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        consoleLogger.printDioError("CATEGORY LIST-ERROR:",error);
-
+        Logger().e("CATEGORY LIST-ERROR:", error);
       }
     });
     yield LoadCategoryListSuccess(categories: categories);

@@ -17,6 +17,10 @@ class Customer {
 
   @JsonKey(name: "referral")
   String referral;
+
+  @JsonKey(name: "country")
+  String country;
+
   Customer();
   factory Customer.fromJson(Map<String, dynamic> json) =>
       _$CustomerFromJson(json);

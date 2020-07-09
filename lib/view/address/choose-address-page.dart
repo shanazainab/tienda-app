@@ -11,6 +11,7 @@ import 'package:tienda/model/address.dart';
 import 'package:http/http.dart' as http;
 import 'package:tienda/model/reverse-geocoded-mapbox-data.dart';
 import 'package:tienda/view/address/add-address-page.dart';
+import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class ChooseAddressPage extends StatefulWidget {
   @override
@@ -46,9 +47,16 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-      ),
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(50.0),
+          child: SafeArea(
+              child: CustomAppBar(
+                title: "Add Address",
+                showCart: false,
+                showLogo: false,
+                showSearch: false,
+                showWishList: false,
+              ))),
       body: Stack(
         children: <Widget>[
           Container(

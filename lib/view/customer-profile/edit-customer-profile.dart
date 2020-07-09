@@ -1,9 +1,24 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tienda/localization.dart';
+import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class EditCustomerProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar:
+      PreferredSize(
+          preferredSize: Size.fromHeight(44),
+          child: CustomAppBar(
+            showLogo: false,
+            showCart: true,
+            showSearch: true,
+            showWishList: true,
+            title: AppLocalizations.of(context).translate('edit-profile'),
+          )),
       body: ListView(
         children: <Widget>[
           Container(
@@ -33,7 +48,7 @@ class EditCustomerProfilePage extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 24.0, right: 24.0,top:24),
+            padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24),
             child: Column(
               children: <Widget>[
                 TextFormField(
@@ -41,7 +56,7 @@ class EditCustomerProfilePage extends StatelessWidget {
                       border: InputBorder.none,
                       filled: true,
                       fillColor: Colors.grey[100],
-                      labelText: 'Name'),
+                      labelText: AppLocalizations.of(context).translate('name')),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
@@ -50,7 +65,7 @@ class EditCustomerProfilePage extends StatelessWidget {
                         border: InputBorder.none,
                         filled: true,
                         fillColor: Colors.grey[100],
-                        labelText: 'Email'),
+                        labelText:AppLocalizations.of(context).translate('email')),
                   ),
                 ),
                 Padding(
@@ -60,14 +75,14 @@ class EditCustomerProfilePage extends StatelessWidget {
                         border: InputBorder.none,
                         filled: true,
                         fillColor: Colors.grey[100],
-                        labelText: 'DOB'),
+                        labelText: AppLocalizations.of(context).translate('dob')),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: RaisedButton(
                     onPressed: () {},
-                    child: Text("SAVE"),
+                    child: Text(AppLocalizations.of(context).translate('save')),
                   ),
                 )
               ],

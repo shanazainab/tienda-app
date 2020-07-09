@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:tienda/localization.dart';
 
 class RecentSearchBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text("Recent Searches",
+              child: Text( AppLocalizations.of(context).translate("recent-searches"),
                   style: TextStyle(
+                    fontSize: 20,
                       color: Colors.grey,
                       fontWeight: FontWeight.bold))),
           SizedBox(

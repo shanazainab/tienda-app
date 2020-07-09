@@ -12,6 +12,8 @@ class _SellerProfileViewsMainState extends State<SellerProfileViewsMain> {
 
   @override
   Widget build(BuildContext context) {
+    print("SELLER BUILD");
+
     return Scaffold(
       body: Stack(
         children: <Widget>[

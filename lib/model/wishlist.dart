@@ -1,9 +1,11 @@
+import 'package:equatable/equatable.dart';
 import 'package:tienda/model/product.dart';
 
-class WishList {
+class WishList extends Equatable {
   List<WishListItem> wishListItems;
 
   WishList({this.wishListItems});
+
   factory WishList.fromJson(Map<String, dynamic> json) {
     return WishList(
         wishListItems: (json['wish-list-item'] as List)
@@ -19,14 +21,19 @@ class WishList {
 
     return data;
   }
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [wishListItems];
 }
 
-class WishListItem {
+class WishListItem extends Equatable {
   Product product;
   String color;
   String size;
 
   WishListItem({this.product, this.color, this.size});
+
   factory WishListItem.fromJson(Map<String, dynamic> json) {
     return WishListItem(
       product: Product.fromJson(json['product'] as Map<String, dynamic>),
@@ -43,4 +50,8 @@ class WishListItem {
 
     return data;
   }
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [product.id];
 }

@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:tienda/bloc/address-bloc.dart';
 import 'package:tienda/bloc/states/address-states.dart';
 import 'package:tienda/view/address/choose-address-page.dart';
+import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class SavedAddressPage extends StatelessWidget {
   @override
@@ -11,8 +15,15 @@ class SavedAddressPage extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) => AddressBloc(),
       child: Scaffold(
-          appBar: AppBar(
-            title: Text("Address"),
+          appBar:PreferredSize(
+            preferredSize: Size.fromHeight(50),
+            child: CustomAppBar(
+              title: "Saved Address",
+              showWishList: false,
+              showSearch: false,
+              showCart: false,
+              showLogo: false,
+            ),
           ),
           bottomNavigationBar: ButtonTheme(
             height: 48,

@@ -1,107 +1,241 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:tienda/app-language.dart';
+import 'package:tienda/bloc/category-bloc.dart';
+import 'package:tienda/bloc/events/category-events.dart';
+import 'package:tienda/bloc/states/category-states.dart';
 import 'package:tienda/view/products/product-list-page.dart';
 
-class CategoriesPage extends StatelessWidget {
-  final ScrollController subcategoryScroller = new ScrollController();
+class CategoriesPage extends StatefulWidget {
+  @override
+  _CategoriesPageState createState() => _CategoriesPageState();
+}
+
+class _CategoriesPageState extends State<CategoriesPage> {
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
+  final selectedCategoryIndex = BehaviorSubject<int>();
+
+  CategoryBlock categoryBlock = new CategoryBlock();
+
+  bool tapActionPlaced = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    categoryBlock.add(LoadCategories());
+
+    selectedCategoryIndex.add(0);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(8), bottomRight: Radius.circular(8)),
-            child: Container(
-              alignment: Alignment.center,
-              color: Colors.grey[200],
-              height: MediaQuery.of(context).size.height - 200,
-              width: MediaQuery.of(context).size.width / 4 + 50,
-              child: ListView.builder(
-                  itemCount: 100,
-                  itemBuilder: (BuildContext ctxt, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          itemScrollController.scrollTo(
-                              index: 5,
-                              duration: Duration(seconds: 2),
-                              curve: Curves.easeInOutCubic);
-                        },
-                        child: Container(
-                            decoration: BoxDecoration(
-                                border: index == 0
-                                    ? Border(
-                                        right: BorderSide(
-                                            color: Colors.blue, width: 4))
-                                    : Border()),
-                            height: 50,
-                            alignment: Alignment.center,
-                            child: Text(
-                              'category',
-                              style: TextStyle(fontSize: 16),
-                            )),
-                      ),
-                    );
-                  }),
-            ),
-          ),
-          Container(
-            width: 3 * MediaQuery.of(context).size.width / 4 - 50,
-            child: ScrollablePositionedList.builder(
-              padding: EdgeInsets.only(top: 100),
-              itemCount: 100,
-              itemBuilder: (context, index) => GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProductListPage()),
-                  );
-                },
-                child: Container(
-                    child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+    var appLanguage = Provider.of<AppLanguage>(context);
+
+    print("CATEGORY BUILD");
+    return Consumer<AppLanguage>(
+      builder: (context, cart, child) {
+        print("CONSUMER CALLED");
+        categoryBlock.add(LoadCategories());
+        return MultiBlocProvider(
+            providers: [
+              BlocProvider<CategoryBlock>(
+                  create: (BuildContext context) => categoryBlock),
+            ],
+            child: BlocBuilder<CategoryBlock, CategoryStates>(
+                builder: (context, state) {
+              if (state is LoadCategoriesSuccess)
+                return Container(
                   child: Row(
                     children: <Widget>[
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(2),
-                        child: Container(
-                          height: 60,
-                          width: 50,
-                          color: Colors.grey[200],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text('sub-category'),
-                            Text(
-                              'One short description',
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.grey),
-                            )
-                          ],
+                      StreamBuilder<int>(
+                          stream: selectedCategoryIndex,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<int> snapshot) {
+                            return ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(8),
+                                    bottomRight: Radius.circular(8)),
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  color: Colors.grey[200],
+                                  height:
+                                      MediaQuery.of(context).size.height - 200,
+                                  width: MediaQuery.of(context).size.width / 4 +
+                                      50,
+                                  child: ListView.builder(
+                                      itemCount: state.categories.length,
+                                      itemBuilder:
+                                          (BuildContext ctxt, int index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 8.0, bottom: 8.0),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              tapActionPlaced = true;
+                                              selectedCategoryIndex.add(index);
+
+                                              itemScrollController
+                                                  .scrollTo(
+                                                      index: index,
+                                                      duration:
+                                                          Duration(seconds: 2),
+                                                      curve:
+                                                          Curves.easeInOutCubic)
+                                                  .then((value) {
+                                                tapActionPlaced = false;
+                                              });
+                                            },
+                                            child: Container(
+                                                decoration: BoxDecoration(
+                                                    border: snapshot.data ==
+                                                            index
+                                                        ? Border(
+                                                            right: BorderSide(
+                                                                color:
+                                                                    Colors.blue,
+                                                                width: 4))
+                                                        : null),
+                                                height: 50,
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  appLanguage.appLocal ==
+                                                          Locale('en')
+                                                      ? state.categories[index]
+                                                          .nameEnglish
+                                                      : state.categories[index]
+                                                          .nameArabic,
+                                                  style:
+                                                      TextStyle(fontSize: 16),
+                                                )),
+                                          ),
+                                        );
+                                      }),
+                                ));
+                          }),
+                      Container(
+                        width: 3 * MediaQuery.of(context).size.width / 4 - 50,
+                        child: NotificationListener(
+                          onNotification: (value) {
+                            if (value is ScrollUpdateNotification &&
+                                !tapActionPlaced) {
+                              selectedCategoryIndex.add(itemPositionsListener
+                                  .itemPositions.value.last.index);
+                              return true;
+                            }
+
+                            return false;
+                          },
+                          child: ScrollablePositionedList.builder(
+                            padding: EdgeInsets.only(top: 50),
+                            itemCount: state.categories.length,
+                            itemBuilder: (context, index) => GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ProductListPage()),
+                                );
+                              },
+                              child: Container(
+                                  child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 24.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          appLanguage.appLocal == Locale('en')
+                                              ? state
+                                                  .categories[index].nameEnglish
+                                              : state
+                                                  .categories[index].nameArabic,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        padding: EdgeInsets.all(0),
+                                        itemCount: state.categories[index]
+                                            .subCategories.length,
+                                        itemBuilder: (BuildContext context,
+                                                int subIndex) =>
+                                            Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: <Widget>[
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(2),
+                                                child: Container(
+                                                  height: 60,
+                                                  width: 50,
+                                                  color: Colors.grey[200],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 8.0, right: 8.0),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Text(appLanguage.appLocal ==
+                                                            Locale('en')
+                                                        ? state
+                                                            .categories[index]
+                                                            .nameEnglish
+                                                        : state
+                                                            .categories[index]
+                                                            .nameArabic),
+                                                    Text(
+                                                      'One short description',
+                                                      softWrap: true,
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.grey),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )),
+                            ),
+                            itemScrollController: itemScrollController,
+                            itemPositionsListener: itemPositionsListener,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                )),
-              ),
-              itemScrollController: itemScrollController,
-              itemPositionsListener: itemPositionsListener,
-            ),
-          ),
-
-        ],
-      ),
+                );
+              else
+                return Container();
+            }));
+      },
     );
   }
 }

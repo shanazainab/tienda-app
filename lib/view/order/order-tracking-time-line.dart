@@ -12,7 +12,7 @@ class OrderTrackingTimeLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
+      height: 66,
       alignment: Alignment.center,
       child: new ListView.builder(
           shrinkWrap: true,

@@ -3,17 +3,14 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:logger/logger.dart';
 import 'package:tienda/api/product-api-client.dart';
 import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/states/product-states.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/product.dart';
 
-import '../console-logger.dart';
-
 class ProductBloc extends Bloc<ProductEvents, ProductStates> {
-    ConsoleLogger consoleLogger = new ConsoleLogger();
-
   @override
   ProductStates get initialState => Loading();
 
@@ -22,6 +19,16 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
     if (event is FetchProductList) {
       yield* _mapFetchProductListToStates(event);
     }
+    if (event is UpdateMarkAsWishListed) {
+      yield* _mapUpdateMarkAsWishListedToStates(event);
+    }
+  }
+
+  Stream<ProductStates> _mapUpdateMarkAsWishListedToStates(
+      UpdateMarkAsWishListed event) async* {
+    print(event.products);
+
+    yield UpdateProductListSuccess(event.products);
   }
 
   Stream<ProductStates> _mapFetchProductListToStates(
@@ -35,7 +42,7 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
     ProductApiClient productApiClient = ProductApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await productApiClient.getDummyProducts().then((response) {
-      consoleLogger.printResponse("GET-PRODUCT-LIST-RESPONSE:$response");
+      Logger().d("GET-PRODUCT-LIST-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           for (final product in json.decode(response)['products'])
@@ -45,8 +52,7 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        consoleLogger.printDioError("GET-PRODUCT-LIST-ERROR:",error);
-
+        Logger().e("GET-PRODUCT-LIST-ERROR:", error);
       }
     });
 

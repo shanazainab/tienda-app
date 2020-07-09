@@ -48,3 +48,12 @@ class LoadCategoryListFail extends PreferenceStates {
   @override
   List<Object> get props => error;
 }
+
+class FetchCountryPreferenceSuccess extends PreferenceStates {
+  final Country country;
+
+  FetchCountryPreferenceSuccess({this.country}) : super();
+
+  @override
+  List<Object> get props => [country];
+}

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tienda/view/order/order-tracking-time-line.dart';
 import 'dart:math' as math;
 
+import 'package:tienda/view/widgets/custom-app-bar.dart';
+
 class OrdersDetailsPage extends StatefulWidget {
   @override
   _OrdersDetailsPageState createState() => _OrdersDetailsPageState();
@@ -24,9 +26,16 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("ORDER DETAILS"),
-      ),
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(44.0), // here the desired height
+
+          child: CustomAppBar(
+            title: "Order Details",
+            showWishList: false,
+            showSearch: false,
+            showCart: false,
+            showLogo: false,
+          )),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

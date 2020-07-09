@@ -81,6 +81,15 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
+                  Align(
+                      alignment: Alignment.topLeft,
+                      child: Text("Enter OTP Sent To Your Mobile",
+                        style: TextStyle(
+                            fontSize: 16
+                        ),)),
+                  SizedBox(
+                    height: 20,
+                  ),
                   ///OTP Pin enter field
                   PinCodeTextField(
                     length: 4,

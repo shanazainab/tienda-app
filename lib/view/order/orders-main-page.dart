@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tienda/localization.dart';
 import 'package:tienda/view/order/orders-page.dart';
 
 class OrdersMainPage extends StatelessWidget {
@@ -8,24 +9,24 @@ class OrdersMainPage extends StatelessWidget {
         length: 3,
         child: new Scaffold(
           appBar: AppBar(
-            title: Text('ORDERS'),
+            brightness: Brightness.light,
+            title: Text(AppLocalizations.of(context).translate("orders")),
             centerTitle: true,
             bottom: TabBar(
-              isScrollable: true,
+                isScrollable: true,
                 indicatorColor: Colors.blue,
                 labelColor: Colors.grey,
                 unselectedLabelColor: Colors.grey,
-
                 unselectedLabelStyle: TextStyle(color: Colors.grey),
                 tabs: [
                   Tab(
-                    text: "ALL",
+                    text: AppLocalizations.of(context).translate("all"),
                   ),
                   Tab(
-                    text: "IN PROCESS",
+                    text: AppLocalizations.of(context).translate("in-process"),
                   ),
                   Tab(
-                    text: "DELIVERED",
+                    text: AppLocalizations.of(context).translate("delivered"),
                   ),
                 ]),
           ),

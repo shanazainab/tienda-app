@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:tienda/localization.dart';
 import 'package:tienda/view/seller-profile/seller-profile-main-page.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 
@@ -18,7 +19,7 @@ class SellerProfilesGridView extends StatelessWidget {
           zoomSensibility: 2.3,
           initZoom: 0.0,
           width: 1000,
-          height: 1800,
+          height: 2000,
           child: Center(
               child: Padding(
                 padding:
@@ -53,7 +54,7 @@ class SellerProfilesGridView extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(top: 16.0),
                               child: new Text(
-                                "seller",
+                                AppLocalizations.of(context).translate("sellers"),
                                 style: TextStyle(
                                   fontSize: 36,
                                 ),

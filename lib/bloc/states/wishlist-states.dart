@@ -29,7 +29,10 @@ class AddWishListSuccess extends WishListStates {
 }
 
 class DeleteWishListItemSuccess extends WishListStates {
-  DeleteWishListItemSuccess() : super();
+  final WishListItem wishListItem;
+  final WishList wishList;
+
+  DeleteWishListItemSuccess({this.wishList,this.wishListItem}) : super();
 
   @override
   List<Object> get props => [];
@@ -42,4 +45,11 @@ class LoadWishListFail extends WishListStates {
 
   @override
   List<Object> get props => error;
+}
+
+class AuthorizationFailed extends WishListStates {
+  AuthorizationFailed() : super();
+
+  @override
+  List<Object> get props => [];
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tienda/app-language.dart';
 
 class LiveCommentBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var appLanguage = Provider.of<AppLanguage>(context);
     return Container(
       child: ListView.separated(
         padding: EdgeInsets.only(top:16),
@@ -13,13 +16,16 @@ class LiveCommentBox extends StatelessWidget {
         ),
         itemCount: 4,
         itemBuilder: (BuildContext context, int index) => Container(
-          height: 50,
+          height: appLanguage.appLocal != Locale('en')?52:40,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              Spacer(
+                flex: 1,
+              ),
               CircleAvatar(
-                radius: 30,
+                radius: 15,
                 backgroundColor: Colors.grey,
               ),
               Spacer(
@@ -28,7 +34,7 @@ class LiveCommentBox extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top:8.0),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(

@@ -1,4 +1,6 @@
-class Category {
+import 'package:equatable/equatable.dart';
+
+class Category extends Equatable {
   int id;
   String nameArabic;
   String nameEnglish;
@@ -30,6 +32,14 @@ class Category {
     data['thumbnail'] = this.thumbnail;
     return data;
   }
+
+  @override
+  // TODO: implement stringify
+  bool get stringify => true;
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [nameEnglish];
 }
 
 class SubCategory {
@@ -37,5 +47,5 @@ class SubCategory {
   String nameEnglish;
   String nameArabic;
 
-  SubCategory(this.id, this.nameEnglish, this.nameArabic);
+  SubCategory({this.id, this.nameEnglish, this.nameArabic});
 }

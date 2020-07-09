@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../localization.dart';
+
 class NewArrivalList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -10,14 +12,13 @@ class NewArrivalList extends StatelessWidget {
         children: <Widget>[
           Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text("New Arrival",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20))),
-          SizedBox(
-            height: 190,
+              child: Text(AppLocalizations.of(context).translate('new-arrival'),
+                  style: TextStyle(color: Colors.black, fontSize: 20))),
+          Container(
+            height: 200,
             child: ListView.builder(
                 itemCount: 5,
+                shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (BuildContext cxt, int index) {
                   return Padding(
@@ -34,13 +35,11 @@ class NewArrivalList extends StatelessWidget {
                             color: Colors.lightBlue,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text("Item Name"),
+                        Text(
+                          'Item Name',
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text("AED XXX"),
+                        Text(
+                          'AED XXX',
                         )
                       ],
                     ),

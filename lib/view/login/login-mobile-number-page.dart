@@ -76,14 +76,24 @@ class _LoginWithMobileNumberState extends State<LoginWithMobileNumber> {
             child: Padding(
               padding: const EdgeInsets.only(top: 100, left: 16.0, right: 16),
               child: Column(
+
                 children: <Widget>[
+                  Align(
+                      alignment: Alignment.topLeft,
+                      child: Text("Enter Your Mobile Number",
+                      style: TextStyle(
+                        fontSize: 20
+                      ),)),
+                  SizedBox(
+                    height: 20,
+                  ),
                   ListTile(
                       leading: Container(
-                        width: 70,
+                        width: 80,
                         child: Row(
                           children: <Widget>[
                             Image.asset(
-                              "assets/flags/ae.png",
+                              "assets/icons/flag.png",
                               height: 30,
                               width: 30,
                             ),
@@ -151,6 +161,9 @@ class _LoginWithMobileNumberState extends State<LoginWithMobileNumber> {
     _loginBloc.add(SendOTP(
         loginRequest: new LoginRequest(
             mobileNumber: "+971" + mobileNumberTextController.text)));*/
+
+    FocusScope.of(context).requestFocus(FocusNode());
+
 
     BlocProvider.of<LoginBloc>(context).add(SendOTP(
         loginRequest: new LoginRequest(

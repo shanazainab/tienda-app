@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tienda/app-language.dart';
+import 'package:tienda/localization.dart';
 import 'package:tienda/view/login/login-main-page.dart';
 
 class CustomerLoginMenu extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 200,
+    var appLanguage = Provider.of<AppLanguage>(context);
+
+    return Card(
+      margin: EdgeInsets.all(0),
+      elevation: 4,
+
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -17,12 +25,15 @@ class CustomerLoginMenu extends StatelessWidget {
               height: 50,
             ),
             Text(
-              "Welcome to Tienda",
+              AppLocalizations.of(context).translate('profile-menu-caption'),
               style: TextStyle(fontSize: 20),
             ),
-            Text("The world's leading shopping site"),
+            Text(
+              AppLocalizations.of(context)
+                  .translate('profile-menu-sub-caption'),
+            ),
             Padding(
-              padding: const EdgeInsets.only(top:16.0),
+              padding: const EdgeInsets.only(top: 16.0),
               child: Container(
                 alignment: Alignment.center,
                 child: Row(
@@ -35,37 +46,49 @@ class CustomerLoginMenu extends StatelessWidget {
                     Column(
                       children: <Widget>[
                         GestureDetector(
-                          onTap: (){
-                             Navigator.push(
+                          onTap: () {
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => LoginMainPage()),
                             );
                           },
                           child: CircleAvatar(
-                            radius: 20,
-                            child: Icon(Icons.person),
+                            radius: 30,
+                            backgroundColor: Colors.lightBlue,
+                            child: Icon(Icons.person,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                        Text("Login")
+                        Text(
+                          AppLocalizations.of(context).translate('login'),
+                        )
                       ],
                     ),
                     Spacer(),
                     Column(
                       children: <Widget>[
                         GestureDetector(
-                          onTap: (){
-                              Navigator.push(
+                          onTap: () {
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => LoginMainPage()),
                             );
                           },
                           child: CircleAvatar(
-                            child: Icon(Icons.person_add),
+                            radius: 30,
+                            backgroundColor: Colors.lightBlue,
+                            child: Icon(
+                              Icons.person_add,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                        Text("Sign Up")
+                        Text(
+                          AppLocalizations.of(context).translate('sign-up'),
+                        )
                       ],
                     ),
                     Spacer(

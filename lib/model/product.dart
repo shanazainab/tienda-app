@@ -1,4 +1,6 @@
-class Product {
+import 'package:equatable/equatable.dart';
+
+class Product extends Equatable {
   int categoryId;
   int id;
   bool isAvailable;
@@ -8,7 +10,9 @@ class Product {
   String sellerId;
   String subCategoryId;
   String thumbnail;
-  double discount ;
+  double discount;
+
+  bool isWishListed;
 
   Product(
       {this.categoryId,
@@ -20,7 +24,8 @@ class Product {
       this.sellerId,
       this.subCategoryId,
       this.thumbnail,
-      this.discount});
+      this.discount,
+      this.isWishListed});
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
@@ -33,7 +38,8 @@ class Product {
         sellerId: (json['seller_id']),
         subCategoryId: json['sub_category_id'],
         thumbnail: json['thumbnail'],
-        discount: json['discount']);
+        discount: json['discount'],
+        isWishListed: json['is-wish-listed']);
   }
 
   Map<String, dynamic> toJson() {
@@ -49,7 +55,16 @@ class Product {
 
     data['sub_category_id'] = this.subCategoryId;
     data['discount'] = this.discount;
+    data['is-wish-listed'] = this.isWishListed;
 
     return data;
   }
+
+  @override
+  // TODO: implement stringify
+  bool get stringify => true;
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [isWishListed];
 }

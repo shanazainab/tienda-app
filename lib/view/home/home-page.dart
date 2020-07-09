@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tienda/localization.dart';
 
 import 'package:tienda/view/categories/categories-page.dart';
 import 'package:tienda/view/home/home-bottom-app-bar.dart';
 import 'package:tienda/view/home/tienda-home-page.dart';
 import 'package:tienda/view/customer-profile/profile-menu.dart';
+import 'package:tienda/view/live-stream/shop-live-screen.dart';
 import 'package:tienda/view/seller-profile/profiles-view-main.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,6 +17,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  CategoriesPage categoryPage = CategoriesPage();
+  TiendaHomePage tiendaHomePage = TiendaHomePage();
+  SellerProfileViewsMain sellerProfileViewsMain = SellerProfileViewsMain();
+
+  CustomerProfile customerProfile = CustomerProfile();
 
   void _selectedTab(int index) {
     setState(() {
@@ -24,44 +32,45 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*appBar: _selectedIndex == 1
-          ? AppBar(
-              elevation: 0,
-            )
-          : PreferredSize(
-              preferredSize: Size.fromHeight(50.0), // here the desired height
-
-              child: HomePageAppbar()),*/
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ShopLiveScreen()),
+          );
+        },
         child: Icon(Icons.shop),
         elevation: 2.0,
       ),
       bottomNavigationBar: FABBottomAppBar(
         onTabSelected: _selectedTab,
         selectedColor: Colors.blue,
-        centerItemText: "Shop Live",
+        centerItemText: AppLocalizations.of(context).translate('shop-live'),
         items: [
           FABBottomAppBarItem(
             iconData: FontAwesomeIcons.home,
-            text: 'Home',
+            text: AppLocalizations.of(context).translate('home'),
           ),
           FABBottomAppBarItem(
-              iconData: FontAwesomeIcons.layerGroup, text: 'Category'),
+              iconData: FontAwesomeIcons.layerGroup,
+              text: AppLocalizations.of(context).translate('category')),
           FABBottomAppBarItem(
-              iconData: FontAwesomeIcons.certificate, text: 'Sellers'),
-          FABBottomAppBarItem(iconData: FontAwesomeIcons.user, text: 'Profile'),
+              iconData: FontAwesomeIcons.certificate,
+              text: AppLocalizations.of(context).translate('sellers')),
+          FABBottomAppBarItem(
+              iconData: FontAwesomeIcons.user,
+              text: AppLocalizations.of(context).translate('profile')),
         ],
       ),
       backgroundColor: Colors.white,
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          TiendaHomePage(),
-          CategoriesPage(),
-          SellerProfileViewsMain(),
-          CustomerProfile()
+          tiendaHomePage,
+          categoryPage,
+          sellerProfileViewsMain,
+          customerProfile
         ],
       ),
     );

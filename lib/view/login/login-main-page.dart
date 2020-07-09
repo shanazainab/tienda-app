@@ -17,13 +17,14 @@ class LoginMainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginStates>(
         listener: (context, state) {
-          if (state is GoogleSignInResponse && state.response == GoogleSignInResponse.SUCCESS) {
+          if (state is GoogleSignInResponse &&
+              state.response == GoogleSignInResponse.SUCCESS) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => HomePage()),
             );
-          } else if (state is GoogleSignInResponse && state.response == GoogleSignInResponse.FAILED) {
+          } else if (state is GoogleSignInResponse &&
+              state.response == GoogleSignInResponse.FAILED) {
             Fluttertoast.showToast(
                 msg: "Something Went Wrong!!",
                 toastLength: Toast.LENGTH_SHORT,
@@ -35,84 +36,113 @@ class LoginMainPage extends StatelessWidget {
           }
         },
         child: Scaffold(
-      body: Container(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 24.0, right: 24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          body: Stack(
             children: <Widget>[
-              RaisedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => LoginWithMobileNumber()),
-                  );
-                },
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    FaIcon(
-                      FontAwesomeIcons.mobileAlt,
-                      size: 16,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text("Continue With Phone Number"),
-                    ),
-                  ],
+              Container(
+                child: Center(
+                  child: Text("BACKGROUND IMAGE"),
                 ),
               ),
-              SizedBox(
-                height: 2,
-              ),
-              RaisedButton(
-                onPressed: () {
-                  BlocProvider.of<LoginBloc>(context).add(DoGoogleSignIn());
-                },
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    FaIcon(
-                      FontAwesomeIcons.google,
-                      size: 16,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text("Continue With Google"),
-                    ),
-                  ],
+              Container(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 24.0, right: 24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16)),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginWithMobileNumber()),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              FaIcon(
+                                FontAwesomeIcons.mobileAlt,
+                                size: 16,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Text("Continue With Phone Number"),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16)),
+                        onPressed: () {
+                          BlocProvider.of<LoginBloc>(context)
+                              .add(DoGoogleSignIn());
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              FaIcon(
+                                FontAwesomeIcons.google,
+                                size: 16,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Text("Continue With Google"),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16)),
+                        onPressed: () {
+                          BlocProvider.of<LoginBloc>(context)
+                              .add(DoFacebookSignIn());
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              FaIcon(
+                                FontAwesomeIcons.facebook,
+                                size: 16,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Text("Continue With facebook"),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(
-                height: 2,
-              ),
-              RaisedButton(
-                onPressed: () {
-                  BlocProvider.of<LoginBloc>(context).add(DoFacebookSignIn());
-                },
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    FaIcon(
-                      FontAwesomeIcons.facebook,
-                      size: 16,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text("Continue With facebook"),
-                    ),
-                  ],
-                ),
-              )
             ],
           ),
-        ),
-      ),
-    ));
+        ));
   }
 }

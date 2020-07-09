@@ -27,9 +27,10 @@ class AddToWishList extends WishListEvents {
 }
 
 class DeleteWishListItem extends WishListEvents {
+  final WishList wishList;
   final WishListItem wishListItem;
 
-  DeleteWishListItem({this.wishListItem}) : super();
+  DeleteWishListItem({this.wishList,this.wishListItem}) : super();
 
   @override
   List<Object> get props => [wishListItem];

@@ -12,22 +12,22 @@ class Loading extends CategoryStates {
   Loading() : super();
 }
 
-class SwitchCategory extends CategoryStates {
-  final Category category;
-
-  SwitchCategory(this.category) : super();
+abstract class HomeStates extends Equatable {
+  HomeStates();
 
   @override
-  List<Object> get props => [category];
+  List<Object> get props => null;
 }
+
+
 
 class LoadCategoriesSuccess extends CategoryStates {
   final List<Category> categories;
-
-  LoadCategoriesSuccess(this.categories) : super();
+  final Category selectedCategory;
+  LoadCategoriesSuccess({this.categories,this.selectedCategory}) : super();
 
   @override
-  List<Object> get props => categories;
+  List<Object> get props => [categories,selectedCategory];
 }
 
 class LoadCategoriesFailed extends CategoryStates {

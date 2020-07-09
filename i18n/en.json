@@ -1,3 +1,114 @@
 {
-  "country-message": "Choose Your Country"
+  "1": "CUSTOMER PROFILE MENU",
+  "country-message": "Choose Your Country",
+  "orders": "Orders",
+  "returns": "Returns",
+  "wishlist": "Wishlist",
+  "address": "Address",
+  "payment": "Payment",
+  "refer-and-earn": "Refer & Earn",
+  "memberships": "Memberships",
+  "country": "Country",
+  "language": "Language",
+  "call": "Call",
+  "chat-to-us": "Chat to us",
+  "explore": "EXPLORE",
+  "settings": "SETTINGS",
+  "reach-out-to-us": "REACH OUT TO US",
+  "login": "Login",
+  "sign-up": "Sign Up",
+  "profile-menu-caption": "Welcome to Tienda",
+  "profile-menu-sub-caption": "The world's leading shopping site",
+  "logout": "LOGOUT",
+  "edit-profile": "EDIT PROFILE",
+  "following": "FOLLOWING",
+  "help": "Help",
+
+
+
+
+
+  "2": "HOME PAGE BOTTOM NAV BAR",
+  "home": "Home",
+  "category": "Category",
+  "sellers": "Sellers",
+  "profile": "Profile",
+  "shop-live": "Shop Live",
+
+
+  "3": "EDIT PROFILE",
+  "name": "Name",
+  "email": "email",
+  "dob": "DOB",
+  "save": "SAVE",
+
+
+
+
+  "4": "CUSTOMER PROFILE BOTTOM BAR",
+  "privacy-policy": "Privacy Policy",
+  "terms-of-sale": "Terms Of Sale",
+  "terms-of-use": "Terms Of Use",
+  "return-policy": "Return Policy",
+  "warranty-policy": "Warranty Policy",
+
+
+  "5": "CUSTOMER ORDERS MAIN PAGE ",
+  "all": "ALL",
+  "in-process": "IN PROCESS",
+  "delivered": "DELIVERED",
+  "order-number": "Order No:",
+  "ordered": "Ordered",
+  "delivery": "Delivery",
+
+
+
+  "6": "CART PAGE",
+  "cart": "Cart",
+
+
+  "7": "WISHLIST PAGE",
+  "add-to-cart": "MOVE TO CART",
+  "on-discount": "ON DISCOUNT",
+  "popular": "POPULAR",
+
+  "8": "TIENDA HOMEPAGE",
+  "featured-sellers": "Featured Sellers",
+  "recommended-for-you": "Recommended For You",
+  "deals-of-the-day": "Deals Of The Day",
+  "new-arrival": "New Arrival",
+  "top-categories": "Top Categories",
+  "featured-brands": "Featured Brands",
+
+
+
+  "10": "SELLER PROFILE MAIN PAGE",
+  "follow": "Follow",
+  "products": "Products",
+  "videos": "videos",
+  "followers": "followers",
+  "featured-products": "Featured Products",
+  "see-all": "See All",
+  "popular-videos": "Popular Videos",
+  "last-online": "Last Online",
+  "today": "Today",
+
+
+  "11": "SELLER PROFILES LIST VIEW",
+  "join": "join",
+  "message": "message",
+  "live": "live",
+
+
+
+
+  "12": "LIVE VIDEO STREAM FULL SCREEEN",
+  "type-your-comment": "Type Your Comment",
+
+
+
+  "13": "SEARCH PAGE",
+  "search-for-brands-and-products": "Search for brands & products",
+  "recent-searches": "Recent Searches"
 }
+

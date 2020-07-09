@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:tienda/model/product.dart';
 
 abstract class ProductEvents extends Equatable {
   ProductEvents();
@@ -12,4 +13,13 @@ class FetchProductList extends ProductEvents {
 
   @override
   List<Object> get props => [];
+}
+
+class UpdateMarkAsWishListed extends ProductEvents {
+  final List<Product> products;
+
+  UpdateMarkAsWishListed({this.products}) : super();
+
+  @override
+  List<Object> get props => [products];
 }

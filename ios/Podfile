@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
- platform :ios, '9.0'
+ platform :ios, '10.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -76,6 +76,13 @@ target 'Runner' do
     File.symlink(path, symlink)
     pod name, :path => File.join(symlink, 'ios')
   end
+  
+  
+  pod 'ZendeskAnswerBotSDK' # AnswerBot only on the Unified SDK
+  pod 'ZendeskChatSDK'      # Chat only on the Unified SDK
+  pod 'ZendeskSupportSDK'   # Support only on the Unified SDK
+  
+  
 end
 
 post_install do |installer|
@@ -85,3 +92,5 @@ post_install do |installer|
     end
   end
 end
+
+

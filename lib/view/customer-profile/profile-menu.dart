@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:logger/logger.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/events/login-events.dart';
@@ -9,19 +11,25 @@ import 'package:tienda/bloc/events/customer-profile-events.dart';
 import 'package:tienda/bloc/events/startup-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/customer-profile-bloc.dart';
+import 'package:tienda/bloc/preference-bloc.dart';
 import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/customer-profile-states.dart';
+import 'package:tienda/bloc/states/preference-states.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
-import 'package:tienda/console-logger.dart';
 import 'package:tienda/view/address/saved-address-page.dart';
 import 'package:tienda/view/customer-profile/login-bar.dart';
+import 'package:tienda/view/explore/help.dart';
+import 'package:tienda/view/explore/memberships.dart';
 import 'package:tienda/view/customer-profile/profile-card.dart';
-import 'package:tienda/view/customer-profile/refer-and-earn.dart';
+import 'package:tienda/view/explore/refer-and-earn.dart';
 import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/order/orders-main-page.dart';
 import 'package:tienda/view/returns/returns-page.dart';
+import 'package:tienda/view/wishlist/wishlist-main-page.dart';
 import 'package:tienda/view/wishlist/wishlist-page.dart';
+
+import '../../localization.dart';
 
 class CustomerProfile extends StatefulWidget {
   @override
@@ -85,7 +93,16 @@ class _CustomerProfileState extends State<CustomerProfile> {
                             else
                               return Container();
                           }),
-                    _buildMenuList(appLanguage, state)
+                    Expanded(
+                      child: ListView(
+                        children: <Widget>[
+                          state is LogInStatusResponse && state.isLoggedIn
+                              ? _buildLoggedInUserMenus(appLanguage, state)
+                              : Container(),
+                          _buildMenuList(appLanguage, state)
+                        ],
+                      ),
+                    )
                   ],
                 ));
               })),
@@ -93,231 +110,187 @@ class _CustomerProfileState extends State<CustomerProfile> {
   }
 
   _buildMenuList(appLanguage, state) {
-    return Expanded(
-      child: ListView(
-        shrinkWrap: true,
-        children: <Widget>[
-          ListTile(
-            leading: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  Icons.format_list_bulleted,
+    bool isEnglish = appLanguage.appLocal == Locale('en');
+    return Column(
+      children: <Widget>[
+        Container(
+          height: 50,
+          width: MediaQuery.of(context).size.width,
+
+          color: Colors.grey[200],
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16.0, top: 16,right:16),
+            child: Text(
+              AppLocalizations.of(context).translate('settings'),
+            ),
+          ),
+        ),
+        BlocBuilder<PreferenceBloc, PreferenceStates>(
+            builder: (context, substate) {
+          if (substate is FetchCountryPreferenceSuccess)
+            return ListTile(
+              leading: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  FaIcon(
+                    FontAwesomeIcons.globe,
+                    size: 18,
+                  ),
+                ],
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Text(substate.country.nameEnglish),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                    ),
+                  )
+                ],
+              ),
+              title: Text(
+                AppLocalizations.of(context).translate('country'),
+              ),
+              onTap: () {},
+            );
+          else
+            return ListTile(
+              leading: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  FaIcon(
+                    FontAwesomeIcons.globe,
+                    size: 18,
+                  ),
+                ],
+              ),
+              title: Text(
+                AppLocalizations.of(context).translate('country'),
+              ),
+              onTap: () {},
+            );
+        }),
+        ListTile(
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FaIcon(
+                FontAwesomeIcons.flag,
+                size: 18,
+              ),
+            ],
+          ),
+          title: Text(
+            AppLocalizations.of(context).translate('language'),
+          ),
+          trailing: appLanguage.appLocal != Locale('en')
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text("English"),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0,right:8.0),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                      ),
+                    )
+                  ],
+                )
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text("العربية"),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                      ),
+                    )
+                  ],
                 ),
-              ],
-            ),
-            title: Text(
-              "Orders",
-              style: TextStyle(),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => OrdersMainPage()),
-              );
-            },
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-            ),
-          ),
-          ListTile(
-            leading: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.sync),
-              ],
-            ),
-            title: Text(
-              "Returns",
-              style: TextStyle(),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ReturnsPage()),
-              );
-            },
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-            ),
-          ),
-          ListTile(
-            leading: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.bookmark),
-              ],
-            ),
-            title: Text(
-              "Wishlist",
-              style: TextStyle(),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => WishListPage()),
-              );
-            },
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-            ),
-          ),
-          ListTile(
-            leading: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.location_on),
-              ],
-            ),
-            title: Text("Address"),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SavedAddressPage()),
-              );
-            },
-          ),
-          ListTile(
-            leading: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.credit_card),
-              ],
-            ),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-            ),
-            title: Text("Payments"),
-            onTap: () {},
-          ),
-          Container(
+          onTap: () {
+            appLanguage.changeLanguage(appLanguage.appLocal == Locale('en')
+                ? Locale('ar')
+                : Locale('en'));
+          },
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+
             height: 50,
             color: Colors.grey[200],
             child: Padding(
-              padding: const EdgeInsets.only(left: 16.0, top: 16),
-              child: Text("EXPLORE"),
-            ),
-          ),
-          ListTile(
-            leading: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.credit_card),
-              ],
-            ),
-            title: Text("Refer & Earn"),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ReferAndEarn()),
-              );
-            },
-          ),
-          ListTile(
-            leading: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.credit_card),
-              ],
-            ),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-            ),
-            title: Text("Memberships"),
-            onTap: () {},
-          ),
-          Container(
-            height: 50,
-            color: Colors.grey[200],
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16.0, top: 16),
-              child: Text("SETTINGS"),
-            ),
-          ),
-          ListTile(
-            title: Text("Country"),
-            onTap: () {},
-          ),
-          ListTile(
-            title: Text("Language"),
-            trailing: appLanguage.appLocal == Locale('en')
-                ? Text("English")
-                : Text("العربية"),
-            onTap: () {
-              appLanguage.changeLanguage(appLanguage.appLocal == Locale('en')
-                  ? Locale('ar')
-                  : Locale('en'));
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              height: 50,
-              color: Colors.grey[200],
-              child: Padding(
-                padding: const EdgeInsets.only(left: 16.0, top: 16),
-                child: Text("REACH OUT TO US"),
+              padding: const EdgeInsets.only(left: 16.0, top: 16,right:16),
+              child: Text(
+                AppLocalizations.of(context).translate('reach-out-to-us'),
               ),
             ),
           ),
-          ListTile(
-            title: Text("Call"),
-            onTap: () {},
+        ),
+        ListTile(
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FaIcon(
+                FontAwesomeIcons.phone,
+                size: 18,
+              ),
+            ],
           ),
-          ListTile(
-            title: Text("Chat To Us"),
-            onTap: () {
-              handleChat();
-            },
+          title: Text(
+            AppLocalizations.of(context).translate('call'),
           ),
-          SizedBox(
-            height: 20,
+          onTap: () {},
+        ),
+        ListTile(
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.message),
+            ],
           ),
-          state is LogInStatusResponse && state.isLoggedIn
-              ? Center(
-                  child: FlatButton(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          FaIcon(
-                            FontAwesomeIcons.signOutAlt,
-                            color: Colors.grey[200],
-                            size: 16,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text("Logout"),
-                          ),
-                        ],
-                      ),
-                    ),
-                    onPressed: () {
-                      handleLogout(context);
-                    },
-                  ),
-                )
-              : Container(),
-          SizedBox(
-            height: 50,
-          )
-        ],
-      ),
+          title: Text(
+            AppLocalizations.of(context).translate('chat-to-us'),
+          ),
+          onTap: () {
+            handleChat();
+          },
+        ),
+        ListTile(
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.message),
+            ],
+          ),
+          title: Text(
+            AppLocalizations.of(context).translate('help'),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Help()),
+            );
+          },
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        bottomContainer(state)
+      ],
     );
   }
 
@@ -330,17 +303,326 @@ class _CustomerProfileState extends State<CustomerProfile> {
   }
 
   void handleChat() {
-    _getBatteryLevel();
+    startChatSystem();
   }
 
-  Future<void> _getBatteryLevel() async {
+  Future<void> startChatSystem() async {
     String result;
     try {
       result = await platform.invokeMethod('getChat');
     } on PlatformException catch (e) {
       result = "Platform Method Error: '${e.message}'.";
     }
+    Logger().d("******$result");
+  }
 
-    new ConsoleLogger().printResponse("******$result");
+  bottomContainer(state) {
+    return Container(
+      height: 160,
+      color: Colors.grey[200],
+      child: Column(
+        children: <Widget>[
+          state is LogInStatusResponse && state.isLoggedIn
+              ? Center(
+                  child: FlatButton(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0,right:8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+
+                            MdiIcons.login,
+                            size: 18,
+                            color: Colors.grey,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0,right:8.0),
+                            child: Text(
+                              AppLocalizations.of(context).translate('logout'),
+                              style:
+                                  TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    onPressed: () {
+                      handleLogout(context);
+                    },
+                  ),
+                )
+              : Container(),
+          Container(
+            alignment: Alignment.center,
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      FaIcon(
+                        FontAwesomeIcons.facebook,
+                        color: Colors.grey,
+                        size: 14,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      FaIcon(
+                        FontAwesomeIcons.instagram,
+                        color: Colors.grey,
+                        size: 14,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      FaIcon(
+                        FontAwesomeIcons.twitter,
+                        color: Colors.grey,
+                        size: 14,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      FaIcon(
+                        FontAwesomeIcons.linkedin,
+                        color: Colors.grey,
+                        size: 14,
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Row(
+                    children: <Widget>[
+                      Spacer(
+                        flex: 2,
+                      ),
+                      Text(
+                        AppLocalizations.of(context).translate('terms-of-use'),
+                        style: TextStyle(fontSize: 10, color: Colors.grey),
+                      ),
+                      Spacer(
+                        flex: 1,
+                      ),
+                      Text(
+                        AppLocalizations.of(context).translate('terms-of-sale'),
+                        style: TextStyle(fontSize: 10, color: Colors.grey),
+                      ),
+                      Spacer(
+                        flex: 1,
+                      ),
+                      Text(
+                        AppLocalizations.of(context).translate('privacy-policy'),
+                        style: TextStyle(fontSize: 10, color: Colors.grey),
+                      ),
+                      Spacer(
+                        flex: 2,
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    children: <Widget>[
+                      Spacer(
+                        flex: 2,
+                      ),
+                      Text(
+                        AppLocalizations.of(context).translate('warranty-policy'),
+                        style: TextStyle(fontSize: 10, color: Colors.grey),
+                      ),
+                      Spacer(
+                        flex: 1,
+                      ),
+                      Text(
+                        AppLocalizations.of(context).translate('return-policy'),
+
+                        style: TextStyle(fontSize: 10, color: Colors.grey),
+                      ),
+                      Spacer(
+                        flex: 2,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  _buildLoggedInUserMenus(AppLanguage appLanguage, StartupStates state) {
+    return Column(
+      children: <Widget>[
+        ListTile(
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.format_list_bulleted,
+              ),
+            ],
+          ),
+          title: Text(
+            AppLocalizations.of(context).translate('orders'),
+            style: TextStyle(),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => OrdersMainPage()),
+            );
+          },
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+          ),
+        ),
+        ListTile(
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.sync),
+            ],
+          ),
+          title: Text(
+            AppLocalizations.of(context).translate('returns'),
+            style: TextStyle(),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ReturnsPage()),
+            );
+          },
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+          ),
+        ),
+        ListTile(
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.bookmark),
+            ],
+          ),
+          title: Text(
+            AppLocalizations.of(context).translate('wishlist'),
+            style: TextStyle(),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => WishListMainPage()),
+            );
+          },
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+          ),
+        ),
+        ListTile(
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.location_on),
+            ],
+          ),
+          title: Text(
+            AppLocalizations.of(context).translate('address'),
+          ),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SavedAddressPage()),
+            );
+          },
+        ),
+        ListTile(
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.credit_card),
+            ],
+          ),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+          ),
+          title: Text(
+            AppLocalizations.of(context).translate('payment'),
+          ),
+          onTap: () {},
+        ),
+        Container(
+          height: 50,
+          width: MediaQuery.of(context).size.width,
+          color: Colors.grey[200],
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16.0, top: 16,right:16),
+            child: Text(
+              AppLocalizations.of(context).translate('explore'),
+            ),
+          ),
+        ),
+        ListTile(
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.credit_card),
+            ],
+          ),
+          title: Text(
+            AppLocalizations.of(context).translate('refer-and-earn'),
+          ),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ReferAndEarn()),
+            );
+          },
+        ),
+        ListTile(
+
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.credit_card),
+            ],
+          ),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+          ),
+          title: Text(
+            AppLocalizations.of(context).translate('memberships'),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Memberships()),
+            );
+          },
+        )
+      ],
+    );
   }
 }

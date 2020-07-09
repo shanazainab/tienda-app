@@ -5,10 +5,15 @@ class PopularSearchBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text("Popular on Tienda",
-              style:
-                  TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text("Popular on Tienda",
+                style:
+                    TextStyle(color: Colors.grey,fontSize: 20, fontWeight: FontWeight.bold)),
+          ),
           ListView.separated(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),

@@ -3,16 +3,15 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:logger/logger.dart';
 import 'package:tienda/api/customer-profile-api-client.dart';
 import 'package:tienda/bloc/events/customer-profile-events.dart';
 import 'package:tienda/bloc/states/customer-profile-states.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/customer.dart';
 
-import '../console-logger.dart';
 
 class CustomerProfileBloc extends Bloc<CustomerProfileEvents, CustomerProfileStates> {
-  ConsoleLogger consoleLogger = new ConsoleLogger();
 
   @override
   CustomerProfileStates get initialState => Loading();
@@ -36,7 +35,7 @@ class CustomerProfileBloc extends Bloc<CustomerProfileEvents, CustomerProfileSta
         CustomerProfileApiClient(dio,
             baseUrl: GlobalConfiguration().getString("baseURL"));
     await customerProfileApiClient.getCustomerProfile().then((response) {
-      consoleLogger.printResponse("GET-CUSTOMER-PROFILE-RESPONSE:$response");
+      Logger().d("GET-CUSTOMER-PROFILE-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           customer = Customer.fromJson(json.decode(response)['profile']);
@@ -46,7 +45,7 @@ class CustomerProfileBloc extends Bloc<CustomerProfileEvents, CustomerProfileSta
       if (err is DioError) {
         DioError error = err;
 
-        consoleLogger.printDioError("GET-CUSTOMER-PROFILE-ERROR:", error);
+        Logger().e("GET-CUSTOMER-PROFILE-ERROR:", error);
       }
     });
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../localization.dart';
+
 class FeaturedBrands extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -10,7 +12,7 @@ class FeaturedBrands extends StatelessWidget {
         children: <Widget>[
           Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text("Featured Brands",
+              child: Text(AppLocalizations.of(context).translate('featured-brands'),
                   style: TextStyle(color: Colors.black, fontSize: 20))),
           SizedBox(
             height: 185,
