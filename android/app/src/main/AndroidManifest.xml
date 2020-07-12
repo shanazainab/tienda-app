@@ -8,6 +8,10 @@
         android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="tienda">
+
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="ocr" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDBMARSuk2l-TxaUBlHY3m5RVb7bN2C08c" />

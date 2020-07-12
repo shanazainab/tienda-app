@@ -39,6 +39,18 @@ PODS:
   - Firebase/DynamicLinks (6.27.0):
     - Firebase/CoreOnly
     - FirebaseDynamicLinks (~> 4.1.0)
+  - Firebase/MLVision (6.27.0):
+    - Firebase/CoreOnly
+    - FirebaseMLVision (~> 0.20.1)
+  - Firebase/MLVisionBarcodeModel (6.27.0):
+    - Firebase/CoreOnly
+    - FirebaseMLVisionBarcodeModel (~> 0.20.0)
+  - Firebase/MLVisionLabelModel (6.27.0):
+    - Firebase/CoreOnly
+    - FirebaseMLVisionLabelModel (~> 0.20.0)
+  - Firebase/MLVisionTextModel (6.27.0):
+    - Firebase/CoreOnly
+    - FirebaseMLVisionTextModel (~> 0.20.0)
   - firebase_analytics (0.0.1):
     - Firebase/Analytics (~> 6.0)
     - Firebase/Core
@@ -63,6 +75,10 @@ PODS:
     - Flutter
   - firebase_dynamic_links (0.1.0):
     - Firebase/DynamicLinks
+    - Flutter
+  - firebase_ml_vision (0.1.1):
+    - Firebase/Core
+    - Firebase/MLVision
     - Flutter
   - FirebaseAnalytics (6.6.1):
     - FirebaseCore (~> 6.8)
@@ -94,6 +110,35 @@ PODS:
     - GoogleUtilities/Environment (~> 6.6)
     - GoogleUtilities/UserDefaults (~> 6.6)
     - PromisesObjC (~> 1.2)
+  - FirebaseInstanceID (4.4.0):
+    - FirebaseCore (~> 6.8)
+    - FirebaseInstallations (~> 1.0)
+    - GoogleUtilities/Environment (~> 6.5)
+    - GoogleUtilities/UserDefaults (~> 6.5)
+  - FirebaseMLCommon (0.20.1):
+    - FirebaseCore (~> 6.7)
+    - FirebaseInstanceID (~> 4.3)
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
+    - GoogleUtilities/UserDefaults (~> 6.0)
+    - GTMSessionFetcher/Core (~> 1.1)
+    - Protobuf (~> 3.12)
+  - FirebaseMLVision (0.20.1):
+    - FirebaseCore (~> 6.7)
+    - FirebaseMLCommon (~> 0.20)
+    - GoogleAPIClientForREST/Core (~> 1.3)
+    - GoogleAPIClientForREST/Vision (~> 1.3)
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+    - GTMSessionFetcher/Core (~> 1.1)
+    - Protobuf (~> 3.12)
+  - FirebaseMLVisionBarcodeModel (0.20.0):
+    - FirebaseMLVision (~> 0.20)
+  - FirebaseMLVisionLabelModel (0.20.0):
+    - FirebaseMLVision (~> 0.20)
+  - FirebaseMLVisionTextModel (0.20.0):
+    - FirebaseMLVision (~> 0.20)
   - Flutter (1.0.0)
   - flutter_facebook_login (0.0.1):
     - FBSDKCoreKit (~> 5.5)
@@ -120,6 +165,11 @@ PODS:
     - GoogleSignIn (~> 5.0)
   - google_sign_in_web (0.8.1):
     - Flutter
+  - GoogleAPIClientForREST/Core (1.4.2):
+    - GTMSessionFetcher (>= 1.1.7)
+  - GoogleAPIClientForREST/Vision (1.4.2):
+    - GoogleAPIClientForREST/Core
+    - GTMSessionFetcher (>= 1.1.7)
   - GoogleAppMeasurement (6.6.1):
     - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
     - GoogleUtilities/MethodSwizzler (~> 6.0)
@@ -139,6 +189,18 @@ PODS:
     - AppAuth (~> 1.2)
     - GTMAppAuth (~> 1.0)
     - GTMSessionFetcher/Core (~> 1.1)
+  - GoogleToolboxForMac/DebugUtils (2.2.2):
+    - GoogleToolboxForMac/Defines (= 2.2.2)
+  - GoogleToolboxForMac/Defines (2.2.2)
+  - GoogleToolboxForMac/Logger (2.2.2):
+    - GoogleToolboxForMac/Defines (= 2.2.2)
+  - "GoogleToolboxForMac/NSData+zlib (2.2.2)":
+    - GoogleToolboxForMac/Defines (= 2.2.2)
+  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.2.2)":
+    - GoogleToolboxForMac/DebugUtils (= 2.2.2)
+    - GoogleToolboxForMac/Defines (= 2.2.2)
+    - "GoogleToolboxForMac/NSString+URLArguments (= 2.2.2)"
+  - "GoogleToolboxForMac/NSString+URLArguments (2.2.2)"
   - GoogleUtilities/AppDelegateSwizzler (6.6.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -180,6 +242,7 @@ PODS:
   - path_provider_macos (0.0.1):
     - Flutter
   - PromisesObjC (1.2.9)
+  - Protobuf (3.12.0)
   - Reachability (3.2)
   - share (0.0.1):
     - Flutter
@@ -229,6 +292,9 @@ DEPENDENCIES:
   - connectivity_for_web (from `.symlinks/plugins/connectivity_for_web/ios`)
   - connectivity_macos (from `.symlinks/plugins/connectivity_macos/ios`)
   - device_info (from `.symlinks/plugins/device_info/ios`)
+  - Firebase/MLVisionBarcodeModel
+  - Firebase/MLVisionLabelModel
+  - Firebase/MLVisionTextModel
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_analytics_web (from `.symlinks/plugins/firebase_analytics_web/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
@@ -237,6 +303,7 @@ DEPENDENCIES:
   - firebase_core_web (from `.symlinks/plugins/firebase_core_web/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
   - firebase_dynamic_links (from `.symlinks/plugins/firebase_dynamic_links/ios`)
+  - firebase_ml_vision (from `.symlinks/plugins/firebase_ml_vision/ios`)
   - Flutter (from `Flutter`)
   - flutter_facebook_login (from `.symlinks/plugins/flutter_facebook_login/ios`)
   - flutter_plugin_android_lifecycle (from `.symlinks/plugins/flutter_plugin_android_lifecycle/ios`)
@@ -278,17 +345,26 @@ SPEC REPOS:
     - FirebaseCoreDiagnostics
     - FirebaseDynamicLinks
     - FirebaseInstallations
+    - FirebaseInstanceID
+    - FirebaseMLCommon
+    - FirebaseMLVision
+    - FirebaseMLVisionBarcodeModel
+    - FirebaseMLVisionLabelModel
+    - FirebaseMLVisionTextModel
     - FMDB
+    - GoogleAPIClientForREST
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleDataTransportCCTSupport
     - GoogleMaps
     - GoogleSignIn
+    - GoogleToolboxForMac
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
     - nanopb
     - PromisesObjC
+    - Protobuf
     - Reachability
     - ZendeskAnswerBotProvidersSDK
     - ZendeskAnswerBotSDK
@@ -327,6 +403,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_crashlytics/ios"
   firebase_dynamic_links:
     :path: ".symlinks/plugins/firebase_dynamic_links/ios"
+  firebase_ml_vision:
+    :path: ".symlinks/plugins/firebase_ml_vision/ios"
   Flutter:
     :path: Flutter
   flutter_facebook_login:
@@ -393,12 +471,19 @@ SPEC CHECKSUMS:
   firebase_core_web: d501d8b946b60c8af265428ce483b0fff5ad52d1
   firebase_crashlytics: bd8c58df07f107cb7e1a20cb190b9a468e0a69fd
   firebase_dynamic_links: c70e8764252b4f4f130fffe273e0bbd01e6b7aef
+  firebase_ml_vision: 8ad46403728e266021514b939d6d535406505163
   FirebaseAnalytics: 0ea640473474f036cabbc2576e20c2d63671c92f
   FirebaseAuth: b85c064e0ac60f82486728d50a4803f235687302
   FirebaseCore: feda061cb1ee6d8ad4824f4a4a8ffbcfe284f595
   FirebaseCoreDiagnostics: 4505e4d4009b1d93f605088ee7d7764d5f0d1c84
   FirebaseDynamicLinks: 50cff91aff05347770be750dde61d3311ff7ffc8
   FirebaseInstallations: 293f567159b6d66d1c990f13bb868066096c94ec
+  FirebaseInstanceID: 3b119bfe90e904851218159c9a4ecb847cc51d18
+  FirebaseMLCommon: 5e1184cfdddbd097f55cad75b598881d348d900f
+  FirebaseMLVision: 485358b97d3332669ecc4fed55ee360aaef2813d
+  FirebaseMLVisionBarcodeModel: 35cfeaa9494d8c6106423a4672055dd8e07ddbc3
+  FirebaseMLVisionLabelModel: 3dbf36096c0802bd09167bee09063183d964f4db
+  FirebaseMLVisionTextModel: 2ec9bf2287b29ef2b7d79152aad454cce5bc3040
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_facebook_login: cfb5659f686b1c575ef205c6b6fd20db9679d3c4
   flutter_plugin_android_lifecycle: dc0b544e129eebb77a6bfb1239d4d1c673a60a35
@@ -410,11 +495,13 @@ SPEC CHECKSUMS:
   google_maps_flutter: df4e7de95264aa0a2f11aac0fc7e313acb8ffc7e
   google_sign_in: 6bd214b9c154f881422f5fe27b66aaa7bbd580cc
   google_sign_in_web: 52deb24929ac0992baff65c57956031c44ed44c3
+  GoogleAPIClientForREST: 9f49df9fac7867b459187e687fed3066b2be049a
   GoogleAppMeasurement: 2fd5c5a56c069db635c8e7b92d4809a9591d0a69
   GoogleDataTransport: 9a8a16f79feffc7f42096743de2a7c4815e84020
   GoogleDataTransportCCTSupport: 489c1265d2c85b68187a83a911913d190012158d
   GoogleMaps: 4b5346bddfe6911bb89155d43c903020170523ac
   GoogleSignIn: 7137d297ddc022a7e0aa4619c86d72c909fa7213
+  GoogleToolboxForMac: 800648f8b3127618c1b59c7f97684427630c5ea3
   GoogleUtilities: 39530bc0ad980530298e9c4af8549e991fd033b1
   GTMAppAuth: 4deac854479704f348309e7b66189e604cf5e01e
   GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
@@ -424,6 +511,7 @@ SPEC CHECKSUMS:
   path_provider_linux: 4d630dc393e1f20364f3e3b4a2ff41d9674a84e4
   path_provider_macos: f760a3c5b04357c380e2fddb6f9db6f3015897e0
   PromisesObjC: b48e0338dbbac2207e611750777895f7a5811b75
+  Protobuf: 2793fcd0622a00b546c60e7cbbcc493e043e9bb9
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
@@ -446,6 +534,6 @@ SPEC CHECKSUMS:
   ZendeskSupportProvidersSDK: d21ce8eb3df1066338c7d3875bb818b32c3f124e
   ZendeskSupportSDK: 7e29a825e862aba217b7b89f7d3397f7deef586a
 
-PODFILE CHECKSUM: cb0e70690203da47b46c86480e5c7452f2ae6bc7
+PODFILE CHECKSUM: edade1bf2de971f820770757945fe666721930b7
 
 COCOAPODS: 1.9.3

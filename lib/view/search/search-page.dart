@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tienda/controller/ml-controller.dart';
 
 import 'package:tienda/localization.dart';
 
@@ -45,7 +46,6 @@ class _SearchPageState extends State<SearchPage> {
                 hintText: AppLocalizations.of(context)
                     .translate("search-for-brands-and-products"),
                 hintStyle: TextStyle(fontSize: 12),
-
                 border: InputBorder.none),
           ),
         ),
@@ -59,9 +59,14 @@ class _SearchPageState extends State<SearchPage> {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-            child: Icon(
-              Icons.camera_alt,
-              size: 22,
+            child: GestureDetector(
+              onTap: () {
+                MLController().createImageLabels();
+              },
+              child: Icon(
+                Icons.camera_alt,
+                size: 22,
+              ),
             ),
           )
         ],

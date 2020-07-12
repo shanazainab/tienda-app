@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/app-settings.config.dart';
 import 'package:tienda/bloc-delegate.dart';
@@ -38,8 +39,8 @@ import 'bloc/category-bloc.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-//   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-//  sharedPreferences.clear();
+   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  sharedPreferences.clear();
 
   ///Enable firebase crash analytics
   // Crashlytics.instance.enableInDevMode = true;

@@ -82,7 +82,11 @@ target 'Runner' do
   pod 'ZendeskChatSDK'      # Chat only on the Unified SDK
   pod 'ZendeskSupportSDK'   # Support only on the Unified SDK
   
-  
+
+  pod 'Firebase/MLVisionBarcodeModel'
+  pod 'Firebase/MLVisionLabelModel'
+  pod 'Firebase/MLVisionTextModel'
+
 end
 
 post_install do |installer|
