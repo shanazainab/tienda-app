@@ -2,15 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
+import 'package:tienda/view/widgets/image-option-dialogue.dart';
 
 class EditCustomerProfilePage extends StatelessWidget {
+  final _imageStream = BehaviorSubject<File>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-      PreferredSize(
+      appBar: PreferredSize(
           preferredSize: Size.fromHeight(44),
           child: CustomAppBar(
             showLogo: false,
@@ -22,70 +25,105 @@ class EditCustomerProfilePage extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           Container(
-            height: 250,
+            height: 200,
             child: Stack(
               children: <Widget>[
                 Column(
                   children: <Widget>[
                     Container(
-                      height: 200,
+                      height: 140,
                       color: Colors.grey[200],
                     ),
                     Container(
-                      height: 50,
+                      height: 60,
                       color: Colors.white,
                     ),
                   ],
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: CircleAvatar(
-                    radius: 75,
-                    backgroundColor: Colors.lightBlue,
+                  child: GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext bc) {
+                            return ImageOptionDialogue(
+                              camera: null,
+                              selectedImage: (image) {
+                                print("CHOSEN IMAGE IS:$image");
+
+
+                                _imageStream.add(image);
+                              },
+                            );
+                          });
+                    },
+                    child: StreamBuilder<File>(
+                        stream: _imageStream,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<File> snapshot) {
+                          return CircleAvatar(
+                            radius: 75,
+                            backgroundColor: Colors.lightBlue,
+                            backgroundImage: snapshot.data != null
+                                ? FileImage(snapshot.data)
+                                : null,
+                          );
+                        }),
                   ),
-                )
+                ),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Icon(Icons.add_a_photo))
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24),
-            child: Column(
-              children: <Widget>[
-                TextFormField(
-                  decoration: InputDecoration(
-                      border: InputBorder.none,
-                      filled: true,
-                      fillColor: Colors.grey[100],
-                      labelText: AppLocalizations.of(context).translate('name')),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: TextFormField(
+          Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24),
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
                     decoration: InputDecoration(
                         border: InputBorder.none,
                         filled: true,
                         fillColor: Colors.grey[100],
-                        labelText:AppLocalizations.of(context).translate('email')),
+                        labelText:
+                            AppLocalizations.of(context).translate('name')),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        filled: true,
-                        fillColor: Colors.grey[100],
-                        labelText: AppLocalizations.of(context).translate('dob')),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          labelText:
+                              AppLocalizations.of(context).translate('email')),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: RaisedButton(
-                    onPressed: () {},
-                    child: Text(AppLocalizations.of(context).translate('save')),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          labelText:
+                              AppLocalizations.of(context).translate('dob')),
+                    ),
                   ),
-                )
-              ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: RaisedButton(
+                      onPressed: () {},
+                      child:
+                          Text(AppLocalizations.of(context).translate('save')),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ],

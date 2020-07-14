@@ -11,7 +11,7 @@ class Product extends Equatable {
   String subCategoryId;
   String thumbnail;
   double discount;
-
+  int maxOrderQuantity;
   bool isWishListed;
 
   Product(
@@ -25,7 +25,7 @@ class Product extends Equatable {
       this.subCategoryId,
       this.thumbnail,
       this.discount,
-      this.isWishListed});
+      this.isWishListed,this.maxOrderQuantity});
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(

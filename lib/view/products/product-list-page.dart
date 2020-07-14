@@ -8,19 +8,16 @@ import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/events/wishlist-events.dart';
 import 'package:tienda/bloc/product-bloc.dart';
-import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/bloc/states/product-states.dart';
 import 'package:tienda/bloc/states/wishlist-states.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/model/cart.dart';
 import 'package:tienda/model/product.dart';
 import 'package:tienda/model/wishlist.dart';
-import 'package:tienda/view/cart/cart-page.dart';
 import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/filter/product-filter.dart';
 import 'package:tienda/view/filter/product-sort.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
-import 'package:tienda/view/wishlist/wishlist-page.dart';
 
 class ProductListPage extends StatefulWidget {
   @override
@@ -98,7 +95,7 @@ class _ProductListPageState extends State<ProductListPage> {
                         preferredSize: Size.fromHeight(80.0),
                         // here the desired height
                         child: CustomAppBar(
-                          bottom:      TabBar(
+                          bottom: TabBar(
                             labelColor: Colors.lightBlue,
                             unselectedLabelColor: Colors.grey,
                             indicatorColor: Colors.lightBlue,
@@ -144,7 +141,7 @@ class _ProductListPageState extends State<ProductListPage> {
       itemCount: products.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           childAspectRatio: MediaQuery.of(context).size.width /
-              (MediaQuery.of(context).size.height / 1.25),
+              (MediaQuery.of(context).size.height / 1.3),
           crossAxisCount: 2),
       itemBuilder: (BuildContext context, int index) {
         return new Card(
@@ -179,71 +176,99 @@ class _ProductListPageState extends State<ProductListPage> {
                 child: Padding(
                   padding: const EdgeInsets.only(
                       top: 8, bottom: 4, left: 8, right: 8),
-                  child: Row(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text("Brand"),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Text(
-                              "product.nameEnglish",
-                              overflow: TextOverflow.fade,
-                              softWrap: false,
-                              maxLines: 1,
+                          GestureDetector(
+                            onTap: () {
+                              if (products[index].isWishListed == null)
+                                products[index].isWishListed = true;
+                              else
+                                products[index].isWishListed =
+                                !products[index].isWishListed;
+
+                              if (products[index].isWishListed) {
+                                Fluttertoast.showToast(
+                                    msg: "Added to wishlist",
+                                    gravity: ToastGravity.BOTTOM);
+                                BlocProvider.of<WishListBloc>(context).add(
+                                    AddToWishList(
+                                        wishListItem: new WishListItem(
+                                            product: products[index])));
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: "Removed from wishlist",
+                                    gravity: ToastGravity.BOTTOM);
+
+                                BlocProvider.of<WishListBloc>(context).add(
+                                    DeleteWishListItem(
+                                        wishListItem: new WishListItem(
+                                            product: products[index])));
+                              }
+
+                              context
+                                  .bloc<ProductBloc>()
+                                  .add(UpdateMarkAsWishListed(
+                                products: products,
+                              ));
+                            },
+                            child: Icon(
+                              Icons.bookmark,
+                              size: 18,
+                              color: products[index].isWishListed != null &&
+                                  products[index].isWishListed
+                                  ? Colors.pink
+                                  : Colors.grey,
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Text(products[index].price.toString()),
                           )
                         ],
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          if (products[index].isWishListed == null)
-                            products[index].isWishListed = true;
-                          else
-                            products[index].isWishListed =
-                                !products[index].isWishListed;
-
-                          if (products[index].isWishListed) {
-                            Fluttertoast.showToast(
-                                msg: "Added to wishlist",
-                                gravity: ToastGravity.BOTTOM);
-                            BlocProvider.of<WishListBloc>(context).add(
-                                AddToWishList(
-                                    wishListItem: new WishListItem(
-                                        product: products[index])));
-                          } else {
-                            Fluttertoast.showToast(
-                                msg: "Removed from wishlist",
-                                gravity: ToastGravity.BOTTOM);
-
-                            BlocProvider.of<WishListBloc>(context).add(
-                                DeleteWishListItem(
-                                    wishListItem: new WishListItem(
-                                        product: products[index])));
-                          }
-
-                          context
-                              .bloc<ProductBloc>()
-                              .add(UpdateMarkAsWishListed(
-                                products: products,
-                              ));
-                        },
-                        child: Icon(
-                          Icons.bookmark,
-                          size: 18,
-                          color: products[index].isWishListed != null &&
-                                  products[index].isWishListed
-                              ? Colors.pink
-                              : Colors.grey,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          "product.nameEnglish",
+                          overflow: TextOverflow.fade,
+                          softWrap: false,
+                          maxLines: 1,
                         ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: index == 0
+                            ? FittedBox(
+                          fit: BoxFit.fitWidth,
+
+                          child: Row(
+                                children: <Widget>[
+                                  Text(
+                                      "AED " + products[index].price.toString(),style: TextStyle(
+                                    fontWeight: FontWeight.bold
+                                  ),),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left:4.0,right:4.0),
+                                    child: Text(
+                                        "AED " + products[index].price.toString(),
+                                    style: TextStyle(
+                                        decoration: TextDecoration.lineThrough
+                                    ),),
+                                  ),
+                                  Text(
+                                      "50 % OFF",style: TextStyle(
+                                    color: Colors.pink
+                                  ),),
+                                ],
+                              ),
+                            )
+                            : FittedBox(
+                          fit: BoxFit.fitWidth,
+                              child: Text(
+                                  "AED " + products[index].price.toString()),
+                            ),
                       )
                     ],
                   ),

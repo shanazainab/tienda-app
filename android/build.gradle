@@ -31,8 +31,6 @@ allprojects {
         }
         maven {
             url 'https://zendesk.jfrog.io/zendesk/repo'
-
-
         }
 
     }
@@ -49,6 +47,7 @@ subprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
 
 dependencies {
 

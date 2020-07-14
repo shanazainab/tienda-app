@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:tienda/app-country.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/events/customer-profile-events.dart';
+import 'package:tienda/bloc/events/preference-events.dart';
 import 'package:tienda/bloc/events/startup-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/customer-profile-bloc.dart';
@@ -17,7 +20,9 @@ import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/customer-profile-states.dart';
 import 'package:tienda/bloc/states/preference-states.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
+import 'package:tienda/controller/customer-care-controller.dart';
 import 'package:tienda/view/address/saved-address-page.dart';
+import 'package:tienda/view/customer-profile/bottom-container.dart';
 import 'package:tienda/view/customer-profile/login-bar.dart';
 import 'package:tienda/view/explore/help.dart';
 import 'package:tienda/view/explore/memberships.dart';
@@ -26,8 +31,8 @@ import 'package:tienda/view/explore/refer-and-earn.dart';
 import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/order/orders-main-page.dart';
 import 'package:tienda/view/returns/returns-page.dart';
+import 'package:tienda/view/startup/country-list-card.dart';
 import 'package:tienda/view/wishlist/wishlist-main-page.dart';
-import 'package:tienda/view/wishlist/wishlist-page.dart';
 
 import '../../localization.dart';
 
@@ -41,8 +46,6 @@ class _CustomerProfileState extends State<CustomerProfile> {
 
   final CustomerProfileBloc profileBloc = new CustomerProfileBloc();
 
-  static const platform = const MethodChannel('tienda.dev/zendesk');
-
   @override
   void initState() {
     // TODO: implement initState
@@ -53,6 +56,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
   @override
   Widget build(BuildContext context) {
     var appLanguage = Provider.of<AppLanguage>(context);
+    var appCountry = Provider.of<AppCountry>(context);
 
     return BlocProvider(
       create: (BuildContext context) => profileBloc,
@@ -95,11 +99,12 @@ class _CustomerProfileState extends State<CustomerProfile> {
                           }),
                     Expanded(
                       child: ListView(
+                        padding: EdgeInsets.all(0),
                         children: <Widget>[
                           state is LogInStatusResponse && state.isLoggedIn
                               ? _buildLoggedInUserMenus(appLanguage, state)
                               : Container(),
-                          _buildMenuList(appLanguage, state)
+                          _buildMenuList(appLanguage, state, appCountry)
                         ],
                       ),
                     )
@@ -109,72 +114,91 @@ class _CustomerProfileState extends State<CustomerProfile> {
     );
   }
 
-  _buildMenuList(appLanguage, state) {
+  _buildMenuList(appLanguage, state, AppCountry appCountry) {
     bool isEnglish = appLanguage.appLocal == Locale('en');
     return Column(
       children: <Widget>[
         Container(
           height: 50,
           width: MediaQuery.of(context).size.width,
-
           color: Colors.grey[200],
           child: Padding(
-            padding: const EdgeInsets.only(left: 16.0, top: 16,right:16),
+            padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
             child: Text(
               AppLocalizations.of(context).translate('settings'),
             ),
           ),
         ),
-        BlocBuilder<PreferenceBloc, PreferenceStates>(
-            builder: (context, substate) {
-          if (substate is FetchCountryPreferenceSuccess)
-            return ListTile(
-              leading: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  FaIcon(
-                    FontAwesomeIcons.globe,
-                    size: 18,
+        ListTile(
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FaIcon(
+                FontAwesomeIcons.globe,
+                size: 18,
+              ),
+            ],
+          ),
+          trailing: Container(
+            width: 55,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Image.network(
+                  "${GlobalConfiguration().getString("baseURL")}${appCountry.chosenCountry.thumbnail}",
+                  width: 25,
+                  height: 15,
+                  fit: BoxFit.cover,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 0.0),
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
                   ),
-                ],
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Text(substate.country.nameEnglish),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                    ),
-                  )
-                ],
-              ),
-              title: Text(
-                AppLocalizations.of(context).translate('country'),
-              ),
-              onTap: () {},
-            );
-          else
-            return ListTile(
-              leading: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  FaIcon(
-                    FontAwesomeIcons.globe,
-                    size: 18,
-                  ),
-                ],
-              ),
-              title: Text(
-                AppLocalizations.of(context).translate('country'),
-              ),
-              onTap: () {},
-            );
-        }),
+                )
+              ],
+            ),
+          ),
+          title: Text(
+            AppLocalizations.of(context).translate('country'),
+          ),
+          onTap: () {
+            ///change country
+
+            showModalBottomSheet(
+                context: context,
+                builder: (BuildContext bc) {
+                  return BlocProvider<PreferenceBloc>(
+                    create: (context) =>
+                        PreferenceBloc()..add(FetchCountryList()),
+                    child: BlocBuilder<PreferenceBloc, PreferenceStates>(
+                        builder: (context, state) {
+                      if (state is LoadCountryListSuccess)
+                        return CountryListCard(
+                          countries: state.countries,
+                          function: (selectedCountry) {
+                            appCountry.changeCountry(selectedCountry);
+                          },
+                        );
+                      else
+                        return Container(
+                            height: 200,
+                            alignment: Alignment.center,
+                            child: Container(
+                              height: 30,
+                              width: 30,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            ));
+                    }),
+                  );
+                });
+          },
+        ),
         ListTile(
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -192,11 +216,11 @@ class _CustomerProfileState extends State<CustomerProfile> {
               ? Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Text("English"),
                     Padding(
-                      padding: const EdgeInsets.only(left: 8.0,right:8.0),
+                      padding: const EdgeInsets.only(left: 4.0),
                       child: Icon(
                         Icons.arrow_forward_ios,
                         size: 16,
@@ -229,11 +253,10 @@ class _CustomerProfileState extends State<CustomerProfile> {
           padding: const EdgeInsets.all(8.0),
           child: Container(
             width: MediaQuery.of(context).size.width,
-
             height: 50,
             color: Colors.grey[200],
             child: Padding(
-              padding: const EdgeInsets.only(left: 16.0, top: 16,right:16),
+              padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
               child: Text(
                 AppLocalizations.of(context).translate('reach-out-to-us'),
               ),
@@ -250,6 +273,10 @@ class _CustomerProfileState extends State<CustomerProfile> {
               ),
             ],
           ),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+          ),
           title: Text(
             AppLocalizations.of(context).translate('call'),
           ),
@@ -262,11 +289,15 @@ class _CustomerProfileState extends State<CustomerProfile> {
               Icon(Icons.message),
             ],
           ),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+          ),
           title: Text(
             AppLocalizations.of(context).translate('chat-to-us'),
           ),
           onTap: () {
-            handleChat();
+            new CustomerCareController().startChat();
           },
         ),
         ListTile(
@@ -275,6 +306,10 @@ class _CustomerProfileState extends State<CustomerProfile> {
             children: <Widget>[
               Icon(Icons.message),
             ],
+          ),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
           ),
           title: Text(
             AppLocalizations.of(context).translate('help'),
@@ -289,179 +324,14 @@ class _CustomerProfileState extends State<CustomerProfile> {
         SizedBox(
           height: 20,
         ),
-        bottomContainer(state)
+        BottomContainer(state is LogInStatusResponse && state.isLoggedIn)
       ],
-    );
-  }
-
-  void handleLogout(context) {
-    BlocProvider.of<LoginBloc>(context).add(Logout());
-  }
-
-  void handleLogin(context) {
-    Navigator.pushNamed(context, '/loginMainPage');
-  }
-
-  void handleChat() {
-    startChatSystem();
-  }
-
-  Future<void> startChatSystem() async {
-    String result;
-    try {
-      result = await platform.invokeMethod('getChat');
-    } on PlatformException catch (e) {
-      result = "Platform Method Error: '${e.message}'.";
-    }
-    Logger().d("******$result");
-  }
-
-  bottomContainer(state) {
-    return Container(
-      height: 160,
-      color: Colors.grey[200],
-      child: Column(
-        children: <Widget>[
-          state is LogInStatusResponse && state.isLoggedIn
-              ? Center(
-                  child: FlatButton(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0,right:8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-
-                            MdiIcons.login,
-                            size: 18,
-                            color: Colors.grey,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0,right:8.0),
-                            child: Text(
-                              AppLocalizations.of(context).translate('logout'),
-                              style:
-                                  TextStyle(color: Colors.grey),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    onPressed: () {
-                      handleLogout(context);
-                    },
-                  ),
-                )
-              : Container(),
-          Container(
-            alignment: Alignment.center,
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      FaIcon(
-                        FontAwesomeIcons.facebook,
-                        color: Colors.grey,
-                        size: 14,
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      FaIcon(
-                        FontAwesomeIcons.instagram,
-                        color: Colors.grey,
-                        size: 14,
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      FaIcon(
-                        FontAwesomeIcons.twitter,
-                        color: Colors.grey,
-                        size: 14,
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      FaIcon(
-                        FontAwesomeIcons.linkedin,
-                        color: Colors.grey,
-                        size: 14,
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Row(
-                    children: <Widget>[
-                      Spacer(
-                        flex: 2,
-                      ),
-                      Text(
-                        AppLocalizations.of(context).translate('terms-of-use'),
-                        style: TextStyle(fontSize: 10, color: Colors.grey),
-                      ),
-                      Spacer(
-                        flex: 1,
-                      ),
-                      Text(
-                        AppLocalizations.of(context).translate('terms-of-sale'),
-                        style: TextStyle(fontSize: 10, color: Colors.grey),
-                      ),
-                      Spacer(
-                        flex: 1,
-                      ),
-                      Text(
-                        AppLocalizations.of(context).translate('privacy-policy'),
-                        style: TextStyle(fontSize: 10, color: Colors.grey),
-                      ),
-                      Spacer(
-                        flex: 2,
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Row(
-                    children: <Widget>[
-                      Spacer(
-                        flex: 2,
-                      ),
-                      Text(
-                        AppLocalizations.of(context).translate('warranty-policy'),
-                        style: TextStyle(fontSize: 10, color: Colors.grey),
-                      ),
-                      Spacer(
-                        flex: 1,
-                      ),
-                      Text(
-                        AppLocalizations.of(context).translate('return-policy'),
-
-                        style: TextStyle(fontSize: 10, color: Colors.grey),
-                      ),
-                      Spacer(
-                        flex: 2,
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
-      ),
     );
   }
 
   _buildLoggedInUserMenus(AppLanguage appLanguage, StartupStates state) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         ListTile(
           leading: Column(
@@ -573,7 +443,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
           width: MediaQuery.of(context).size.width,
           color: Colors.grey[200],
           child: Padding(
-            padding: const EdgeInsets.only(left: 16.0, top: 16,right:16),
+            padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
             child: Text(
               AppLocalizations.of(context).translate('explore'),
             ),
@@ -601,7 +471,6 @@ class _CustomerProfileState extends State<CustomerProfile> {
           },
         ),
         ListTile(
-
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[

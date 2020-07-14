@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/view/cart/cart-page.dart';
+import 'package:tienda/view/notification/notification-screen.dart';
 import 'package:tienda/view/search/search-page.dart';
 import 'package:tienda/view/wishlist/wishlist-main-page.dart';
 import 'package:tienda/view/wishlist/wishlist-page.dart';
@@ -17,11 +18,13 @@ class CustomAppBar extends StatelessWidget {
   final bool showWishList;
   final bool showLogo;
   final bool showSearch;
+  final bool showNotification;
   final Widget bottom;
 
   CustomAppBar(
       {this.title,
       this.showCart,
+        this.showNotification,
       this.showWishList,
       this.showLogo,
       this.showSearch,
@@ -64,6 +67,22 @@ class CustomAppBar extends StatelessWidget {
             },
             icon: Icon(
               Icons.search,
+              size: 20,
+            ),
+          ),
+        if (showNotification != null && showNotification)
+          IconButton(
+            constraints: BoxConstraints.tight(Size.square(40)),
+            padding: EdgeInsets.all(0),
+            visualDensity: VisualDensity.compact,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationScreen()),
+              );
+            },
+            icon: Icon(
+              Icons.notifications_none,
               size: 20,
             ),
           ),

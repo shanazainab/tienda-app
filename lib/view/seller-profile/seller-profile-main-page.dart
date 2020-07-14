@@ -47,8 +47,25 @@ class SellerProfilePage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
-                                Text("John Doe"),
-                                Text("${AppLocalizations.of(context).translate("last-online")} ${AppLocalizations.of(context).translate("today")}")
+                                Row(
+                                  children: <Widget>[
+                                    Text("John Doe",
+                                    style: TextStyle(
+                                      fontSize: 24
+                                    ),),
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    Icon(Icons.verified_user,
+                                    size: 16,
+                                    color: Colors.lightBlue,)
+                                  ],
+                                ),
+                                Text("${AppLocalizations.of(context).translate("last-online")} ${AppLocalizations.of(context).translate("today")}",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey
+                                ),)
 
                               ],
                             ),

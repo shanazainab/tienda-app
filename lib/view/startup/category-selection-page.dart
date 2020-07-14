@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -106,20 +107,11 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                                     child: CircleAvatar(
                                       maxRadius: 120.0,
                                       backgroundImage: NetworkImage(
-                                          state.categories[index].thumbnail),
+                                        state.categories[index].thumbnail,
+                                      ),
                                     ),
                                     shape: CircleBorder(),
                                   ),
-//                                  CircleAvatar(
-//                                    maxRadius: 120,
-//                                    backgroundImage: categoryPreferences[
-//                                                    state.categories[index]] !=
-//                                                null &&
-//                                            categoryPreferences[
-//                                                state.categories[index]]
-//                                        ? state.categories[index].thumbnail
-//                                        : Colors.grey[200],
-//                                  ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 16.0),
                                     child: new Text(
@@ -134,7 +126,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                             ),
                             staggeredTileBuilder: (int index) =>
                                 new StaggeredTile.count(
-                                    2, index.isEven ? 3: 2),
+                                    2, index.isEven ? 3 : 2),
                             mainAxisSpacing: 20.0,
                             crossAxisSpacing: 20.0,
                           ),

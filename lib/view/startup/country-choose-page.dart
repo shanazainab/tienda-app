@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
-import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:tienda/app-country.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/events/preference-events.dart';
 import 'package:tienda/bloc/events/startup-events.dart';
@@ -21,39 +21,61 @@ class CountryChoosePage extends StatefulWidget {
   _CountryChoosePageState createState() => _CountryChoosePageState();
 }
 
-class _CountryChoosePageState extends State<CountryChoosePage> {
+class _CountryChoosePageState extends State<CountryChoosePage>
+    with SingleTickerProviderStateMixin {
   String currentCountry = "";
   PreferenceBloc preferenceBloc = new PreferenceBloc();
   bool viewCountryList = false;
   final GlobalKey key = new GlobalKey();
-
+  String currentLocationCountry;
   PanelController panelController = new PanelController();
+  AnimationController _controller;
+  Animation<Offset> _offsetAnimation;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     preferenceBloc.add(FetchCountryList());
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+    _offsetAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(0.0, 1.5),
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.bounceOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _controller.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var appLanguage = Provider.of<AppLanguage>(context);
+    var appCountry = Provider.of<AppCountry>(context);
 
     return BlocProvider<PreferenceBloc>(
         create: (context) => preferenceBloc,
         child: BlocListener<PreferenceBloc, PreferenceStates>(
             listener: (context, state) async {
               if (state is LoadCountryListSuccess) {
-                String currentLocationCountry = await getTheCurrentLocation();
+                currentLocationCountry = await getTheCurrentLocation();
                 if (appLanguage.appLocal == Locale('en')) {
                   setState(() {
                     currentCountry = currentLocationCountry;
                   });
+                  _controller.stop(canceled: true);
                 } else {
                   print("LANGUAGE IN PREFERENCE: ARABIC");
                   for (final country in state.countries) {
-                    print(country.nameArabic);
                     if (country.nameEnglish.toLowerCase() ==
                         currentLocationCountry.toLowerCase()) {
                       print("ITS EQUAL");
@@ -62,6 +84,12 @@ class _CountryChoosePageState extends State<CountryChoosePage> {
                         currentCountry = country.nameArabic;
                       });
                     }
+                  }
+                }
+                for (final country in state.countries) {
+                  if (country.nameEnglish.toLowerCase() ==
+                      currentLocationCountry.toLowerCase()) {
+                    appCountry.changeCountry(country);
                   }
                 }
               }
@@ -89,7 +117,7 @@ class _CountryChoosePageState extends State<CountryChoosePage> {
                           Container(
                             child: Text(
                               AppLocalizations.of(context)
-                                  .translate('country-message'),
+                                  .translate('choose-your-country'),
                               style: TextStyle(fontSize: 16),
                             ),
                           ),
@@ -101,7 +129,22 @@ class _CountryChoosePageState extends State<CountryChoosePage> {
                                   currentCountry,
                                   style: TextStyle(fontSize: 24),
                                 )
-                              : FadingText('fetching your location...'),
+                              : Column(
+                                  children: <Widget>[
+                                    SlideTransition(
+                                      position: _offsetAnimation,
+                                      child: Image.asset(
+                                        "assets/icons/address-pin.png",
+                                        height: 30,
+                                        width: 30,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 30.0),
+                                      child: Text("fetching your location.."),
+                                    )
+                                  ],
+                                ),
                           Spacer(
                             flex: 2,
                           ),
@@ -109,7 +152,8 @@ class _CountryChoosePageState extends State<CountryChoosePage> {
                               onPressed: () {
                                 handleNext(context);
                               },
-                              child: Text("CONTINUE")),
+                              child: Text(AppLocalizations.of(context)
+                                  .translate("continue"))),
                           Spacer(
                             flex: 1,
                           ),
@@ -129,9 +173,13 @@ class _CountryChoosePageState extends State<CountryChoosePage> {
                             countries: state.countries,
                             function: (selectedCountry) {
                               setState(() {
-                                currentCountry = selectedCountry;
+                                currentCountry =
+                                    appLanguage.appLocal == Locale('en')
+                                        ? selectedCountry.nameEnglish
+                                        : selectedCountry.nameArabic;
                                 panelController.close();
                               });
+                              appCountry.changeCountry(selectedCountry);
                             },
                           );
                         else

@@ -1,6 +1,5 @@
 {
   "1": "CUSTOMER PROFILE MENU",
-  "country-message": " اختر بلدك",
   "orders": "الطلبات",
   "returns": "الطلبات الإرجاع",
   "wishlist": "مفضلة",
@@ -23,23 +22,32 @@
   "edit-profile": "تعديل الملف الشخصي",
   "following": "التالية",
   "help": "مساعدة",
+
+
   "2": "HOME PAGE BOTTOM NAV BAR",
   "home": "الرئيسية",
   "category": "الفئة",
   "sellers": "الباعة",
   "profile": "الملف الشخصي",
   "shop-live": "التسو قحي",
+
+
   "3": "EDIT PROFILE",
   "name": "اسم",
   "email": "البريد الإلكتروني",
   "dob": "تاريخ الولادة",
   "save": "حفظ",
+
+
   "4": "CUSTOMER PROFILE BOTTOM BAR",
   "privacy-policy": "سياسة خاصة",
   "terms-of-sale": "شروط البيع",
   "terms-of-use": "شروط الاستخدام",
   "return-policy": "سياسة العائدات",
   "warranty-policy": "سياسة الضمان",
+
+
+
   "5": "CUSTOMER ORDERS MAIN PAGE ",
   "all": "الكل",
   "in-process": "معالجة",
@@ -47,12 +55,21 @@
   "order-number": "رقم الأمر",
   "ordered": "طلب",
   "delivery": "ايصال",
+
+
+
   "6": "CART PAGE",
   "cart": "عربة التسوق",
+
+
+
   "7": "WISHLIST PAGE",
   "add-to-cart": "أضف الى الحقيبة",
   "on-discount": "خصم على",
   "popular": "محبوب",
+
+
+
   "8": "TIENDA HOMEPAGE",
   "featured-sellers": "البائعين المميزين",
   "recommended-for-you": "موصى به لك",
@@ -60,9 +77,13 @@
   "new-arrival": "الوافد الجديد",
   "top-categories": "أعلى الفئات",
   "featured-brands": "ماركات مميزة",
+
+
   "9": "FILTER AND SORT",
   "filter": "مرشح",
   "sort": "فرز",
+
+
   "10": "SELLER PROFILE MAIN PAGE",
   "follow": "اتبع",
   "products": "منتجات",
@@ -73,13 +94,32 @@
   "popular-videos": "الناس الفيديو",
   "last-online": "آخر ظهور على الإنترنت",
   "today": "اليوم",
+
+
+
+
   "11": "SELLER PROFILES LIST VIEW",
   "join": "انضم",
   "message": "رسالة",
   "live": "بث مباشر",
+
+
+
+
   "12": "LIVE VIDEO STREAM FULL SCREEEN",
   "type-your-comment": "اكتب تعليقك",
+
+
+
   "13": "SEARCH PAGE",
   "search-for-brands-and-products": "ابحث عن العلامات التجارية والمنتجات",
-  "recent-searches": "عمليات البحث الأخيرة"
+  "recent-searches": "عمليات البحث الأخيرة",
+
+
+
+
+  "14": "INTRODUCTION PAGES",
+  "pick-your-language": "اختر لغتك",
+  "continue": "استمر",
+  "choose-your-country": "اختر بلدك"
 }

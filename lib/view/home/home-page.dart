@@ -6,7 +6,7 @@ import 'package:tienda/localization.dart';
 import 'package:tienda/view/categories/categories-page.dart';
 import 'package:tienda/view/home/home-bottom-app-bar.dart';
 import 'package:tienda/view/home/tienda-home-page.dart';
-import 'package:tienda/view/customer-profile/profile-menu.dart';
+import 'package:tienda/view/customer-profile/profile-main-page.dart';
 import 'package:tienda/view/live-stream/shop-live-screen.dart';
 import 'package:tienda/view/seller-profile/profiles-view-main.dart';
 

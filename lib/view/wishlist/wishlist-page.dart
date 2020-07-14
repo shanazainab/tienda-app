@@ -25,7 +25,8 @@ class WishListPage extends StatelessWidget {
       shrinkWrap: true,
       itemCount: wishList.wishListItems.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          childAspectRatio: MediaQuery.of(context).size.height / 850,
+          childAspectRatio:  MediaQuery.of(context).size.width /
+              (MediaQuery.of(context).size.height / 1.4),
           crossAxisCount: 2),
       itemBuilder: (BuildContext context, int index) {
         return new Card(

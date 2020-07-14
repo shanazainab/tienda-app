@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:tienda/view/order/order-tracking-page.dart';
 import 'package:tienda/view/order/order-tracking-time-line.dart';
 import 'dart:math' as math;
 
@@ -13,12 +15,17 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
 
+  final _trackNowStream = BehaviorSubject<bool>();
+
   double height = 150;
 
   @override
   void initState() {
     // TODO: implement initState
+    _trackNowStream.add(false);
+
     super.initState();
+
     _controller =
         AnimationController(vsync: this, duration: Duration(seconds: 2));
   }
@@ -82,7 +89,8 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
@@ -137,7 +145,9 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
                 setState(() {
                   height = 150;
                 });
-                _controller.reverse();
+                _controller.reverse().then((value) {
+                  _trackNowStream.add(false);
+                });
               },
               child: AnimatedContainer(
                 duration: Duration(seconds: 2),
@@ -158,10 +168,18 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
                           ),
                           FlatButton(
                             onPressed: () {
-                              setState(() {
-                                height = 400;
-                              });
-                              _controller.forward();
+//                              _trackNowStream.add(true);
+//
+//                              setState(() {
+//                                height = 400;
+//                              });
+//                              _controller.forward();
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => OrderTrackingPage()),
+                              );
                             },
                             child: Text(
                               "Track Now",
@@ -181,17 +199,24 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
                             ),
                           );
                         },
-                        child: Container(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 16.0),
-                            child: OrderTrackingTimeLine(
-                              expand: true,
-                              topRowItems: ["", "", ""],
-                              numberOfTrackLines: 3,
-                              bottomRowItems: ["", "", ""],
-                            ),
-                          ),
-                        ),
+                        child: StreamBuilder<bool>(
+                            stream: _trackNowStream,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<bool> snapshot) {
+                              return Container(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 16.0),
+                                  child: OrderTrackingTimeLine(
+                                    expand: true,
+                                    rightItems: ["Packed", "", ""],
+                                    showDescription: snapshot.data,
+                                    hideElements: snapshot.data,
+                                    topRowItems: ["Packed", "", ""],
+                                    numberOfTrackLines: 3,
+                                  ),
+                                ),
+                              );
+                            }),
                       ),
                     ],
                   ),

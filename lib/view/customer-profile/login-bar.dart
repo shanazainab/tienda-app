@@ -12,7 +12,7 @@ class CustomerLoginMenu extends StatelessWidget {
 
     return Card(
       margin: EdgeInsets.all(0),
-      elevation: 4,
+      elevation: 0,
 
       child: Padding(
         padding: const EdgeInsets.all(16.0),

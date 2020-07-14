@@ -6,7 +6,7 @@ import 'package:tienda/view/seller-profile/seller-profile-main-page.dart';
 import 'package:video_player/video_player.dart';
 
 class SellerProfileContainer extends StatelessWidget {
-  GlobalKey pageViewGlobalKey;
+  final GlobalKey pageViewGlobalKey;
 
   SellerProfileContainer(this.pageViewGlobalKey);
 
@@ -106,7 +106,7 @@ class SellerProfileContainer extends StatelessWidget {
           child: Chewie(
             controller: ChewieController(
               videoPlayerController: VideoPlayerController.network(
-                  'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4'),
+                  'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4')..initialize(),
               aspectRatio: 3 / 2,
               autoPlay: false,
               looping: true,
@@ -119,7 +119,11 @@ class SellerProfileContainer extends StatelessWidget {
             child: FlatButton(
                 onPressed: () {
                   PageView pageView = pageViewGlobalKey.currentWidget;
-                  pageView.controller.jumpToPage(1);
+                  pageView.controller.animateToPage(1,
+                  duration: Duration(
+                    seconds: 1
+                  ),
+                  curve: Curves.easeIn);
                 },
                 child: Text(
     AppLocalizations.of(context).translate("see-all"),

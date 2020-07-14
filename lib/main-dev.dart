@@ -8,6 +8,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tienda/app-country.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/app-settings.config.dart';
 import 'package:tienda/bloc-delegate.dart';
@@ -39,8 +40,8 @@ import 'bloc/category-bloc.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  sharedPreferences.clear();
+//  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+//  sharedPreferences.clear();
 
   ///Enable firebase crash analytics
   // Crashlytics.instance.enableInDevMode = true;
@@ -52,7 +53,7 @@ Future<void> main() async {
     ..initializeConnectivityListener();
 
   ///load global app settings
-  GlobalConfiguration().loadFromMap(appSettings);
+  GlobalConfiguration().loadFromMap(appSettingsDev);
 
   ///add firebase crash analytics to entire MaterialApp
   /* runZonedGuarded(() async {
@@ -66,6 +67,9 @@ Future<void> main() async {
   AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
 
+  AppCountry appCountry = AppCountry();
+  await appCountry.fetchCountry();
+
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp]); // To turn off landscape mode
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -73,7 +77,6 @@ Future<void> main() async {
     // For iOS.
     // Use [dark] for white status bar and [light] for black status bar.
     statusBarBrightness: Brightness.dark,
-
   ));
   runApp(MultiBlocProvider(
     providers: [
@@ -94,6 +97,7 @@ Future<void> main() async {
       ),
     ],
     child: App(
+      appCountry: appCountry,
       appLanguage: appLanguage,
     ),
   ));
@@ -103,16 +107,18 @@ class App extends StatelessWidget {
   final FirebaseAnalytics analytics = FirebaseAnalytics();
   final AppLanguage appLanguage;
 
-  App({this.appLanguage});
+  final AppCountry appCountry;
+
+  App({this.appLanguage, this.appCountry});
 
   ///change font family based on language locale
 
   @override
   Widget build(BuildContext context) {
-
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => appLanguage),
+          ChangeNotifierProvider(create: (_) => appCountry),
         ],
         child: Consumer<AppLanguage>(builder: (context, model, child) {
           return MaterialApp(
@@ -126,7 +132,6 @@ class App extends StatelessWidget {
               GlobalMaterialLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-
 
             locale: model.appLocal,
 
@@ -170,14 +175,13 @@ class App extends StatelessWidget {
 
             ///App wide theme
             theme: ThemeData(
-                fontFamily:
-                    appLanguage.appLocal != Locale('en') ? 'Cairo' : '',
+                fontFamily: appLanguage.appLocal != Locale('en') ? 'Cairo' : '',
                 textTheme: TextTheme(
                     headline1: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                )),
+                      color: Colors.grey,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    )),
                 appBarTheme: AppBarTheme(
                     color: Colors.white,
                     iconTheme: IconThemeData(color: Colors.grey),

@@ -84,8 +84,15 @@ class SellerProfilesListView extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Text(
-                                    "Seller name",
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        "Seller name",
+                                      ),
+                                      index == 0?Icon(Icons.verified_user,
+                                      size: 16,
+                                      color: Colors.lightBlue,):Container()
+                                    ],
                                   ),
                                   Text(
                                     "One line description",

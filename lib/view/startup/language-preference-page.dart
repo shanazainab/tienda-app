@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/bloc/events/startup-events.dart';
 import 'package:tienda/bloc/startup-bloc.dart';
+import 'package:tienda/localization.dart';
 
 import '../../app-language.dart';
 
@@ -29,7 +30,7 @@ class _LanguagePreferencePageState extends State<LanguagePreferencePage> {
             height: 200,
             alignment: Alignment.center,
             child: Text(
-              'Pick Your Language',
+             AppLocalizations.of(context).translate("pick-your-language"),
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -67,36 +68,6 @@ class _LanguagePreferencePageState extends State<LanguagePreferencePage> {
                     ),
                   ],
                 )
-
-//              CupertinoPicker(
-//
-//                  itemExtent: 60,
-//                  diameterRatio: 2,
-//                  backgroundColor: Colors.white,
-//                  looping: true,
-//                  useMagnifier: true,
-//                  onSelectedItemChanged: (item) {
-//                    print('ITEM SELECTED FROM PICKER: $item');
-//
-//                    ///0: English
-//                    ///1: Arabic
-//
-//                    item == 0
-//                        ? appLanguage.changeLanguage(Locale("en"))
-//                        : appLanguage.changeLanguage(Locale("ar"));
-//                  },
-//                  children: [
-//                    Text("English"),
-//                    Text(
-//                      "العربية",
-//                      locale: Locale.fromSubtags(
-//                          countryCode: 'ae', languageCode: 'ar'),
-//                      style: TextStyle(
-//                          locale: Locale.fromSubtags(
-//                              countryCode: 'ae', languageCode: 'ar')),
-//                    ),
-//                  ]),
-
                 ),
           ),
           Container(
@@ -106,7 +77,7 @@ class _LanguagePreferencePageState extends State<LanguagePreferencePage> {
               onPressed: () {
                 handleNext(context);
               },
-              child: Text("CONTINUE"),
+              child: Text(AppLocalizations.of(context).translate("continue")),
             ),
           ),
         ],

@@ -7,7 +7,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
-        android:label="tienda">
+        android:label="@string/app_name">
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"

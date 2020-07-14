@@ -28,6 +28,7 @@ class TiendaHomePage extends StatelessWidget {
             showWishList: true,
             showSearch: true,
             showCart: true,
+            showNotification: true,
             showLogo: true,
           )),
       body: SafeArea(

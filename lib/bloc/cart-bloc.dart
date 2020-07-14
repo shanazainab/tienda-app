@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +13,6 @@ import 'package:tienda/controller/login-controller.dart';
 import 'package:tienda/model/cart.dart';
 
 class CartBloc extends Bloc<CartEvents, CartStates> {
-
   @override
   CartStates get initialState => Initialized();
 
@@ -81,7 +81,10 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
 
     ///LoggedIn User call the cart API
     bool isLoggedIn = await new LoginController().checkLoginStatus();
-    if (isLoggedIn) {}
+    if (isLoggedIn) {
+      ///Update cart to backend
+      callAddCartApi(event.cartItem);
+    }
   }
 
   Stream<CartStates> _mapEditCartItemToStates(EditCartItem event) async* {
@@ -96,6 +99,14 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
     }
     sharedPreferences.setString("cart", json.encode(cart.toJson()));
     yield EditCartItemSuccess();
+
+    ///LoggedIn User call the cart API
+    ///TODO: EDIT CART BACKEND API
+//    bool isLoggedIn = await new LoginController().checkLoginStatus();
+//    if (isLoggedIn) {
+//      ///Update cart to backend
+//      callAddCartApi(event.cartItem);
+//    }
   }
 
   Stream<CartStates> _mapDeleteCartItemToStates(DeleteCartItem event) async* {
@@ -107,12 +118,21 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
     sharedPreferences.setString("cart", json.encode(cart.toJson()));
     yield DeleteCartItemSuccess(cart: cart);
     yield LoadCartSuccess(cart: cart);
+
+    ///LoggedIn User call the cart API
+    bool isLoggedIn = await new LoginController().checkLoginStatus();
+    if (isLoggedIn) {
+      ///delete cart item to backend
+      callDeleteCartAPI(event.cartItem);
+    }
   }
 
   callAddCartApi(CartItem cartItem) async {
     String status;
 
     final dio = Dio();
+    String value = await FlutterSecureStorage().read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
     final client =
         CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.addToCart(cartItem.product.id).then((response) {
@@ -128,6 +148,33 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
       if (err is DioError) {
         DioError error = err;
         Logger().e("ADD-CART-ERROR:", error);
+      }
+    });
+
+    return status;
+  }
+
+  callDeleteCartAPI(CartItem cartItem) async {
+    String status;
+
+    final dio = Dio();
+    String value = await FlutterSecureStorage().read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
+    final client =
+        CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
+    await client.deleteFromCart(cartItem.product.id).then((response) {
+      Logger().d("DELETE-CART-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          status = "success";
+          break;
+        case 407:
+          status = "error";
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+        Logger().e("DELETE-CART-ERROR:", error);
       }
     });
 

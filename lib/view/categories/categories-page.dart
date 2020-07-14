@@ -176,48 +176,63 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                         itemBuilder: (BuildContext context,
                                                 int subIndex) =>
                                             Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(2),
-                                                child: Container(
-                                                  height: 60,
-                                                  width: 50,
-                                                  color: Colors.grey[200],
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+
+                                                ///DEVELOPER NOTE: expansion_tile.dart has been
+                                                /// edited to fit the requirement
+                                                ///Keep track on version update
+
+                                                child: ExpansionTile(
+                                                  leading: CircleAvatar(
+                                                    backgroundColor:
+                                                        Colors.grey[200],
+                                                    radius: 30,
+                                                  ),
+                                                  backgroundColor: Colors.white,
+
+                                                  children:
+                                                      _buildSubSubCategory(),
+                                                  title: Text(
+                                                      appLanguage.appLocal ==
+                                                              Locale('en')
+                                                          ? state
+                                                              .categories[index]
+                                                              .nameEnglish
+                                                          : state
+                                                              .categories[index]
+                                                              .nameArabic),
+                                                )
+//                                          child: Row(
+//                                            children: <Widget>[
+//                                              CircleAvatar(
+//                                                backgroundColor: Colors.grey[200],
+//                                                radius: 30,
+//                                              ),
+//                                              Padding(
+//                                                padding: const EdgeInsets.only(
+//                                                    left: 8.0, right: 8.0),
+//                                                child: Column(
+//                                                  mainAxisAlignment:
+//                                                      MainAxisAlignment.center,
+//                                                  crossAxisAlignment:
+//                                                      CrossAxisAlignment.start,
+//                                                  children: <Widget>[
+//                                                    Text(appLanguage.appLocal ==
+//                                                            Locale('en')
+//                                                        ? state
+//                                                            .categories[index]
+//                                                            .nameEnglish
+//                                                        : state
+//                                                            .categories[index]
+//                                                            .nameArabic),
+//
+//                                                  ],
+//                                                ),
+//                                              ),
+//                                            ],
+//                                          ),
                                                 ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8.0, right: 8.0),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Text(appLanguage.appLocal ==
-                                                            Locale('en')
-                                                        ? state
-                                                            .categories[index]
-                                                            .nameEnglish
-                                                        : state
-                                                            .categories[index]
-                                                            .nameArabic),
-                                                    Text(
-                                                      'One short description',
-                                                      softWrap: true,
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          color: Colors.grey),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
                                       )
                                     ],
                                   ),
@@ -237,5 +252,27 @@ class _CategoriesPageState extends State<CategoriesPage> {
             }));
       },
     );
+  }
+
+  _buildSubSubCategory() {
+    List<Widget> widgets = new List();
+    for (int i = 0; i < 5; ++i) {
+      widgets.add(Padding(
+        padding: const EdgeInsets.only(top:16.0,left: 8),
+        child: Card(
+            elevation: 0,
+            color: Colors.grey[200],
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.only(left:8.0,right:8.0),
+              child: Text("test",style: TextStyle(
+                fontSize: 12
+              ),),
+            )),
+      ));
+    }
+
+    return widgets;
   }
 }

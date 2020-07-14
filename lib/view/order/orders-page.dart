@@ -90,9 +90,10 @@ class OrdersPage extends StatelessWidget {
                         ),
                         OrderTrackingTimeLine(
                           expand: false,
-                          topRowItems: ["", "", ""],
+                          showDescription: false,
+                          hideElements: false,
+                          topRowItems: ["Packed", "", ""],
                           numberOfTrackLines: 3,
-                          bottomRowItems: ["", "", ""],
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,

@@ -1,9 +1,15 @@
+import 'dart:io';
+
+import 'package:camera/camera.dart';
+
 import 'package:flutter/material.dart';
 import 'package:tienda/controller/ml-controller.dart';
 
 import 'package:tienda/localization.dart';
+import 'package:tienda/view/widgets/image-option-dialogue.dart';
 
 import 'package:tienda/view/search/search-home-container.dart';
+import 'package:tienda/view/search/voice-search.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -11,17 +17,37 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  CameraDescription firstCamera;
+  FocusNode searchFocus = new FocusNode();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initializeCamera();
+  }
+
+  initializeCamera() async {
+    final cameras = await availableCameras();
+    firstCamera = cameras.first;
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        brightness: Brightness.light, // or use Brightness.dark
-
+        brightness: Brightness.light,
         elevation: 0,
-
         title: Padding(
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
           child: TextField(
+            focusNode: searchFocus,
             decoration: InputDecoration(
                 contentPadding: EdgeInsets.all(8),
                 filled: true,
@@ -50,28 +76,62 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
         actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 8, right: 8.0),
-            child: Icon(
+          IconButton(
+            constraints: BoxConstraints.tight(Size.square(40)),
+            padding: EdgeInsets.all(0),
+            visualDensity: VisualDensity.compact,
+            onPressed: () {
+              searchFocus.unfocus();
+              showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext bc) {
+                    return VoiceSearch();
+                  });
+            },
+            icon: Icon(
               Icons.keyboard_voice,
               size: 22,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-            child: GestureDetector(
-              onTap: () {
-                MLController().createImageLabels();
-              },
-              child: Icon(
-                Icons.camera_alt,
-                size: 22,
-              ),
+          IconButton(
+            constraints: BoxConstraints.tight(Size.square(40)),
+            padding: EdgeInsets.all(0),
+            visualDensity: VisualDensity.compact,
+            onPressed: () {
+              // MLController().createImageLabels();
+              searchFocus.unfocus();
+              showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext bc) {
+                    return ImageOptionDialogue(
+                      camera: null,
+                      selectedImage: (image) {
+                        handleImageSearchQuery(image);
+                      },
+                    );
+                  });
+            },
+            icon: Icon(
+              Icons.camera_alt,
+              size: 22,
             ),
+          ),
+          SizedBox(
+            width: 8,
           )
         ],
       ),
-      body: SearchHomeContainer(),
+      body: SearchHomeContainer(
+        onScroll: (status) {
+          print("CALLBACK RECEIVED");
+
+          if (status == "START") searchFocus.unfocus();
+        },
+      ),
     );
+  }
+
+  void handleImageSearchQuery(File image) {
+    new MLController().createImageLabels(image);
   }
 }

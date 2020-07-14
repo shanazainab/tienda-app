@@ -9,6 +9,10 @@ import 'package:tienda/bloc/states/address-states.dart';
 import 'package:tienda/view/address/choose-address-page.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 
+
+
+
+
 class SavedAddressPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -40,11 +44,13 @@ class SavedAddressPage extends StatelessWidget {
           ),
           body: BlocBuilder<AddressBloc, AddressStates>(
               builder: (context, state) {
-            if (state is LoadAddressSuccess)
+         //   if (state is LoadAddressSuccess)
               return Container(
                 color: Colors.white,
                 child: new ListView.separated(
-                    itemCount: state.deliveryAddresses.length,
+                  //  itemCount: state.deliveryAddresses.length,
+                    itemCount: 4,
+
                     separatorBuilder: (BuildContext context, int index) =>
                         Divider(
                           endIndent: 16,
@@ -57,8 +63,10 @@ class SavedAddressPage extends StatelessWidget {
                         child: Container(
                           color: Colors.white,
                           child: ListTile(
-                            title: Text(state.deliveryAddresses[index].address),
-                            subtitle: Text(state.deliveryAddresses[index].name),
+//                            title: Text(state.deliveryAddresses[index].address),
+//                            subtitle: Text(state.deliveryAddresses[index].name),
+                            title: Text("name"),
+                            subtitle: Text("address"),
                           ),
                         ),
                         secondaryActions: <Widget>[
@@ -74,12 +82,12 @@ class SavedAddressPage extends StatelessWidget {
                       );
                     }),
               );
-            else
-              return Container(
-                child: Center(
-                  child: Text("No Address"),
-                ),
-              );
+//            else
+//              return Container(
+//                child: Center(
+//                  child: Text("No Address"),
+//                ),
+//              );
           })),
     );
   }

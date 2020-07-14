@@ -31,19 +31,23 @@ class WishListMainPage extends StatelessWidget {
                       isScrollable: true,
                       indicatorColor: Colors.blue,
                       labelColor: Colors.grey,
+                      labelStyle: TextStyle(),
                       unselectedLabelColor: Colors.grey,
                       unselectedLabelStyle: TextStyle(color: Colors.grey),
                       tabs: [
                         Tab(
-                          text: AppLocalizations.of(context).translate("all"),
+                          child: Text(
+                            AppLocalizations.of(context).translate("all"),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                         Tab(
-                          text: AppLocalizations.of(context)
-                              .translate("on-discount"),
+                          child: Text(AppLocalizations.of(context)
+                              .translate("on-discount")),
                         ),
                         Tab(
-                          text:
-                              AppLocalizations.of(context).translate("popular"),
+                          child: Text(AppLocalizations.of(context)
+                              .translate("popular")),
                         ),
                       ]),
                 ),
@@ -62,14 +66,12 @@ class WishListMainPage extends StatelessWidget {
                           WishListPage(state.wishList, context),
                           WishListPage(state.wishList, context),
                           WishListPage(state.wishList, context),
-
                         ]);
                       } else if (state is DeleteWishListItemSuccess) {
                         return TabBarView(children: [
                           WishListPage(state.wishList, context),
                           WishListPage(state.wishList, context),
                           WishListPage(state.wishList, context),
-
                         ]);
                       } else {
                         return Container(

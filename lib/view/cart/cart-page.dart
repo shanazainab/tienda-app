@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/wishlist-events.dart';
@@ -20,10 +21,12 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  final _selectedCartItem = BehaviorSubject<int>();
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: (){
+      onWillPop: () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
@@ -55,7 +58,8 @@ class _CartPageState extends State<CartPage> {
                   child: Text("CHECKOUT"),
                 ),
               ),
-              body: BlocBuilder<CartBloc, CartStates>(builder: (context, state) {
+              body:
+                  BlocBuilder<CartBloc, CartStates>(builder: (context, state) {
                 if (state is LoadCartSuccess)
                   return ListView.builder(
                     shrinkWrap: true,
@@ -71,8 +75,8 @@ class _CartPageState extends State<CartPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               CachedNetworkImage(
-                                imageUrl:
-                                    state.cart.cartItems[index].product.thumbnail,
+                                imageUrl: state
+                                    .cart.cartItems[index].product.thumbnail,
                                 width: 150,
                                 height: 150,
                                 fit: BoxFit.cover,
@@ -89,6 +93,10 @@ class _CartPageState extends State<CartPage> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
+                                      "Brand",
+                                      softWrap: true,
+                                    ),
+                                    Text(
                                       state.cart.cartItems[index].product
                                           .nameEnglish
                                           .substring(0, 9),
@@ -96,44 +104,191 @@ class _CartPageState extends State<CartPage> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 8.0),
-                                      child: Text(state
-                                          .cart.cartItems[index].product.price
-                                          .toStringAsFixed(2)),
+                                      child: Text(
+                                        'AED ${state.cart.cartItems[index].product.price.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
+                                    Container(
+                                        width: 120,
+                                        child: Row(
+                                          children: <Widget>[
+                                            ButtonTheme(
+                                              height: 10,
+                                              minWidth: 10,
+                                              child: RaisedButton(
+                                                  color: Colors.grey[200],
+                                                  onPressed: () {
+                                                    if (state
+                                                            .cart
+                                                            .cartItems[index]
+                                                            .quantity ==
+                                                        1) {
+                                                      ///delete the item
+                                                      ///or don do anything
+                                                    } else {}
+                                                  },
+                                                  child: Text("-")),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0, right: 8),
+                                              child: Text(state.cart
+                                                  .cartItems[index].quantity
+                                                  .toString()),
+                                            ),
+                                            ButtonTheme(
+                                              height: 10,
+                                              minWidth: 10,
+                                              child: RaisedButton(
+                                                  color: Colors.grey[200],
+                                                  onPressed: () {
+                                                    state.cart.cartItems[index]
+                                                        .quantity = state
+                                                            .cart
+                                                            .cartItems[index]
+                                                            .quantity +
+                                                        1;
+                                                  },
+                                                  child: Text('+')),
+                                            )
+                                          ],
+                                        )),
+                                    GestureDetector(
+                                      onTap: () {
+                                        if (_selectedCartItem.value != index)
+                                          _selectedCartItem.add(index);
+                                        else
+                                          _selectedCartItem.add(null);
+                                      },
+                                      child: Container(
+                                        color: Colors.grey[200],
+                                        child: Row(
+                                          children: <Widget>[
+                                            Text("Size:"),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0, right: 8),
+                                              child: Text("ONESIZE"),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    StreamBuilder<int>(
+                                        stream: _selectedCartItem,
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<int> snapshot) {
+                                          if (snapshot.data != null &&
+                                              snapshot.data == index) {
+                                            return Container(
+                                              height: 30,
+                                              child: ListView.builder(
+                                                  itemCount: 4,
+                                                  shrinkWrap: true,
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  itemBuilder: (BuildContext
+                                                              context,
+                                                          int index) =>
+                                                      Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  right: 4.0),
+                                                          child: Container(
+                                                            width: 40,
+                                                            height: 40,
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text("L"),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .grey),
+                                                            ),
+                                                          ))),
+                                            );
+                                          } else
+                                            return Container();
+                                        }),
                                   ],
                                 ),
                               )
                             ],
                           ),
-                          Divider(
-                            endIndent: 16,
-                            indent: 16,
-                          ),
+//                          Divider(
+//                            endIndent: 16,
+//                            indent: 16,
+//                          ),
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: <Widget>[
                               FlatButton(
+                                padding: EdgeInsets.all(0),
                                 onPressed: () {
                                   BlocProvider.of<CartBloc>(context).add(
                                       DeleteCartItem(
-                                          cartItem: state.cart.cartItems[index]));
+                                          cartItem:
+                                              state.cart.cartItems[index]));
                                 },
-                                child: Center(child: Text("REMOVE")),
+                                child: Center(
+                                    child: Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.delete,
+                                      size: 14,
+                                    ),
+                                    Text(
+                                      "REMOVE",
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ],
+                                )),
+                              ),
+                              Container(
+                                height: 25,
+                                color: Colors.grey[200],
+                                width: 1,
                               ),
                               FlatButton(
+                                padding: EdgeInsets.all(0),
                                 onPressed: () {
                                   BlocProvider.of<WishListBloc>(context)
                                       .add(AddToWishList(
                                           wishListItem: new WishListItem(
-                                    product: state.cart.cartItems[index].product,
+                                    product:
+                                        state.cart.cartItems[index].product,
                                   )));
 
                                   BlocProvider.of<CartBloc>(context).add(
                                       DeleteCartItem(
-                                          cartItem: state.cart.cartItems[index]));
+                                          cartItem:
+                                              state.cart.cartItems[index]));
                                 },
-                                child: Center(child: Text("MOVE TO WISHLIST")),
+                                child: Center(
+                                    child: Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.bookmark,
+                                      size: 14,
+                                    ),
+                                    Text(
+                                      "MOVE TO WISHLIST",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                )),
                               ),
                             ],
                           ),

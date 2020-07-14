@@ -5,6 +5,9 @@ import 'package:tienda/app-language.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/customer.dart';
 import 'package:tienda/view/customer-profile/edit-customer-profile.dart';
+import 'package:tienda/view/customer-profile/following-list.dart';
+import 'package:tienda/view/order/orders-main-page.dart';
+import 'package:tienda/view/returns/returns-page.dart';
 
 class CustomerProfileCard extends StatelessWidget {
   final Customer customerDetails;
@@ -46,17 +49,25 @@ class CustomerProfileCard extends StatelessWidget {
                 Spacer(
                   flex: 2,
                 ),
-                Column(
-                  children: <Widget>[
-                    Text(
-                      NumberFormat().format(20),
-                      style: TextStyle(color: Colors.lightBlue),
-                    ),
-                    Text(
-                      AppLocalizations.of(context).translate('following'),
-                      style: TextStyle(color: Colors.grey, fontSize: 10),
-                    )
-                  ],
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FollowingList()),
+                    );
+                  },
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        NumberFormat().format(20),
+                        style: TextStyle(color: Colors.lightBlue),
+                      ),
+                      Text(
+                        AppLocalizations.of(context).translate('following'),
+                        style: TextStyle(color: Colors.grey, fontSize: 10),
+                      )
+                    ],
+                  ),
                 ),
                 Spacer(
                   flex: 1,
@@ -69,17 +80,27 @@ class CustomerProfileCard extends StatelessWidget {
                 Spacer(
                   flex: 1,
                 ),
-                Column(
-                  children: <Widget>[
-                    Text(
-                      NumberFormat().format(2),
-                      style: TextStyle(color: Colors.lightBlue),
-                    ),
-                    Text(
-                      AppLocalizations.of(context).translate('orders').toUpperCase(),
-                      style: TextStyle(color: Colors.grey, fontSize: 10),
-                    )
-                  ],
+                GestureDetector(
+                  onTap: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => OrdersMainPage()),
+                    );
+                  },
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        NumberFormat().format(2),
+                        style: TextStyle(color: Colors.lightBlue),
+                      ),
+                      Text(
+                        AppLocalizations.of(context)
+                            .translate('orders')
+                            .toUpperCase(),
+                        style: TextStyle(color: Colors.grey, fontSize: 10),
+                      )
+                    ],
+                  ),
                 ),
                 Spacer(
                   flex: 1,
@@ -92,17 +113,27 @@ class CustomerProfileCard extends StatelessWidget {
                 Spacer(
                   flex: 1,
                 ),
-                Column(
-                  children: <Widget>[
-                    Text(
-                      NumberFormat().format(0),
-                      style: TextStyle(color: Colors.lightBlue),
-                    ),
-                    Text(
-                      AppLocalizations.of(context).translate('returns').toUpperCase(),
-                      style: TextStyle(color: Colors.grey, fontSize: 10),
-                    )
-                  ],
+                GestureDetector(
+                  onTap: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ReturnsPage()),
+                    );
+                  },
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        NumberFormat().format(0),
+                        style: TextStyle(color: Colors.lightBlue),
+                      ),
+                      Text(
+                        AppLocalizations.of(context)
+                            .translate('returns')
+                            .toUpperCase(),
+                        style: TextStyle(color: Colors.grey, fontSize: 10),
+                      )
+                    ],
+                  ),
                 ),
                 Spacer(
                   flex: 2,
