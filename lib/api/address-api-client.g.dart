@@ -15,11 +15,9 @@ class _AddressApiClient implements AddressApiClient {
 
   String baseUrl;
 
-
-
   @override
   Future<String> addSavedAddress(DeliveryAddress address) async {
-      const _extra = <String, dynamic>{};
+    const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = address.toJson();
 
@@ -36,20 +34,56 @@ class _AddressApiClient implements AddressApiClient {
   }
 
   @override
-  Future<String> deleteSavedAddress() {
-    // TODO: implement deleteSavedAddress
-    throw UnimplementedError();
+  Future<String> deleteSavedAddress(int addressId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = {"address_id": addressId};
+
+    final Response<String> _result = await _dio.request('/delete_address/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
+    return value;
   }
 
   @override
-  Future<String> editSavedAddress() {
-    // TODO: implement editSavedAddress
-    throw UnimplementedError();
+  Future<String> editSavedAddress(DeliveryAddress address) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = address.toJson();
+
+    final Response<String> _result = await _dio.request('/edit_address/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
+    return value;
   }
 
   @override
-  Future<String> getSavedAddress() {
-    // TODO: implement getSavedAddress
-    throw UnimplementedError();
+  Future<String> getSavedAddress() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+
+    final Response<String> _result = await _dio.request(
+      '/get_addresses/',
+      queryParameters: queryParameters,
+      options: RequestOptions(
+          method: 'GET',
+          headers: <String, dynamic>{},
+          extra: _extra,
+          baseUrl: baseUrl),
+    );
+    final value = _result.data;
+    return value;
   }
 }

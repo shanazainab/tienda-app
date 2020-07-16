@@ -50,4 +50,23 @@ class _CustomerProfileApiClient implements CustomerProfileApiClient {
     final value = _result.data;
     return value;
   }
+
+  @override
+  Future<String> editCustomerDetails(Customer customer) async {
+    ArgumentError.checkNotNull(customer, 'customer');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(customer?.toJson() ?? <String, dynamic>{});
+    final Response<String> _result = await _dio.request('/update_profile/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
+    return value;
+  }
 }

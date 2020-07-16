@@ -193,16 +193,23 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
     GeocodingResponse response = await geocoding
         .searchByLocation(new Location(latLng.latitude, latLng.longitude));
 
-//    response.
-
-    Logger().d("DELIVERY ADDRESS RESPONSE :${response.results[0].addressComponents}");
-
-
+    PlacesDetailsResponse placesDetailsResponse =
+        await _places.getDetailsByPlaceId(response.results[0].placeId);
     deliveryAddress = new DeliveryAddress(
-        lat: latLng.latitude,
-        lng: latLng.longitude,
-   
-        address: response.results[0].formattedAddress);
+        mapLat: latLng.latitude,
+        mapLong: latLng.longitude,
+        longAddress: placesDetailsResponse.result.name);
+    for (final name in placesDetailsResponse.result.addressComponents) {
+      print(name.longName);
+      print(name.types);
+      if (name.types.contains("country")) {
+        deliveryAddress.country = name.longName;
+      }
+      if (name.types.contains("locality")) {
+        deliveryAddress.city = name.longName;
+      }
+    }
+
     return response.results[0].formattedAddress;
   }
 

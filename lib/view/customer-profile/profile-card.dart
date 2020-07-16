@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/app-language.dart';
+import 'package:tienda/bloc/customer-profile-bloc.dart';
+import 'package:tienda/bloc/events/customer-profile-events.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/customer.dart';
 import 'package:tienda/view/customer-profile/edit-customer-profile.dart';
@@ -81,7 +84,7 @@ class CustomerProfileCard extends StatelessWidget {
                   flex: 1,
                 ),
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => OrdersMainPage()),
@@ -114,7 +117,7 @@ class CustomerProfileCard extends StatelessWidget {
                   flex: 1,
                 ),
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => ReturnsPage()),
@@ -145,11 +148,22 @@ class CustomerProfileCard extends StatelessWidget {
             padding: const EdgeInsets.only(top: 16.0),
             child: OutlineButton(
               onPressed: () {
+//
+
+//                Navigator.push(context, MaterialPageRoute(builder: (_) {
+//                  return BlocProvider(
+//                    create: (BuildContext context) => CustomerProfileBloc()..add(FetchCustomerProfile()),
+//
+//                    //  value: BlocProvider.of<C>(context),
+//                    child: EditCustomerProfilePage(customerDetails),
+//                  );
+//                }));
+
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => EditCustomerProfilePage()),
-                );
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            EditCustomerProfilePage(customerDetails)));
               },
               child: Text(
                 AppLocalizations.of(context).translate('edit-profile'),

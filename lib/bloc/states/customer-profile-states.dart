@@ -29,3 +29,11 @@ class LoadCustomerProfileFail extends CustomerProfileStates {
   @override
   List<Object> get props => error;
 }
+
+class EditCustomerProfileSuccess extends CustomerProfileStates {
+  final Customer customer;
+  EditCustomerProfileSuccess({this.customer}) : super();
+
+  @override
+  List<Object> get props => [];
+}

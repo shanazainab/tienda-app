@@ -7,14 +7,16 @@ import 'package:tienda/bloc/events/address-events.dart';
 import 'package:tienda/bloc/states/address-states.dart';
 import 'package:tienda/model/delivery-address.dart';
 import 'package:tienda/view/address/saved-address-page.dart';
-import 'dart:io' show Platform;
 
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class AddAddressPage extends StatefulWidget {
+
+  final bool isViewMode;
+
   final DeliveryAddress deliveryAddress;
 
-  AddAddressPage({this.deliveryAddress});
+  AddAddressPage({this.deliveryAddress,this.isViewMode});
 
   @override
   _AddAddressPageState createState() => _AddAddressPageState();
@@ -23,14 +25,17 @@ class AddAddressPage extends StatefulWidget {
 class _AddAddressPageState extends State<AddAddressPage> {
   final _formKey = GlobalKey<FormState>();
 
-  PageController pageController = new PageController(initialPage: 0);
   bool isSwitched = false;
+
+  String labelOne = "Apartment name";
+  String labelTwo = "Floor number";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     widget.deliveryAddress.addressType = "none";
+    widget.deliveryAddress.apartment = "test";
   }
 
   @override
@@ -68,7 +73,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0, left: 16),
                           child: Text(
-                            "${widget.deliveryAddress.address}",
+                            "${widget.deliveryAddress.longAddress}",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
                           ),
@@ -103,7 +108,6 @@ class _AddAddressPageState extends State<AddAddressPage> {
                           children: <Widget>[
                             Text("Set as default"),
                             Switch(
-                              focusColor: Colors.lightBlue,
                               value: isSwitched,
                               onChanged: (value) {
                                 setState(() {
@@ -111,8 +115,8 @@ class _AddAddressPageState extends State<AddAddressPage> {
                                   widget.deliveryAddress.isDefault = isSwitched;
                                 });
                               },
-                              activeTrackColor: Colors.lightGreenAccent,
-                              activeColor: Colors.green,
+                              activeTrackColor: Colors.lightBlueAccent,
+                              activeColor: Colors.lightBlue,
                             ),
                           ],
                         ),
@@ -151,7 +155,10 @@ class _AddAddressPageState extends State<AddAddressPage> {
         child: Column(
           children: <Widget>[
             TextFormField(
+              textInputAction: TextInputAction.next,
+              onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
               decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(left: 8, top: 8),
                   border: InputBorder.none,
                   filled: true,
                   fillColor: Colors.grey[100],
@@ -160,7 +167,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
                 if (value.isEmpty) {
                   return 'Please provide a contact name';
                 }
-                widget.deliveryAddress.name = value;
+                widget.deliveryAddress.fullName = value;
 
                 return null;
               },
@@ -168,7 +175,11 @@ class _AddAddressPageState extends State<AddAddressPage> {
             Padding(
               padding: const EdgeInsets.only(top: 16.0),
               child: TextFormField(
+                keyboardType: TextInputType.phone,
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                 decoration: InputDecoration(
+                    contentPadding: EdgeInsets.only(left: 8, top: 8),
                     border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.grey[100],
@@ -177,7 +188,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
                   if (value.isEmpty) {
                     return 'Please provide a contact name';
                   }
-                  widget.deliveryAddress.mobileNumber = int.parse(value);
+                  widget.deliveryAddress.phoneNumber = value;
                   return null;
                 },
               ),
@@ -203,164 +214,98 @@ class _AddAddressPageState extends State<AddAddressPage> {
                 GestureDetector(
                   onTap: () {
                     widget.deliveryAddress.addressType = "apartment";
-
-                    pageController.animateToPage(0,
-                        duration: Duration(seconds: 1),
-                        curve: Curves.easeInOutCubic);
+                    setState(() {
+                      labelOne = "Apartment name";
+                      labelTwo = "Floor Number";
+                    });
                   },
                   child: Card(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16.0, top: 4, bottom: 4),
                       child: Text("Apartment"),
                     ),
-                    color: Colors.grey,
+                    color: Colors.lightBlue,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                 ),
                 GestureDetector(
                   onTap: () {
                     widget.deliveryAddress.addressType = "villa";
-
-                    pageController.animateToPage(1,
-                        duration: Duration(seconds: 1),
-                        curve: Curves.easeInOutCubic);
+                    setState(() {
+                      labelOne = "Villa name";
+                      labelTwo = "Street";
+                    });
                   },
                   child: Card(
-                      color: Colors.grey,
+                      color: Colors.lightBlue,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                          borderRadius: BorderRadius.circular(16)),
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                        padding: const EdgeInsets.only(
+                            left: 16.0, right: 16.0, top: 4, bottom: 4),
                         child: Text("Villa"),
                       )),
                 ),
                 GestureDetector(
                   onTap: () {
                     widget.deliveryAddress.addressType = "office";
-
-                    pageController.animateToPage(2,
-                        duration: Duration(seconds: 1),
-                        curve: Curves.easeInOutCubic);
+                    setState(() {
+                      labelOne = "Office";
+                      labelTwo = "Floor number";
+                    });
                   },
                   child: Card(
-                      color: Colors.grey,
+                      color: Colors.lightBlue,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                          borderRadius: BorderRadius.circular(16)),
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                        padding: const EdgeInsets.only(
+                            left: 16.0, right: 16.0, top: 4, bottom: 4),
                         child: Text("Office"),
                       )),
                 )
               ],
             ),
+            SizedBox(
+              height: 20,
+            ),
             Container(
-              height: 200,
-              child: PageView(
-                controller: pageController,
+              child: Column(
                 children: <Widget>[
-                  Container(
-                    child: Column(
-                      children: <Widget>[
-                        TextFormField(
-                          validator: (value) {
-                            widget.deliveryAddress.buildingName = value;
+                  TextFormField(
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                    validator: (value) {
+                      widget.deliveryAddress.buildingName = value;
 
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              filled: true,
-                              fillColor: Colors.grey[100],
-                              labelText: 'Apartment Name'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: TextFormField(
-                            validator: (value) {
-                              widget.deliveryAddress.floorNUmber = value;
-
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                filled: true,
-                                fillColor: Colors.grey[100],
-                                labelText: 'Floor Number'),
-                          ),
-                        ),
-                      ],
-                    ),
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(left: 8, top: 8),
+                        border: InputBorder.none,
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        labelText: labelOne),
                   ),
-                  Container(
-                    child: Column(
-                      children: <Widget>[
-                        TextFormField(
-                          validator: (value) {
-                            widget.deliveryAddress.villaName = value;
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: TextFormField(
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) =>
+                          FocusScope.of(context).nextFocus(),
+                      validator: (value) {
+                        widget.deliveryAddress.floor = value;
 
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              filled: true,
-                              fillColor: Colors.grey[100],
-                              labelText: 'Villa Name'),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: TextFormField(
-                            validator: (value) {
-                              widget.deliveryAddress.floorNUmber = value;
-
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                filled: true,
-                                fillColor: Colors.grey[100],
-                                labelText: 'Villa Number'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: <Widget>[
-                          TextFormField(
-                            validator: (value) {
-                              widget.deliveryAddress.buildingName = value;
-
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.all(0),
-                                border: InputBorder.none,
-                                filled: true,
-                                fillColor: Colors.grey[100],
-                                labelText: 'Office'),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16.0),
-                            child: TextFormField(
-                              validator: (value) {
-                                widget.deliveryAddress.floorNUmber = value;
-
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.all(0),
-                                  border: InputBorder.none,
-                                  filled: true,
-                                  fillColor: Colors.grey[100],
-                                  labelText: 'Floor Number'),
-                            ),
-                          ),
-                        ],
-                      ),
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.only(left: 8, top: 8),
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          labelText: labelTwo),
                     ),
                   ),
                 ],
@@ -375,16 +320,19 @@ class _AddAddressPageState extends State<AddAddressPage> {
   personalInstructionWidget() {
     return Container(
       child: Padding(
-        padding: const EdgeInsets.only(top: 16.0),
+        padding: const EdgeInsets.all(16.0),
         child: TextFormField(
+          textInputAction: TextInputAction.done,
+          onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
           validator: (value) {
-            widget.deliveryAddress.instruction = value;
+            widget.deliveryAddress.comment = value;
 
             return null;
           },
           minLines: 2,
           maxLines: 4,
           decoration: InputDecoration(
+              contentPadding: EdgeInsets.only(left: 8, top: 8),
               border: InputBorder.none,
               filled: true,
               fillColor: Colors.grey[100],

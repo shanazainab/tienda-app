@@ -1,74 +1,73 @@
 class DeliveryAddress {
-  String id;
-  String name;
-  int mobileNumber;
-  String addressType;
-  String address;
-  double lat;
-  double lng;
-  String instruction;
-  bool isDefault;
-  String buildingName;
-  String buildingNumber;
-  String floorNUmber;
-  String city;
+  DeliveryAddress({
+    this.id,
+    this.fullName,
+    this.country,
+    this.city,
+    this.longAddress,
+    this.phoneNumber,
+    this.mapLat,
+    this.mapLong,
+    this.apartment,
+    this.buildingName,
+    this.floor,
+    this.customerId,
+    this.comment,
+    this.addressType,
+    this.isDefault,
+  });
+
+  int id;
+  String fullName;
   String country;
-  String villaName;
+  String city;
+  String longAddress;
+  String phoneNumber;
+  double mapLat;
+  double mapLong;
+  String apartment;
+  String buildingName;
+  String floor;
+  int customerId;
+  String comment;
+  String addressType;
+  bool isDefault;
 
-  DeliveryAddress(
-      {this.id,
-      this.name,
-      this.mobileNumber,
-      this.addressType,
-      this.address,
-      this.lat,
-      this.lng,
-      this.instruction,
-      this.isDefault,
-      this.villaName,
-      this.buildingName,
-      this.buildingNumber,
-      this.floorNUmber,
-      this.city,
-      this.country});
+  factory DeliveryAddress.fromJson(Map<String, dynamic> json) =>
+      DeliveryAddress(
+        id: json["id"],
+        fullName: json["full_name"],
+        country: json["country"],
+        city: json["city"],
+        longAddress: json["long_address"],
+        phoneNumber: json["phone_number"],
+        mapLat: json["map_lat"].toDouble(),
+        mapLong: json["map_long"].toDouble(),
+        apartment: json["apartment"],
+        buildingName: json["building_name"],
+        floor: json["floor"],
+        customerId: json["customer_id"],
+        comment: json["comment"],
+        addressType: json["address_type"],
+        isDefault: json["is_default"],
+      );
 
-  factory DeliveryAddress.fromJson(Map<String, dynamic> json) {
-    return DeliveryAddress(
-        addressType: json['address_type'],
-        villaName: json['apartment'],
-        buildingName: json['building_name'],
-        city: json['city'],
-        instruction: json['comment'],
-        country: json['country'],
-        floorNUmber: json['floor'],
-        name: json['full_name'],
-        address: json['long_address'],
-        lat: json['map_lat'],
-        lng: json['map_long'],
-        mobileNumber: json['phone_number'],
-        isDefault: json['is_default']);
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['address_type'] = this.addressType;
-    data['apartment'] = this.villaName;
-    data['building_name'] = this.buildingName;
-    data['city'] = this.city;
-    data['comment'] = this.instruction;
-    data['country'] = this.country;
-    data['floor'] = this.floorNUmber;
-    data['full_name'] = this.name;
-    data['long_address'] = this.address;
-    data['map_lat'] = this.lat;
-    data['map_long'] = this.lng;
-    data['is_default'] = this.isDefault;
-    data['phone_number'] = this.mobileNumber;
-    return data;
-  }
-
-  @override
-  String toString() {
-    return 'DeliveryAddress{id: $id, name: $name, mobileNumber: $mobileNumber, addressType: $addressType, address: $address, lat: $lat, lng: $lng, instruction: $instruction, isDefault: $isDefault, buildingName: $buildingName, buildingNumber: $buildingNumber, floorNUmber: $floorNUmber, city: $city, country: $country, villaName: $villaName}';
-  }
+  Map<String, dynamic> toJson() =>
+      {
+        "id": id,
+        "full_name": fullName,
+        "country": country,
+        "city": city,
+        "long_address": longAddress,
+        "phone_number": phoneNumber,
+        "map_lat": mapLat,
+        "map_long": mapLong,
+        "apartment": apartment,
+        "building_name": buildingName,
+        "floor": floor,
+        "customer_id": customerId,
+        "comment": comment,
+        "address_type": addressType,
+        "is_default": isDefault,
+      };
 }

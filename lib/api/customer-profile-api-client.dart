@@ -14,4 +14,8 @@ abstract class CustomerProfileApiClient {
   @GET("/get_profile/")
   Future<String> getCustomerProfile();
 
+  @POST("/update_profile/")
+  Future<String> editCustomerDetails(@Body() Customer customer);
+
+
 }

@@ -15,6 +15,7 @@ import 'package:tienda/app-settings.config.dart';
 import 'package:tienda/bloc-delegate.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/connectivity-bloc.dart';
+import 'package:tienda/bloc/customer-profile-bloc.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/startup-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
@@ -110,6 +111,9 @@ Future<void> main() async {
         ),
         BlocProvider<WishListBloc>(
           create: (BuildContext context) => WishListBloc(),
+        ),
+        BlocProvider<CustomerProfileBloc>(
+          create: (BuildContext context) => CustomerProfileBloc(),
         ),
         BlocProvider<CartBloc>(
           create: (BuildContext context) => CartBloc()..add(FetchCartData()),

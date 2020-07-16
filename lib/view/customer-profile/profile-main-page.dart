@@ -44,7 +44,6 @@ class CustomerProfile extends StatefulWidget {
 class _CustomerProfileState extends State<CustomerProfile> {
   final StartupBloc startupBloc = new StartupBloc();
 
-  final CustomerProfileBloc profileBloc = new CustomerProfileBloc();
 
   @override
   void initState() {
@@ -58,60 +57,62 @@ class _CustomerProfileState extends State<CustomerProfile> {
     var appLanguage = Provider.of<AppLanguage>(context);
     var appCountry = Provider.of<AppCountry>(context);
 
-    return BlocProvider(
-      create: (BuildContext context) => profileBloc,
-      child: MultiBlocListener(
-          listeners: [
-            BlocListener<LoginBloc, LoginStates>(
-              listener: (context, state) {
-                if (state is LogoutSuccess) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
-                }
-              },
-            ),
-            BlocListener<StartupBloc, StartupStates>(
-              bloc: startupBloc,
-              listener: (context, state) {
-                if (state is LogInStatusResponse && state.isLoggedIn) {
-                  profileBloc.add(FetchCustomerProfile());
-                }
-              },
-            ),
-          ],
-          child: BlocBuilder<StartupBloc, StartupStates>(
-              bloc: startupBloc,
-              builder: (context, state) {
-                return Scaffold(
-                    body: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    state is LogInStatusResponse && !state.isLoggedIn
-                        ? CustomerLoginMenu()
-                        : BlocBuilder<CustomerProfileBloc,
-                            CustomerProfileStates>(builder: (context, state) {
-                            if (state is LoadCustomerProfileSuccess)
-                              return CustomerProfileCard(state.customerDetails);
-                            else
-                              return Container();
-                          }),
-                    Expanded(
-                      child: ListView(
-                        padding: EdgeInsets.all(0),
-                        children: <Widget>[
-                          state is LogInStatusResponse && state.isLoggedIn
-                              ? _buildLoggedInUserMenus(appLanguage, state)
-                              : Container(),
-                          _buildMenuList(appLanguage, state, appCountry)
-                        ],
-                      ),
-                    )
-                  ],
-                ));
-              })),
-    );
+    return MultiBlocListener(
+        listeners: [
+          BlocListener<LoginBloc, LoginStates>(
+            listener: (context, state) {
+              if (state is LogoutSuccess) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                );
+              }
+            },
+          ),
+          BlocListener<StartupBloc, StartupStates>(
+            bloc: startupBloc,
+            listener: (context, state) {
+              if (state is LogInStatusResponse && state.isLoggedIn) {
+                //profileBloc.add(FetchCustomerProfile());
+
+                BlocProvider.of<CustomerProfileBloc>(context).add(FetchCustomerProfile());
+
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<StartupBloc, StartupStates>(
+            bloc: startupBloc,
+            builder: (context, state) {
+              return Scaffold(
+                  body: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  state is LogInStatusResponse && !state.isLoggedIn
+                      ? CustomerLoginMenu()
+                      : BlocBuilder<CustomerProfileBloc,
+                          CustomerProfileStates>(builder: (context, state) {
+                          if (state is LoadCustomerProfileSuccess)
+                            return CustomerProfileCard(state.customerDetails);
+                          if (state is EditCustomerProfileSuccess)
+                            return CustomerProfileCard(state.customer);
+                          else
+                            return Container();
+                        }),
+                  Expanded(
+                    child: ListView(
+                      padding: EdgeInsets.all(0),
+                      children: <Widget>[
+                        state is LogInStatusResponse && state.isLoggedIn
+                            ? _buildLoggedInUserMenus(appLanguage, state)
+                            : Container(),
+                        _buildMenuList(appLanguage, state, appCountry)
+                      ],
+                    ),
+                  )
+                ],
+              ));
+            }));
   }
 
   _buildMenuList(appLanguage, state, AppCountry appCountry) {

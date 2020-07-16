@@ -10,10 +10,10 @@ abstract class AddressApiClient {
   @POST("/add_address/")
   Future<String> addSavedAddress(@Body() DeliveryAddress address);
 
-  @GET("")
+  @GET("/get_addresses/")
   Future<String> getSavedAddress();
-  @POST("")
-  Future<String> editSavedAddress();
-  @POST("")
-  Future<String> deleteSavedAddress();
+  @POST("/edit_address/")
+  Future<String> editSavedAddress(@Body() DeliveryAddress address);
+  @POST("/delete_address/")
+  Future<String> deleteSavedAddress(@Body() int addressId);
 }

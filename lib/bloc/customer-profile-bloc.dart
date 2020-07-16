@@ -10,17 +10,56 @@ import 'package:tienda/bloc/states/customer-profile-states.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/customer.dart';
 
-
-class CustomerProfileBloc extends Bloc<CustomerProfileEvents, CustomerProfileStates> {
-
+class CustomerProfileBloc
+    extends Bloc<CustomerProfileEvents, CustomerProfileStates> {
   @override
   CustomerProfileStates get initialState => Loading();
 
   @override
-  Stream<CustomerProfileStates> mapEventToState(CustomerProfileEvents event) async* {
+  Stream<CustomerProfileStates> mapEventToState(
+      CustomerProfileEvents event) async* {
     if (event is FetchCustomerProfile) {
       yield* _mapFetchCustomerProfileToStates(event);
     }
+    if (event is EditCustomerProfile) {
+      yield* _mapEditCustomerProfileToStates(event);
+    }
+  }
+
+  Stream<CustomerProfileStates> _mapEditCustomerProfileToStates(
+      EditCustomerProfile event) async* {
+    print("CALLED");
+
+    final dio = new Dio();
+    String value = await FlutterSecureStorage().read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
+    CustomerProfileApiClient customerProfileApiClient =
+        CustomerProfileApiClient(dio,
+            baseUrl: GlobalConfiguration().getString("baseURL"));
+
+    String status;
+    await customerProfileApiClient
+        .editCustomerDetails(event.customer)
+        .then((response) {
+      Logger().d("EDIT-CUSTOMER-PROFILE-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          status = "success";
+          break;
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+
+        Logger().e("EDIT-CUSTOMER-PROFILE-ERROR:", error);
+      }
+    });
+    print("CALLEDs");
+
+    if(status == "success")
+    yield EditCustomerProfileSuccess(
+      customer: event.customer
+    );
   }
 
   Stream<CustomerProfileStates> _mapFetchCustomerProfileToStates(

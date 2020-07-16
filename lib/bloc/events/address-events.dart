@@ -33,7 +33,7 @@ class EditSavedAddress extends AddressEvents {
 }
 
 class DeleteSavedAddress extends AddressEvents {
-  final String deliveryAddressId;
+  final int deliveryAddressId;
   DeleteSavedAddress({this.deliveryAddressId}) : super();
 
   @override
