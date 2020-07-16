@@ -18,12 +18,12 @@ class _AddressApiClient implements AddressApiClient {
 
 
   @override
-  Future<String> addSavedAddress(Customer customer) {
+  Future<String> addSavedAddress(DeliveryAddress address) async {
       const _extra = <String, dynamic>{};
-/*    final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{'product_id': productId};
+    final queryParameters = <String, dynamic>{};
+    final _data = address.toJson();
 
-    final Response<String> _result = await _dio.request('/delete_from_cart/',
+    final Response<String> _result = await _dio.request('/add_address/',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -32,7 +32,7 @@ class _AddressApiClient implements AddressApiClient {
             baseUrl: baseUrl),
         data: _data);
     final value = _result.data;
-    return value;*/
+    return value;
   }
 
   @override

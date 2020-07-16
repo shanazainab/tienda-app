@@ -1,4 +1,3 @@
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -135,74 +134,63 @@ class _CategoriesPageState extends State<CategoriesPage> {
                           child: ScrollablePositionedList.builder(
                             padding: EdgeInsets.only(top: 50),
                             itemCount: state.categories.length,
-                            itemBuilder: (context, index) => GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ProductListPage()),
-                                );
-                              },
-                              child: Container(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                            itemBuilder: (context, index) => Container(
                                 child: Padding(
-                                  padding: const EdgeInsets.only(top: 24.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 8.0),
-                                        child: Text(
-                                          appLanguage.appLocal == Locale('en')
-                                              ? state
-                                                  .categories[index].nameEnglish
-                                              : state
-                                                  .categories[index].nameArabic,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        ),
+                              padding: const EdgeInsets.all(8.0),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 24.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Text(
+                                        appLanguage.appLocal == Locale('en')
+                                            ? state
+                                                .categories[index].nameEnglish
+                                            : state
+                                                .categories[index].nameArabic,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        padding: EdgeInsets.all(0),
-                                        itemCount: state.categories[index]
-                                            .subCategories.length,
-                                        itemBuilder: (BuildContext context,
-                                                int subIndex) =>
-                                            Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
+                                    ),
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      padding: EdgeInsets.all(0),
+                                      itemCount: state.categories[index]
+                                          .subCategories.length,
+                                      itemBuilder: (BuildContext context,
+                                              int subIndex) =>
+                                          Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
 
-                                                ///DEVELOPER NOTE: expansion_tile.dart has been
-                                                /// edited to fit the requirement
-                                                ///Keep track on version update
+                                              ///DEVELOPER NOTE: expansion_tile.dart has been
+                                              /// edited to fit the requirement
+                                              ///Keep track on version update
 
-                                                child: ExpansionTile(
-                                                  leading: CircleAvatar(
-                                                    backgroundColor:
-                                                        Colors.grey[200],
-                                                    radius: 30,
-                                                  ),
-                                                  backgroundColor: Colors.white,
-
-                                                  children:
-                                                      _buildSubSubCategory(),
-                                                  title: Text(
-                                                      appLanguage.appLocal ==
-                                                              Locale('en')
-                                                          ? state
-                                                              .categories[index]
-                                                              .nameEnglish
-                                                          : state
-                                                              .categories[index]
-                                                              .nameArabic),
-                                                )
+                                              child: ExpansionTile(
+                                                leading: CircleAvatar(
+                                                  backgroundColor:
+                                                      Colors.grey[200],
+                                                  radius: 30,
+                                                ),
+                                                backgroundColor: Colors.white,
+                                                children:
+                                                    _buildSubSubCategory(),
+                                                title: Text(
+                                                    appLanguage.appLocal ==
+                                                            Locale('en')
+                                                        ? state
+                                                            .categories[index]
+                                                            .nameEnglish
+                                                        : state
+                                                            .categories[index]
+                                                            .nameArabic),
+                                              )
 //                                          child: Row(
 //                                            children: <Widget>[
 //                                              CircleAvatar(
@@ -232,13 +220,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
 //                                              ),
 //                                            ],
 //                                          ),
-                                                ),
-                                      )
-                                    ],
-                                  ),
+                                              ),
+                                    )
+                                  ],
                                 ),
-                              )),
-                            ),
+                              ),
+                            )),
                             itemScrollController: itemScrollController,
                             itemPositionsListener: itemPositionsListener,
                           ),
@@ -258,18 +245,27 @@ class _CategoriesPageState extends State<CategoriesPage> {
     List<Widget> widgets = new List();
     for (int i = 0; i < 5; ++i) {
       widgets.add(Padding(
-        padding: const EdgeInsets.only(top:16.0,left: 8),
-        child: Card(
-            elevation: 0,
-            color: Colors.grey[200],
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: Padding(
-              padding: const EdgeInsets.only(left:8.0,right:8.0),
-              child: Text("test",style: TextStyle(
-                fontSize: 12
-              ),),
-            )),
+        padding: const EdgeInsets.only(top: 16.0, left: 8),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProductListPage()),
+            );
+          },
+          child: Card(
+              elevation: 0,
+              color: Colors.grey[200],
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                child: Text(
+                  "test",
+                  style: TextStyle(fontSize: 14),
+                ),
+              )),
+        ),
       ));
     }
 

@@ -56,6 +56,14 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
       }
     });
 
+    print("777777777");
+    print(products);
+
+    print("777777777");
+
     if (products.isNotEmpty) yield LoadProductListSuccess(products);
+
+
+
   }
 }

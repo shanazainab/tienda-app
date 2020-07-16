@@ -7,8 +7,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import "package:google_maps_webservice/geocoding.dart";
 
-import 'package:tienda/model/address.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
+import 'package:tienda/model/delivery-address.dart';
 import 'package:tienda/model/reverse-geocoded-mapbox-data.dart';
 import 'package:tienda/view/address/add-address-page.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
@@ -51,12 +52,12 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
           preferredSize: Size.fromHeight(50.0),
           child: SafeArea(
               child: CustomAppBar(
-                title: "Add Address",
-                showCart: false,
-                showLogo: false,
-                showSearch: false,
-                showWishList: false,
-              ))),
+            title: "Add Address",
+            showCart: false,
+            showLogo: false,
+            showSearch: false,
+            showWishList: false,
+          ))),
       body: Stack(
         children: <Widget>[
           Container(
@@ -192,8 +193,16 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
     GeocodingResponse response = await geocoding
         .searchByLocation(new Location(latLng.latitude, latLng.longitude));
 
+//    response.
+
+    Logger().d("DELIVERY ADDRESS RESPONSE :${response.results[0].addressComponents}");
+
+
     deliveryAddress = new DeliveryAddress(
-        latLng: latLng, address: response.results[0].formattedAddress);
+        lat: latLng.latitude,
+        lng: latLng.longitude,
+   
+        address: response.results[0].formattedAddress);
     return response.results[0].formattedAddress;
   }
 
@@ -224,7 +233,10 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
   void handleConfirmAddress() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AddAddressPage(deliveryAddress: deliveryAddress,)),
+      MaterialPageRoute(
+          builder: (context) => AddAddressPage(
+                deliveryAddress: deliveryAddress,
+              )),
     );
   }
 }

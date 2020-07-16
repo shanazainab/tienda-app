@@ -78,16 +78,16 @@ android {
         }
 
     }
-    flavorDimensions "version"
-    productFlavors {
-        dev {
-            dimension "version"
-            versionNameSuffix "-dev"
-        }
-        prod {
-            dimension "version"
-        }
-    }
+//    flavorDimensions "version"
+//    productFlavors {
+//        dev {
+//            dimension "version"
+//            versionNameSuffix "-dev"
+//        }
+//        prod {
+//            dimension "version"
+//        }
+//    }
 
 
     ndkVersion "21.1.6352462"

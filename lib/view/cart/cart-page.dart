@@ -13,6 +13,7 @@ import 'package:tienda/model/wishlist.dart';
 import 'dart:io' show Platform;
 
 import 'package:tienda/view/home/home-page.dart';
+import 'package:tienda/view/checkout/checkout-orders-main-page.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class CartPage extends StatefulWidget {
@@ -302,5 +303,10 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  void handleCheckOut() {}
+  void handleCheckOut() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CheckoutOrdersMainPage()),
+    );
+  }
 }

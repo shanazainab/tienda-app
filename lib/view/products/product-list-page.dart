@@ -17,6 +17,7 @@ import 'package:tienda/model/wishlist.dart';
 import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/filter/product-filter.dart';
 import 'package:tienda/view/filter/product-sort.dart';
+import 'package:tienda/view/products/single-product-page.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class ProductListPage extends StatefulWidget {
@@ -150,27 +151,34 @@ class _ProductListPageState extends State<ProductListPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             GestureDetector(
-              onTap: () {
-                print("PRODUCT CLICKED");
-                BlocProvider.of<CartBloc>(context).add(AddCartItem(
-                    cartItem: new CartItem(
-                        color: null,
-                        product: products[index],
-                        quantity: 1,
-                        size: null)));
-              },
-              child: CachedNetworkImage(
-                imageUrl: products[index].thumbnail,
-                width: MediaQuery.of(context).size.width / 2,
-                height: 180,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            SingleProductPage(products[index])),
+                  );
+                },
+                child: Image.asset(
+                  'assets/images/image1.jpg',
                   height: 180,
-                  color: Color(0xfff2f2e4),
+                  width: MediaQuery.of(context).size.width / 2,
+                  fit: BoxFit.cover,
+                )
+
+//              CachedNetworkImage(
+//
+//                imageUrl: products[index].thumbnail,
+//                width: MediaQuery.of(context).size.width / 2,
+//                height: 180,
+//                fit: BoxFit.cover,
+//                placeholder: (context, url) => Container(
+//                  height: 180,
+//                  color: Color(0xfff2f2e4),
+//                ),
+//                errorWidget: (context, url, error) => Icon(Icons.error),
+//              ),
                 ),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-              ),
-            ),
             Expanded(
               child: Container(
                 child: Padding(
@@ -190,7 +198,7 @@ class _ProductListPageState extends State<ProductListPage> {
                                 products[index].isWishListed = true;
                               else
                                 products[index].isWishListed =
-                                !products[index].isWishListed;
+                                    !products[index].isWishListed;
 
                               if (products[index].isWishListed) {
                                 Fluttertoast.showToast(
@@ -214,14 +222,14 @@ class _ProductListPageState extends State<ProductListPage> {
                               context
                                   .bloc<ProductBloc>()
                                   .add(UpdateMarkAsWishListed(
-                                products: products,
-                              ));
+                                    products: products,
+                                  ));
                             },
                             child: Icon(
                               Icons.bookmark,
                               size: 18,
                               color: products[index].isWishListed != null &&
-                                  products[index].isWishListed
+                                      products[index].isWishListed
                                   ? Colors.pink
                                   : Colors.grey,
                             ),
@@ -241,34 +249,37 @@ class _ProductListPageState extends State<ProductListPage> {
                         padding: const EdgeInsets.only(top: 4.0),
                         child: index == 0
                             ? FittedBox(
-                          fit: BoxFit.fitWidth,
-
-                          child: Row(
-                                children: <Widget>[
-                                  Text(
-                                      "AED " + products[index].price.toString(),style: TextStyle(
-                                    fontWeight: FontWeight.bold
-                                  ),),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left:4.0,right:4.0),
-                                    child: Text(
-                                        "AED " + products[index].price.toString(),
-                                    style: TextStyle(
-                                        decoration: TextDecoration.lineThrough
-                                    ),),
-                                  ),
-                                  Text(
-                                      "50 % OFF",style: TextStyle(
-                                    color: Colors.pink
-                                  ),),
-                                ],
-                              ),
-                            )
+                                fit: BoxFit.fitWidth,
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "AED " + products[index].price.toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 4.0, right: 4.0),
+                                      child: Text(
+                                        "AED " +
+                                            products[index].price.toString(),
+                                        style: TextStyle(
+                                            decoration:
+                                                TextDecoration.lineThrough),
+                                      ),
+                                    ),
+                                    Text(
+                                      "50 % OFF",
+                                      style: TextStyle(color: Colors.pink),
+                                    ),
+                                  ],
+                                ),
+                              )
                             : FittedBox(
-                          fit: BoxFit.fitWidth,
-                              child: Text(
-                                  "AED " + products[index].price.toString()),
-                            ),
+                                fit: BoxFit.fitWidth,
+                                child: Text(
+                                    "AED " + products[index].price.toString()),
+                              ),
                       )
                     ],
                   ),

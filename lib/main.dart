@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,28 +58,7 @@ Future<void> main() async {
 
   ///add firebase crash analytics to entire MaterialApp
   /* runZonedGuarded(() async {
-    runApp(
-      BlocProvider(
-        create: (context) => StartupBloc()..add(StartupEvent.AppStarted),
-        child: App(),
-      ),
-    );
-  }, Crashlytics.instance.recordError);*/
-  AppLanguage appLanguage = AppLanguage();
-  await appLanguage.fetchLocale();
-
-  AppCountry appCountry = AppCountry();
-  await appCountry.fetchCountry();
-
-  await SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp]); // To turn off landscape mode
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarIconBrightness: Brightness.light,
-    // For iOS.
-    // Use [dark] for white status bar and [light] for black status bar.
-    statusBarBrightness: Brightness.dark,
-  ));
-  runApp(MultiBlocProvider(
+      runApp(MultiBlocProvider(
     providers: [
       BlocProvider<StartupBloc>(
         create: (context) => StartupBloc()..add(AppStarted()),
@@ -101,6 +81,46 @@ Future<void> main() async {
       appLanguage: appLanguage,
     ),
   ));
+    );
+  }, Crashlytics.instance.recordError);*/
+  AppLanguage appLanguage = AppLanguage();
+  await appLanguage.fetchLocale();
+
+  AppCountry appCountry = AppCountry();
+  await appCountry.fetchCountry();
+
+  await SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp]); // To turn off landscape mode
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarIconBrightness: Brightness.light,
+    statusBarBrightness: Brightness.dark,
+  ));
+
+  runZoned<Future<void>>(() async {
+    runApp(MultiBlocProvider(
+      providers: [
+        BlocProvider<StartupBloc>(
+          create: (context) => StartupBloc()..add(AppStarted()),
+        ),
+        BlocProvider<PreferenceBloc>(
+          create: (context) => PreferenceBloc(),
+        ),
+        BlocProvider<LoginBloc>(
+          create: (BuildContext context) => LoginBloc(),
+        ),
+        BlocProvider<WishListBloc>(
+          create: (BuildContext context) => WishListBloc(),
+        ),
+        BlocProvider<CartBloc>(
+          create: (BuildContext context) => CartBloc()..add(FetchCartData()),
+        ),
+      ],
+      child: App(
+        appCountry: appCountry,
+        appLanguage: appLanguage,
+      ),
+    ));
+  }, onError: Crashlytics.instance.recordError);
 }
 
 class App extends StatelessWidget {
@@ -175,13 +195,14 @@ class App extends StatelessWidget {
 
             ///App wide theme
             theme: ThemeData(
-                fontFamily: appLanguage.appLocal != Locale('en') ? 'Cairo' : '',
+                fontFamily:
+                    appLanguage.appLocal != Locale('en') ? 'Cairo' : 'Roboto',
                 textTheme: TextTheme(
                     headline1: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    )),
+                  color: Colors.grey,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                )),
                 appBarTheme: AppBarTheme(
                     color: Colors.white,
                     iconTheme: IconThemeData(color: Colors.grey),

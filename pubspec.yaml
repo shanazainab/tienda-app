@@ -78,6 +78,9 @@ dependencies:
   camera: ^0.5.8+2
   speech_to_text: ^2.3.0
   image_picker: ^0.6.7+4
+  carousel_slider: ^2.2.1
+  step_progress_indicator: ^0.2.3+6
+  flutter_rating_bar: ^3.0.1+1
 
 
 
@@ -127,10 +130,10 @@ flutter:
         - asset: assets/fonts/arabic/Cairo-Light.ttf
           weight: 100
 
-    - family: Poppins
+    - family: Roboto
       fonts:
-        - asset: assets/fonts/english/Poppins-Regular.ttf
-        - asset: assets/fonts/english/Poppins-Light.ttf
+        - asset: assets/fonts/english/Roboto-Regular.ttf
+        - asset: assets/fonts/english/Roboto-Thin.ttf
           weight: 100
 
   # For details regarding fonts from package dependencies,

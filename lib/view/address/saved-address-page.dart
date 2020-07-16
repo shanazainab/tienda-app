@@ -9,10 +9,6 @@ import 'package:tienda/bloc/states/address-states.dart';
 import 'package:tienda/view/address/choose-address-page.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 
-
-
-
-
 class SavedAddressPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -44,51 +40,47 @@ class SavedAddressPage extends StatelessWidget {
           ),
           body: BlocBuilder<AddressBloc, AddressStates>(
               builder: (context, state) {
-         //   if (state is LoadAddressSuccess)
-              return Container(
-                color: Colors.white,
-                child: new ListView.separated(
-                  //  itemCount: state.deliveryAddresses.length,
-                    itemCount: 4,
-
-                    separatorBuilder: (BuildContext context, int index) =>
-                        Divider(
-                          endIndent: 16,
-                          indent: 16,
-                        ),
-                    itemBuilder: (BuildContext ctxt, int index) {
-                      return Slidable(
-                        actionPane: SlidableDrawerActionPane(),
-                        actionExtentRatio: 0.25,
-                        child: Container(
-                          color: Colors.white,
-                          child: ListTile(
-//                            title: Text(state.deliveryAddresses[index].address),
-//                            subtitle: Text(state.deliveryAddresses[index].name),
-                            title: Text("name"),
-                            subtitle: Text("address"),
-                          ),
-                        ),
-                        secondaryActions: <Widget>[
-                          IconSlideAction(
-                            caption: 'Delete',
-                            color: Colors.red,
-                            icon: Icons.delete,
-                            onTap: () {
-                              // deleteAddress()
-                            },
-                          ),
-                        ],
-                      );
-                    }),
-              );
-//            else
-//              return Container(
-//                child: Center(
-//                  child: Text("No Address"),
-//                ),
-//              );
-          })),
+                if (state is LoadAddressSuccess)
+                  return Container(
+                    color: Colors.white,
+                    child: new ListView.separated(
+                        itemCount: state.deliveryAddresses.length,
+                        separatorBuilder: (BuildContext context, int index) =>
+                            Divider(
+                              endIndent: 16,
+                              indent: 16,
+                            ),
+                        itemBuilder: (BuildContext ctxt, int index) {
+                          return Slidable(
+                            actionPane: SlidableDrawerActionPane(),
+                            actionExtentRatio: 0.25,
+                            child: Container(
+                              color: Colors.white,
+                              child: ListTile(
+                                title: Text(state.deliveryAddresses[index].address),
+                                subtitle: Text(state.deliveryAddresses[index].name),
+                              ),
+                            ),
+                            secondaryActions: <Widget>[
+                              IconSlideAction(
+                                caption: 'Delete',
+                                color: Colors.red,
+                                icon: Icons.delete,
+                                onTap: () {
+                                  // deleteAddress()
+                                },
+                              ),
+                            ],
+                          );
+                        }),
+                  );
+                else
+                  return Container(
+                    child: Center(
+                      child: Text("No Address"),
+                    ),
+                  );
+              })),
     );
   }
 }

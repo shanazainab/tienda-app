@@ -36,16 +36,24 @@ class WishListPage extends StatelessWidget {
           children: <Widget>[
             Stack(
               children: <Widget>[
-                CachedNetworkImage(
-                  imageUrl: wishList.wishListItems[index].product.thumbnail,
-                  width: MediaQuery.of(context).size.width / 2,
+
+                Image.asset(
+                  'assets/images/image1.jpg',
                   height: 180,
+                  width: MediaQuery.of(context).size.width / 2,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Color(0xfff2f2e4),
-                  ),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
+
+//                CachedNetworkImage(
+//                  imageUrl: wishList.wishListItems[index].product.thumbnail,
+//                  width: MediaQuery.of(context).size.width / 2,
+//                  height: 180,
+//                  fit: BoxFit.cover,
+//                  placeholder: (context, url) => Container(
+//                    color: Color(0xfff2f2e4),
+//                  ),
+//                  errorWidget: (context, url, error) => Icon(Icons.error),
+//                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.end,
