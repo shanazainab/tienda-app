@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tienda/model/product.dart';
 
 class ProductInfoContainer extends StatelessWidget {
+  Product product;
+
+  ProductInfoContainer(this.product);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -11,23 +16,21 @@ class ProductInfoContainer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text("Brand",style: TextStyle(
-              fontWeight: FontWeight.bold
-            ),),
-            Text("Product Name"),
+
+            Text(product.nameEn),
             Padding(
               padding: const EdgeInsets.only(top:4.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text('AED 714',style: TextStyle(
+                  Text('AED ${product.price}',style: TextStyle(
                     fontWeight: FontWeight.bold
                   ),),
                   Padding(
                     padding: const EdgeInsets.only(left:8.0,right: 8.0),
                     child: Text(
-                      'AED 1299',
+                      'AED ${product.price}',
 
                       style: TextStyle(decoration: TextDecoration.lineThrough,
                       color: Colors.grey),

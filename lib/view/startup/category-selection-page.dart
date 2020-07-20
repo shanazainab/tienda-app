@@ -115,7 +115,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 16.0),
                                     child: new Text(
-                                      state.categories[index].nameEnglish,
+                                      state.categories[index].nameEn,
                                       style: TextStyle(
                                         fontSize: 36,
                                       ),

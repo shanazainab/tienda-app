@@ -11,12 +11,11 @@ import 'package:tienda/view/address/saved-address-page.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class AddAddressPage extends StatefulWidget {
-
-  final bool isViewMode;
+  final bool isEditMode;
 
   final DeliveryAddress deliveryAddress;
 
-  AddAddressPage({this.deliveryAddress,this.isViewMode});
+  AddAddressPage({this.deliveryAddress, this.isEditMode});
 
   @override
   _AddAddressPageState createState() => _AddAddressPageState();
@@ -44,7 +43,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
         create: (BuildContext context) => AddressBloc(),
         child: BlocListener<AddressBloc, AddressStates>(
           listener: (context, state) {
-            if (state is AddAddressSuccess)
+            if (state is AddAddressSuccess || state is EditAddressSuccess)
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => SavedAddressPage()),
@@ -108,7 +107,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
                           children: <Widget>[
                             Text("Set as default"),
                             Switch(
-                              value: isSwitched,
+                              value: widget.isEditMode?widget.deliveryAddress.isDefault:isSwitched,
                               onChanged: (value) {
                                 setState(() {
                                   isSwitched = value;
@@ -133,7 +132,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
                                 handleSaveAddress(context);
                               },
                               child: Text(
-                                "SAVE ADDRESS",
+                                widget.isEditMode ? "UPDATE" : "SAVE ADDRESS",
                               ),
                             ),
                           ),
@@ -155,6 +154,8 @@ class _AddAddressPageState extends State<AddAddressPage> {
         child: Column(
           children: <Widget>[
             TextFormField(
+              initialValue:
+                  widget.isEditMode ? widget.deliveryAddress.fullName : null,
               textInputAction: TextInputAction.next,
               onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
               decoration: InputDecoration(
@@ -175,6 +176,8 @@ class _AddAddressPageState extends State<AddAddressPage> {
             Padding(
               padding: const EdgeInsets.only(top: 16.0),
               child: TextFormField(
+                initialValue:
+                widget.isEditMode ? widget.deliveryAddress.phoneNumber : null,
                 keyboardType: TextInputType.phone,
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
@@ -275,6 +278,8 @@ class _AddAddressPageState extends State<AddAddressPage> {
               child: Column(
                 children: <Widget>[
                   TextFormField(
+                    initialValue:
+                    widget.isEditMode ? widget.deliveryAddress.buildingName : null,
                     textInputAction: TextInputAction.next,
                     onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                     validator: (value) {
@@ -292,6 +297,8 @@ class _AddAddressPageState extends State<AddAddressPage> {
                   Padding(
                     padding: const EdgeInsets.only(top: 16.0),
                     child: TextFormField(
+                      initialValue:
+                      widget.isEditMode ? widget.deliveryAddress.floor : null,
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) =>
                           FocusScope.of(context).nextFocus(),
@@ -322,6 +329,8 @@ class _AddAddressPageState extends State<AddAddressPage> {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: TextFormField(
+          initialValue:
+          widget.isEditMode ? widget.deliveryAddress.comment : null,
           textInputAction: TextInputAction.done,
           onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
           validator: (value) {
@@ -346,8 +355,13 @@ class _AddAddressPageState extends State<AddAddressPage> {
     if (_formKey.currentState.validate()) {
       Logger().d("DELIVERY ADDRESS:${widget.deliveryAddress}");
 
-      BlocProvider.of<AddressBloc>(context)
-          .add(AddSavedAddress(deliveryAddress: widget.deliveryAddress));
+      if(widget.isEditMode){
+        BlocProvider.of<AddressBloc>(context)
+            .add(EditSavedAddress(deliveryAddress: widget.deliveryAddress));
+      }else {
+        BlocProvider.of<AddressBloc>(context)
+            .add(AddSavedAddress(deliveryAddress: widget.deliveryAddress));
+      }
     }
   }
 }

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/category-bloc.dart';
 import 'package:tienda/bloc/events/category-events.dart';
 import 'package:tienda/bloc/states/category-states.dart';
+import 'package:tienda/model/category.dart';
 import 'package:tienda/view/products/product-list-page.dart';
 
 class CategoriesPage extends StatefulWidget {
@@ -67,7 +69,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                   height:
                                       MediaQuery.of(context).size.height - 200,
                                   width: MediaQuery.of(context).size.width / 4 +
-                                      50,
+                                      40,
                                   child: ListView.builder(
                                       itemCount: state.categories.length,
                                       itemBuilder:
@@ -107,9 +109,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                   appLanguage.appLocal ==
                                                           Locale('en')
                                                       ? state.categories[index]
-                                                          .nameEnglish
+                                                          .nameEn
                                                       : state.categories[index]
-                                                          .nameArabic,
+                                                          .nameAr,
                                                   style:
                                                       TextStyle(fontSize: 16),
                                                 )),
@@ -119,7 +121,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                 ));
                           }),
                       Container(
-                        width: 3 * MediaQuery.of(context).size.width / 4 - 50,
+                        width: 3 * MediaQuery.of(context).size.width / 4 - 40,
                         child: NotificationListener(
                           onNotification: (value) {
                             if (value is ScrollUpdateNotification &&
@@ -147,10 +149,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                       padding: const EdgeInsets.only(left: 8.0),
                                       child: Text(
                                         appLanguage.appLocal == Locale('en')
-                                            ? state
-                                                .categories[index].nameEnglish
-                                            : state
-                                                .categories[index].nameArabic,
+                                            ? state.categories[index].nameEn
+                                            : state.categories[index].nameAr,
                                         style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold),
@@ -160,8 +160,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                       shrinkWrap: true,
                                       physics: NeverScrollableScrollPhysics(),
                                       padding: EdgeInsets.all(0),
-                                      itemCount: state.categories[index]
-                                          .subCategories.length,
+                                      itemCount: state
+                                          .categories[index].subCats.length,
                                       itemBuilder: (BuildContext context,
                                               int subIndex) =>
                                           Padding(
@@ -176,20 +176,27 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                 leading: CircleAvatar(
                                                   backgroundColor:
                                                       Colors.grey[200],
-                                                  radius: 30,
+                                                  radius: 20,
                                                 ),
                                                 backgroundColor: Colors.white,
-                                                children:
-                                                    _buildSubSubCategory(),
+                                                children: _buildSubSubCategory(
+                                                    state
+                                                        .categories[index]
+                                                        .subCats[subIndex]
+                                                        .thirdLevel),
                                                 title: Text(
                                                     appLanguage.appLocal ==
                                                             Locale('en')
                                                         ? state
                                                             .categories[index]
-                                                            .nameEnglish
+                                                            .subCats[subIndex]
+                                                            .nameEn
                                                         : state
                                                             .categories[index]
-                                                            .nameArabic),
+                                                            .subCats[subIndex]
+                                                            .nameAr,style: TextStyle(
+                                                  fontSize: 13
+                                                ),),
                                               )
 //                                          child: Row(
 //                                            children: <Widget>[
@@ -241,16 +248,19 @@ class _CategoriesPageState extends State<CategoriesPage> {
     );
   }
 
-  _buildSubSubCategory() {
+  _buildSubSubCategory(List<SubSubCat> thirdLevelCategory) {
     List<Widget> widgets = new List();
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < thirdLevelCategory.length; ++i) {
       widgets.add(Padding(
         padding: const EdgeInsets.only(top: 16.0, left: 8),
         child: GestureDetector(
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProductListPage()),
+              MaterialPageRoute(
+                  builder: (context) => ProductListPage(
+                        categoryId: thirdLevelCategory[i].id.toString(),
+                      )),
             );
           },
           child: Card(
@@ -261,14 +271,13 @@ class _CategoriesPageState extends State<CategoriesPage> {
               child: Padding(
                 padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                 child: Text(
-                  "test",
+                  thirdLevelCategory[i].nameEn,
                   style: TextStyle(fontSize: 14),
                 ),
               )),
         ),
       ));
     }
-
     return widgets;
   }
 }

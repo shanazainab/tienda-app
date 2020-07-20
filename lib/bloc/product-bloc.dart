@@ -8,6 +8,7 @@ import 'package:tienda/api/product-api-client.dart';
 import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/states/product-states.dart';
 import 'package:dio/dio.dart';
+import 'package:tienda/model/product-list-response.dart';
 import 'package:tienda/model/product.dart';
 
 class ProductBloc extends Bloc<ProductEvents, ProductStates> {
@@ -22,13 +23,17 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
     if (event is UpdateMarkAsWishListed) {
       yield* _mapUpdateMarkAsWishListedToStates(event);
     }
+
+    if (event is FetchMoreProductList) {
+      yield* _mapFetchMoreProductListToStates(event);
+    }
   }
 
   Stream<ProductStates> _mapUpdateMarkAsWishListedToStates(
       UpdateMarkAsWishListed event) async* {
-    print(event.products);
+    print(event.productListResponse);
 
-    yield UpdateProductListSuccess(event.products);
+    yield UpdateProductListSuccess(event.productListResponse);
   }
 
   Stream<ProductStates> _mapFetchProductListToStates(
@@ -37,16 +42,21 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
 
-    List<Product> products = new List();
+    String status;
+
+    ProductListResponse productListResponse;
 
     ProductApiClient productApiClient = ProductApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
-    await productApiClient.getDummyProducts().then((response) {
+    await productApiClient
+        .getProductsByCategory(event.categoryId, event.pageNumber)
+        .then((response) {
       Logger().d("GET-PRODUCT-LIST-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
-          for (final product in json.decode(response)['products'])
-            products.add(Product.fromJson(product));
+          productListResponse =
+              ProductListResponse.fromJson(json.decode(response));
+          status = "success";
           break;
       }
     }).catchError((err) {
@@ -56,14 +66,50 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
       }
     });
 
-    print("777777777");
-    print(products);
+    Logger().d("PRODUCT LIST RESPONSE:$productListResponse");
 
-    print("777777777");
+    if (status == "success") yield LoadProductListSuccess(productListResponse);
+  }
 
-    if (products.isNotEmpty) yield LoadProductListSuccess(products);
+  Stream<ProductStates> _mapFetchMoreProductListToStates(
+      FetchMoreProductList event) async* {
+    final dio = Dio();
+    String value = await FlutterSecureStorage().read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
 
+    String status;
 
+    ProductListResponse productListResponse;
 
+    ProductApiClient productApiClient = ProductApiClient(dio,
+        baseUrl: GlobalConfiguration().getString("baseURL"));
+    await productApiClient
+        .getProductsByCategory(event.categoryId, event.pageNumber)
+        .then((response) {
+      Logger().d("GET-PRODUCT-LIST-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          productListResponse =
+              ProductListResponse.fromJson(json.decode(response));
+          status = "success";
+          break;
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+        Logger().e("GET-PRODUCT-LIST-ERROR:", error);
+      }
+    });
+
+    Logger().d("PRODUCT LIST RESPONSE:$productListResponse");
+
+    List<Product> products = new List();
+
+    products.addAll(event.products);
+
+    products.addAll(productListResponse.products);
+
+    productListResponse.products = products;
+    if (status == "success") yield LoadProductListSuccess(productListResponse);
   }
 }

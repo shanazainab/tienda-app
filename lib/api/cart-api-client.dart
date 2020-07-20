@@ -12,4 +12,8 @@ abstract class CartApiClient {
 
   @POST("/delete_from_cart/")
   Future<String> deleteFromCart(@Body() int productId);
+
+  @POST("/checkout/")
+  Future<String> cartCheckout(@Body() int addressId);
+
 }

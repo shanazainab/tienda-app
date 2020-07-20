@@ -36,3 +36,12 @@ class DeleteCartItem extends CartEvents {
   @override
   List<Object> get props => [cartItem];
 }
+
+
+class CartCheckOut extends CartEvents {
+  final int addressId;
+  CartCheckOut({this.addressId}) : super();
+
+  @override
+  List<Object> get props => [addressId];
+}

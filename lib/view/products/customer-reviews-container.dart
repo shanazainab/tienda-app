@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:tienda/model/product.dart';
 
 class CustomerReviewContainer extends StatelessWidget {
+  List<Review> reviews;
+
+  CustomerReviewContainer(this.reviews);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,7 +28,7 @@ class CustomerReviewContainer extends StatelessWidget {
                       endIndent: 8,
                     ),
                 shrinkWrap: true,
-                itemCount: 4,
+                itemCount: reviews.length,
                 itemBuilder: (BuildContext context, int index) => Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -34,57 +39,40 @@ class CustomerReviewContainer extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  CircleAvatar(
-                                    maxRadius: 16,
-                                    backgroundColor: Colors.grey,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text("Customer Name"),
-                                  )
-                                ],
-                              ),
+                              Text(reviews[index].customerName),
                               Text(
-                                '2 mins ago',
+                                reviews[index].elapsedTime,
                                 style:
                                     TextStyle(color: Colors.grey, fontSize: 12),
                               )
                             ],
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.only(top:16.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text("review message"),
-                                RatingBar(
-                                    initialRating: 3,
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemSize: 14,
-                                    //unratedColor: Colors.grey,
-                                    itemCount: 5,
-                                    itemPadding:
-                                        EdgeInsets.symmetric(horizontal: 4.0),
-                                    itemBuilder: (context, _) => Icon(
-                                          Icons.star,
-                                          size: 12,
-                                          color: Colors.amber,
-                                        ),
-                                    onRatingUpdate: null),
+                                Flexible(
+                                  child: Text(reviews[index].body,
+                                  softWrap: true,
+                                  textAlign: TextAlign.justify,),
+                                ),
+
+                                Padding(
+                                  padding: const EdgeInsets.only(left:20.0),
+                                  child: Text(reviews[index].rating.toString()),
+                                )
                               ],
                             ),
                           ),
 
+                          SizedBox(
+                            height: 8,
+                          ),
                           ///Image carousel
                           SizedBox(
-                            height: 70,
+                            height: 50,
                             child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
                                 itemCount: 4,
@@ -96,8 +84,8 @@ class CustomerReviewContainer extends StatelessWidget {
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(8),
                                         child: Container(
-                                          height: 60,
-                                          width: 50,
+                                          height: 40,
+                                          width: 40,
                                           color: Colors.grey[200],
                                         ),
                                       ),

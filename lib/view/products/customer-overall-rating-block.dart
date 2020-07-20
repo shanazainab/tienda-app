@@ -4,7 +4,10 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 class CustomerOverallRatingBlock extends StatelessWidget {
-  final List<String> ratings = ['2', '3', '4', '5'];
+  final double overallRating;
+  final Map<String, int> ratings;
+
+  CustomerOverallRatingBlock(this.overallRating, this.ratings);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,7 @@ class CustomerOverallRatingBlock extends StatelessWidget {
             ),
             Row(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 Container(
@@ -32,25 +35,9 @@ class CustomerOverallRatingBlock extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text("Overall Rating"),
-                      Padding(
-                        padding: const EdgeInsets.only(top:16.0),
-                        child: RatingBar(
-                          initialRating: 3,
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: true,
-                          itemSize: 16,
-                          //unratedColor: Colors.grey,
-                          itemCount: 5,
-                          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                          itemBuilder: (context, _) => Icon(
-                            Icons.star,
-                            size: 12,
-                            color: Colors.amber,
-                          ),
-                          onRatingUpdate: null
-                        ),
+                      Text(
+                        overallRating.toString(),
+                        style: TextStyle(fontSize: 28, color: Colors.lightBlue),
                       )
                     ],
                   ),
@@ -67,7 +54,7 @@ class CustomerOverallRatingBlock extends StatelessWidget {
                                 Row(
                                   children: <Widget>[
                                     Text(
-                                      ratings[index],
+                                      ratings.keys.toList()[index],
                                       style: TextStyle(fontSize: 12),
                                     ),
                                     Padding(
@@ -86,13 +73,15 @@ class CustomerOverallRatingBlock extends StatelessWidget {
                                   currentStep: 32,
                                   size: 8,
                                   padding: 0,
-                                  selectedColor: Colors.yellow,
-                                  unselectedColor: Colors.cyan,
+                                  selectedColor: Colors.grey[200],
+                                  unselectedColor: Colors.lightBlue,
                                   roundedEdges: Radius.circular(10),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
-                                  child: Text("100"),
+                                  child: Text(
+                                    ratings.values.toList()[index].toString(),
+                                  ),
                                 )
                               ],
                             ),

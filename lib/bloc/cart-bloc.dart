@@ -70,7 +70,7 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
         cartItems: [event.cartItem],
         cartPrice: new CartPrice(
           discountTotal: 0,
-          cartTotal: event.cartItem.product.price,
+          cartTotal: event.cartItem.product.price.toDouble(),
           deliverCharge: 0.0,
         ),
       );

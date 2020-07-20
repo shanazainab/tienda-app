@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tienda/model/order.dart';
 import 'package:tienda/view/order/order-tracking-page.dart';
 import 'package:tienda/view/order/order-tracking-time-line.dart';
 import 'dart:math' as math;
@@ -7,6 +8,10 @@ import 'dart:math' as math;
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class OrdersDetailsPage extends StatefulWidget {
+  final Order order;
+
+  OrdersDetailsPage(this.order);
+
   @override
   _OrdersDetailsPageState createState() => _OrdersDetailsPageState();
 }
@@ -54,10 +59,10 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   children: <Widget>[
-                    Row(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text("Order No 12123232"),
+                        Text(widget.order.orderUuid),
                         Text("Expected Delivery 10 Jun")
                       ],
                     ),
@@ -69,7 +74,7 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
                       alignment: Alignment.bottomLeft,
                       child: ListView.builder(
                           shrinkWrap: true,
-                          itemCount: 4,
+                          itemCount: widget.order.products.length,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (BuildContext ctxt, int index) {
                             return Padding(
@@ -94,11 +99,11 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
-                                          Text("Product"),
+                                          Text(widget.order.products[index].nameEn),
                                           Padding(
                                             padding:
                                                 const EdgeInsets.only(top: 8.0),
-                                            child: Text("AED XXX"),
+                                            child: Text("AED ${widget.order.products[index].price}"),
                                           )
                                         ],
                                       ),
@@ -246,9 +251,8 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text("Address Line"),
-                          Text("Street, City"),
-                          Text("Country")
+                          Text(widget.order.addressData),
+
                         ],
                       ),
                     )

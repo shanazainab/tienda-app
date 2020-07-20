@@ -1,51 +1,101 @@
-import 'package:equatable/equatable.dart';
+// To parse this JSON data, do
+//
+//     final category = categoryFromJson(jsonString);
 
-class Category extends Equatable {
+import 'dart:convert';
+
+Category categoryFromJson(String str) => Category.fromJson(json.decode(str));
+
+String categoryToJson(Category data) => json.encode(data.toJson());
+
+class Category {
+  Category({
+    this.id,
+    this.nameEn,
+    this.nameAr,
+    this.thumbnail,
+    this.subCats,
+  });
+
   int id;
-  String nameArabic;
-  String nameEnglish;
+  String nameEn;
+  String nameAr;
   String thumbnail;
+  List<SubCat> subCats;
 
-  List<SubCategory> subCategories;
+  factory Category.fromJson(Map<String, dynamic> json) => Category(
+    id: json["id"],
+    nameEn: json["name_en"],
+    nameAr: json["name_ar"],
+    thumbnail: json["thumbnail"],
+    subCats: List<SubCat>.from(json["sub_cats"].map((x) => SubCat.fromJson(x))),
+  );
 
-  Category(
-      {this.id,
-      this.nameArabic,
-      this.nameEnglish,
-      this.thumbnail,
-      this.subCategories});
-
-  factory Category.fromJson(Map<String, dynamic> json) {
-    return Category(
-      id: json['id'],
-      nameArabic: json['name_ar'],
-      nameEnglish: json['name_en'],
-      thumbnail: json['thumbnail'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name_ar'] = this.nameArabic;
-    data['name_en'] = this.nameEnglish;
-    data['thumbnail'] = this.thumbnail;
-    return data;
-  }
-
-  @override
-  // TODO: implement stringify
-  bool get stringify => true;
-
-  @override
-  // TODO: implement props
-  List<Object> get props => [nameEnglish];
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name_en": nameEn,
+    "name_ar": nameAr,
+    "thumbnail": thumbnail,
+    "sub_cats": List<dynamic>.from(subCats.map((x) => x.toJson())),
+  };
 }
 
-class SubCategory {
-  String id;
-  String nameEnglish;
-  String nameArabic;
+class SubCat {
+  SubCat({
+    this.id,
+    this.categoryId,
+    this.nameEn,
+    this.nameAr,
+    this.thirdLevel,
+  });
 
-  SubCategory({this.id, this.nameEnglish, this.nameArabic});
+  int id;
+  int categoryId;
+  String nameEn;
+  String nameAr;
+  List<SubSubCat> thirdLevel;
+
+  factory SubCat.fromJson(Map<String, dynamic> json) => SubCat(
+    id: json["id"],
+    categoryId: json["category_id"],
+    nameEn: json["name_en"],
+    nameAr: json["name_ar"],
+    thirdLevel: json["third_level"] == null ? null : List<SubSubCat>.from(json["third_level"].map((x) => SubSubCat.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "category_id": categoryId,
+    "name_en": nameEn,
+    "name_ar": nameAr,
+    "third_level": thirdLevel == null ? null : List<dynamic>.from(thirdLevel.map((x) => x.toJson())),
+  };
+}
+
+class SubSubCat {
+  SubSubCat({
+    this.id,
+    this.categoryId,
+    this.nameEn,
+    this.nameAr,
+  });
+
+  int id;
+  int categoryId;
+  String nameEn;
+  String nameAr;
+
+  factory SubSubCat.fromJson(Map<String, dynamic> json) => SubSubCat(
+    id: json["id"],
+    categoryId: json["category_id"],
+    nameEn: json["name_en"],
+    nameAr: json["name_ar"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "category_id": categoryId,
+    "name_en": nameEn,
+    "name_ar": nameAr,
+  };
 }

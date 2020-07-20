@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'cart-api-client.dart';
+part of 'chat-api-client.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -16,12 +16,17 @@ class _CartApiClient implements CartApiClient {
   String baseUrl;
 
   @override
-  addToCart(productId) async {
+  Future<String> createMessage(
+      String senderId, String receiverId, String message) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{'product_id': productId};
+    final _data = <String, dynamic>{
+      'sender_id': senderId,
+      'receiver_id': receiverId,
+      'message': message
+    };
 
-    final Response<String> _result = await _dio.request('/add_to_cart/',
+    final Response<String> _result = await _dio.request('api/v1/message',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -34,15 +39,15 @@ class _CartApiClient implements CartApiClient {
   }
 
   @override
-  Future<String> deleteFromCart(int productId) async {
+  Future<String> getAllAddress() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{'product_id': productId};
+    final _data = <String, dynamic>{};
 
-    final Response<String> _result = await _dio.request('/delete_from_cart/',
+    final Response<String> _result = await _dio.request('api/v1/message',
         queryParameters: queryParameters,
         options: RequestOptions(
-            method: 'POST',
+            method: 'GET',
             headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
@@ -52,11 +57,15 @@ class _CartApiClient implements CartApiClient {
   }
 
   @override
-  Future<String> cartCheckout(int addressId) async {
+  Future<String> getConversation(String senderId, String receiverId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{'address_id': addressId};
-    final Response<String> _result = await _dio.request('/checkout/',
+    final _data = <String, dynamic>{
+      'sender_id': senderId,
+    };
+
+    final Response<String> _result = await _dio.request(
+        'api/v1/message/$receiverId',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',

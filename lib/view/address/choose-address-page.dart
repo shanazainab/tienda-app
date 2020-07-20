@@ -242,6 +242,7 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
       context,
       MaterialPageRoute(
           builder: (context) => AddAddressPage(
+            isEditMode: false,
                 deliveryAddress: deliveryAddress,
               )),
     );

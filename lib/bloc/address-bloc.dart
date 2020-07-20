@@ -1,9 +1,6 @@
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
 import 'package:tienda/api/address-api-client.dart';
@@ -28,6 +25,10 @@ class AddressBloc extends Bloc<AddressEvents, AddressStates> {
     if (event is DeleteSavedAddress) {
       yield* _mapDeleteSavedAddressToStates(event);
     }
+
+    if (event is EditSavedAddress) {
+      yield* _mapEditSavedAddressToStates(event);
+    }
   }
 
   Stream<AddressStates> _mapLoadSavedAddressToStates(
@@ -45,11 +46,11 @@ class AddressBloc extends Bloc<AddressEvents, AddressStates> {
       DeliverAddressResponse data = deliverAddressResponseFromJson(response);
       switch (data.status) {
         case 200:
-          if(data.addresses.isNotEmpty){
+          if (data.addresses.isNotEmpty) {
             addresses = data.addresses;
             status = "success";
-          }else
-          status = "empty";
+          } else
+            status = "empty";
 
           break;
         case 401:
@@ -97,6 +98,35 @@ class AddressBloc extends Bloc<AddressEvents, AddressStates> {
     //if (status == "Not Authorized") yield AuthorizationFailed();
   }
 
+  Stream<AddressStates> _mapEditSavedAddressToStates(
+      EditSavedAddress event) async* {
+    final dio = Dio();
+    String status;
+    String value = await FlutterSecureStorage().read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
+    final client = AddressApiClient(dio,
+        baseUrl: GlobalConfiguration().getString("baseURL"));
+    await client.editSavedAddress(event.deliveryAddress).then((response) {
+      Logger().d("EDIT-SAVED-ADDRESS-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          status = "success";
+          break;
+        case 401:
+          status = "Not Authorized";
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+        Logger().e("EDIT-SAVED-ADDRESS-ERROR:${error.response}");
+        Logger().e("EDIT-SAVED-ADDRESS-DATA:${error.response?.data}");
+        Logger().e("EDIT-SAVED-ADDRESS-REQUEST:${error.request?.data}");
+      }
+    });
+    if (status == "success") yield EditAddressSuccess();
+    //if (status == "Not Authorized") yield AuthorizationFailed();
+  }
+
   Stream<AddressStates> _mapDeleteSavedAddressToStates(
       DeleteSavedAddress event) async* {
     final dio = Dio();
@@ -127,12 +157,11 @@ class AddressBloc extends Bloc<AddressEvents, AddressStates> {
   }
 }
 
+DeliverAddressResponse deliverAddressResponseFromJson(String str) =>
+    DeliverAddressResponse.fromJson(json.decode(str));
 
-
-
-DeliverAddressResponse deliverAddressResponseFromJson(String str) => DeliverAddressResponse.fromJson(json.decode(str));
-
-String deliverAddressResponseToJson(DeliverAddressResponse data) => json.encode(data.toJson());
+String deliverAddressResponseToJson(DeliverAddressResponse data) =>
+    json.encode(data.toJson());
 
 class DeliverAddressResponse {
   DeliverAddressResponse({
@@ -143,17 +172,15 @@ class DeliverAddressResponse {
   int status;
   List<DeliveryAddress> addresses;
 
-  factory DeliverAddressResponse.fromJson(Map<String, dynamic> json) => DeliverAddressResponse(
-    status: json["status"],
-    addresses: List<DeliveryAddress>.from(json["addresses"].map((x) => DeliveryAddress.fromJson(x))),
-  );
+  factory DeliverAddressResponse.fromJson(Map<String, dynamic> json) =>
+      DeliverAddressResponse(
+        status: json["status"],
+        addresses: List<DeliveryAddress>.from(
+            json["addresses"].map((x) => DeliveryAddress.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "addresses": List<dynamic>.from(addresses.map((x) => x.toJson())),
-  };
+        "status": status,
+        "addresses": List<dynamic>.from(addresses.map((x) => x.toJson())),
+      };
 }
-
-
-
-

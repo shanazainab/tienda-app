@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
-class OrderSummaryContainer extends StatelessWidget {
+class CheckoutStatusContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Center(child: Text("order checkout page")),
+      child: Center(
+        child: Text("CHECK OUT STATUS"),
+      ),
     );
   }
 }

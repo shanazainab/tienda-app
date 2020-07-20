@@ -18,7 +18,6 @@ class CategoryBlock extends Bloc<CategoryEvents, CategoryStates> {
     if (event is LoadCategories) {
       yield* _mapFetchHomeDataToStates(event);
     }
-
   }
 
   Stream<CategoryStates> _mapFetchHomeDataToStates(
@@ -33,7 +32,6 @@ class CategoryBlock extends Bloc<CategoryEvents, CategoryStates> {
         categories.add(Category.fromJson(item));
       }
 
-      Logger().d("#########CATEGORY LIST: $categories ");
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
@@ -41,15 +39,7 @@ class CategoryBlock extends Bloc<CategoryEvents, CategoryStates> {
       }
     });
 
-    for (final category in categories) {
-      category.subCategories = new List<SubCategory>();
-      for (int i = 0; i < 10; ++i)
-        category.subCategories.add(new SubCategory(
-            nameEnglish: category.nameEnglish + " " + i.toString()));
-    }
-
-    yield LoadCategoriesSuccess(categories: categories,
-    selectedCategory: categories[0]);
+    yield LoadCategoriesSuccess(
+        categories: categories, selectedCategory: categories[0]);
   }
-
 }

@@ -99,7 +99,7 @@ class _CartPageState extends State<CartPage> {
                                     ),
                                     Text(
                                       state.cart.cartItems[index].product
-                                          .nameEnglish
+                                          .nameEn
                                           .substring(0, 9),
                                       softWrap: true,
                                     ),

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tienda/model/product.dart';
 
 class ProductDescriptionContainer extends StatelessWidget {
+  final Product product;
+
+  ProductDescriptionContainer(this.product);
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
