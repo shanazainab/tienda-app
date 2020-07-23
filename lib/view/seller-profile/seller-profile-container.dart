@@ -5,10 +5,25 @@ import 'package:tienda/view/products/featured-product-list.dart';
 import 'package:tienda/view/seller-profile/seller-profile-main-page.dart';
 import 'package:video_player/video_player.dart';
 
-class SellerProfileContainer extends StatelessWidget {
+class SellerProfileContainer extends StatefulWidget {
   final GlobalKey pageViewGlobalKey;
 
   SellerProfileContainer(this.pageViewGlobalKey);
+
+  @override
+  _SellerProfileContainerState createState() => _SellerProfileContainerState();
+}
+
+class _SellerProfileContainerState extends State<SellerProfileContainer> {
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    super.initState();
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +32,7 @@ class SellerProfileContainer extends StatelessWidget {
       shrinkWrap: true,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(top:16.0),
+          padding: const EdgeInsets.only(top: 16.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -35,7 +50,9 @@ class SellerProfileContainer extends StatelessWidget {
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    AppLocalizations.of(context).translate("products").toUpperCase(),
+                    AppLocalizations.of(context)
+                        .translate("products")
+                        .toUpperCase(),
                     style: TextStyle(color: Colors.blue, fontSize: 12),
                   )
                 ],
@@ -53,7 +70,9 @@ class SellerProfileContainer extends StatelessWidget {
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    AppLocalizations.of(context).translate("videos").toUpperCase(),
+                    AppLocalizations.of(context)
+                        .translate("videos")
+                        .toUpperCase(),
                     style: TextStyle(color: Colors.blue, fontSize: 12),
                   )
                 ],
@@ -71,7 +90,9 @@ class SellerProfileContainer extends StatelessWidget {
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
-                      AppLocalizations.of(context).translate("followers").toUpperCase(),
+                    AppLocalizations.of(context)
+                        .translate("followers")
+                        .toUpperCase(),
                     style: TextStyle(color: Colors.blue, fontSize: 12),
                   )
                 ],
@@ -93,7 +114,8 @@ class SellerProfileContainer extends StatelessWidget {
         ),
         Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(AppLocalizations.of(context).translate("popular-videos"),
+            child: Text(
+                AppLocalizations.of(context).translate("popular-videos"),
                 style: TextStyle(
                     color: Colors.grey,
                     fontSize: 20,
@@ -101,32 +123,41 @@ class SellerProfileContainer extends StatelessWidget {
 
         ///NOTE: only https video
 
+
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Chewie(
             controller: ChewieController(
               videoPlayerController: VideoPlayerController.network(
-                  'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4')..initialize(),
+                  'http://192.168.1.83:1935/test_presenter/myStream/playlist.m3u8',
+                formatHint: VideoFormat.hls
+             ),
               aspectRatio: 3 / 2,
-              autoPlay: false,
+              autoPlay: true,
+              isLive: true,
               looping: true,
+              autoInitialize: true,
               allowFullScreen: true,
             ),
           ),
         ),
 
+//        Padding(
+//            padding: const EdgeInsets.all(16.0),
+//            child: AspectRatio(
+//              aspectRatio: controller.value.aspectRatio,
+//              child: VideoPlayer(controller),
+//            )),
+
         Center(
             child: FlatButton(
                 onPressed: () {
-                  PageView pageView = pageViewGlobalKey.currentWidget;
+                  PageView pageView = widget.pageViewGlobalKey.currentWidget;
                   pageView.controller.animateToPage(1,
-                  duration: Duration(
-                    seconds: 1
-                  ),
-                  curve: Curves.easeIn);
+                      duration: Duration(seconds: 1), curve: Curves.easeIn);
                 },
                 child: Text(
-    AppLocalizations.of(context).translate("see-all"),
+                  AppLocalizations.of(context).translate("see-all"),
                   style: TextStyle(color: Colors.lightBlue),
                 ))),
 
@@ -136,7 +167,6 @@ class SellerProfileContainer extends StatelessWidget {
                 onPressed: () {},
                 child: Text(
                   AppLocalizations.of(context).translate("see-all"),
-
                   style: TextStyle(color: Colors.lightBlue),
                 ))),
       ],
