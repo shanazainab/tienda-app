@@ -1,5 +1,6 @@
 {
   "1": "CUSTOMER PROFILE MENU",
+  "tienda-points": "نقاط تندا",
   "orders": "الطلبات",
   "returns": "الطلبات الإرجاع",
   "wishlist": "مفضلة",
@@ -60,11 +61,21 @@
 
   "6": "CART PAGE",
   "cart": "عربة التسوق",
+  "checkout": "سداد",
+  "move-to-wishlist": "الانتقال إلى قائمة الرغبات",
+  "remove": "حذف",
+  "cart-total": "إجمالي عربة التسوق",
+  "price-details": "تفاصيل السعر",
+  "cart-discount": "عربة التسوق الخصم",
+  "order-total": "السعر المطلوب",
+  "delivery-charge": "رسوم التوصيل",
+  "total": "مجموع",
+  "free": "مجانا",
 
 
 
   "7": "WISHLIST PAGE",
-  "add-to-cart": "أضف الى الحقيبة",
+  "move-to-cart": "أضف الى الحقيبة",
   "on-discount": "خصم على",
   "popular": "محبوب",
 
@@ -77,6 +88,7 @@
   "new-arrival": "الوافد الجديد",
   "top-categories": "أعلى الفئات",
   "featured-brands": "ماركات مميزة",
+  "now-trending": "مشهور الآن",
 
 
   "9": "FILTER AND SORT",
@@ -121,5 +133,36 @@
   "14": "INTRODUCTION PAGES",
   "pick-your-language": "اختر لغتك",
   "continue": "استمر",
-  "choose-your-country": "اختر بلدك"
+  "choose-your-country": "اختر بلدك",
+
+
+
+  "15": "LOGIN PAGES",
+  "continue-with-phone-number":"قم بتسجيل الدخول باستخدام رقم الهاتف",
+  "continue-with-google": "تسجيل الدخول عبر جوجل",
+  "continue-with-facebook": "تسجيل الدخول باستخدام الفيسبوك",
+  "enter-your-mobile-number": "أدخل رقم الهاتف المحمول الخاص بك",
+  "enter-otp-sent-to-your-mobile": "أدخل كلمة المرور OTP المرسلة إلى هاتفك المحمول",
+  "next": "استمر",
+  "verify": "التحقق من",
+
+
+  "16": "PRODUCT DETAILS",
+  "production-description": "وصف المنتج",
+  "specification": "يعدل أو يكيف",
+  "description":"وصف",
+  "customer-rating": "تقييم العملاء",
+  "customer-review": "رأي العملاء",
+  "add-to-cart": "أضف إلى السلة",
+  "add-your-review": "أضف تعليقك",
+  "submit": "إرسال",
+
+
+  "aed": "د.إ;",
+
+  "17": "PRODUCT LIST CONTAINER",
+  "added-to-wishlist": "أضيف لقائمة الأماني",
+  "removed-from-wishlist": "تمت إزالته من قائمة الرغبات"
+
+
 }

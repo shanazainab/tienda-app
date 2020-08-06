@@ -8,18 +8,16 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:tienda/api/cart-api-client.dart';
 import 'package:tienda/api/customer-profile-api-client.dart';
 import 'package:tienda/api/login-api-client.dart';
-import 'package:tienda/model/cart.dart';
 import 'package:tienda/model/customer.dart';
 import 'package:tienda/model/login-request.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/login-verify-request.dart';
 
 class LoginController {
-
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
   final FacebookLogin _facebookLogin;
@@ -78,10 +76,7 @@ class LoginController {
           await _secureStorage.write(
               key: "session-id", value: response['headers']['set-cookie'][0]);
 
-          String value = await _secureStorage.read(key: "session-id");
-
-          updateCartAtTheBackend();
-
+          callUpdateDeviceId();
           break;
         case 400:
           status = "Enter Valid OTP";
@@ -243,7 +238,7 @@ class LoginController {
     } else {
       Logger().d("REGISTERED CUSTOMER");
 
-    //  checkCookie();
+      //  checkCookie();
 
       isLoggedIn = true;
     }
@@ -319,8 +314,7 @@ class LoginController {
 
           print("SESSION ID FOR GOOGLE SIGN IN: $value");
           status = "success";
-          updateCartAtTheBackend();
-
+          callUpdateDeviceId();
           break;
       }
     }).catchError((err) {
@@ -352,7 +346,7 @@ class LoginController {
 
           Logger().d("SESSION ID FOR FACEBOOK SIGN IN: $value");
           status = "success";
-          updateCartAtTheBackend();
+          callUpdateDeviceId();
 
           break;
       }
@@ -367,22 +361,11 @@ class LoginController {
     return status;
   }
 
-  Future<void> updateCartAtTheBackend() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    Cart cart;
-    if (sharedPreferences.containsKey("cart")) {
-      cart = Cart.fromJson(json.decode(sharedPreferences.getString('cart')));
-      for (final cartItem in cart.cartItems) {
-        callAddToCartApi(cartItem.product.id);
-      }
-    }
-  }
-
-  callAddToCartApi(productId) {
+  callAddToCartApi(productId, quantity) {
     final dio = Dio();
     final client =
         CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
-    client.addToCart(productId).then((response) {
+    client.addToCart(productId, quantity).then((response) {
       Logger().d("ADD-TO-CART-AFTER-LOGIN-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
@@ -422,5 +405,51 @@ class LoginController {
     });
 
     return status;
+  }
+
+  Future<String> callUpdateDeviceId() async {
+    String status;
+
+    final dio = Dio();
+    String value = await _secureStorage.read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
+    final client = LoginApiClient(dio,
+        baseUrl: GlobalConfiguration().getString("baseURL"));
+
+    String deviceId = await _getId();
+    await client.updateDeviceId(deviceId).then((response) {
+      Logger().d("UPDATE-DEVICE-ID-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          status = "success";
+          break;
+        case 407:
+          status = "Enter Valid Number";
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+        Logger().e("UPDATE-DEVICE-ID-ERROR:", error);
+      }
+    });
+
+    return status;
+  }
+
+  Future<String> _getId() async {
+
+    OSPermissionSubscriptionState subscriptionState =
+    await OneSignal.shared.getPermissionSubscriptionState();
+    Logger().d("PLAYER ID: ${subscriptionState.subscriptionStatus.userId}");
+
+    return subscriptionState.subscriptionStatus.userId;
+//    var deviceInfo = DeviceInfoPlugin();
+//    if (Platform.isIOS) {
+//      IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
+//      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+//    } else {
+//      AndroidDeviceInfo androidDeviceInfo = await deviceInfo.androidInfo;
+//      return androidDeviceInfo.androidId; // unique ID on Android
+//    }
   }
 }

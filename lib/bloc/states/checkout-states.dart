@@ -1,10 +1,9 @@
 import 'package:equatable/equatable.dart';
+import 'package:tienda/model/order.dart';
 
-abstract class CheckoutStates extends Equatable {
+abstract class CheckoutStates {
   CheckoutStates();
 
-  @override
-  List<Object> get props => null;
 }
 
 class Loading extends CheckoutStates {
@@ -12,10 +11,26 @@ class Loading extends CheckoutStates {
 }
 
 class InitialCheckOutSuccess extends CheckoutStates {
-
-
   InitialCheckOutSuccess() : super();
 
-  @override
-  List<Object> get props => [];
 }
+
+class AddressActive extends CheckoutStates {
+  final String status;
+  final Order order;
+  AddressActive(this.status,this.order) : super();
+
+}
+class PaymentActive extends CheckoutStates {
+  final String status;
+  final Order order;
+  PaymentActive(this.status,this.order) : super();
+
+}
+class CartActive extends CheckoutStates {
+  final String status;
+  final Order order;
+  CartActive(this.status,this.order) : super();
+
+}
+

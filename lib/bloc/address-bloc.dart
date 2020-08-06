@@ -33,6 +33,13 @@ class AddressBloc extends Bloc<AddressEvents, AddressStates> {
 
   Stream<AddressStates> _mapLoadSavedAddressToStates(
       LoadSavedAddress event) async* {
+    List<DeliveryAddress> addresses = await callLoadAddressApi();
+    if (addresses.isNotEmpty)
+      yield LoadAddressSuccess(deliveryAddresses: addresses);
+    //if (status == "Not Authorized") yield AuthorizationFailed();
+  }
+
+  Future<List<DeliveryAddress>> callLoadAddressApi() async {
     List<DeliveryAddress> addresses = new List();
     final dio = Dio();
     String status;
@@ -59,14 +66,13 @@ class AddressBloc extends Bloc<AddressEvents, AddressStates> {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        Logger().e("GET-SAVED-ADDRESS-ERROR:${error.response}");
+        Logger().e("GET-SAVED-ADDRESS-ERROR:${error}");
         Logger().e("GET-SAVED-ADDRESS-DATA:${error.response?.data}");
         Logger().e("GET-SAVED-ADDRESS-REQUEST:${error.request?.data}");
       }
     });
-    if (status == "success")
-      yield LoadAddressSuccess(deliveryAddresses: addresses);
-    //if (status == "Not Authorized") yield AuthorizationFailed();
+
+    return addresses;
   }
 
   Stream<AddressStates> _mapAddSavedAddressToStates(
@@ -94,8 +100,11 @@ class AddressBloc extends Bloc<AddressEvents, AddressStates> {
         Logger().e("ADD-TO-SAVED-ADDRESS-REQUEST:${error.request?.data}");
       }
     });
-    if (status == "success") yield AddAddressSuccess();
-    //if (status == "Not Authorized") yield AuthorizationFailed();
+    if (status == "success") {
+      List<DeliveryAddress> addresses = await callLoadAddressApi();
+      if (addresses.isNotEmpty)
+        yield LoadAddressSuccess(deliveryAddresses: addresses);
+    }
   }
 
   Stream<AddressStates> _mapEditSavedAddressToStates(
@@ -123,7 +132,12 @@ class AddressBloc extends Bloc<AddressEvents, AddressStates> {
         Logger().e("EDIT-SAVED-ADDRESS-REQUEST:${error.request?.data}");
       }
     });
-    if (status == "success") yield EditAddressSuccess();
+    if (status == "success") {
+      List<DeliveryAddress> addresses = await callLoadAddressApi();
+      if (addresses.isNotEmpty)
+        yield LoadAddressSuccess(deliveryAddresses: addresses);
+    }
+
     //if (status == "Not Authorized") yield AuthorizationFailed();
   }
 
@@ -152,7 +166,12 @@ class AddressBloc extends Bloc<AddressEvents, AddressStates> {
         Logger().e("DELETE-SAVED-ADDRESS-REQUEST:${error.request?.data}");
       }
     });
-    if (status == "success") yield DeleteAddressSuccess();
+
+    ///update UI
+    event.deliveryAddresses
+        .removeWhere((element) => element.id == event.deliveryAddressId);
+    if (status == "success")
+      yield DeleteAddressSuccess(deliveryAddresses: event.deliveryAddresses);
     //if (status == "Not Authorized") yield AuthorizationFailed();
   }
 }

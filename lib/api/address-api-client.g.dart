@@ -65,6 +65,7 @@ class _AddressApiClient implements AddressApiClient {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
+    Logger().d("EDIT ADDRESS: ${_result.data}");
     final value = _result.data;
     return value;
   }

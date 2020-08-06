@@ -112,7 +112,7 @@ class _LoginApiClient implements LoginApiClient {
     ArgumentError.checkNotNull(deviceId, 'deviceId');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = {"device-id":deviceId};
+    final _data = {"device-id": deviceId};
     final Response<Map<String, dynamic>> _result = await _dio.request(
         '/get_cookie/',
         queryParameters: queryParameters,
@@ -148,13 +148,31 @@ class _LoginApiClient implements LoginApiClient {
 
   @override
   Future<String> checkCookie() async {
-     const _extra = <String, dynamic>{};
+    const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final Response<String> _result = await _dio.request('/check_cookie/',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
+    return value;
+  }
+
+  @override
+  Future<String> updateDeviceId(String deviceId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{"device_id": deviceId};
+
+    final Response<String> _result = await _dio.request('/update_device_id/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
             headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),

@@ -1,142 +1,242 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:tienda/bloc/address-bloc.dart';
 import 'package:tienda/bloc/events/address-events.dart';
 import 'package:tienda/bloc/states/address-states.dart';
+import 'package:tienda/model/delivery-address.dart';
 import 'package:tienda/view/address/add-address-page.dart';
 import 'package:tienda/view/address/choose-address-page.dart';
-import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class SavedAddressPage extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) => AddressBloc()..add(LoadSavedAddress()),
-      child: Scaffold(
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(50),
-            child: CustomAppBar(
-              title: "Saved Address",
-              showWishList: false,
-              showSearch: false,
-              showCart: false,
-              showLogo: false,
+  Widget build(BuildContext contextB) {
+    return Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          brightness: Brightness.light,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
+        body: Stack(
+          children: <Widget>[
+            Container(
+              color: Colors.white,
+              child: ListView(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text("Delivery Address",
+                        style: Theme.of(contextB).textTheme.headline2),
+                  ),
+                  BlocBuilder<AddressBloc, AddressStates>(
+                      builder: (context, state) {
+                    if (state is LoadAddressSuccess)
+                      return deliveryAddressBlock(
+                          context, state.deliveryAddresses);
+                    if (state is DeleteAddressSuccess)
+                      return deliveryAddressBlock(
+                          context, state.deliveryAddresses);
+                    else
+                      return Container(
+                        child: Center(),
+                      );
+                  }),
+                ],
+              ),
             ),
-          ),
-          bottomNavigationBar: ButtonTheme(
-            height: 48,
-            minWidth: MediaQuery.of(context).size.width - 48,
-            child: RaisedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ChooseAddressPage()),
-                );
-              },
-              child: Text("ADD NEW ADDRESS"),
+            BlocBuilder<AddressBloc, AddressStates>(builder: (context, state) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width - 50,
+                    child: RaisedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          contextB,
+                          MaterialPageRoute(
+                              builder: (context) => BlocProvider.value(
+                                  value: BlocProvider.of<AddressBloc>(contextB),
+                                  child: ChooseAddressPage())),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Text("ADD NEW ADDRESS"),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ],
+        ));
+  }
+
+  deliveryAddressBlock(contextA, List<DeliveryAddress> deliveryAddresses) {
+    return new ListView.separated(
+        shrinkWrap: true,
+        itemCount: deliveryAddresses.length,
+        separatorBuilder: (BuildContext context, int index) => Divider(
+              endIndent: 16,
+              indent: 16,
             ),
-          ),
-          body: BlocBuilder<AddressBloc, AddressStates>(
-              builder: (context, state) {
-            if (state is LoadAddressSuccess)
-              return Container(
-                color: Colors.white,
-                child: new ListView.separated(
-                    itemCount: state.deliveryAddresses.length,
-                    separatorBuilder: (BuildContext context, int index) =>
-                        Divider(
-                          endIndent: 16,
-                          indent: 16,
+        itemBuilder: (BuildContext ctxt, int index) {
+          return Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Container(
+                            alignment: Alignment.center,
+                            width: 50,
+                            child: Icon(
+                              deliveryAddresses[index].addressType == "villa"
+                                  ? Icons.home
+                                  : Icons.location_city,
+                              size: 16,
+                            )),
+                        Container(
+                          width: MediaQuery.of(contextA).size.width - 150,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 16.0),
+                            child: Text(deliveryAddresses[index].longAddress),
+                          ),
                         ),
-                    itemBuilder: (BuildContext ctxt, int index) {
-                      return Slidable(
-                        actionPane: SlidableDrawerActionPane(),
-                        actionExtentRatio: 0.25,
-                        child: GestureDetector(
-                          onTap: () {
+                        deliveryAddresses[index].isDefault
+                            ? Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.1),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20))),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 8.0, right: 8.0),
+                                  child: Text("Default"),
+                                ),
+                              )
+                            : Container()
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            alignment: Alignment.center,
+                            width: 50,
+                            child: Icon(
+                              Icons.phone,
+                              size: 16,
+                            ),
+                          ),
+                          Container(
+                            width: MediaQuery.of(contextA).size.width - 90,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 16.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(deliveryAddresses[index].fullName),
+                                  Text(deliveryAddresses[index].phoneNumber),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    deliveryAddresses[index].apartment != "null"
+                        ? Row(
+                            children: <Widget>[
+                              Container(
+                                  alignment: Alignment.center,
+                                  width: 50,
+                                  child: Icon(
+                                    Icons.location_on,
+                                    size: 16,
+                                  )),
+                              Container(
+                                width: MediaQuery.of(contextA).size.width - 150,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 16.0),
+                                  child:
+                                      Text(deliveryAddresses[index].apartment),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        FlatButton(
+                          onPressed: () {
+                            BlocProvider.of<AddressBloc>(contextA).add(
+                                DeleteSavedAddress(
+                                    deliveryAddresses: deliveryAddresses,
+                                    deliveryAddressId:
+                                        deliveryAddresses[index].id));
+                          },
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.delete,
+                                size: 14,
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Text(
+                                "DELETE",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                        FlatButton(
+                          onPressed: () {
                             Navigator.push(
-                              context,
+                              contextA,
                               MaterialPageRoute(
-                                  builder: (context) => AddAddressPage(
-                                        isEditMode: true,
-                                        deliveryAddress:
-                                            state.deliveryAddresses[index],
+                                  builder: (context) => BlocProvider.value(
+                                        value: BlocProvider.of<AddressBloc>(
+                                            contextA),
+                                        child: AddAddressPage(
+                                          isEditMode: true,
+                                          deliveryAddress:
+                                              deliveryAddresses[index],
+                                        ),
                                       )),
                             );
                           },
-                          child: Container(
-                              color: Colors.white,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  children: <Widget>[
-                                    Row(
-                                      children: <Widget>[
-                                        Icon(Icons.business),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 16.0),
-                                          child: Text(state
-                                              .deliveryAddresses[index]
-                                              .longAddress),
-                                        ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Icon(Icons.phone),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 16.0),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(state
-                                                    .deliveryAddresses[index]
-                                                    .fullName),
-                                                Text(state
-                                                    .deliveryAddresses[index]
-                                                    .phoneNumber),
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )),
-                        ),
-                        secondaryActions: <Widget>[
-                          IconSlideAction(
-                            caption: 'Delete',
-                            color: Colors.red,
-                            icon: Icons.delete,
-                            onTap: () {
-                              context.bloc<AddressBloc>().add(
-                                  DeleteSavedAddress(
-                                      deliveryAddressId:
-                                          state.deliveryAddresses[index].id));
-                            },
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.edit,
+                                size: 14,
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Text("EDIT", style: TextStyle(fontSize: 12)),
+                            ],
                           ),
-                        ],
-                      );
-                    }),
-              );
-            else
-              return Container(
-                child: Center(),
-              );
-          })),
-    );
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ));
+        });
   }
 }

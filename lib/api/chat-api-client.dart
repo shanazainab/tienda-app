@@ -1,19 +1,20 @@
+import 'package:logger/logger.dart';
 import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
 part 'chat-api-client.g.dart';
 
 @RestApi()
-abstract class CartApiClient {
-  factory CartApiClient(Dio dio, {String baseUrl}) =
-  _CartApiClient;
+abstract class ChatApiClient {
+  factory ChatApiClient(Dio dio, {String baseUrl}) =
+  _ChatApiClient;
 
   @POST("api/v1/message")
-  Future<String> createMessage(@Body() String senderId,@Body() String receiverId,@Body() String message);
+  Future<String> createMessage(@Body() String senderId,@Body() String receiverId,@Body() String message,@Body() String socketId);
 
   @GET("api/v1/message")
-  Future<String> getAllAddress();
+  Future<String> getAllMessages();
 
-  @POST("api/v1/message/{receiverId}")
-  Future<String> getConversation(@Body() String senderId, @Path('receiverId') String receiverId);
+  @GET("api/v1/message/{senderId}/{receiverId}")
+  Future<String> getConversation(@Path("senderId") String senderId, @Path("receiverId") String id);
 
 }

@@ -1,39 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:tienda/model/order.dart';
 import 'package:tienda/view/order/order-tracking-page.dart';
 import 'package:tienda/view/order/order-tracking-time-line.dart';
-import 'dart:math' as math;
 
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 
-class OrdersDetailsPage extends StatefulWidget {
+class OrdersDetailsPage extends StatelessWidget {
   final Order order;
 
   OrdersDetailsPage(this.order);
-
-  @override
-  _OrdersDetailsPageState createState() => _OrdersDetailsPageState();
-}
-
-class _OrdersDetailsPageState extends State<OrdersDetailsPage>
-    with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-
-  final _trackNowStream = BehaviorSubject<bool>();
-
-  double height = 150;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    _trackNowStream.add(false);
-
-    super.initState();
-
-    _controller =
-        AnimationController(vsync: this, duration: Duration(seconds: 2));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,23 +25,19 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
             showLogo: false,
           )),
       body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              color: Colors.white,
-              child: Padding(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          color: Colors.grey[200],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
                 padding: const EdgeInsets.all(24.0),
+                color: Colors.white,
                 child: Column(
                   children: <Widget>[
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(widget.order.orderUuid),
-                        Text("Expected Delivery 10 Jun")
-                      ],
-                    ),
+                    Text("ORDER NO: ${order.orderUuid}"),
                     SizedBox(
                       height: 50,
                     ),
@@ -74,51 +46,98 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
                       alignment: Alignment.bottomLeft,
                       child: ListView.builder(
                           shrinkWrap: true,
-                          itemCount: widget.order.products.length,
+                          itemCount: order.products.length,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (BuildContext ctxt, int index) {
                             return Padding(
                               padding: const EdgeInsets.only(left: 8.0),
-                              child: Stack(
-                                children: <Widget>[
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: Container(
+                              child: Container(
+                                height: 160,
+                                width: 120,
+                                child: Stack(
+                                  children: <Widget>[
+                                    CachedNetworkImage(
+                                      imageUrl: order.products[index].thumbnail,
                                       height: 160,
                                       width: 120,
-                                      color: Colors.grey[200],
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Container(
+                                        color: Color(0xfff2f2e4),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(Icons.error),
                                     ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(widget.order.products[index].nameEn),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
-                                            child: Text("AED ${widget.order.products[index].price}"),
-                                          )
-                                        ],
+                                    Align(
+                                      alignment: Alignment.bottomLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              order.products[index].nameEn,
+                                              softWrap: true,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 8.0),
+                                              child: Text(
+                                                "AED ${order.products[index].price}",
+                                                overflow: TextOverflow.ellipsis,
+                                                softWrap: true,
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             );
                           }),
                     ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Container(
+                color: Colors.white,
+                padding: const EdgeInsets.only(
+                    top: 16, left: 24, right: 24.0, bottom: 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(top: 50.0),
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text(
+                        "Price Details",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text("Subtotal"),
+                        Text("AED ${order.totalPrice}")
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[Text("Subtotal"), Text("AED 100")],
+                        children: <Widget>[
+                          Text("Total Discount"),
+                          Text("AED 0")
+                        ],
                       ),
                     ),
                     Padding(
@@ -127,115 +146,72 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text("Delivery charge"),
-                          Text("AED 10")
+                          Text("AED 0")
                         ],
                       ),
                     ),
+                    Divider(),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[Text("Total"), Text("AED 110")],
+                        children: <Widget>[
+                          Text("Total"),
+                          Text("AED ${order.totalPrice}")
+                        ],
                       ),
                     )
                   ],
                 ),
               ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  height = 150;
-                });
-                _controller.reverse().then((value) {
-                  _trackNowStream.add(false);
-                });
-              },
-              child: AnimatedContainer(
-                duration: Duration(seconds: 2),
+              SizedBox(
+                height: 8,
+              ),
+              Container(
                 color: Colors.white,
-                height: height,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            "Order Status",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                padding: const EdgeInsets.only(
+                    top: 16, left: 24, right: 24.0, bottom: 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          "Order Status",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        FlatButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => OrderTrackingPage()),
+                            );
+                          },
+                          child: Text(
+                            "Track Now",
+                            style: TextStyle(color: Colors.blue),
                           ),
-                          FlatButton(
-                            onPressed: () {
-//                              _trackNowStream.add(true);
-//
-//                              setState(() {
-//                                height = 400;
-//                              });
-//                              _controller.forward();
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => OrderTrackingPage()),
-                              );
-                            },
-                            child: Text(
-                              "Track Now",
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                          ),
-                        ],
-                      ),
-                      AnimatedBuilder(
-                        animation: _controller,
-                        builder: (_, child) {
-                          return Transform.translate(
-                            offset: Offset(0.0, _controller.value * 100.0),
-                            child: Transform.rotate(
-                              angle: _controller.value * math.pi / 2,
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: StreamBuilder<bool>(
-                            stream: _trackNowStream,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<bool> snapshot) {
-                              return Container(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 16.0),
-                                  child: OrderTrackingTimeLine(
-                                    expand: true,
-                                    rightItems: ["Packed", "", ""],
-                                    showDescription: snapshot.data,
-                                    hideElements: snapshot.data,
-                                    topRowItems: ["Packed", "", ""],
-                                    numberOfTrackLines: 3,
-                                  ),
-                                ),
-                              );
-                            }),
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                    OrderTrackingTimeLine(
+                      topRowItems: ["Packed", "", ""],
+                      numberOfTrackLines: 3,
+                    ),
+                  ],
                 ),
               ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
+              SizedBox(
+                height: 8,
+              ),
+              Container(
+                color: Colors.white,
+                padding: const EdgeInsets.only(
+                    top: 16, left: 24, right: 24.0, bottom: 16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,23 +227,21 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(widget.order.addressData),
-
+                          Text(order.addressData),
                         ],
                       ),
                     )
                   ],
                 ),
               ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
+              SizedBox(
+                height: 8,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                color: Colors.white,
+                padding: const EdgeInsets.only(
+                    top: 16, left: 24, right: 24.0, bottom: 16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,28 +253,25 @@ class _OrdersDetailsPageState extends State<OrdersDetailsPage>
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text("Cash on Delivery"),
-                        ],
-                      ),
+                      child: Text("Cash on Delivery"),
                     )
                   ],
                 ),
               ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Center(
-              child: RaisedButton(
-                onPressed: () {},
-                child: Text("CANCEL ORDER"),
+              SizedBox(
+                height: 20,
               ),
-            )
-          ],
+              Center(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width - 100,
+                  child: RaisedButton(
+                    onPressed: () {},
+                    child: Text("CANCEL ORDER"),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

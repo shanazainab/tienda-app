@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:badges/badges.dart';
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,13 +9,11 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/localization.dart';
-import 'package:tienda/view/cart/cart-page.dart';
 import 'package:tienda/view/live-stream/add-to-cart-popup.dart';
 import 'package:tienda/view/live-stream/cart-checkout-pop-up.dart';
 import 'package:tienda/view/live-stream/live-comment-box.dart';
-import 'package:tienda/view/wishlist/wishlist-main-page.dart';
 import 'package:tienda/view/wishlist/wishlist-page.dart';
-import 'package:video_player/video_player.dart';
+
 
 class VideoStreamFullScreenView extends StatefulWidget {
   @override
@@ -123,7 +120,7 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => WishListMainPage()),
+                MaterialPageRoute(builder: (context) => WishListPage()),
               );
             },
             icon: Icon(
@@ -144,7 +141,7 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
                 if (state is AddToCartSuccess) {
                   return Badge(
                     badgeContent: Text(
-                      state.addedCart.cartItems.length.toString(),
+                      state.addedCart.products.length.toString(),
                       style: TextStyle(fontSize: 10, color: Colors.white),
                     ),
                     child: Icon(
@@ -155,7 +152,7 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
                 } else if (state is LoadCartSuccess) {
                   return Badge(
                     badgeContent: Text(
-                      state.cart.cartItems.length.toString(),
+                      state.cart.products.length.toString(),
                       style: TextStyle(fontSize: 10, color: Colors.white),
                     ),
                     child: Icon(
@@ -176,20 +173,6 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
       ),
       body: Stack(
         children: <Widget>[
-          /*Container(
-            child: Chewie(
-              controller: ChewieController(
-                videoPlayerController: VideoPlayerController.network(
-                    'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4'),
-                autoPlay: true,
-                looping: true,
-                autoInitialize: true,
-                aspectRatio: 16 / 9,
-                showControls: false,
-                allowFullScreen: true,
-              ),
-            ),
-          ),*/
           SingleChildScrollView(
             physics: NeverScrollableScrollPhysics(),
             child: GestureDetector(

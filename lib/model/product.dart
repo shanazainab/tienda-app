@@ -1,28 +1,35 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:logger/logger.dart';
 
 class Product extends Equatable {
-  Product({
-    this.id,
-    this.nameAr,
-    this.nameEn,
-    this.categoryId,
-    this.subCategoryId,
-    this.thirdCategoryId,
-    this.price,
-    this.thumbnail,
-    this.isAvailable,
-    this.sellerId,
-    this.totalReviews,
-    this.overallRating,
-    this.isWishListed,
-    this.images,
-    this.specs,
-    this.reviews,
-    this.ratings,
-  });
+  Product(
+      {this.id,
+      this.quantity,
+      this.nameAr,
+      this.nameEn,
+      this.categoryId,
+      this.subCategoryId,
+      this.thirdCategoryId,
+      this.price,
+      this.thumbnail,
+      this.isAvailable,
+      this.sellerId,
+      this.totalReviews,
+      this.overallRating,
+      this.isWishListed,
+      this.images,
+      this.specs,
+      this.reviews,
+      this.ratings,
+      this.isReviewed,
+      this.discount,
+      this.isPurchased,
+      this.brand});
 
   int id;
+  String brand;
   String nameAr;
   String nameEn;
   int categoryId;
@@ -39,39 +46,49 @@ class Product extends Equatable {
   List<Spec> specs;
   List<Review> reviews;
   Map<String, int> ratings;
+  bool isReviewed;
+  bool isPurchased;
+
+  int quantity;
+  int discount;
 
   factory Product.fromJson(Map<String, dynamic> json) {
     Product product;
     try {
       product = Product(
-        id: json["id"],
-        nameAr: json["name_ar"],
-        nameEn: json["name_en"],
-        categoryId: json["category_id"],
-        subCategoryId: json["sub_category_id"],
-        thirdCategoryId: json["third_category_id"],
-        price: json["price"] != null ? json["price"].toDouble() : 0,
-        thumbnail: json["thumbnail"],
-        isAvailable: json["is_available"],
-        sellerId: json["seller_id"],
-        totalReviews: json["total_reviews"],
-        overallRating: json["overall_rating"] != null
-            ? json["overall_rating"].toDouble()
-            : 0.0,
-        images: json["images"] != null
-            ? List<String>.from(json["images"].map((x) => x))
-            : null,
-        specs: json["specs"] != null
-            ? List<Spec>.from(json["specs"].map((x) => Spec.fromJson(x)))
-            : null,
-        reviews: json["reviews"] != null
-            ? List<Review>.from(json["reviews"].map((x) => Review.fromJson(x)))
-            : null,
-        ratings: json["ratings"] != null
-            ? Map.from(json["ratings"])
-                .map((k, v) => MapEntry<String, int>(k, v))
-            : null,
-      );
+          id: json["id"],
+          nameAr: json["name_ar"],
+          nameEn: json["name_en"],
+          categoryId: json["category_id"],
+          subCategoryId: json["sub_category_id"],
+          thirdCategoryId: json["third_category_id"],
+          price: json["price"] != null ? json["price"].toDouble() : 0,
+          thumbnail: json["thumbnail"],
+          isAvailable: json["is_available"],
+          sellerId: json["seller_id"],
+          totalReviews: json["total_reviews"],
+          discount: json["discount"],
+          isReviewed: json["is_reviewed"],
+          isPurchased: json["is_purchased"],
+          overallRating: json["overall_rating"] != null
+              ? json["overall_rating"].toDouble()
+              : 0.0,
+          images: json["images"] != null
+              ? List<String>.from(json["images"].map((x) => x))
+              : null,
+          specs: json["specs"] != null
+              ? List<Spec>.from(json["specs"].map((x) => Spec.fromJson(x)))
+              : null,
+          reviews: json["reviews"] != null
+              ? List<Review>.from(
+                  json["reviews"].map((x) => Review.fromJson(x)))
+              : null,
+          ratings: json["ratings"] != null
+              ? Map.from(json["ratings"])
+                  .map((k, v) => MapEntry<String, int>(k, v))
+              : null,
+          quantity: json['quantity'],
+          brand: json["brand"]);
     } catch (err) {
       Logger().e(err);
     }
@@ -79,7 +96,10 @@ class Product extends Equatable {
     return product;
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> j;
+    try {
+      j = {
         "id": id,
         "name_ar": nameAr,
         "name_en": nameEn,
@@ -87,17 +107,34 @@ class Product extends Equatable {
         "sub_category_id": subCategoryId,
         "third_category_id": thirdCategoryId,
         "price": price,
+        "is_reviewed": isReviewed,
         "thumbnail": thumbnail,
         "is_available": isAvailable,
         "seller_id": sellerId,
-        "images": List<dynamic>.from(images.map((x) => x)),
-        "specs": List<dynamic>.from(specs.map((x) => x.toJson())),
+        "is_purchased": isPurchased,
+        'quantity': quantity,
+        "images":
+            images != null ? List<dynamic>.from(images.map((x) => x)) : null,
+        "specs": specs != null
+            ? List<dynamic>.from(specs.map((x) => x.toJson()))
+            : null,
         "total_reviews": totalReviews,
-        "reviews": List<dynamic>.from(reviews.map((x) => x.toJson())),
+        "reviews": reviews != null
+            ? List<dynamic>.from(reviews.map((x) => x.toJson()))
+            : null,
         "overall_rating": overallRating,
-        "ratings":
-            Map.from(ratings).map((k, v) => MapEntry<String, dynamic>(k, v)),
+        "brand": brand,
+        "discount": discount,
+        "ratings": ratings != null
+            ? Map.from(ratings).map((k, v) => MapEntry<String, dynamic>(k, v))
+            : null,
       };
+    } catch (e) {
+      print('99999999999INside : $e');
+    }
+
+    return j;
+  }
 
   @override
   // TODO: implement stringify
@@ -115,18 +152,24 @@ class Review {
     this.body,
     this.customerName,
     this.elapsedTime,
+    this.images,
+    this.fileImages,
   });
+
+  List<Image> images;
 
   DateTime createdAt;
   double rating;
   String body;
   String customerName;
   String elapsedTime;
+  List<File> fileImages;
 
   factory Review.fromJson(Map<String, dynamic> json) => Review(
         createdAt: DateTime.parse(json["created_at"]),
         rating: json["rating"].toDouble(),
         body: json["body"],
+        images: List<Image>.from(json["images"].map((x) => Image.fromJson(x))),
         customerName: json["customer_name"],
         elapsedTime: json["elapsed_time"],
       );
@@ -135,8 +178,30 @@ class Review {
         "created_at": createdAt.toIso8601String(),
         "rating": rating,
         "body": body,
+        "images": List<dynamic>.from(images.map((x) => x.toJson())),
         "customer_name": customerName,
         "elapsed_time": elapsedTime,
+      };
+
+  @override
+  String toString() {
+    return 'Review{images: $images, fileImages: $fileImages}';
+  }
+}
+
+class Image {
+  Image({
+    this.image,
+  });
+
+  String image;
+
+  factory Image.fromJson(Map<String, dynamic> json) => Image(
+        image: json["image"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "image": image,
       };
 }
 

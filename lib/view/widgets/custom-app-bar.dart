@@ -3,14 +3,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
+import 'package:tienda/bloc/checkout-bloc.dart';
+import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
-import 'package:tienda/view/cart/cart-page.dart';
+import 'package:tienda/bloc/states/login-states.dart';
+import 'package:tienda/view/checkout/checkout-orders-main-page.dart';
+import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/notification/notification-screen.dart';
 import 'package:tienda/view/search/search-page.dart';
-import 'package:tienda/view/wishlist/wishlist-main-page.dart';
 import 'package:tienda/view/wishlist/wishlist-page.dart';
-import 'dart:io' show Platform;
 
 class CustomAppBar extends StatelessWidget {
   final String title;
@@ -21,10 +24,13 @@ class CustomAppBar extends StatelessWidget {
   final bool showNotification;
   final Widget bottom;
 
+  final bool extend;
+
   CustomAppBar(
       {this.title,
+      this.extend,
       this.showCart,
-        this.showNotification,
+      this.showNotification,
       this.showWishList,
       this.showLogo,
       this.showSearch,
@@ -34,25 +40,16 @@ class CustomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppBar(
       brightness: Brightness.light,
+      backgroundColor:
+          extend != null && extend ? Colors.transparent : Colors.white,
       elevation: 0,
       title: Text(
         title,
-        style: TextStyle(fontSize: 14),
+        style: TextStyle(fontSize: showLogo?20:14,color: Colors.grey),
       ),
-      centerTitle: true,
+      centerTitle: false,
       automaticallyImplyLeading: true,
       bottom: bottom != null ? bottom : null,
-      leading: showLogo
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  "Logo",
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-              ),
-            )
-          : null,
       actions: <Widget>[
         if (showSearch)
           IconButton(
@@ -67,7 +64,6 @@ class CustomAppBar extends StatelessWidget {
             },
             icon: Icon(
               Icons.search,
-              size: 20,
             ),
           ),
         if (showNotification != null && showNotification)
@@ -83,7 +79,6 @@ class CustomAppBar extends StatelessWidget {
             },
             icon: Icon(
               Icons.notifications_none,
-              size: 20,
             ),
           ),
         if (showWishList)
@@ -92,13 +87,18 @@ class CustomAppBar extends StatelessWidget {
             constraints: BoxConstraints.tight(Size.square(40)),
             padding: EdgeInsets.all(0),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => WishListMainPage()),
-              );
+              BlocProvider.of<LoginBloc>(context).state is GuestUser
+                  ? Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginMainPage()),
+                    )
+                  : Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => WishListPage()),
+                    );
             },
             icon: Icon(
-              Icons.bookmark,
+                FontAwesomeIcons.heart,
               size: 20,
             ),
           ),
@@ -110,7 +110,12 @@ class CustomAppBar extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CartPage()),
+                  MaterialPageRoute(builder: (context) {
+                    return BlocProvider(
+                      create: (context) => CheckOutBloc(),
+                      child: CheckoutOrdersMainPage(),
+                    );
+                  }),
                 );
               },
               icon:
@@ -118,35 +123,31 @@ class CustomAppBar extends StatelessWidget {
                 if (state is AddToCartSuccess) {
                   return Badge(
                     badgeContent: Text(
-                      state.addedCart.cartItems.length.toString(),
+                      state.addedCart.products.length.toString(),
                       style: TextStyle(fontSize: 10, color: Colors.white),
                     ),
                     child: Icon(
                       Icons.shopping_basket,
-                      size: 20,
                     ),
                   );
                 } else if (state is LoadCartSuccess) {
-                  if (state.cart.cartItems.length != 0)
+                  if (state.cart != null)
                     return Badge(
                       badgeContent: Text(
-                        state.cart.cartItems.length.toString(),
+                        state.cart.products.length.toString(),
                         style: TextStyle(fontSize: 10, color: Colors.white),
                       ),
                       child: Icon(
                         Icons.shopping_basket,
-                        size: 20,
                       ),
                     );
                   else
                     return Icon(
                       Icons.shopping_basket,
-                      size: 20,
                     );
                 } else
                   return Icon(
                     Icons.shopping_basket,
-                    size: 20,
                   );
               })),
         SizedBox(

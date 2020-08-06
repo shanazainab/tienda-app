@@ -14,12 +14,14 @@ class Loading extends OrderStates {
 
 class LoadOrderDataSuccess extends OrderStates {
 
-  final List<Order> orders;
+  final List<Order> allOrders;
+  final List<Order> processingOrders;
+  final List<Order> deliveredOrders;
 
-  LoadOrderDataSuccess(this.orders) : super();
+  LoadOrderDataSuccess({this.allOrders,this.processingOrders,this.deliveredOrders}) : super();
 
   @override
-  List<Object> get props => orders;
+  List<Object> get props => [allOrders,processingOrders,deliveredOrders];
 }
 
 class LoadOrderDataFail extends OrderStates {

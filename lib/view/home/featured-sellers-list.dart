@@ -18,10 +18,12 @@ class FeaturedSellersList extends StatelessWidget {
         children: <Widget>[
           Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(AppLocalizations.of(context).translate('featured-sellers'),
-                  style: TextStyle(
-                      color: Colors.lightBlue,
-                      fontSize: 20))),
+              child: Center(
+                child: Text(AppLocalizations.of(context).translate('featured-sellers'),
+                    style: TextStyle(
+                        color: Colors.lightBlue,
+                        fontSize: 20)),
+              )),
           SizedBox(
             height: appLanguage.appLocal == Locale('en')?230:250,
             child: ListView.builder(

@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
+
+    <key>NSSpeechRecognitionUsageDescription</key>
+	<string>Can I use the Speech Recognition?</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Can I use the photo library?</string>
 	<key>NSCameraUsageDescription</key>
@@ -32,7 +36,7 @@
 		<string>location</string>
 	</array>
 	<key>io.flutter.embedded_views_preview</key>
-	<string>YES</string>
+	<true/>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundlePackageType</key>
@@ -95,5 +99,10 @@
 	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs access to location when open.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

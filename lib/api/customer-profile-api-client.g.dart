@@ -69,4 +69,26 @@ class _CustomerProfileApiClient implements CustomerProfileApiClient {
     final value = _result.data;
     return value;
   }
+
+  @override
+  Future<String> updateProfilePicture(String encodedImage) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{
+      'profile_picture':encodedImage
+    };
+    Logger().d("REQUEST:${_data}");
+
+    final Response<String> _result = await _dio.request('/change_profile_picture/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    Logger().d("REQUEST:${_result.data}");
+    final value = _result.data;
+    return value;
+  }
 }

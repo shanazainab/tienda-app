@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tienda/localization.dart';
 
 class TopCategories extends StatelessWidget {
   @override
@@ -6,7 +7,7 @@ class TopCategories extends StatelessWidget {
     return Column(
       children: <Widget>[
         Text(
-          "Top Categories",
+          AppLocalizations.of(context).translate('top-categories'),
           style: TextStyle(fontSize: 20, color: Colors.lightBlue),
         ),
         GridView.builder(

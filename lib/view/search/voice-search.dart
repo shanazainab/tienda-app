@@ -7,7 +7,13 @@ import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
+typedef OnVoiceInput =  Function(String);
+
 class VoiceSearch extends StatefulWidget {
+  final OnVoiceInput onVoiceInput;
+
+  VoiceSearch({this.onVoiceInput});
+
   @override
   _VoiceSearchState createState() => _VoiceSearchState();
 }
@@ -62,7 +68,6 @@ class _VoiceSearchState extends State<VoiceSearch> {
 
               stopListening();
 
-           /// Navigator.of(context).pop();
             },
             child: Container(
               width: 80,
@@ -85,7 +90,6 @@ class _VoiceSearchState extends State<VoiceSearch> {
         SizedBox(
           height: 8,
         ),
-
         Center(
           child: Text(lastError),
         ),
@@ -127,6 +131,10 @@ class _VoiceSearchState extends State<VoiceSearch> {
     setState(() {
       level = 0.0;
     });
+
+    widget.onVoiceInput(lastWords);
+    Navigator.of(context).pop();
+
   }
 
   void cancelListening() {
@@ -138,14 +146,15 @@ class _VoiceSearchState extends State<VoiceSearch> {
 
   void resultListener(SpeechRecognitionResult result) {
     setState(() {
-      lastWords = "${result.recognizedWords} - ${result.finalResult}";
+      lastWords = "${result.recognizedWords}";
+      print(lastWords);
     });
   }
 
   void soundLevelListener(double level) {
     minSoundLevel = min(minSoundLevel, level);
     maxSoundLevel = max(maxSoundLevel, level);
-    // print("sound level $level: $minSoundLevel - $maxSoundLevel ");
+    print("sound level $level: $minSoundLevel - $maxSoundLevel ");
     setState(() {
       this.level = level;
     });

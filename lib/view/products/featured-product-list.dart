@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/localization.dart';
-import 'package:tienda/view/seller-profile/seller-product-video-page.dart';
+import 'package:tienda/view/presenter-profile/seller-product-video-page.dart';
 
 class FeaturedProductList extends StatelessWidget {
   @override

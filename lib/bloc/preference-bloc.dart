@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
-import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/api/preference-api-client.dart';
 import 'package:tienda/bloc/states/preference-states.dart';
@@ -27,6 +26,9 @@ class PreferenceBloc extends Bloc<PreferenceEvents, PreferenceStates> {
     }
     if (event is GetCountryPreference) {
       yield* _mapGetCountryPreferenceToStates(event);
+    }
+    if (event is FetchPreferredCategoryList) {
+      yield* _mapFetchPreferredCategoryListToStates(event);
     }
   }
 
@@ -83,5 +85,27 @@ class PreferenceBloc extends Bloc<PreferenceEvents, PreferenceStates> {
       }
     });
     yield LoadCategoryListSuccess(categories: categories);
+  }
+
+  Stream<PreferenceStates> _mapFetchPreferredCategoryListToStates(
+      FetchPreferredCategoryList event) async* {
+    List<Category> categories = new List();
+    final dio = Dio();
+    final client = PreferenceApiClient(dio,
+        baseUrl: GlobalConfiguration().getString("baseURL"));
+    await client.getCategoriesList().then((response) {
+      Logger().d("PREFERRED-CATEGORY-RESPONSE:$response");
+      for (final item in json.decode(response)['categories']) {
+        categories.add(Category.fromJson(item));
+      }
+
+      Logger().d("#########PREFERRED-CATEGORY CATEGORY LIST: $categories ");
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+        Logger().e("PREFERRED-CATEGORY CATEGORY LIST-ERROR:", error);
+      }
+    });
+    yield LoadPreferredCategoryListSuccess(categories: categories);
   }
 }

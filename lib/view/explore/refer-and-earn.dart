@@ -1,41 +1,56 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/share.dart';
+import 'package:tienda/bloc/customer-profile-bloc.dart';
+import 'package:tienda/bloc/states/customer-profile-states.dart';
+import 'package:tienda/model/customer.dart';
+import 'package:tienda/view/explore/faq.dart';
 
 class ReferAndEarn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            brightness: Brightness.light,
-            title: Text("Refer & Earn"),
-            bottom: TabBar(
-              unselectedLabelColor: Colors.grey[200],
-              indicatorColor: Colors.lightBlue,
-              labelColor: Colors.lightBlue,
-              tabs: [
-                Tab(
-                  text: "INVITE",
+    return BlocBuilder<CustomerProfileBloc, CustomerProfileStates>(
+        builder: (context, state) {
+      if (state is LoadCustomerProfileSuccess)
+        return DefaultTabController(
+            length: 3,
+            child: Scaffold(
+              appBar: AppBar(
+                brightness: Brightness.light,
+                title: Text("Refer & Earn"),
+                bottom: TabBar(
+                  unselectedLabelColor: Colors.grey[200],
+                  indicatorColor: Colors.lightBlue,
+                  labelColor: Colors.lightBlue,
+                  tabs: [
+                    Tab(
+                      text: "INVITE",
+                    ),
+                    Tab(text: "REWARD"),
+                    Tab(text: "FAQs"),
+                  ],
                 ),
-                Tab(text: "REWARD"),
-                Tab(text: "FAQs"),
-              ],
-            ),
-          ),
-          body: TabBarView(
-            children: [
-              Invite(),
-              Reward(),
-              FAQ(),
-            ],
-          ),
-        ));
+              ),
+              body: TabBarView(
+                children: [
+                  Invite(state.customerDetails),
+                  Reward(state.customerDetails),
+                  FAQ(),
+                ],
+              ),
+            ));
+      else
+        return Container();
+    });
   }
 }
 
 class Invite extends StatelessWidget {
+  final Customer customer;
+
+  Invite(this.customer);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -71,7 +86,7 @@ class Invite extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        "HDJ8340WT",
+                        customer.referral,
                         style: TextStyle(fontSize: 24),
                       ),
                     ),
@@ -105,7 +120,6 @@ class Invite extends StatelessWidget {
     ///create dynamic link for referral
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://beuniquegroup.page.link/amTC',
-
       link: Uri.parse('https://tienda.ae/'),
       androidParameters: AndroidParameters(
         packageName: 'com.beuniquegroup.tienda',
@@ -125,6 +139,10 @@ class Invite extends StatelessWidget {
 }
 
 class Reward extends StatelessWidget {
+  final Customer customer;
+
+  Reward(this.customer);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -138,7 +156,20 @@ class Reward extends StatelessWidget {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[Text("Your Referral Earnings"), Text("0 AED")],
+              children: <Widget>[
+                Text("Your Referral Earnings"),
+                Card(
+                  color: Colors.grey[200],
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 8.0, right: 8.0, top: 4.0, bottom: 4.0),
+                    child: Text(
+                      "TIENDA POINTS: 1000",
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ),
+                ),
+              ],
             ),
             SizedBox(
               height: 30,
@@ -151,12 +182,5 @@ class Reward extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class FAQ extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }

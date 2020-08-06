@@ -39,6 +39,7 @@ class CategoryBlock extends Bloc<CategoryEvents, CategoryStates> {
       }
     });
 
+    if(categories.isNotEmpty)
     yield LoadCategoriesSuccess(
         categories: categories, selectedCategory: categories[0]);
   }

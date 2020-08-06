@@ -16,10 +16,13 @@ class _CartApiClient implements CartApiClient {
   String baseUrl;
 
   @override
-  addToCart(productId) async {
+  addToCart(productId, quantity) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{'product_id': productId};
+    final _data = <String, dynamic>{
+      'product_id': productId,
+      'quantity': quantity
+    };
 
     final Response<String> _result = await _dio.request('/add_to_cart/',
         queryParameters: queryParameters,
@@ -30,6 +33,8 @@ class _CartApiClient implements CartApiClient {
             baseUrl: baseUrl),
         data: _data);
     final value = _result.data;
+    Logger().e("ADD TO CART: ${_result.request.data}");
+
     return value;
   }
 
@@ -65,6 +70,46 @@ class _CartApiClient implements CartApiClient {
             baseUrl: baseUrl),
         data: _data);
     final value = _result.data;
+    Logger().e("CART CHECKOUT REQUEST: ${_result.request.data}");
+    return value;
+  }
+
+  @override
+  Future<String> getCart() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final Response<String> _result = await _dio.request('/get_cart/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
+    return value;
+  }
+
+  @override
+  Future<String> changeQuantity(int productId, int quantity) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{
+      'product_id': productId,
+      'quantity': quantity
+    };
+    final Response<String> _result = await _dio.request(
+        '/change_cart_product_quantity/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
+    Logger().e("CART CHECKOUT REQUEST: ${_result.request.data}");
     return value;
   }
 }

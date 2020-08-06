@@ -5,8 +5,9 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(child: Text('Splash Screen',style: TextStyle(
-        fontSize: 24
+      body: Center(child: Text('TIENDA',
+      style: TextStyle(
+        fontSize: 36,
       ),)),
     );
   }

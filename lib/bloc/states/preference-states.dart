@@ -39,6 +39,14 @@ class LoadCategoryListSuccess extends PreferenceStates {
   @override
   List<Object> get props => categories;
 }
+class LoadPreferredCategoryListSuccess extends PreferenceStates {
+  final List<Category> categories;
+
+  LoadPreferredCategoryListSuccess({this.categories}) : super();
+
+  @override
+  List<Object> get props => categories;
+}
 
 class LoadCategoryListFail extends PreferenceStates {
   final dynamic error;

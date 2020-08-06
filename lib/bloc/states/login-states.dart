@@ -109,3 +109,17 @@ class LogoutError extends LoginStates {
   @override
   List<Object> get props => [error];
 }
+
+class LoggedInUser extends LoginStates {
+  LoggedInUser() : super();
+
+  @override
+  List<Object> get props => null;
+}
+
+class GuestUser extends LoginStates {
+  GuestUser() : super();
+
+  @override
+  List<Object> get props => null;
+}

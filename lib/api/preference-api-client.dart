@@ -7,9 +7,12 @@ abstract class PreferenceApiClient {
   factory PreferenceApiClient(Dio dio, {String baseUrl}) =
       _PreferenceApiClient;
 
-  @POST("/get_countries/")
+  @GET("/get_countries/")
   Future<String> getCountriesList();
 
-    @POST("/get_categories/")
+    @GET("/get_categories/")
   Future<String> getCategoriesList();
+
+  @GET("/get_preferred_categories/")
+  Future<String> getPreferredCategories();
 }

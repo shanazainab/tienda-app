@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:tienda/bloc/connectivity-bloc.dart';
 import 'dart:developer' as developer;
 
+typedef NetworkState(ConnectivityResult result);
+
 class NetworkStateWrapper extends StatelessWidget {
   final Widget child;
   final double opacity;
+  final NetworkState networkState;
 
-  NetworkStateWrapper({
-    this.child,
-    this.opacity = 0.5,
-  });
+  NetworkStateWrapper({this.child, this.opacity = 0.5, this.networkState});
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +21,13 @@ class NetworkStateWrapper extends StatelessWidget {
         builder:
             (BuildContext ctxt, AsyncSnapshot<ConnectivityResult> snapShot) {
           if (snapShot.data == ConnectivityResult.wifi) {
+            networkState(ConnectivityResult.wifi);
             print("CONNECTIVITY: WIFI");
             return child;
           }
           if (snapShot.data == ConnectivityResult.mobile) {
             print("CONNECTIVITY: CELLULAR");
+            networkState(ConnectivityResult.mobile);
 
             return Opacity(
               opacity: opacity,
@@ -35,17 +37,19 @@ class NetworkStateWrapper extends StatelessWidget {
           if (snapShot.data == ConnectivityResult.none) {
             print("CONNECTIVITY: NONE");
 
-            return Stack(
-              children: <Widget>[
-                Opacity(
-                  opacity: 0.1,
-                  child: child,
-                ),
-                Align(
-                    alignment: Alignment.topCenter,
-                    child: ConnectivityErrorPage()),
-              ],
-            );
+            networkState(ConnectivityResult.none);
+            return opacity != 0
+                ? Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      Opacity(
+                        opacity: 0.1,
+                        child: child,
+                      ),
+                      ConnectivityErrorPage(),
+                    ],
+                  )
+                : child;
           } else
             return Container();
         });

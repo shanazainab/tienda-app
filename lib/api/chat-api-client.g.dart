@@ -6,8 +6,8 @@ part of 'chat-api-client.dart';
 // RetrofitGenerator
 // **************************************************************************
 
-class _CartApiClient implements CartApiClient {
-  _CartApiClient(this._dio, {this.baseUrl}) {
+class _ChatApiClient implements ChatApiClient {
+  _ChatApiClient(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
   }
 
@@ -16,14 +16,15 @@ class _CartApiClient implements CartApiClient {
   String baseUrl;
 
   @override
-  Future<String> createMessage(
-      String senderId, String receiverId, String message) async {
+  Future<String> createMessage(String senderId, String receiverId,
+      String message, String socketId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{
       'sender_id': senderId,
-      'receiver_id': receiverId,
-      'message': message
+      'reciever_id': receiverId,
+      'message': message,
+      'socket_id': socketId
     };
 
     final Response<String> _result = await _dio.request('api/v1/message',
@@ -39,7 +40,7 @@ class _CartApiClient implements CartApiClient {
   }
 
   @override
-  Future<String> getAllAddress() async {
+  Future<String> getAllMessages() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -60,15 +61,13 @@ class _CartApiClient implements CartApiClient {
   Future<String> getConversation(String senderId, String receiverId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{
-      'sender_id': senderId,
-    };
+    final _data = <String, dynamic>{};
 
     final Response<String> _result = await _dio.request(
-        'api/v1/message/$receiverId',
+        'api/v1/message/$senderId/$receiverId',
         queryParameters: queryParameters,
         options: RequestOptions(
-            method: 'POST',
+            method: 'GET',
             headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),

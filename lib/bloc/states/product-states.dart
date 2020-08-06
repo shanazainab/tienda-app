@@ -33,9 +33,4 @@ class UpdateProductListSuccess extends ProductStates {
 
   UpdateProductListSuccess(this.productListResponse) : super();
 
-  @override
-  bool operator ==(Object other) => false;
-
-  @override
-  int get hashCode => productListResponse.hashCode;
 }

@@ -1,21 +1,22 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_playout/player_state.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/product-events.dart';
+import 'package:tienda/bloc/events/review-events.dart';
+import 'package:tienda/bloc/review-bloc.dart';
 import 'package:tienda/bloc/single-product-bloc.dart';
 import 'package:tienda/bloc/states/product-states.dart';
+import 'package:tienda/localization.dart';
 import 'package:tienda/model/cart.dart';
-import 'package:tienda/model/product.dart';
+import 'package:tienda/view/live-stream/video-playout.dart';
 import 'package:tienda/view/products/add-customer-review-container.dart';
-import 'package:tienda/view/products/color-chart-container.dart';
 import 'package:tienda/view/products/customer-overall-rating-block.dart';
 import 'package:tienda/view/products/customer-reviews-container.dart';
 import 'package:tienda/view/products/product-description-container.dart';
 import 'package:tienda/view/products/product-info-container.dart';
-import 'package:tienda/view/products/size-chart-container.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class SingleProductPage extends StatefulWidget {
@@ -41,11 +42,19 @@ class _SingleProductPageState extends State<SingleProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (BuildContext context) => singleProductBloc,
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<ReviewBloc>(
+            create: (BuildContext context) => ReviewBloc(),
+          ),
+          BlocProvider(
+            create: (BuildContext context) => singleProductBloc,
+          ),
+        ],
         child: Scaffold(
             appBar: PreferredSize(
-                preferredSize: Size.fromHeight(44.0), // here the desired height
+                preferredSize: Size.fromHeight(44.0),
+                // here the desired height
                 child: CustomAppBar(
                   title: "",
                   showWishList: true,
@@ -62,20 +71,21 @@ class _SingleProductPageState extends State<SingleProductPage> {
                     Expanded(
                       child: FlatButton(
                         onPressed: () {},
-                        child: Text("WISHLIST"),
+                        child: Text(AppLocalizations.of(context)
+                            .translate('wishlist')
+                            .toUpperCase()),
                       ),
                     ),
                     Expanded(
                       child: FlatButton(
                         onPressed: () {
-                          BlocProvider.of<CartBloc>(context).add(AddCartItem(
-                              cartItem: new CartItem(
-                                  color: null,
-                                  product: state.product,
-                                  quantity: 1,
-                                  size: null)));
+                          state.product.quantity = 1;
+                          BlocProvider.of<CartBloc>(context)
+                              .add(AddCartItem(cartItem: state.product));
                         },
-                        child: Text("ADD TO BAG"),
+                        child: Text(AppLocalizations.of(context)
+                            .translate('add-to-cart')
+                            .toUpperCase()),
                       ),
                     ),
                   ],
@@ -90,96 +100,123 @@ class _SingleProductPageState extends State<SingleProductPage> {
                   color: Colors.grey[200],
                   child: ListView(
                     children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Container(
-                            color: Colors.white,
-                            height: 430,
-                            width: MediaQuery.of(context).size.width,
-                            child: CarouselSlider(
-                              options: CarouselOptions(
-                                  autoPlay: true,
-                                  height: 430,
-                                  viewportFraction: 1.0,
-                                  enlargeCenterPage: false,
-                                  onPageChanged: (index, reason) {
-                                    setState(() {
-                                      _current = index;
-                                    });
-                                  }),
-                              items: state.product.images
-                                  .map((item) => Container(
-                                        child: CachedNetworkImage(
-                                          imageUrl: item,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2,
-                                          height: 180,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) =>
-                                              Container(
-                                            height: 180,
-                                            color: Color(0xfff2f2e4),
-                                          ),
-                                          errorWidget: (context, url, error) =>
-                                              Container(
-                                            height: 180,
-                                            color: Color(0xfff2f2e4),
-                                          ),
-                                        ),
-                                      ))
-                                  .toList(),
-                            ),
-                          ),
-                          Container(
-                            color: Colors.white,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: state.product.images.map((url) {
-                                int index = state.product.images.indexOf(url);
-                                return Container(
-                                  width: 8.0,
-                                  height: 8.0,
-                                  margin: EdgeInsets.symmetric(
-                                      vertical: 10.0, horizontal: 2.0),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: _current == index
-                                        ? Colors.grey
-                                        : Colors.grey[200],
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ],
+//                      VideoPlayOut(
+//                        url:
+//                            'http://192.168.1.93:1935/test_presenter/myStream/playlist.m3u8',
+//                        desiredState: PlayerState.PLAYING,
+//                        showPlayerControls: true,
+//                      ),
+
+                      Container(
+                        height: 200,
+                        color: Colors.grey[200],
+                        child: Center(
+                          child: Icon(Icons.play_circle_outline),
+                        ),
                       ),
+                      state.product.images.isNotEmpty
+                          ? Container(
+                              color: Colors.white,
+                              child: SizedBox(
+                                height: 120,
+                                child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: state.product.images.length,
+                                    itemBuilder: (BuildContext context,
+                                            int index) =>
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                            child: CachedNetworkImage(
+                                              imageUrl:
+                                                  state.product.images[index],
+                                              width: 120,
+                                              height: 120,
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) =>
+                                                  ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                                child: Container(
+                                                  height: 120,
+                                                  width: 120,
+                                                  color: Color(0xfff2f2e4),
+                                                ),
+                                              ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Container(
+                                                height: 120,
+                                                color: Color(0xfff2f2e4),
+                                              ),
+                                            ),
+                                          ),
+                                        )),
+                              ),
+                            )
+                          : Container(),
                       ProductInfoContainer(state.product),
                       SizedBox(
                         height: 10,
                       ),
-//                      SizeChartContainer(),
-//                      SizedBox(
-//                        height: 10,
-//                      ),
-//                      ColorChartContainer(),
+                      ProductDescriptionContainer(state.product.specs),
                       SizedBox(
                         height: 10,
                       ),
-                      ProductDescriptionContainer(state.product),
+                      CustomerOverallRatingBlock(
+                          state.product.overallRating, state.product.ratings),
                       SizedBox(
                         height: 10,
                       ),
-                      CustomerOverallRatingBlock(state.product.overallRating,state.product.ratings),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      AddCustomerReviewContainer(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      CustomerReviewContainer(state.product.reviews),
+
+                      (!state.product.isReviewed &&
+                                  state.product.isPurchased) ||
+                              state.product.reviews.isNotEmpty
+                          ? Container(
+                              color: Colors.white,
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: ListView(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  children: <Widget>[
+                                    Text("Reviews"),
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+                                    !state.product.isReviewed &&
+                                            state.product.isPurchased
+                                        ? BlocProvider.value(
+                                            value: BlocProvider.of<ReviewBloc>(
+                                                context)
+                                              ..add(LoadReview(
+                                                  state.product.reviews)),
+                                            child: AddCustomerReviewContainer(
+                                                state.product.id),
+                                          )
+                                        : Container(),
+                                    !state.product.isReviewed &&
+                                            state.product.isPurchased
+                                        ? SizedBox(
+                                            height: 10,
+                                          )
+                                        : Container(),
+                                     BlocProvider.value(
+                                            value: BlocProvider.of<ReviewBloc>(
+                                                context)
+                                              ..add(LoadReview(
+                                                  state.product.reviews)),
+                                            child: CustomerReviewContainer(
+                                                state.product.reviews),
+                                          )
+
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container()
                     ],
                   ),
                 );

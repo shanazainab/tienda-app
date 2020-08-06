@@ -1,3 +1,4 @@
+import 'package:logger/logger.dart';
 import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/customer.dart';
@@ -16,6 +17,9 @@ abstract class CustomerProfileApiClient {
 
   @POST("/update_profile/")
   Future<String> editCustomerDetails(@Body() Customer customer);
+
+  @POST("/change_profile_picture/")
+  Future<String> updateProfilePicture(@Body() String encodedImage);
 
 
 }

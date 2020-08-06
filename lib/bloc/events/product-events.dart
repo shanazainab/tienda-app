@@ -1,50 +1,50 @@
 import 'package:equatable/equatable.dart';
 import 'package:tienda/model/product-list-response.dart';
 import 'package:tienda/model/product.dart';
+import 'package:tienda/model/search-body.dart';
 
-abstract class ProductEvents extends Equatable {
+abstract class ProductEvents {
   ProductEvents();
+}
 
-  @override
-  List<Object> get props => null;
+class Initialize extends ProductEvents {
+  Initialize() : super();
 }
 
 class FetchProductList extends ProductEvents {
-  final String categoryId;
+  final String query;
   final String pageNumber;
+  final SearchBody searchBody;
 
-  FetchProductList({this.categoryId,this.pageNumber}) : super();
+  FetchProductList({this.query, this.pageNumber, this.searchBody}) : super();
+}
 
-  @override
-  List<Object> get props => [];
+class FetchFilteredProductList extends ProductEvents {
+  final String query;
+  final SearchBody searchBody;
+
+  FetchFilteredProductList({this.query, this.searchBody}) : super();
+}
+
+class FetchMoreProductList extends ProductEvents {
+  final List<Product> products;
+  final String query;
+  final String pageNumber;
+  final SearchBody searchBody;
+
+  FetchMoreProductList(
+      {this.products, this.query, this.pageNumber, this.searchBody})
+      : super();
 }
 
 class FetchProductDetails extends ProductEvents {
   final int productId;
 
   FetchProductDetails({this.productId}) : super();
-
-  @override
-  List<Object> get props => [];
 }
-
-class FetchMoreProductList extends ProductEvents {
-  final List<Product> products;
-  final String categoryId;
-  final String pageNumber;
-
-  FetchMoreProductList({this.products,this.categoryId,this.pageNumber}) : super();
-
-  @override
-  List<Object> get props => [];
-}
-
 
 class UpdateMarkAsWishListed extends ProductEvents {
   final ProductListResponse productListResponse;
 
   UpdateMarkAsWishListed({this.productListResponse}) : super();
-
-  @override
-  List<Object> get props => [productListResponse];
 }

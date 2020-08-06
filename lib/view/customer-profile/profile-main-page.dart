@@ -1,25 +1,24 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:logger/logger.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/app-country.dart';
 import 'package:tienda/app-language.dart';
+import 'package:tienda/bloc/address-bloc.dart';
+import 'package:tienda/bloc/events/address-events.dart';
 import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/events/customer-profile-events.dart';
+import 'package:tienda/bloc/events/order-events.dart';
 import 'package:tienda/bloc/events/preference-events.dart';
-import 'package:tienda/bloc/events/startup-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/customer-profile-bloc.dart';
+import 'package:tienda/bloc/orders-bloc.dart';
 import 'package:tienda/bloc/preference-bloc.dart';
-import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/customer-profile-states.dart';
 import 'package:tienda/bloc/states/preference-states.dart';
-import 'package:tienda/bloc/states/startup-states.dart';
 import 'package:tienda/controller/customer-care-controller.dart';
 import 'package:tienda/view/address/saved-address-page.dart';
 import 'package:tienda/view/customer-profile/bottom-container.dart';
@@ -32,26 +31,12 @@ import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/order/orders-main-page.dart';
 import 'package:tienda/view/returns/returns-page.dart';
 import 'package:tienda/view/startup/country-list-card.dart';
-import 'package:tienda/view/wishlist/wishlist-main-page.dart';
+import 'package:tienda/view/widgets/network-state-wrapper.dart';
+import 'package:tienda/view/wishlist/wishlist-page.dart';
 
 import '../../localization.dart';
 
-class CustomerProfile extends StatefulWidget {
-  @override
-  _CustomerProfileState createState() => _CustomerProfileState();
-}
-
-class _CustomerProfileState extends State<CustomerProfile> {
-  final StartupBloc startupBloc = new StartupBloc();
-
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    startupBloc.add(CheckLogInStatus());
-  }
-
+class CustomerProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appLanguage = Provider.of<AppLanguage>(context);
@@ -62,60 +47,64 @@ class _CustomerProfileState extends State<CustomerProfile> {
           BlocListener<LoginBloc, LoginStates>(
             listener: (context, state) {
               if (state is LogoutSuccess) {
-                Navigator.push(
+                BlocProvider.of<LoginBloc>(context).add(CheckLoginStatus());
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => HomePage()),
                 );
               }
-            },
-          ),
-          BlocListener<StartupBloc, StartupStates>(
-            bloc: startupBloc,
-            listener: (context, state) {
-              if (state is LogInStatusResponse && state.isLoggedIn) {
-                //profileBloc.add(FetchCustomerProfile());
-
-                BlocProvider.of<CustomerProfileBloc>(context).add(FetchCustomerProfile());
-
+              if (state is LoggedInUser) {
+                BlocProvider.of<CustomerProfileBloc>(context)
+                    .add(FetchCustomerProfile());
               }
             },
           ),
         ],
-        child: BlocBuilder<StartupBloc, StartupStates>(
-            bloc: startupBloc,
-            builder: (context, state) {
-              return Scaffold(
-                  body: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  state is LogInStatusResponse && !state.isLoggedIn
-                      ? CustomerLoginMenu()
-                      : BlocBuilder<CustomerProfileBloc,
+        child: BlocBuilder<LoginBloc, LoginStates>(builder: (context, state) {
+          return Scaffold(
+              body: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              state is GuestUser
+                  ? CustomerLoginMenu()
+                  : NetworkStateWrapper(
+                      opacity: 0,
+                      ///Don show overlap
+                      networkState: (value) {
+                        if (value == ConnectivityResult.none) {
+                          BlocProvider.of<CustomerProfileBloc>(context)
+                              .add(OfflineLoadCustomerData());
+                        }
+                      },
+                      child: BlocBuilder<CustomerProfileBloc,
                           CustomerProfileStates>(builder: (context, state) {
-                          if (state is LoadCustomerProfileSuccess)
-                            return CustomerProfileCard(state.customerDetails);
-                          if (state is EditCustomerProfileSuccess)
-                            return CustomerProfileCard(state.customer);
-                          else
-                            return Container();
-                        }),
-                  Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.all(0),
-                      children: <Widget>[
-                        state is LogInStatusResponse && state.isLoggedIn
-                            ? _buildLoggedInUserMenus(appLanguage, state)
-                            : Container(),
-                        _buildMenuList(appLanguage, state, appCountry)
-                      ],
+                        if (state is LoadCustomerProfileSuccess)
+                          return CustomerProfileCard(state.customerDetails);
+                        if (state is OfflineLoadCustomerDataSuccess)
+                          return CustomerProfileCard(state.customerDetails);
+                        if (state is EditCustomerProfileSuccess)
+                          return CustomerProfileCard(state.customer);
+                        else
+                          return Container();
+                      }),
                     ),
-                  )
-                ],
-              ));
-            }));
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.all(0),
+                  children: <Widget>[
+                    state is LoggedInUser
+                        ? _buildLoggedInUserMenus(appLanguage, context)
+                        : Container(),
+                    _buildMenuList(appLanguage, state, appCountry, context)
+                  ],
+                ),
+              )
+            ],
+          ));
+        }));
   }
 
-  _buildMenuList(appLanguage, state, AppCountry appCountry) {
+  _buildMenuList(appLanguage, state, AppCountry appCountry, context) {
     bool isEnglish = appLanguage.appLocal == Locale('en');
     return Column(
       children: <Widget>[
@@ -143,18 +132,21 @@ class _CustomerProfileState extends State<CustomerProfile> {
           trailing: Container(
             width: 55,
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Image.network(
-                  "${GlobalConfiguration().getString("baseURL")}${appCountry.chosenCountry.thumbnail}",
-                  width: 25,
-                  height: 15,
-                  fit: BoxFit.cover,
+                Padding(
+                  padding: const EdgeInsets.only(right:8.0),
+                  child: Image.network(
+                    "${GlobalConfiguration().getString("baseURL")}${appCountry.chosenCountry.thumbnail}",
+                    width: 22,
+                    height: 12,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 0.0),
+                  padding: const EdgeInsets.only(left: 4.0, right: 4.0),
                   child: Icon(
                     Icons.arrow_forward_ios,
                     size: 16,
@@ -217,11 +209,11 @@ class _CustomerProfileState extends State<CustomerProfile> {
               ? Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Text("English"),
                     Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
+                      padding: const EdgeInsets.only(left: 4.0,right:4.0),
                       child: Icon(
                         Icons.arrow_forward_ios,
                         size: 16,
@@ -250,17 +242,14 @@ class _CustomerProfileState extends State<CustomerProfile> {
                 : Locale('en'));
           },
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: 50,
-            color: Colors.grey[200],
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
-              child: Text(
-                AppLocalizations.of(context).translate('reach-out-to-us'),
-              ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: 50,
+          color: Colors.grey[200],
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
+            child: Text(
+              AppLocalizations.of(context).translate('reach-out-to-us'),
             ),
           ),
         ),
@@ -325,12 +314,12 @@ class _CustomerProfileState extends State<CustomerProfile> {
         SizedBox(
           height: 20,
         ),
-        BottomContainer(state is LogInStatusResponse && state.isLoggedIn)
+        BottomContainer(state is LoggedInUser)
       ],
     );
   }
 
-  _buildLoggedInUserMenus(AppLanguage appLanguage, StartupStates state) {
+  _buildLoggedInUserMenus(AppLanguage appLanguage, context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -348,9 +337,13 @@ class _CustomerProfileState extends State<CustomerProfile> {
             style: TextStyle(),
           ),
           onTap: () {
+
+
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => OrdersMainPage()),
+              MaterialPageRoute(builder: (context) =>  BlocProvider(
+                  create: (BuildContext context) => OrdersBloc()..add(LoadOrders()),
+                  child: OrdersMainPage())),
             );
           },
           trailing: Icon(
@@ -394,7 +387,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => WishListMainPage()),
+              MaterialPageRoute(builder: (context) => WishListPage()),
             );
           },
           trailing: Icon(
@@ -419,7 +412,12 @@ class _CustomerProfileState extends State<CustomerProfile> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SavedAddressPage()),
+              MaterialPageRoute(builder: (context) {
+                return BlocProvider(
+                  create: (context) => AddressBloc()..add(LoadSavedAddress()),
+                  child: SavedAddressPage(),
+                );
+              }),
             );
           },
         ),

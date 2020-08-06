@@ -10,4 +10,7 @@ abstract class OrdersApiClient {
   @GET("/get_orders/")
   Future<String> getOrders();
 
+
+  @POST("/cancel_order/")
+  Future<String> cancelOrder(@Body() int orderId);
 }

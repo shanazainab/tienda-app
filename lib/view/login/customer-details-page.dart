@@ -24,7 +24,7 @@ class CustomerDetailsPage extends StatelessWidget {
     return BlocListener<LoginBloc, LoginStates>(
         listener: (context, state) {
           if (state is CustomerRegistrationSuccess) {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => HomePage()),
             );

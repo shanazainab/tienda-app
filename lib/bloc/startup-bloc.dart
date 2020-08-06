@@ -27,20 +27,11 @@ class StartupBloc extends Bloc<StartupEvents, StartupStates> {
     if (event is UpdatePreferenceFlow) {
       _updateThePreferenceFlow(event.route);
     }
-    if (event is CheckLogInStatus) {
-      yield* _mapCheckLoginStatusToState();
-    }
+
   }
 
   Stream<StartupStates> _mapAppStartedToState() async* {
-    ///{ "/welcomeScreen":true,
-    ///   "/countryChoosePage":false,
-    ///   "/languagePreferencePage":false,
-    ///   "/categorySelectionPage":false }
 
-    ///CHECK LOGIN STATUS
-
-    await loginController.checkLoginStatus();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String route = '/welcomeScreen';
@@ -64,20 +55,6 @@ class StartupBloc extends Bloc<StartupEvents, StartupStates> {
     }
 
     yield PreferenceFlowFetchComplete(route);
-  }
-
-  Stream<StartupStates> _mapCheckLoginStatusToState() async* {
-    bool isLoggedIn = await loginController.checkLoginStatus();
-
-    Logger().d("#########LOGIN-STATUS: $isLoggedIn");
-    switch (isLoggedIn) {
-      case true:
-        yield LogInStatusResponse(isLoggedIn: true);
-        break;
-      case false:
-        yield LogInStatusResponse(isLoggedIn: false);
-        break;
-    }
   }
 
   Future<void> _updateThePreferenceFlow(String route) async {

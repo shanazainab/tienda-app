@@ -29,4 +29,9 @@ abstract class LoginApiClient {
 
   @GET("/customer_logout/")
   Future<String> logout();
+
+  @POST("/update_device_id/")
+  Future<String> updateDeviceId(@Body() String deviceId);
+
+
 }

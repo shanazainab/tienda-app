@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -9,12 +10,16 @@ import "package:google_maps_webservice/geocoding.dart";
 
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:tienda/bloc/address-bloc.dart';
 import 'package:tienda/model/delivery-address.dart';
 import 'package:tienda/model/reverse-geocoded-mapbox-data.dart';
 import 'package:tienda/view/address/add-address-page.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class ChooseAddressPage extends StatefulWidget {
+
+  ChooseAddressPage();
+
   @override
   _ChooseAddressPageState createState() => _ChooseAddressPageState();
 }
@@ -22,7 +27,7 @@ class ChooseAddressPage extends StatefulWidget {
 class _ChooseAddressPageState extends State<ChooseAddressPage> {
   Completer<GoogleMapController> _controller = Completer();
   GoogleMapsPlaces _places =
-      GoogleMapsPlaces(apiKey: "AIzaSyDBMARSuk2l-TxaUBlHY3m5RVb7bN2C08c");
+  GoogleMapsPlaces(apiKey: "AIzaSyDBMARSuk2l-TxaUBlHY3m5RVb7bN2C08c");
 
   final geocoding = new GoogleMapsGeocoding(
       apiKey: "AIzaSyDBMARSuk2l-TxaUBlHY3m5RVb7bN2C08c");
@@ -46,59 +51,56 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext contextA) {
     return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(50.0),
-          child: SafeArea(
-              child: CustomAppBar(
-            title: "Add Address",
-            showCart: false,
-            showLogo: false,
-            showSearch: false,
-            showWishList: false,
-          ))),
+      extendBodyBehindAppBar:true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        brightness: Brightness.light,
+        elevation: 0,
+      ),
       body: Stack(
         children: <Widget>[
-          Container(
-              height: MediaQuery.of(context).size.height - 60,
-              child: GoogleMap(
-                compassEnabled: false,
-                mapToolbarEnabled: false,
-                zoomControlsEnabled: false,
-                tiltGesturesEnabled: false,
-                myLocationButtonEnabled: true,
-                myLocationEnabled: true,
-                mapType: MapType.normal,
-                onCameraMove: (cameraPosition) {
-                  chosenLocation = new LatLng(cameraPosition.target.latitude,
-                      cameraPosition.target.longitude);
-                  address = 'fetching address..';
-                  setState(() {});
-                },
-                onCameraIdle: () async {
-                  if (chosenLocation != null) {
-                    address = await reverseGeocodeTheLatLng(chosenLocation);
+          GoogleMap(
+            compassEnabled: false,
+            mapToolbarEnabled: false,
+            zoomControlsEnabled: false,
+            tiltGesturesEnabled: false,
+            myLocationButtonEnabled: true,
+            myLocationEnabled: true,
+            mapType: MapType.normal,
+            onCameraMove: (cameraPosition) {
+              chosenLocation = new LatLng(cameraPosition.target.latitude,
+                  cameraPosition.target.longitude);
+              address = 'fetching address..';
+              setState(() {});
+            },
+            onCameraIdle: () async {
+              if (chosenLocation != null) {
+                address = await reverseGeocodeTheLatLng(chosenLocation);
 
-                    setState(() {
-                      _mapLoading = false;
-                    });
-                  }
-                },
-                initialCameraPosition: initialPosition,
-                onMapCreated: (GoogleMapController controller) {
-                  _controller.complete(controller);
-                  getCurrentLocation();
-                },
-              )),
+                setState(() {
+                  _mapLoading = false;
+                });
+              }
+            },
+            initialCameraPosition: initialPosition,
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+              getCurrentLocation();
+            },
+          ),
           _mapLoading
               ? Container(
-                  height: MediaQuery.of(context).size.height - 60,
-                  color: Color(0xfffcfcfb),
-                )
+            height: MediaQuery
+                .of(context)
+                .size
+                .height - 60,
+            color: Color(0xfffcfcfb),
+          )
               : Container(),
           Padding(
-            padding: const EdgeInsets.only(top: 16.0),
+            padding: const EdgeInsets.only(top: 20.0),
             child: Align(
               alignment: Alignment.topCenter,
               child: Column(
@@ -140,15 +142,14 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: ButtonTheme(
-                      height: 48,
-                      minWidth: MediaQuery.of(context).size.width - 48,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(05)),
+                    child: SizedBox(
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width - 48,
                       child: RaisedButton(
-                        color: Colors.grey,
                         onPressed: () {
-                          handleConfirmAddress();
+                          handleConfirmAddress(contextA);
                         },
                         child: Text(
                           "CONFIRM LOCATION",
@@ -194,7 +195,7 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
         .searchByLocation(new Location(latLng.latitude, latLng.longitude));
 
     PlacesDetailsResponse placesDetailsResponse =
-        await _places.getDetailsByPlaceId(response.results[0].placeId);
+    await _places.getDetailsByPlaceId(response.results[0].placeId);
     deliveryAddress = new DeliveryAddress(
         mapLat: latLng.latitude,
         mapLong: latLng.longitude,
@@ -225,7 +226,7 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
   Future<Null> displayPrediction(Prediction p) async {
     if (p != null) {
       PlacesDetailsResponse detail =
-          await _places.getDetailsByPlaceId(p.placeId);
+      await _places.getDetailsByPlaceId(p.placeId);
       final lat = detail.result.geometry.location.lat;
       final lng = detail.result.geometry.location.lng;
 
@@ -237,14 +238,17 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
     }
   }
 
-  void handleConfirmAddress() {
+  void handleConfirmAddress(contextA) {
     Navigator.push(
-      context,
+      contextA,
       MaterialPageRoute(
-          builder: (context) => AddAddressPage(
-            isEditMode: false,
-                deliveryAddress: deliveryAddress,
-              )),
+          builder: (context) =>
+              BlocProvider.value(
+                  value: BlocProvider.of<AddressBloc>(contextA),
+                  child: AddAddressPage(
+                    isEditMode: false,
+                    deliveryAddress: deliveryAddress,
+                  ))),
     );
   }
 }

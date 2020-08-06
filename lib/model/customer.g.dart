@@ -12,7 +12,8 @@ Customer _$CustomerFromJson(Map<String, dynamic> json) {
     ..dob = json['dob'] as String
     ..name = json['full_name'] as String
     ..email = json['email'] as String
-    ..referral = json['referral'] as String;
+    ..referral = json['referral'] as String
+    ..profileImage = json['profile_picture'];
 }
 
 Map<String, dynamic> _$CustomerToJson(Customer instance) => <String, dynamic>{
@@ -21,4 +22,5 @@ Map<String, dynamic> _$CustomerToJson(Customer instance) => <String, dynamic>{
       'full_name': instance.name,
       'email': instance.email,
       'referral': instance.referral,
+      'profile_picture': instance.profileImage
     };

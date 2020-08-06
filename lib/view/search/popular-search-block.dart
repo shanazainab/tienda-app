@@ -12,7 +12,7 @@ class PopularSearchBlock extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Text("Popular on Tienda",
                 style:
-                    TextStyle(color: Colors.grey,fontSize: 20, fontWeight: FontWeight.bold)),
+                    TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           ),
           ListView.separated(
               shrinkWrap: true,

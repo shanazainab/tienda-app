@@ -15,8 +15,19 @@ class CheckOutBloc extends Bloc<CheckoutEvents, CheckoutStates> {
 
   @override
   Stream<CheckoutStates> mapEventToState(CheckoutEvents event) async* {
+    if (event is Initialize) {
+      yield Loading();
+    }
     if (event is DoCartCheckout) {
       yield* _mapDoCardCheckoutToStates(event);
+    }
+    if (event is DoUpdateCheckOutProgress) {
+      if (event.status == "CART")
+        yield CartActive(event.status, event.order);
+      else if (event.status == "ADDRESS")
+        yield AddressActive(event.status, event.order);
+      else if (event.status == "PAYMENT")
+        yield PaymentActive(event.status, event.order);
     }
   }
 
@@ -28,7 +39,7 @@ class CheckOutBloc extends Bloc<CheckoutEvents, CheckoutStates> {
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
     final client =
-    CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
+        CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.cartCheckout(event.addressId).then((response) {
       Logger().d("CART-CEHCKOUT-RESPONSE:$response");
       switch (json.decode(response)['status']) {
@@ -45,10 +56,8 @@ class CheckOutBloc extends Bloc<CheckoutEvents, CheckoutStates> {
       }
     });
 
-    if(status == "success")
+    if (status == "success") {
       yield InitialCheckOutSuccess();
-
-
-
+    }
   }
 }

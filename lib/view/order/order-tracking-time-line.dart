@@ -1,38 +1,23 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 class OrderTrackingTimeLine extends StatefulWidget {
   final numberOfTrackLines;
   final List<String> topRowItems;
-  final bool expand;
-  final bool hideElements;
-  final List<String> rightItems;
-  final showDescription;
 
-  OrderTrackingTimeLine(
-      {this.numberOfTrackLines,
-      this.topRowItems,
-      this.expand,
-      this.hideElements,
-      this.rightItems,
-      this.showDescription});
+  OrderTrackingTimeLine({
+    this.numberOfTrackLines,
+    this.topRowItems,
+  });
 
   @override
   _OrderTrackingTimeLineState createState() => _OrderTrackingTimeLineState();
 }
 
-class _OrderTrackingTimeLineState extends State<OrderTrackingTimeLine>
-    with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-Animation _animation;
+class _OrderTrackingTimeLineState extends State<OrderTrackingTimeLine> {
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: Duration(seconds: 2));
-    _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
-    if (widget.showDescription) _controller.forward();
   }
 
   @override
@@ -50,20 +35,9 @@ Animation _animation;
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                if (!widget.hideElements)
-                  Text(
-                    widget.topRowItems[index],
-                    style: TextStyle(fontSize: 12),
-                  ),
-                FadeTransition(
-                  opacity: _animation,
-                  child: Transform.rotate(
-                    angle: -1.5708,
-                    child: Text(
-                      widget.topRowItems[index],
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ),
+                Text(
+                  widget.topRowItems[index],
+                  style: TextStyle(fontSize: 12),
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -80,7 +54,7 @@ Animation _animation;
                           ? Colors.lightBlue
                           : Colors.grey,
                       height: 2,
-                      width: widget.expand ? 80 : 50,
+                      width: 80,
                     ),
                     index == widget.numberOfTrackLines - 1
                         ? CircleAvatar(

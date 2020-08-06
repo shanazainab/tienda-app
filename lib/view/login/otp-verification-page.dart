@@ -12,6 +12,8 @@ import 'package:tienda/model/login-verify-request.dart';
 import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/login/customer-details-page.dart';
 
+import '../../localization.dart';
+
 class OTPVerificationPage extends StatefulWidget {
   final String mobileNumber;
 
@@ -44,11 +46,13 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
                           mobileNumber: widget.mobileNumber,
                         )),
               );
-            else
-              Navigator.push(
+            else {
+              BlocProvider.of<LoginBloc>(context)..add(CheckLoginStatus());
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => HomePage()),
               );
+            }
           } else if (state is LogoutError) {
             Fluttertoast.showToast(
                 msg: state.error,
@@ -62,6 +66,11 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
         },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            brightness: Brightness.light,
+            elevation: 0,
+          ),
           bottomNavigationBar:
               BlocBuilder<LoginBloc, LoginStates>(builder: (context, state) {
             if (state is LoginInProgress)
@@ -75,7 +84,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
             alignment: Alignment.topCenter,
             color: Colors.white,
             child: Padding(
-              padding: const EdgeInsets.only(top: 100, left: 16.0, right: 16),
+              padding: const EdgeInsets.only(top: 50, left: 16.0, right: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -83,13 +92,15 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
                 children: <Widget>[
                   Align(
                       alignment: Alignment.topLeft,
-                      child: Text("Enter OTP Sent To Your Mobile",
-                        style: TextStyle(
-                            fontSize: 16
-                        ),)),
+                      child: Text(
+                        AppLocalizations.of(context)
+                            .translate('enter-otp-sent-to-your-mobile'),
+                        style: TextStyle(fontSize: 16),
+                      )),
                   SizedBox(
                     height: 20,
                   ),
+
                   ///OTP Pin enter field
                   PinCodeTextField(
                     length: 4,
@@ -136,7 +147,8 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
                       onPressed: () {
                         handleVerify();
                       },
-                      child: Text("VERIFY"),
+                      child: Text(
+                          AppLocalizations.of(context).translate('verify')),
                     ),
                   )
                 ],

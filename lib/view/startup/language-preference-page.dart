@@ -31,12 +31,12 @@ class _LanguagePreferencePageState extends State<LanguagePreferencePage> {
             alignment: Alignment.center,
             child: Text(
              AppLocalizations.of(context).translate("pick-your-language"),
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 18),
             ),
           ),
           Center(
             child: Container(
-                height: MediaQuery.of(context).size.height - 400,
+                height: MediaQuery.of(context).size.height - 300,
                 width: 200,
                 child: ListView(
                   shrinkWrap: true,
@@ -71,13 +71,21 @@ class _LanguagePreferencePageState extends State<LanguagePreferencePage> {
                 ),
           ),
           Container(
-            height: 200,
+
+            height: 100,
             alignment: Alignment.center,
-            child: RaisedButton(
-              onPressed: () {
-                handleNext(context);
-              },
-              child: Text(AppLocalizations.of(context).translate("continue")),
+            child: SizedBox(
+              height: 46,
+              width: MediaQuery.of(context).size.width - 100,
+              child: RaisedButton(
+
+                onPressed: () {
+                  handleNext(context);
+                },
+                child: Text(AppLocalizations.of(context).translate("continue"),style: TextStyle(
+                  color: Colors.white
+                ),),
+              ),
             ),
           ),
         ],

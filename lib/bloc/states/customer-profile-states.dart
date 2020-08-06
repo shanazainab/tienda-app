@@ -12,6 +12,15 @@ class Loading extends CustomerProfileStates {
   Loading() : super();
 }
 
+class OfflineLoadCustomerDataSuccess extends CustomerProfileStates {
+  final Customer customerDetails;
+
+  OfflineLoadCustomerDataSuccess({this.customerDetails}) : super();
+
+  @override
+  List<Object> get props => [customerDetails];
+}
+
 class LoadCustomerProfileSuccess extends CustomerProfileStates {
   final Customer customerDetails;
 
@@ -32,6 +41,7 @@ class LoadCustomerProfileFail extends CustomerProfileStates {
 
 class EditCustomerProfileSuccess extends CustomerProfileStates {
   final Customer customer;
+
   EditCustomerProfileSuccess({this.customer}) : super();
 
   @override

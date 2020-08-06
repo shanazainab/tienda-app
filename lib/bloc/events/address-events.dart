@@ -9,7 +9,6 @@ abstract class AddressEvents extends Equatable {
 }
 
 class LoadSavedAddress extends AddressEvents {
-
   LoadSavedAddress() : super();
 
   @override
@@ -17,24 +16,31 @@ class LoadSavedAddress extends AddressEvents {
 }
 
 class AddSavedAddress extends AddressEvents {
+  final List<DeliveryAddress> deliveryAddresses;
   final DeliveryAddress deliveryAddress;
-  AddSavedAddress({this.deliveryAddress}) : super();
+
+  AddSavedAddress({this.deliveryAddress,this.deliveryAddresses}) : super();
 
   @override
   List<Object> get props => [deliveryAddress];
 }
 
 class EditSavedAddress extends AddressEvents {
+  final List<DeliveryAddress> deliveryAddresses;
   final DeliveryAddress deliveryAddress;
-  EditSavedAddress({this.deliveryAddress}) : super();
+
+  EditSavedAddress({this.deliveryAddresses,this.deliveryAddress}) : super();
 
   @override
   List<Object> get props => [deliveryAddress];
 }
 
 class DeleteSavedAddress extends AddressEvents {
+  final List<DeliveryAddress> deliveryAddresses;
   final int deliveryAddressId;
-  DeleteSavedAddress({this.deliveryAddressId}) : super();
+
+  DeleteSavedAddress({this.deliveryAddresses, this.deliveryAddressId})
+      : super();
 
   @override
   List<Object> get props => [deliveryAddressId];

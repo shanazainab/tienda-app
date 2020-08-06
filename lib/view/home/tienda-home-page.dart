@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:page_indicator/page_indicator.dart';
 import 'package:tienda/view/home/banner-bottom.dart';
-import 'package:tienda/view/home/category-block.dart';
+import 'package:tienda/view/home/now-trending-block.dart';
 import 'package:tienda/view/home/deals-block.dart';
 import 'package:tienda/view/home/featured-brands.dart';
 import 'package:tienda/view/home/featured-sellers-list.dart';
@@ -20,21 +20,21 @@ class TiendaHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(44.0), // here the desired height
-
           child: CustomAppBar(
-            title: "",
+            extend: true,
+            title: "TIENDA",
             showWishList: true,
             showSearch: true,
             showCart: true,
             showNotification: true,
             showLogo: true,
           )),
-      body: SafeArea(
-        child: NetworkStateWrapper(
-            child: TiendaHomePageContents(controller: controller)),
-      ),
+      body: NetworkStateWrapper(
+        networkState: (value){},
+          child: TiendaHomePageContents(controller: controller)),
     );
   }
 }
@@ -51,6 +51,7 @@ class TiendaHomePageContents extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: ListView(
+        padding: EdgeInsets.all(0),
         children: <Widget>[
           Container(
             height: 400,
@@ -72,16 +73,6 @@ class TiendaHomePageContents extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            Text(
-                              "Banner Title",
-                              style:
-                                  TextStyle(fontSize: 24, color: Colors.blue),
-                            ),
-                            Text(
-                              "Lorem Epsum",
-                              style:
-                                  TextStyle(fontSize: 24, color: Colors.blue),
-                            ),
                             Container(
                               width: 200,
                               child: RaisedButton(
@@ -90,10 +81,18 @@ class TiendaHomePageContents extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Icon(Icons.shop),
+                                    Icon(
+                                      Icons.shop,
+                                      color: Colors.white,
+                                    ),
                                     Padding(
-                                      padding: const EdgeInsets.only(left: 8.0,right:8.0),
-                                      child: Text(AppLocalizations.of(context).translate('shop-live')),
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, right: 8.0),
+                                      child: Text(
+                                        AppLocalizations.of(context)
+                                            .translate('shop-live'),
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                     )
                                   ],
                                 ),
@@ -122,22 +121,26 @@ class TiendaHomePageContents extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               indicatorColor: Colors.white,
               indicatorSelectorColor: Colors.blue,
-              shape: IndicatorShape.circle(size: 12),
+              shape: IndicatorShape.circle(size: 8),
               // shape: IndicatorShape.roundRectangleShape(size: Size.square(12),cornerSize: Size.square(3)),
               // shape: IndicatorShape.oval(size: Size(12, 8)),
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
-            child: CategoryBlock(),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: DealsBlock(),
+            child: NowTrendingBlock(),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
             child: FeaturedSellersList(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: TopCategories(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: DealsBlock(),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
@@ -150,10 +153,6 @@ class TiendaHomePageContents extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
             child: NewArrivalList(),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: TopCategories(),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),

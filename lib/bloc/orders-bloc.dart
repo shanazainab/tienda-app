@@ -19,6 +19,36 @@ class OrdersBloc extends Bloc<OrderEvents, OrderStates> {
     if (event is LoadOrders) {
       yield* _mapOrdersToStates(event);
     }
+    if (event is CancelOrder) {
+      yield* _mapCancelOrderToStates(event);
+    }
+  }
+
+  Stream<OrderStates> _mapCancelOrderToStates(CancelOrder event) async* {
+    final dio = Dio();
+    String value = await FlutterSecureStorage().read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
+
+    OrdersApiClient ordersApiClient = OrdersApiClient(dio,
+        baseUrl: GlobalConfiguration().getString("baseURL"));
+    await ordersApiClient.cancelOrder(event.orderId).then((response) {
+      Logger().d("CANCEL-ORDER-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          break;
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+        Logger().e("CANCEL-ORDER-ERROR:", error);
+      }
+    });
+
+
+//      yield LoadOrderDataSuccess(
+//          allOrders: event.,
+//          deliveredOrders: deliveredOrders,
+//          processingOrders: processingOrders);
   }
 
   Stream<OrderStates> _mapOrdersToStates(LoadOrders event) async* {
@@ -46,6 +76,19 @@ class OrdersBloc extends Bloc<OrderEvents, OrderStates> {
 
     Logger().d("ORDER DATA: $orders");
 
-    if (orders != null) yield LoadOrderDataSuccess(orders);
+    List<Order> processingOrders = new List();
+    List<Order> deliveredOrders = new List();
+
+    for (final order in orders) {
+      if (order.status == "processing")
+        processingOrders.add(order);
+      else if (order.status == "delivered") deliveredOrders.add(order);
+    }
+
+    if (orders != null)
+      yield LoadOrderDataSuccess(
+          allOrders: orders,
+          deliveredOrders: deliveredOrders,
+          processingOrders: processingOrders);
   }
 }

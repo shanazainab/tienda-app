@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -7,8 +6,12 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/category-bloc.dart';
 import 'package:tienda/bloc/events/category-events.dart';
+import 'package:tienda/bloc/events/product-events.dart';
+import 'package:tienda/bloc/filter-bloc.dart';
+import 'package:tienda/bloc/product-bloc.dart';
 import 'package:tienda/bloc/states/category-states.dart';
 import 'package:tienda/model/category.dart';
+import 'package:tienda/model/search-body.dart';
 import 'package:tienda/view/products/product-list-page.dart';
 
 class CategoriesPage extends StatefulWidget {
@@ -25,6 +28,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
   CategoryBlock categoryBlock = new CategoryBlock();
 
   bool tapActionPlaced = false;
+
+  ScrollController mainCategoryScroll = new ScrollController();
 
   @override
   void initState() {
@@ -64,13 +69,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                     topRight: Radius.circular(8),
                                     bottomRight: Radius.circular(8)),
                                 child: Container(
-                                  alignment: Alignment.center,
+                                  //  alignment: Alignment.center,
                                   color: Colors.grey[200],
                                   height:
                                       MediaQuery.of(context).size.height - 200,
                                   width: MediaQuery.of(context).size.width / 4 +
                                       40,
                                   child: ListView.builder(
+                                      controller: mainCategoryScroll,
                                       itemCount: state.categories.length,
                                       itemBuilder:
                                           (BuildContext ctxt, int index) {
@@ -104,16 +110,23 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                 width: 4))
                                                         : null),
                                                 height: 50,
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  appLanguage.appLocal ==
-                                                          Locale('en')
-                                                      ? state.categories[index]
-                                                          .nameEn
-                                                      : state.categories[index]
-                                                          .nameAr,
-                                                  style:
-                                                      TextStyle(fontSize: 16),
+                                                //   alignment: Alignment.center,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 16,
+                                                          left: 16.0,
+                                                          right: 16),
+                                                  child: Text(
+                                                    appLanguage.appLocal ==
+                                                            Locale('en')
+                                                        ? state
+                                                            .categories[index]
+                                                            .nameEn
+                                                        : state
+                                                            .categories[index]
+                                                            .nameAr,
+                                                  ),
                                                 )),
                                           ),
                                         );
@@ -126,6 +139,22 @@ class _CategoriesPageState extends State<CategoriesPage> {
                           onNotification: (value) {
                             if (value is ScrollUpdateNotification &&
                                 !tapActionPlaced) {
+                              if (itemPositionsListener
+                                      .itemPositions.value.last.index >
+                                  5)
+                                mainCategoryScroll.animateTo(
+                                  mainCategoryScroll.position.maxScrollExtent,
+                                  curve: Curves.easeOut,
+                                  duration: const Duration(milliseconds: 300),
+                                );
+//                              if (itemPositionsListener
+//                                      .itemPositions.value.last.index <
+//                                  4)
+//                                mainCategoryScroll.animateTo(
+//                                  0.0,
+//                                  curve: Curves.easeOut,
+//                                  duration: const Duration(milliseconds: 300),
+//                                );
                               selectedCategoryIndex.add(itemPositionsListener
                                   .itemPositions.value.last.index);
                               return true;
@@ -146,7 +175,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: <Widget>[
                                     Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, right: 16),
                                       child: Text(
                                         appLanguage.appLocal == Locale('en')
                                             ? state.categories[index].nameEn
@@ -183,20 +213,22 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                     state
                                                         .categories[index]
                                                         .subCats[subIndex]
-                                                        .thirdLevel),
+                                                        .thirdLevel,
+                                                    appLanguage),
                                                 title: Text(
-                                                    appLanguage.appLocal ==
-                                                            Locale('en')
-                                                        ? state
-                                                            .categories[index]
-                                                            .subCats[subIndex]
-                                                            .nameEn
-                                                        : state
-                                                            .categories[index]
-                                                            .subCats[subIndex]
-                                                            .nameAr,style: TextStyle(
-                                                  fontSize: 13
-                                                ),),
+                                                  appLanguage.appLocal ==
+                                                          Locale('en')
+                                                      ? state
+                                                          .categories[index]
+                                                          .subCats[subIndex]
+                                                          .nameEn
+                                                      : state
+                                                          .categories[index]
+                                                          .subCats[subIndex]
+                                                          .nameAr,
+                                                  style:
+                                                      TextStyle(fontSize: 13),
+                                                ),
                                               )
 //                                          child: Row(
 //                                            children: <Widget>[
@@ -248,7 +280,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
     );
   }
 
-  _buildSubSubCategory(List<SubSubCat> thirdLevelCategory) {
+  _buildSubSubCategory(List<SubSubCat> thirdLevelCategory, appLanguage) {
     List<Widget> widgets = new List();
     for (int i = 0; i < thirdLevelCategory.length; ++i) {
       widgets.add(Padding(
@@ -256,12 +288,27 @@ class _CategoriesPageState extends State<CategoriesPage> {
         child: GestureDetector(
           onTap: () {
             Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ProductListPage(
-                        categoryId: thirdLevelCategory[i].id.toString(),
-                      )),
-            );
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MultiBlocProvider(
+                          providers: [
+                            BlocProvider<FilterBloc>(
+                              create: (BuildContext context) => FilterBloc(),
+                            ),
+                            BlocProvider(
+                              create: (BuildContext context) => ProductBloc()
+                                ..add(FetchProductList(
+                                    query: 'get_category',
+                                    searchBody: SearchBody(
+                                        category: thirdLevelCategory[i].id))),
+                            )
+                          ],
+                          child: ProductListPage(
+                            query: 'get_category',
+                            searchBody: new SearchBody(
+                                category: thirdLevelCategory[i].id),
+                          ),
+                        )));
           },
           child: Card(
               elevation: 0,
@@ -271,7 +318,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
               child: Padding(
                 padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                 child: Text(
-                  thirdLevelCategory[i].nameEn,
+                  appLanguage.appLocal == Locale('en')
+                      ? thirdLevelCategory[i].nameEn
+                      : thirdLevelCategory[i].nameAr,
                   style: TextStyle(fontSize: 14),
                 ),
               )),

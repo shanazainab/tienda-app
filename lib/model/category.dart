@@ -38,6 +38,11 @@ class Category {
     "thumbnail": thumbnail,
     "sub_cats": List<dynamic>.from(subCats.map((x) => x.toJson())),
   };
+
+  @override
+  String toString() {
+    return 'Category{id: $id, nameEn: $nameEn, nameAr: $nameAr, thumbnail: $thumbnail, subCats: $subCats}';
+  }
 }
 
 class SubCat {
@@ -70,6 +75,11 @@ class SubCat {
     "name_ar": nameAr,
     "third_level": thirdLevel == null ? null : List<dynamic>.from(thirdLevel.map((x) => x.toJson())),
   };
+
+  @override
+  String toString() {
+    return 'SubCat{id: $id, categoryId: $categoryId, nameEn: $nameEn, nameAr: $nameAr, thirdLevel: $thirdLevel}';
+  }
 }
 
 class SubSubCat {
@@ -98,4 +108,9 @@ class SubSubCat {
     "name_en": nameEn,
     "name_ar": nameAr,
   };
+
+  @override
+  String toString() {
+    return 'SubSubCat{id: $id, categoryId: $categoryId, nameEn: $nameEn, nameAr: $nameAr}';
+  }
 }

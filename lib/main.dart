@@ -6,9 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:logger/logger.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/app-country.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/app-settings.config.dart';
@@ -17,14 +18,17 @@ import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/connectivity-bloc.dart';
 import 'package:tienda/bloc/customer-profile-bloc.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
+import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/events/startup-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/preference-bloc.dart';
 import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
+import 'package:tienda/chewie-demo.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/view/home/home-page.dart';
+import 'package:tienda/view/live-stream/shop-live-screen.dart';
 import 'package:tienda/view/startup/country-choose-page.dart';
 import 'package:tienda/view/startup/language-preference-page.dart';
 import 'package:tienda/view/startup/splash-screen.dart';
@@ -32,8 +36,6 @@ import 'package:tienda/view/startup/welcome-screen.dart';
 import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/startup/category-selection-page.dart';
 import 'package:tienda/view/login/otp-verification-page.dart';
-
-import 'bloc/category-bloc.dart';
 
 ///Tienda : Video streaming e-commerce app
 ///Start date : May 17 2020
@@ -43,7 +45,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
 //  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-//  sharedPreferences.clear();
+////  sharedPreferences.clear();
+
 
   ///Enable firebase crash analytics
   // Crashlytics.instance.enableInDevMode = true;
@@ -84,6 +87,33 @@ Future<void> main() async {
   ));
     );
   }, Crashlytics.instance.recordError);*/
+
+  ///one signal test
+  //Remove this method to stop OneSignal Debugging
+  OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+
+  await OneSignal.shared.init("ba300aff-42f3-4c6a-b235-1e796272dfa2",
+      iOSSettings: {
+        OSiOSSettings.autoPrompt: false,
+        OSiOSSettings.inAppLaunchUrl: false
+      });
+
+  OSPermissionSubscriptionState subscriptionState =
+      await OneSignal.shared.getPermissionSubscriptionState();
+  Logger().d("PLAYER ID: ${subscriptionState.subscriptionStatus.userId}");
+
+  OneSignal.shared
+      .setInFocusDisplayType(OSNotificationDisplayType.notification);
+
+// The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+  await OneSignal.shared
+      .promptUserForPushNotificationPermission(fallbackToSettings: true);
+
+  OneSignal.shared
+      .setNotificationReceivedHandler((OSNotification notification) {
+    Logger().d(notification.jsonRepresentation());
+  });
+
   AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
 
@@ -107,7 +137,7 @@ Future<void> main() async {
           create: (context) => PreferenceBloc(),
         ),
         BlocProvider<LoginBloc>(
-          create: (BuildContext context) => LoginBloc(),
+          create: (BuildContext context) => LoginBloc()..add(CheckLoginStatus()),
         ),
         BlocProvider<WishListBloc>(
           create: (BuildContext context) => WishListBloc(),
@@ -147,10 +177,7 @@ class App extends StatelessWidget {
         child: Consumer<AppLanguage>(builder: (context, model, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            /*navigatorObservers: [
-            ///Track page transitions with firebase analytics
-            FirebaseAnalyticsObserver(analytics: analytics),
-      ],*/
+
             localizationsDelegates: [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
@@ -166,6 +193,12 @@ class App extends StatelessWidget {
             ],
             onGenerateRoute: (settings) {
               switch (settings.name) {
+                case '/shopLiveStream':
+                  return PageTransition(
+                      child: ShopLiveScreen(),
+                      duration: Duration(milliseconds: 500),
+                      type: PageTransitionType.downToUp);
+                  break;
                 case '/countryChoosePage':
                   return PageTransition(
                       child: CountryChoosePage(),
@@ -202,38 +235,44 @@ class App extends StatelessWidget {
                 fontFamily:
                     appLanguage.appLocal != Locale('en') ? 'Cairo' : 'Roboto',
                 textTheme: TextTheme(
-                    headline1: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                )),
+                  headline1: TextStyle(
+                    fontSize: 14,
+                  ),
+                  headline2: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 appBarTheme: AppBarTheme(
-                    color: Colors.white,
-                    iconTheme: IconThemeData(color: Colors.grey),
-                    textTheme: TextTheme(title: TextStyle(color: Colors.grey))),
-                accentColor: Colors.blue,
+
+                  brightness: Brightness.light,
+                  color: Colors.white,
+                  textTheme: TextTheme(
+                    title: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16
+                    )
+                  ),
+                  iconTheme: IconThemeData(color: Color(0xffC0C0C0)),
+                ),
+                accentColor: Colors.black,
                 buttonTheme: ButtonThemeData(
                   buttonColor: Colors.black,
                   padding: EdgeInsets.all(8.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  textTheme: ButtonTextTheme.primary,
+                  textTheme: ButtonTextTheme.accent,
+                  colorScheme: Theme.of(context).colorScheme.copyWith(
+                        secondary: Color(0xffC0C0C0),
+                      ),
                 )),
-
-            ///App startup with bloc pattern architecture with flutter_bloc
-            ///Splash screen transition with data fetch on progress
-
-            ///{ "/welcomeScreen":true,
-            ///   "/countryChoosePage":false,
-            ///   "/languagePreferencePage":false,
-            ///   "/categorySelectionPage":false }
 
             home: Directionality(
               textDirection: appLanguage.appLocal != Locale('en')
                   ? TextDirection.rtl
-                  : TextDirection.ltr, // set it to rtl
-
+                  : TextDirection.ltr,
               child: BlocBuilder<StartupBloc, StartupStates>(
                 builder: (context, state) {
                   if (state is Initialized) {

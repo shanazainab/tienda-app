@@ -23,6 +23,11 @@ class WishList extends Equatable {
   }
 
   @override
+  String toString() {
+    return 'WishList{wishListItems: $wishListItems}';
+  }
+
+  @override
   // TODO: implement props
   List<Object> get props => [wishListItems];
 }
@@ -49,6 +54,11 @@ class WishListItem extends Equatable {
     data['size'] = this.size;
 
     return data;
+  }
+
+  @override
+  String toString() {
+    return 'WishListItem{product: $product, color: $color, size: $size}';
   }
 
   @override

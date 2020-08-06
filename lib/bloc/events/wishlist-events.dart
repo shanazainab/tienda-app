@@ -17,6 +17,13 @@ class LoadWishListProducts extends WishListEvents {
   List<Object> get props => [wishList];
 }
 
+class OfflineLoadWishList extends WishListEvents {
+  OfflineLoadWishList() : super();
+
+  @override
+  List<Object> get props => [];
+}
+
 class AddToWishList extends WishListEvents {
   final WishListItem wishListItem;
 
@@ -30,7 +37,7 @@ class DeleteWishListItem extends WishListEvents {
   final WishList wishList;
   final WishListItem wishListItem;
 
-  DeleteWishListItem({this.wishList,this.wishListItem}) : super();
+  DeleteWishListItem({this.wishList, this.wishListItem}) : super();
 
   @override
   List<Object> get props => [wishListItem];

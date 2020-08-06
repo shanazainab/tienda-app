@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +21,7 @@ class CategorySelectionPage extends StatefulWidget {
 class _CategorySelectionPageState extends State<CategorySelectionPage> {
   PreferenceBloc preferenceBloc = new PreferenceBloc();
 
-  String message = "Category Preference";
+  String message = "Tell Us What You Are Looking for ";
 
   Map<Category, bool> categoryPreferences = new HashMap();
 
@@ -30,7 +29,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    preferenceBloc.add(FetchCategoryList());
+    preferenceBloc.add(FetchPreferredCategoryList());
   }
 
   @override
@@ -39,7 +38,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
         create: (context) => preferenceBloc,
         child: BlocListener<PreferenceBloc, PreferenceStates>(
             listener: (context, state) {
-              if (state is LoadCategoryListSuccess) {
+              if (state is LoadPreferredCategoryListSuccess) {
                 for (final category in state.categories) {
                   categoryPreferences.putIfAbsent(category, () => false);
                 }
@@ -53,7 +52,98 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
               children: <Widget>[
                 BlocBuilder<PreferenceBloc, PreferenceStates>(
                     builder: (context, state) {
-                  if (state is LoadCategoryListSuccess)
+                  if (state is LoadPreferredCategoryListSuccess)
+                    return Zoom(
+                        opacityScrollBars: 0.0,
+                        backgroundColor: Colors.white,
+                        canvasColor: Colors.white,
+                        centerOnScale: true,
+                        enableScroll: true,
+                        doubleTapZoom: true,
+                        zoomSensibility: 2.3,
+                        initZoom: 0.0,
+                        width: 1000,
+                        height: 1800,
+                        child: Center(
+                            child: Padding(
+                          padding:
+                              const EdgeInsets.only(top: 500.0, bottom: 200),
+                          child: ScrollConfiguration(
+                            behavior: CustomBehaviour(),
+                            child: StaggeredGridView.countBuilder(
+                              crossAxisCount: 6,
+                              itemCount: state.categories.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (BuildContext context, int index) =>
+                                  GestureDetector(
+                                onTap: () {
+                                  categoryPreferences.update(
+                                      state.categories[index],
+                                      (value) => !categoryPreferences[
+                                          state.categories[index]]);
+                                  int count = 0;
+                                  setState(() {
+                                    categoryPreferences.forEach((key, value) {
+                                      if (value) ++count;
+                                    });
+
+                                    if (5 - count != 0)
+                                      message = "${5 - count} more to go";
+                                    else
+                                      message = "";
+                                  });
+                                  if (count == 5) {
+                                    handleNext(context);
+                                  }
+                                },
+                                child: Column(
+                                  children: <Widget>[
+                                    Card(
+                                      elevation: categoryPreferences[state
+                                                      .categories[index]] !=
+                                                  null &&
+                                              categoryPreferences[
+                                                  state.categories[index]]
+                                          ? 8
+                                          : 0,
+                                      clipBehavior: Clip.antiAlias,
+                                      child: CircleAvatar(
+                                        maxRadius: 120.0,
+                                        backgroundColor: Colors.grey[200],
+                                        backgroundImage: NetworkImage(
+                                          state.categories[index].thumbnail,
+                                        ),
+                                      ),
+                                      shape: CircleBorder(),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 16.0),
+                                      child: new Text(
+                                        state.categories[index].nameEn,
+                                        style: TextStyle(
+                                          color: categoryPreferences[state
+                                                          .categories[index]] !=
+                                                      null &&
+                                                  categoryPreferences[
+                                                      state.categories[index]]
+                                              ? Colors.lightBlue
+                                              : Colors.black,
+                                          fontSize: 36,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              staggeredTileBuilder: (int index) =>
+                                  new StaggeredTile.count(
+                                      2, index.isEven ? 3 : 2),
+                              mainAxisSpacing: 20.0,
+                              crossAxisSpacing: 20.0,
+                            ),
+                          ),
+                        )));
+                  else
                     return Zoom(
                         opacityScrollBars: 0.0,
                         backgroundColor: Colors.white,
@@ -71,58 +161,30 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                               const EdgeInsets.only(top: 500.0, bottom: 200),
                           child: StaggeredGridView.countBuilder(
                             crossAxisCount: 6,
-                            itemCount: state.categories.length,
+                            itemCount: 8,
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (BuildContext context, int index) =>
-                                GestureDetector(
-                              onTap: () {
-                                print("CHOOSEN");
-                                categoryPreferences.update(
-                                    state.categories[index],
-                                    (value) => !categoryPreferences[
-                                        state.categories[index]]);
-                                setState(() {
-                                  int count = 0;
-                                  categoryPreferences.forEach((key, value) {
-                                    if (value) ++count;
-                                  });
-
-                                  if (count == 5) {
-                                    handleNext(context);
-                                  }
-                                  message = "Choose ${5 - count} more";
-                                });
-                              },
-                              child: Column(
-                                children: <Widget>[
-                                  Card(
-                                    elevation: categoryPreferences[
-                                                    state.categories[index]] !=
-                                                null &&
-                                            categoryPreferences[
-                                                state.categories[index]]
-                                        ? 8
-                                        : 0,
-                                    clipBehavior: Clip.antiAlias,
-                                    child: CircleAvatar(
-                                      maxRadius: 120.0,
-                                      backgroundImage: NetworkImage(
-                                        state.categories[index].thumbnail,
-                                      ),
-                                    ),
-                                    shape: CircleBorder(),
+                                Column(
+                              children: <Widget>[
+                                Card(
+                                  elevation: 0,
+                                  clipBehavior: Clip.antiAlias,
+                                  child: CircleAvatar(
+                                    maxRadius: 120.0,
+                                    backgroundColor: Colors.grey[200],
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 16.0),
-                                    child: new Text(
-                                      state.categories[index].nameEn,
-                                      style: TextStyle(
-                                        fontSize: 36,
-                                      ),
+                                  shape: CircleBorder(),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16.0),
+                                  child: new Text(
+                                    "",
+                                    style: TextStyle(
+                                      fontSize: 36,
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                             staggeredTileBuilder: (int index) =>
                                 new StaggeredTile.count(
@@ -131,26 +193,27 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                             crossAxisSpacing: 20.0,
                           ),
                         )));
-                  else
-                    return Container(
-                      height: 0,
-                    );
                 }),
                 Align(
                     alignment: Alignment.topCenter,
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 100.0),
+                      padding: const EdgeInsets.only(
+                          top: 100.0, left: 16, right: 16),
                       child: Text(
                         message,
+                        textAlign: TextAlign.center,
+                        softWrap: true,
                         style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
+                          fontSize: 18,
+                        ),
                       ),
                     )),
               ],
             ))));
   }
 
-  void handleNext(context) {
+  void handleNext(context) async {
+    await Future.delayed(Duration(milliseconds: 500));
     BlocProvider.of<StartupBloc>(context)
         .add(UpdatePreferenceFlow("/categorySelectionPage"));
 
@@ -158,5 +221,13 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
       context,
       MaterialPageRoute(builder: (context) => HomePage()),
     );
+  }
+}
+
+class CustomBehaviour extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 }

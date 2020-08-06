@@ -9,6 +9,7 @@ import 'package:dio/dio.dart';
 class LoginBloc extends Bloc<LoginEvents, LoginStates> {
   LoginApiClient loginApiClient;
   LoginController loginController;
+
   LoginBloc() {
     final dio = Dio();
     loginApiClient = LoginApiClient(dio);
@@ -20,6 +21,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
 
   @override
   Stream<LoginStates> mapEventToState(LoginEvents event) async* {
+    if (event is CheckLoginStatus) yield* _doCheckLogin(event);
     if (event is SendOTP)
       yield* _doLoginSendOTP(event);
     else if (event is VerifyOTP)
@@ -31,6 +33,14 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
     else if (event is DoGoogleSignIn)
       yield* _doGoogleSignIn(event);
     else if (event is DoFacebookSignIn) yield* _doFacebookSignIn(event);
+  }
+
+  Stream<LoginStates> _doCheckLogin(CheckLoginStatus event) async* {
+    bool isLoggedIn = await loginController.checkLoginStatus();
+    if (isLoggedIn)
+      yield LoggedInUser();
+    else
+      yield GuestUser();
   }
 
   Stream<LoginStates> _doLoginSendOTP(SendOTP event) async* {
@@ -68,8 +78,6 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
 
   Stream<LoginStates> _doLogout(Logout event) async* {
     String status = await loginController.logOut();
-
-
 
     switch (status) {
       case "success":

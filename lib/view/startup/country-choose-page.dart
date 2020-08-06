@@ -111,51 +111,79 @@ class _CountryChoosePageState extends State<CountryChoosePage>
                       width: MediaQuery.of(context).size.width,
                       child: Column(
                         children: <Widget>[
-                          Spacer(
-                            flex: 1,
-                          ),
                           Container(
+                            alignment: Alignment.center,
+                            height: 200,
                             child: Text(
                               AppLocalizations.of(context)
                                   .translate('choose-your-country'),
-                              style: TextStyle(fontSize: 16),
+                              style: TextStyle(fontSize: 18),
                             ),
                           ),
-                          Spacer(
-                            flex: 2,
-                          ),
                           currentCountry.length > 0
-                              ? Text(
-                                  currentCountry,
-                                  style: TextStyle(fontSize: 24),
+                              ? Container(
+                                  alignment: Alignment.center,
+                                  height:
+                                      MediaQuery.of(context).size.height - 300,
+                                  child: Text(
+                                    currentCountry,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
                                 )
-                              : Column(
-                                  children: <Widget>[
-                                    SlideTransition(
-                                      position: _offsetAnimation,
-                                      child: Image.asset(
-                                        "assets/icons/address-pin.png",
-                                        height: 30,
-                                        width: 30,
+                              : Container(
+                                  alignment: Alignment.center,
+                                  height:
+                                      MediaQuery.of(context).size.height - 300,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      SlideTransition(
+                                        position: _offsetAnimation,
+                                        child: Image.asset(
+                                          "assets/icons/address-pin.png",
+                                          height: 30,
+                                          width: 30,
+                                        ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 30.0),
-                                      child: Text("fetching your location.."),
-                                    )
-                                  ],
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 40.0),
+                                        child: Text("fetching your location.."),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                          Spacer(
-                            flex: 2,
-                          ),
-                          RaisedButton(
-                              onPressed: () {
-                                handleNext(context);
-                              },
-                              child: Text(AppLocalizations.of(context)
-                                  .translate("continue"))),
-                          Spacer(
-                            flex: 1,
+                          Container(
+                            height: 100,
+                            alignment: Alignment.center,
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Tap to choose country",
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 46,
+                                  width:
+                                      MediaQuery.of(context).size.width - 100,
+                                  child: RaisedButton(
+                                      onPressed: () {
+                                        handleNext(context);
+                                      },
+                                      child: Text(
+                                        AppLocalizations.of(context)
+                                            .translate("continue"),
+                                        style: TextStyle(color: Colors.white),
+                                      )),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -193,14 +221,15 @@ class _CountryChoosePageState extends State<CountryChoosePage>
   }
 
   void handleNext(BuildContext context) {
-    BlocProvider.of<StartupBloc>(context)
-        .add(UpdatePreferenceFlow("/countryChoosePage"));
-    Navigator.pushNamed(context, '/categorySelectionPage');
+    if (currentCountry != "") {
+      BlocProvider.of<StartupBloc>(context)
+          .add(UpdatePreferenceFlow("/countryChoosePage"));
+
+      Navigator.pushNamed(context, '/categorySelectionPage');
+    }
   }
 
   Future<String> getTheCurrentLocation() async {
-    Logger().d("GET LOCATION");
-
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     List<Placemark> placeMark = await Geolocator()

@@ -1,5 +1,6 @@
 {
   "1": "CUSTOMER PROFILE MENU",
+  "tienda-points": "TIENDA POINTS",
   "country-message": "Choose Your Country",
   "orders": "Orders",
   "returns": "Returns",
@@ -20,7 +21,7 @@
   "profile-menu-caption": "Welcome to Tienda",
   "profile-menu-sub-caption": "The world's leading shopping site",
   "logout": "LOGOUT",
-  "edit-profile": "EDIT PROFILE",
+  "edit-profile": "EDIT",
   "following": "FOLLOWING",
   "help": "Help",
 
@@ -31,7 +32,7 @@
   "2": "HOME PAGE BOTTOM NAV BAR",
   "home": "Home",
   "category": "Category",
-  "sellers": "Sellers",
+  "sellers": "Presenters",
   "profile": "Profile",
   "shop-live": "Shop Live",
 
@@ -65,22 +66,36 @@
 
   "6": "CART PAGE",
   "cart": "Cart",
+  "checkout": "CHECKOUT",
+  "move-to-wishlist": "Move to Wishlist",
+  "remove": "REMOVE",
+  "cart-total": "Cart Total",
+  "price-details": "PRICE DETAILS",
+  "cart-discount": "Cart Discount",
+  "order-total": "Order Total",
+  "delivery-charge": "Delivery Charge",
+  "total": "Total",
+  "free": "FREE",
 
 
   "7": "WISHLIST PAGE",
-  "add-to-cart": "MOVE TO CART",
+  "move-to-cart": "MOVE TO CART",
   "on-discount": "ON DISCOUNT",
   "popular": "POPULAR",
 
   "8": "TIENDA HOMEPAGE",
-  "featured-sellers": "Featured Sellers",
+  "featured-sellers": "Featured Presenters",
   "recommended-for-you": "Recommended For You",
   "deals-of-the-day": "Deals Of The Day",
   "new-arrival": "New Arrival",
   "top-categories": "Top Categories",
   "featured-brands": "Featured Brands",
+  "now-trending":"Now Trending",
 
 
+  "9": "FILTER AND SORT",
+  "filter": "FILTER",
+  "sort": "SORT",
 
   "10": "SELLER PROFILE MAIN PAGE",
   "follow": "Follow",
@@ -114,9 +129,38 @@
 
 
   "14": "INTRODUCTION PAGES",
-  "pick-your-language": "Choose your language",
+  "pick-your-language": "Choose Your Preferred Language",
   "continue": "Continue",
-  "choose-your-country":"Choose your country"
+  "choose-your-country":"Choose Your Country",
+
+
+  "15": "LOGIN PAGES",
+  "continue-with-phone-number":"Continue With Phone Number ",
+  "continue-with-google": "Continue With Google",
+  "continue-with-facebook": "Continue With Facebook",
+  "enter-your-mobile-number": "Enter Your Mobile Number",
+  "enter-otp-sent-to-your-mobile": "Enter OTP sent to your mobile",
+  "next": "NEXT",
+  "verify":"VERIFY",
+
+
+  "16": "PRODUCT DETAILS",
+  "production-description": "Product Description",
+  "specification": "Specification",
+  "description":"Description",
+  "customer-rating":"Customer Ratings",
+  "customer-review": "Customer Reviews",
+  "add-to-cart": "ADD TO CART",
+  "add-your-review": "Add Your Review",
+  "submit": "SUBMIT",
+
+
+  "aed":"AED",
+
+
+  "17": "PRODUCT LIST CONTAINER",
+  "added-to-wishlist": "Added to Wishlist",
+  "removed-from-wishlist": "Removed from Wishlist"
 
 }
 

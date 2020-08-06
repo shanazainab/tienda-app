@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/api/wishlist-api-client.dart';
-import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/events/wishlist-events.dart';
 import 'package:tienda/bloc/states/wishlist-states.dart';
 import 'package:dio/dio.dart';
@@ -20,6 +20,14 @@ class WishListBloc extends Bloc<WishListEvents, WishListStates> {
 
   @override
   Stream<WishListStates> mapEventToState(WishListEvents event) async* {
+    if (event is OfflineLoadWishList) {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      WishList wishList = WishList.fromJson(
+          json.decode(sharedPreferences.getString('wishlist')));
+      print("Wislist: $wishList");
+      yield LoadWishListSuccess(wishList: wishList);
+    }
     if (event is LoadWishListProducts) {
       yield* _mapLoadWishListProductsToStates(event);
     }
@@ -133,7 +141,15 @@ class WishListBloc extends Bloc<WishListEvents, WishListStates> {
       }
     });
 
+    if (wishList.wishListItems.isNotEmpty) updateWisListLocally(wishList);
+
     if (status == "success") yield LoadWishListSuccess(wishList: wishList);
     if (status == "Not Authorized") yield AuthorizationFailed();
+  }
+
+  Future<void> updateWisListLocally(WishList wishList) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString("wishlist", json.encode(wishList));
+    print(sharedPreferences.getString("wishlist"));
   }
 }

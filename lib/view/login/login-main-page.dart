@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
@@ -10,16 +12,19 @@ import 'package:tienda/view/home/tienda-home-page.dart';
 import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/login/login-mobile-number-page.dart';
 
+import '../../localization.dart';
+
 class LoginMainPage extends StatelessWidget {
   final LoginController loginController = new LoginController();
 
   @override
   Widget build(BuildContext context) {
+
     return BlocListener<LoginBloc, LoginStates>(
         listener: (context, state) {
           if (state is GoogleSignInResponse &&
               state.response == GoogleSignInResponse.SUCCESS) {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => HomePage()),
             );
@@ -36,11 +41,16 @@ class LoginMainPage extends StatelessWidget {
           }
         },
         child: Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            brightness: Brightness.light,
+            backgroundColor: Colors.transparent,
+          ),
           body: Stack(
             children: <Widget>[
               Container(
                 child: Center(
-                  child: Text("BACKGROUND IMAGE"),
+                  child: Text(""),
                 ),
               ),
               Container(
@@ -72,7 +82,7 @@ class LoginMainPage extends StatelessWidget {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10.0),
-                                child: Text("Continue With Phone Number"),
+                                child: Text(AppLocalizations.of(context).translate('continue-with-phone-number')),
                               ),
                             ],
                           ),
@@ -100,7 +110,7 @@ class LoginMainPage extends StatelessWidget {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10.0),
-                                child: Text("Continue With Google"),
+                                child: Text(AppLocalizations.of(context).translate('continue-with-google')),
                               ),
                             ],
                           ),
@@ -128,7 +138,7 @@ class LoginMainPage extends StatelessWidget {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10.0),
-                                child: Text("Continue With facebook"),
+                                child: Text(AppLocalizations.of(context).translate('continue-with-facebook')),
                               ),
                             ],
                           ),

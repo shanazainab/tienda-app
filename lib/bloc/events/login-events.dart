@@ -10,6 +10,13 @@ abstract class LoginEvents extends Equatable {
   List<Object> get props => null;
 }
 
+class CheckLoginStatus extends LoginEvents {
+  CheckLoginStatus() : super();
+
+  @override
+  List<Object> get props => [];
+}
+
 class SendOTP extends LoginEvents {
   final LoginRequest loginRequest;
 

@@ -23,7 +23,7 @@ class _PreferenceApiClient implements PreferenceApiClient {
     final Response<String> _result = await _dio.request('/get_countries/',
         queryParameters: queryParameters,
         options: RequestOptions(
-            method: 'POST',
+            method: 'GET',
             headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
@@ -40,7 +40,25 @@ class _PreferenceApiClient implements PreferenceApiClient {
     final Response<String> _result = await _dio.request('/get_categories/',
         queryParameters: queryParameters,
         options: RequestOptions(
-            method: 'POST',
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
+    return value;
+  }
+
+  @override
+  Future<String> getPreferredCategories() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final Response<String> _result = await _dio.request(
+        '/get_preferred_categories/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
             headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),

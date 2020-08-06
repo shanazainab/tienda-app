@@ -1,60 +1,31 @@
-import 'package:equatable/equatable.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'dart:convert';
+
 import 'package:tienda/model/product.dart';
-part 'cart.g.dart';
 
-@JsonSerializable()
+Cart cartFromJson(String str) => Cart.fromJson(json.decode(str));
+
+String cartToJson(Cart data) => json.encode(data.toJson());
+
 class Cart {
-  @JsonKey(name: "cart-items")
-  List<CartItem> cartItems;
+  List<Product> products;
+  double cartPrice;
+  double totalDiscount;
 
-  @JsonKey(name: "cart-price")
-  CartPrice cartPrice;
+  Cart({this.products, this.cartPrice, this.totalDiscount});
 
-  Cart({this.cartItems, this.cartPrice});
+  factory Cart.fromJson(Map<String, dynamic> json) => Cart(
+        products: List<Product>.from(
+            json["cart"].map((x) => Product.fromJson(x))),
+    cartPrice: json['total_price']
+      );
 
-  factory Cart.fromJson(Map<String, dynamic> json) => _$CartFromJson(json);
-
-  Map<String, dynamic> toJson() => _$CartToJson(this);
-}
-
-@JsonSerializable()
-class CartItem extends Equatable{
-  Product product;
-  int quantity;
-  String color;
-  String size;
-
-  CartItem({this.product, this.quantity, this.color, this.size});
-
-  factory CartItem.fromJson(Map<String, dynamic> json) =>
-      _$CartItemFromJson(json);
-
-  Map<String, dynamic> toJson() => _$CartItemToJson(this);
-
-  @override
-  List<Object> get props => [product.id];
-}
-
-@JsonSerializable()
-class CartPrice {
-  @JsonKey(name: "cart-total")
-  double cartTotal;
-  @JsonKey(name: "discount-total")
-  double discountTotal;
-  @JsonKey(name: "deliver-charge")
-  double deliverCharge;
-
-
-  CartPrice({this.cartTotal, this.discountTotal, this.deliverCharge});
-
-  factory CartPrice.fromJson(Map<String, dynamic> json) =>
-      _$CartPriceFromJson(json);
-
-  Map<String, dynamic> toJson() => _$CartPriceToJson(this);
+  Map<String, dynamic> toJson() => {
+    'total_price':cartPrice,
+        "cart": List<dynamic>.from(products.map((x) => x.toJson())),
+      };
 
   @override
   String toString() {
-    return 'CartPrice{cartTotal: $cartTotal, discountTotal: $discountTotal, deliverCharge: $deliverCharge}';
+    return 'Cart{products: $products, cartPrice: $cartPrice, totalDiscount: $totalDiscount}';
   }
 }

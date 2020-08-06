@@ -1,11 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:tienda/model/delivery-address.dart';
 
-abstract class AddressStates extends Equatable {
+abstract class AddressStates  {
   AddressStates();
 
-  @override
-  List<Object> get props => null;
 }
 
 class Loading extends AddressStates {
@@ -17,27 +15,10 @@ class LoadAddressSuccess extends AddressStates {
 
   LoadAddressSuccess({this.deliveryAddresses}) : super();
 
-  @override
-  List<Object> get props => [deliveryAddresses];
 }
-
-class AddAddressSuccess extends AddressStates {
-  AddAddressSuccess() : super();
-
-  @override
-  List<Object> get props => [];
-}
-
-class EditAddressSuccess extends AddressStates {
-  EditAddressSuccess() : super();
-
-  @override
-  List<Object> get props => [];
-}
-
 class DeleteAddressSuccess extends AddressStates {
-  DeleteAddressSuccess() : super();
+  final List<DeliveryAddress> deliveryAddresses;
 
-  @override
-  List<Object> get props => [];
+  DeleteAddressSuccess({this.deliveryAddresses}) : super();
+
 }

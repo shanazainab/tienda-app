@@ -3,97 +3,102 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/events/wishlist-events.dart';
 import 'package:tienda/bloc/product-bloc.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
+import 'package:tienda/localization.dart';
 import 'package:tienda/model/product-list-response.dart' as PLR;
+import 'package:tienda/model/search-body.dart';
 import 'package:tienda/model/wishlist.dart';
 import 'package:tienda/view/products/single-product-page.dart';
 
 class ProductListContainer extends StatelessWidget {
   final PLR.ProductListResponse productListResponse;
 
-  final ProductBloc productBloc;
 
   final ScrollController scrollController = new ScrollController();
 
-  final showProductsCount = new BehaviorSubject<int>();
-  RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
-  ProductListContainer(this.productListResponse, this.productBloc);
+  final String query;
+  final SearchBody searchBody;
+
+  ProductListContainer(
+      this.productListResponse,this.query,{this.searchBody});
 
   @override
   Widget build(BuildContext context) {
+    var appLanguage = Provider.of<AppLanguage>(context);
+
     return Stack(
+      alignment: Alignment.topCenter,
       children: <Widget>[
-        NotificationListener<ScrollNotification>(
-          onNotification: (info) {
-            if (info is ScrollStartNotification) {
-              print("SCROLL START");
-              showProductsCount.sink.add(4);
-            }
-            return true;
-          },
-          child: SmartRefresher(
-            enablePullDown: false,
-            enablePullUp: true,
-
-            header: WaterDropHeader(),
-            footer: CustomFooter(
-              builder: (BuildContext context, LoadStatus mode) {
-                Widget body;
-                if (mode == LoadStatus.idle) {
-                  body = Text("pull up load");
-                } else if (mode == LoadStatus.loading) {
-                  body = CupertinoActivityIndicator();
-                } else if (mode == LoadStatus.failed) {
-                  body = Text("Load Failed!Click retry!");
-                } else if (mode == LoadStatus.canLoading) {
-                  body = Text("release to load more");
-                } else {
-                  body = Text("No more Data");
-                }
-                return Container(
-                  height: 55.0,
-                  child: Center(child: body),
+        SmartRefresher(
+          enablePullDown: false,
+          enablePullUp: true,
+          header: WaterDropHeader(),
+          footer: CustomFooter(
+            builder: (BuildContext context, LoadStatus mode) {
+              Widget body;
+              if (mode == LoadStatus.idle) {
+                body = CircularProgressIndicator(
+                  strokeWidth: 2,
                 );
-              },
-            ),
-
-            controller: _refreshController,
-            onRefresh: () async {
-              print("REFRESH");
-              _refreshController.refreshCompleted();
+              } else if (mode == LoadStatus.loading) {
+                body = CupertinoActivityIndicator();
+              } else if (mode == LoadStatus.failed) {
+                body = Text("Load Failed!Click retry!");
+              } else if (mode == LoadStatus.canLoading) {
+                body = Text("release to load more");
+              } else {
+                body = Text("No more Data");
+              }
+              return Container(
+                height: 55.0,
+                child: Center(child: body),
+              );
             },
-            onLoading: () async {
-              productBloc.add(FetchMoreProductList(
-                products: productListResponse.products,
-                  categoryId: productListResponse.catId.toString(),
+          ),
+          controller: _refreshController,
+          onRefresh: () async {
+            print("REFRESH");
+            _refreshController.refreshCompleted();
+          },
+          onLoading: () async {
+            ///from category
+            if (productListResponse.navigator != null)
+              BlocProvider.of<ProductBloc>(context).add(FetchMoreProductList(
+                  products: productListResponse.products,
+                  query: query,
+                  searchBody: searchBody,
                   pageNumber: productListResponse.navigator.nextPage));
-              print("LOADING");
-              _refreshController.loadComplete();
-            },
-            child: GridView.builder(
-              padding: EdgeInsets.only(top: 100),
-              shrinkWrap: true,
-              itemCount: productListResponse.products.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: MediaQuery
-                      .of(context)
-                      .size
-                      .width /
-                      (MediaQuery
-                          .of(context)
-                          .size
-                          .height / 1.3),
-                  crossAxisCount: 2),
-              itemBuilder: (BuildContext context, int index) {
-                return new Card(
-                    child: Column(
+
+            print("LOADING");
+            _refreshController.loadComplete();
+          },
+          child: GridView.builder(
+            padding: EdgeInsets.only(top: 100,bottom:100),
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemCount: productListResponse.products.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                childAspectRatio: MediaQuery.of(context).size.width /
+                    (MediaQuery.of(context).size.height / 1.2),
+                crossAxisCount: 2),
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: const EdgeInsets.all(1.0),
+                child: Stack(
+                  children: <Widget>[
+                    new Container(
+                      color: Colors.white,
+                        child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -102,30 +107,24 @@ class ProductListContainer extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      SingleProductPage(
-                                          productListResponse.products[index].id)),
+                                  builder: (context) => SingleProductPage(
+                                      productListResponse.products[index].id)),
                             );
                           },
                           child: CachedNetworkImage(
-                            imageUrl: productListResponse.products[index]
-                                .thumbnail,
-                            width: MediaQuery
-                                .of(context)
-                                .size
-                                .width / 2,
-                            height: 180,
+                            imageUrl:
+                                productListResponse.products[index].thumbnail,
+                            width: MediaQuery.of(context).size.width / 2,
+                            height: 220,
                             fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                Container(
-                                  height: 180,
-                                  color: Color(0xfff2f2e4),
-                                ),
-                            errorWidget: (context, url, error) =>
-                                Container(
-                                  height: 180,
-                                  color: Color(0xfff2f2e4),
-                                ),
+                            placeholder: (context, url) => Container(
+                              height: 220,
+                              color: Color(0xfff2f2e4),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              height: 220,
+                              color: Color(0xfff2f2e4),
+                            ),
                           ),
                         ),
                         Expanded(
@@ -139,66 +138,80 @@ class ProductListContainer extends StatelessWidget {
                                 children: <Widget>[
                                   Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                      Text(
-                                        productListResponse
-                                            .products[index].nameEn,
-                                        overflow: TextOverflow.fade,
-                                        softWrap: false,
-                                        maxLines: 1,
+                                      Flexible(
+                                        child: Text(
+                                          appLanguage.appLocal == Locale('en')
+                                              ? productListResponse
+                                                  .products[index].nameEn
+                                              : productListResponse
+                                                  .products[index].nameAr,
+                                          overflow: TextOverflow.ellipsis,
+                                          softWrap: false,
+                                          maxLines: 1,
+                                        ),
                                       ),
                                       GestureDetector(
                                         onTap: () {
                                           if (productListResponse
-                                              .products[index].isWishListed ==
+                                                  .products[index].isWishListed ==
                                               null)
                                             productListResponse.products[index]
                                                 .isWishListed = true;
                                           else
-                                            productListResponse
-                                                .products[index].isWishListed =
-                                            !productListResponse
-                                                .products[index].isWishListed;
+                                            productListResponse.products[index]
+                                                    .isWishListed =
+                                                !productListResponse
+                                                    .products[index].isWishListed;
 
                                           if (productListResponse
                                               .products[index].isWishListed) {
                                             Fluttertoast.showToast(
-                                                msg: "Added to wishlist",
+                                                fontSize: 12,
+                                                toastLength: Toast.LENGTH_LONG,
+                                                msg: AppLocalizations.of(context)
+                                                    .translate(
+                                                        "added-to-wishlist"),
                                                 gravity: ToastGravity.BOTTOM);
-                                            BlocProvider.of<WishListBloc>(
-                                                context)
+                                            BlocProvider.of<WishListBloc>(context)
                                                 .add(AddToWishList(
-                                                wishListItem: new WishListItem(
-                                                    product: productListResponse
-                                                        .products[index])));
+                                                    wishListItem: new WishListItem(
+                                                        product:
+                                                            productListResponse
+                                                                    .products[
+                                                                index])));
                                           } else {
                                             Fluttertoast.showToast(
-                                                msg: "Removed from wishlist",
+                                                msg: AppLocalizations.of(context)
+                                                    .translate(
+                                                        "removed-from-wishlist"),
                                                 gravity: ToastGravity.BOTTOM);
 
-                                            BlocProvider.of<WishListBloc>(
-                                                context)
+                                            BlocProvider.of<WishListBloc>(context)
                                                 .add(DeleteWishListItem(
-                                                wishListItem: new WishListItem(
-                                                    product: productListResponse
-                                                        .products[index])));
+                                                    wishListItem: new WishListItem(
+                                                        product:
+                                                            productListResponse
+                                                                    .products[
+                                                                index])));
                                           }
 
                                           context.bloc<ProductBloc>().add(
                                               UpdateMarkAsWishListed(
                                                   productListResponse:
-                                                  productListResponse));
+                                                      productListResponse));
                                         },
                                         child: Icon(
-                                          Icons.bookmark,
-                                          size: 18,
+                                          FontAwesomeIcons.heart,
+                                          size: 20,
                                           color: productListResponse
-                                              .products[index]
-                                              .isWishListed !=
-                                              null &&
-                                              productListResponse
-                                                  .products[index].isWishListed
+                                                          .products[index]
+                                                          .isWishListed !=
+                                                      null &&
+                                                  productListResponse
+                                                      .products[index]
+                                                      .isWishListed
                                               ? Colors.pink
                                               : Colors.grey,
                                         ),
@@ -206,294 +219,112 @@ class ProductListContainer extends StatelessWidget {
                                     ],
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 4.0),
-                                    child: index == 0
-                                        ? FittedBox(
-                                      fit: BoxFit.fitWidth,
-                                      child: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "AED " +
-                                                productListResponse
-                                                    .products[index].price
-                                                    .toString(),
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 4.0, right: 4.0),
-                                            child: Text(
-                                              "AED " +
+                                      padding: const EdgeInsets.only(top: 4.0),
+                                      child: FittedBox(
+                                        fit: BoxFit.fitWidth,
+                                        child: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              "${AppLocalizations.of(context).translate("aed")} " +
                                                   productListResponse
                                                       .products[index].price
                                                       .toString(),
                                               style: TextStyle(
-                                                  decoration: TextDecoration
-                                                      .lineThrough),
+                                                  fontWeight: FontWeight.w700),
                                             ),
-                                          ),
-                                          Text(
-                                            "50 % OFF",
-                                            style:
-                                            TextStyle(color: Colors.pink),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                        : FittedBox(
-                                      fit: BoxFit.fitWidth,
-                                      child: Text("AED " +
-                                          productListResponse
-                                              .products[index].price
-                                              .toString()),
-                                    ),
-                                  )
+                                            productListResponse.products[index]
+                                                        .discount !=
+                                                    0
+                                                ? Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 4.0,
+                                                            right: 4.0),
+                                                    child: Text(
+                                                      '${AppLocalizations.of(context).translate("aed")} ${productListResponse.products[index].price / productListResponse.products[index].discount * 100}',
+                                                      style: TextStyle(
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .lineThrough),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            productListResponse.products[index]
+                                                        .discount !=
+                                                    0
+                                                ? Container(
+                                                    color: Colors.pink
+                                                        .withOpacity(0.1),
+                                                    child: Text(
+                                                      '${productListResponse.products[index].discount}% OFF',
+                                                      style: TextStyle(
+                                                          color: Colors.pink),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                          ],
+                                        ),
+                                      ))
                                 ],
                               ),
                             ),
                           ),
                         )
                       ],
-                    ));
-              },
-            ),
+                    )),
+
+                    ///overall rating
+                    productListResponse.products[index].overallRating != 0.0
+                        ? Align(
+                            alignment: Alignment.topRight,
+                            child: Card(
+                              elevation: 0,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Text(productListResponse
+                                      .products[index].overallRating
+                                      .toString()),
+                                  Icon(
+                                    Icons.star,
+                                    size: 16,
+                                    color: Colors.blueGrey[900],
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container()
+                  ],
+                ),
+              );
+            },
           ),
         ),
 
         ///Product count
-        StreamBuilder(
-            stream: showProductsCount,
-            builder: (context, snapshot) {
-              if (snapshot.hasData)
-                return Positioned(
-                  top: 100,
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16)),
-                      color: Colors.black.withOpacity(0.1),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 16.0, right: 16, top: 4, bottom: 4),
-                        child: Text(
-                          "PRODUCTS 1/2",
-                          style: TextStyle(color: Colors.white, fontSize: 12),
-                        ),
+        productListResponse.productsCount != null
+            ? Positioned(
+                top: 100,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    color: Colors.black.withOpacity(0.1),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16, top: 4, bottom: 4),
+                      child: Text(
+                        "${productListResponse.productsCount} ${AppLocalizations.of(context).translate("products")}",
+                        style: TextStyle(color: Colors.white, fontSize: 12),
                       ),
                     ),
                   ),
-                );
-              else
-                return Container();
-            }),
+                ),
+              )
+            : Container()
       ],
     );
-
-//      Stack(
-//      children: <Widget>[
-//        NotificationListener<ScrollNotification>(
-//          onNotification: (ScrollNotification scrollInfo) {
-//            if (scrollInfo is ScrollStartNotification) {
-//              showProductsCount.add(4);
-//            }
-//            if (scrollInfo.metrics.pixels ==
-//                scrollInfo.metrics.maxScrollExtent) {
-//              print("SCROLL END");
-//            }
-//            return true;
-//          },
-//          child: GridView.builder(
-//            physics: NeverScrollableScrollPhysics(),
-//            shrinkWrap: true,
-//            itemCount: productListResponse.products.length,
-//            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//                childAspectRatio: MediaQuery.of(context).size.width /
-//                    (MediaQuery.of(context).size.height / 1.3),
-//                crossAxisCount: 2),
-//            itemBuilder: (BuildContext context, int index) {
-//              return new Card(
-//                  child: Column(
-//                mainAxisAlignment: MainAxisAlignment.start,
-//                crossAxisAlignment: CrossAxisAlignment.start,
-//                children: <Widget>[
-//                  GestureDetector(
-//                    onTap: () {
-//                      Navigator.push(
-//                        context,
-//                        MaterialPageRoute(
-//                            builder: (context) => SingleProductPage(
-//                                productListResponse.products[index])),
-//                      );
-//                    },
-//                    child: CachedNetworkImage(
-//                      imageUrl: productListResponse.products[index].thumbnail,
-//                      width: MediaQuery.of(context).size.width / 2,
-//                      height: 180,
-//                      fit: BoxFit.cover,
-//                      placeholder: (context, url) => Container(
-//                        height: 180,
-//                        color: Color(0xfff2f2e4),
-//                      ),
-//                      errorWidget: (context, url, error) => Icon(Icons.error),
-//                    ),
-//                  ),
-//                  Expanded(
-//                    child: Container(
-//                      child: Padding(
-//                        padding: const EdgeInsets.only(
-//                            top: 8, bottom: 4, left: 8, right: 8),
-//                        child: Column(
-//                          crossAxisAlignment: CrossAxisAlignment.start,
-//                          mainAxisAlignment: MainAxisAlignment.start,
-//                          children: <Widget>[
-//                            Row(
-//                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                              children: <Widget>[
-//                                Text(
-//                                  productListResponse
-//                                      .products[index].nameEnglish,
-//                                  overflow: TextOverflow.fade,
-//                                  softWrap: false,
-//                                  maxLines: 1,
-//                                ),
-//                                GestureDetector(
-//                                  onTap: () {
-//                                    if (productListResponse
-//                                            .products[index].isWishListed ==
-//                                        null)
-//                                      productListResponse
-//                                          .products[index].isWishListed = true;
-//                                    else
-//                                      productListResponse
-//                                              .products[index].isWishListed =
-//                                          !productListResponse
-//                                              .products[index].isWishListed;
-//
-//                                    if (productListResponse
-//                                        .products[index].isWishListed) {
-//                                      Fluttertoast.showToast(
-//                                          msg: "Added to wishlist",
-//                                          gravity: ToastGravity.BOTTOM);
-//                                      BlocProvider.of<WishListBloc>(context)
-//                                          .add(AddToWishList(
-//                                              wishListItem: new WishListItem(
-//                                                  product: productListResponse
-//                                                      .products[index])));
-//                                    } else {
-//                                      Fluttertoast.showToast(
-//                                          msg: "Removed from wishlist",
-//                                          gravity: ToastGravity.BOTTOM);
-//
-//                                      BlocProvider.of<WishListBloc>(context)
-//                                          .add(DeleteWishListItem(
-//                                              wishListItem: new WishListItem(
-//                                                  product: productListResponse
-//                                                      .products[index])));
-//                                    }
-//
-//                                    context.bloc<ProductBloc>().add(
-//                                        UpdateMarkAsWishListed(
-//                                            productListResponse:
-//                                                productListResponse));
-//                                  },
-//                                  child: Icon(
-//                                    Icons.bookmark,
-//                                    size: 18,
-//                                    color: productListResponse.products[index]
-//                                                    .isWishListed !=
-//                                                null &&
-//                                            productListResponse
-//                                                .products[index].isWishListed
-//                                        ? Colors.pink
-//                                        : Colors.grey,
-//                                  ),
-//                                )
-//                              ],
-//                            ),
-//                            Padding(
-//                              padding: const EdgeInsets.only(top: 4.0),
-//                              child: index == 0
-//                                  ? FittedBox(
-//                                      fit: BoxFit.fitWidth,
-//                                      child: Row(
-//                                        children: <Widget>[
-//                                          Text(
-//                                            "AED " +
-//                                                productListResponse
-//                                                    .products[index].price
-//                                                    .toString(),
-//                                            style: TextStyle(
-//                                                fontWeight: FontWeight.bold),
-//                                          ),
-//                                          Padding(
-//                                            padding: const EdgeInsets.only(
-//                                                left: 4.0, right: 4.0),
-//                                            child: Text(
-//                                              "AED " +
-//                                                  productListResponse
-//                                                      .products[index].price
-//                                                      .toString(),
-//                                              style: TextStyle(
-//                                                  decoration: TextDecoration
-//                                                      .lineThrough),
-//                                            ),
-//                                          ),
-//                                          Text(
-//                                            "50 % OFF",
-//                                            style:
-//                                                TextStyle(color: Colors.pink),
-//                                          ),
-//                                        ],
-//                                      ),
-//                                    )
-//                                  : FittedBox(
-//                                      fit: BoxFit.fitWidth,
-//                                      child: Text("AED " +
-//                                          productListResponse
-//                                              .products[index].price
-//                                              .toString()),
-//                                    ),
-//                            )
-//                          ],
-//                        ),
-//                      ),
-//                    ),
-//                  )
-//                ],
-//              ));
-//            },
-//          ),
-//        ),
-//        StreamBuilder(
-//            stream: showProductsCount,
-//            builder: (context, snapshot) {
-//              if (snapshot.hasData)
-//                return Positioned(
-//                  top: 100,
-//                  child: Align(
-//                    alignment: Alignment.topCenter,
-//                    child: Card(
-//                      shape: RoundedRectangleBorder(
-//                          borderRadius: BorderRadius.circular(16)),
-//                      color: Colors.black.withOpacity(0.1),
-//                      child: Padding(
-//                        padding: const EdgeInsets.only(
-//                            left: 16.0, right: 16, top: 4, bottom: 4),
-//                        child: Text(
-//                          "PRODUCTS 1/2",
-//                          style: TextStyle(color: Colors.white, fontSize: 12),
-//                        ),
-//                      ),
-//                    ),
-//                  ),
-//                );
-//              else
-//                return Container();
-//            }),
-//
-//      ],
-//    );
   }
 }

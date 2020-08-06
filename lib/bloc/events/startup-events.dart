@@ -21,17 +21,3 @@ class UpdatePreferenceFlow extends StartupEvents {
   @override
   List<Object> get props => null;
 }
-
-class DataFetch extends StartupEvents {
-  DataFetch() : super();
-
-  @override
-  List<Object> get props => null;
-}
-
-class CheckLogInStatus extends StartupEvents {
-  CheckLogInStatus() : super();
-
-  @override
-  List<Object> get props => null;
-}
