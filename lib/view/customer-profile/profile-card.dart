@@ -49,7 +49,7 @@ class CustomerProfileCard extends StatelessWidget {
           SizedBox(
             height: 8,
           ),
-          customerDetails.profileImage == null?CircleAvatar(
+          customerDetails.profilePicture == null?CircleAvatar(
             radius: 30,
             backgroundColor: Colors.grey[200],
             child: Icon(
@@ -61,10 +61,10 @@ class CustomerProfileCard extends StatelessWidget {
               radius: 30,
               backgroundColor: Color(0xfff2f2e4),
               backgroundImage: NetworkImage(
-                  "${GlobalConfiguration().getString("baseURL")}/${customerDetails.profileImage}")),
+                  "${GlobalConfiguration().getString("baseURL")}/${customerDetails.profilePicture}")),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
-            child: Text("${customerDetails.name}",
+            child: Text("${customerDetails.fullName}",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20.0,
@@ -81,7 +81,7 @@ class CustomerProfileCard extends StatelessWidget {
                 Column(
                   children: <Widget>[
                     Text(
-                      "2000",
+                      customerDetails.points.toString(),
                       style: TextStyle(color: Colors.lightBlue),
                     ),
                     Text(
@@ -105,13 +105,13 @@ class CustomerProfileCard extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => FollowingList()),
+                      MaterialPageRoute(builder: (context) => FollowingList(customerDetails.followedPresenters)),
                     );
                   },
                   child: Column(
                     children: <Widget>[
                       Text(
-                        NumberFormat().format(0),
+                        customerDetails.following.toString(),
                         style: TextStyle(color: Colors.lightBlue),
                       ),
                       Text(

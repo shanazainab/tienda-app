@@ -29,7 +29,6 @@ import 'package:tienda/view/customer-profile/profile-card.dart';
 import 'package:tienda/view/explore/refer-and-earn.dart';
 import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/order/orders-main-page.dart';
-import 'package:tienda/view/returns/returns-page.dart';
 import 'package:tienda/view/startup/country-list-card.dart';
 import 'package:tienda/view/widgets/network-state-wrapper.dart';
 import 'package:tienda/view/wishlist/wishlist-page.dart';
@@ -63,44 +62,43 @@ class CustomerProfile extends StatelessWidget {
         child: BlocBuilder<LoginBloc, LoginStates>(builder: (context, state) {
           return Scaffold(
               body: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              state is GuestUser
-                  ? CustomerLoginMenu()
-                  : NetworkStateWrapper(
-                      opacity: 0,
-                      ///Don show overlap
-                      networkState: (value) {
-                        if (value == ConnectivityResult.none) {
-                          BlocProvider.of<CustomerProfileBloc>(context)
-                              .add(OfflineLoadCustomerData());
-                        }
-                      },
-                      child: BlocBuilder<CustomerProfileBloc,
-                          CustomerProfileStates>(builder: (context, state) {
-                        if (state is LoadCustomerProfileSuccess)
-                          return CustomerProfileCard(state.customerDetails);
-                        if (state is OfflineLoadCustomerDataSuccess)
-                          return CustomerProfileCard(state.customerDetails);
-                        if (state is EditCustomerProfileSuccess)
-                          return CustomerProfileCard(state.customer);
-                        else
-                          return Container();
-                      }),
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  state is GuestUser
+                      ? CustomerLoginMenu()
+                      : NetworkStateWrapper(
+                    opacity: 0,
+
+                    ///Don show overlap
+                    networkState: (value) {
+                      if (value == ConnectivityResult.none) {
+                        BlocProvider.of<CustomerProfileBloc>(context)
+                            .add(OfflineLoadCustomerData());
+                      }
+                    },
+                    child: BlocBuilder<CustomerProfileBloc,
+                        CustomerProfileStates>(builder: (context, state) {
+                      if (state is LoadCustomerProfileSuccess)
+                        return CustomerProfileCard(state.customerDetails);
+                      if (state is OfflineLoadCustomerDataSuccess)
+                        return CustomerProfileCard(state.customerDetails);
+                      else
+                        return Container( height: 260,);
+                    }),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      padding: EdgeInsets.all(0),
+                      children: <Widget>[
+                        state is LoggedInUser
+                            ? _buildLoggedInUserMenus(appLanguage, context)
+                            : Container(),
+                        _buildMenuList(appLanguage, state, appCountry, context)
+                      ],
                     ),
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.all(0),
-                  children: <Widget>[
-                    state is LoggedInUser
-                        ? _buildLoggedInUserMenus(appLanguage, context)
-                        : Container(),
-                    _buildMenuList(appLanguage, state, appCountry, context)
-                  ],
-                ),
-              )
-            ],
-          ));
+                  )
+                ],
+              ));
         }));
   }
 
@@ -110,7 +108,10 @@ class CustomerProfile extends StatelessWidget {
       children: <Widget>[
         Container(
           height: 50,
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width,
           color: Colors.grey[200],
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
@@ -125,7 +126,7 @@ class CustomerProfile extends StatelessWidget {
             children: <Widget>[
               FaIcon(
                 FontAwesomeIcons.globe,
-                size: 18,
+                size: 14,
               ),
             ],
           ),
@@ -137,9 +138,10 @@ class CustomerProfile extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.only(right:8.0),
+                  padding: const EdgeInsets.only(right: 8.0),
                   child: Image.network(
-                    "${GlobalConfiguration().getString("baseURL")}${appCountry.chosenCountry.thumbnail}",
+                    "${GlobalConfiguration().getString("baseURL")}${appCountry
+                        .chosenCountry.thumbnail}",
                     width: 22,
                     height: 12,
                     fit: BoxFit.cover,
@@ -166,28 +168,29 @@ class CustomerProfile extends StatelessWidget {
                 builder: (BuildContext bc) {
                   return BlocProvider<PreferenceBloc>(
                     create: (context) =>
-                        PreferenceBloc()..add(FetchCountryList()),
+                    PreferenceBloc()
+                      ..add(FetchCountryList()),
                     child: BlocBuilder<PreferenceBloc, PreferenceStates>(
                         builder: (context, state) {
-                      if (state is LoadCountryListSuccess)
-                        return CountryListCard(
-                          countries: state.countries,
-                          function: (selectedCountry) {
-                            appCountry.changeCountry(selectedCountry);
-                          },
-                        );
-                      else
-                        return Container(
-                            height: 200,
-                            alignment: Alignment.center,
-                            child: Container(
-                              height: 30,
-                              width: 30,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
-                            ));
-                    }),
+                          if (state is LoadCountryListSuccess)
+                            return CountryListCard(
+                              countries: state.countries,
+                              function: (selectedCountry) {
+                                appCountry.changeCountry(selectedCountry);
+                              },
+                            );
+                          else
+                            return Container(
+                                height: 200,
+                                alignment: Alignment.center,
+                                child: Container(
+                                  height: 30,
+                                  width: 30,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ));
+                        }),
                   );
                 });
           },
@@ -198,7 +201,7 @@ class CustomerProfile extends StatelessWidget {
             children: <Widget>[
               FaIcon(
                 FontAwesomeIcons.flag,
-                size: 18,
+                  size: 14
               ),
             ],
           ),
@@ -207,35 +210,35 @@ class CustomerProfile extends StatelessWidget {
           ),
           trailing: appLanguage.appLocal != Locale('en')
               ? Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Text("English"),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0,right:4.0),
-                      child: Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16,
-                      ),
-                    )
-                  ],
-                )
-              : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text("العربية"),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16,
-                      ),
-                    )
-                  ],
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Text("English"),
+              Padding(
+                padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
                 ),
+              )
+            ],
+          )
+              : Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text("العربية"),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                ),
+              )
+            ],
+          ),
           onTap: () {
             appLanguage.changeLanguage(appLanguage.appLocal == Locale('en')
                 ? Locale('ar')
@@ -243,7 +246,10 @@ class CustomerProfile extends StatelessWidget {
           },
         ),
         Container(
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width,
           height: 50,
           color: Colors.grey[200],
           child: Padding(
@@ -259,7 +265,7 @@ class CustomerProfile extends StatelessWidget {
             children: <Widget>[
               FaIcon(
                 FontAwesomeIcons.phone,
-                size: 18,
+                size: 14,
               ),
             ],
           ),
@@ -276,7 +282,7 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.message),
+              Icon(Icons.message,   size: 18),
             ],
           ),
           trailing: Icon(
@@ -294,7 +300,7 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.message),
+              Icon(Icons.message,   size: 18),
             ],
           ),
           trailing: Icon(
@@ -314,7 +320,7 @@ class CustomerProfile extends StatelessWidget {
         SizedBox(
           height: 20,
         ),
-        BottomContainer(state is LoggedInUser)
+        LogoutContainer(state is LoggedInUser)
       ],
     );
   }
@@ -329,6 +335,7 @@ class CustomerProfile extends StatelessWidget {
             children: <Widget>[
               Icon(
                 Icons.format_list_bulleted,
+                size: 18,
               ),
             ],
           ),
@@ -337,13 +344,15 @@ class CustomerProfile extends StatelessWidget {
             style: TextStyle(),
           ),
           onTap: () {
-
-
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) =>  BlocProvider(
-                  create: (BuildContext context) => OrdersBloc()..add(LoadOrders()),
-                  child: OrdersMainPage())),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      BlocProvider(
+                          create: (BuildContext context) =>
+                          OrdersBloc()
+                            ..add(LoadOrders()),
+                          child: OrdersMainPage())),
             );
           },
           trailing: Icon(
@@ -355,29 +364,9 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.sync),
-            ],
-          ),
-          title: Text(
-            AppLocalizations.of(context).translate('returns'),
-            style: TextStyle(),
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ReturnsPage()),
-            );
-          },
-          trailing: Icon(
-            Icons.arrow_forward_ios,
-            size: 16,
-          ),
-        ),
-        ListTile(
-          leading: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(Icons.bookmark),
+              Icon(FontAwesomeIcons.heart,
+                size: 18,
+              ),
             ],
           ),
           title: Text(
@@ -399,7 +388,8 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.location_on),
+              Icon(Icons.location_on,                size: 18,
+              ),
             ],
           ),
           title: Text(
@@ -414,7 +404,9 @@ class CustomerProfile extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) {
                 return BlocProvider(
-                  create: (context) => AddressBloc()..add(LoadSavedAddress()),
+                  create: (context) =>
+                  AddressBloc()
+                    ..add(LoadSavedAddress()),
                   child: SavedAddressPage(),
                 );
               }),
@@ -425,7 +417,8 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.credit_card),
+              Icon(Icons.credit_card,                size: 18,
+              ),
             ],
           ),
           trailing: Icon(
@@ -439,7 +432,10 @@ class CustomerProfile extends StatelessWidget {
         ),
         Container(
           height: 50,
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width,
           color: Colors.grey[200],
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
@@ -452,7 +448,9 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.credit_card),
+              Icon(Icons.star,
+                  size: 18
+              ),
             ],
           ),
           title: Text(
@@ -473,7 +471,9 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.credit_card),
+              Icon(Icons.apps,
+                  size: 18
+              ),
             ],
           ),
           trailing: Icon(

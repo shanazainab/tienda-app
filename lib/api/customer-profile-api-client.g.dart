@@ -30,6 +30,8 @@ class _CustomerProfileApiClient implements CustomerProfileApiClient {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
+    print("REGISTER CUSTOMER PROFILE REQUEST: ${_result.request.data}");
+
     final value = _result.data;
     return value;
   }
@@ -66,6 +68,8 @@ class _CustomerProfileApiClient implements CustomerProfileApiClient {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
+
+    print("REGISTER CUSTOMER PROFILE REQUEST: ${_result.request.data}");
     final value = _result.data;
     return value;
   }
@@ -74,12 +78,11 @@ class _CustomerProfileApiClient implements CustomerProfileApiClient {
   Future<String> updateProfilePicture(String encodedImage) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{
-      'profile_picture':encodedImage
-    };
+    final _data = <String, dynamic>{'profile_picture': encodedImage};
     Logger().d("REQUEST:${_data}");
 
-    final Response<String> _result = await _dio.request('/change_profile_picture/',
+    final Response<String> _result = await _dio.request(
+        '/change_profile_picture/',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',

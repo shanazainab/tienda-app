@@ -1,45 +1,40 @@
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:tienda/bloc/customer-profile-bloc.dart';
+import 'package:tienda/bloc/events/customer-profile-events.dart';
 import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
-import 'package:tienda/controller/login-controller.dart';
 import 'package:tienda/model/customer.dart';
 import 'package:tienda/view/home/home-page.dart';
 
 class CustomerDetailsPage extends StatelessWidget {
   final String mobileNumber;
   final _formKey = GlobalKey<FormState>();
+  final format = DateFormat("yyyy-MMMM-dd");
 
   final TextEditingController dobTextEditingController =
       new TextEditingController();
   final Customer customer = new Customer();
 
   CustomerDetailsPage({this.mobileNumber});
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginStates>(
         listener: (context, state) {
           if (state is CustomerRegistrationSuccess) {
+            ///update customer profile bloc state
+            BlocProvider.of<CustomerProfileBloc>(context)
+                .add(FetchCustomerProfile());
+
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => HomePage()),
             );
           }
-
-          /*    else if (state is CustomerRegistrationError) {
-          Fluttertoast.showToast(
-              msg: state.error,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
-        }*/
         },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
@@ -82,7 +77,7 @@ class CustomerDetailsPage extends StatelessWidget {
                           if (value.isEmpty)
                             return "Enter Your Name";
                           else {
-                            customer.name = value;
+                            customer.fullName = value;
                             return null;
                           }
                         },
@@ -102,7 +97,7 @@ class CustomerDetailsPage extends StatelessWidget {
                           if (value.isEmpty)
                             return "Enter Your Name";
                           else {
-                            customer.mobileNumber = value;
+                            customer.phoneNumber = value;
                             return null;
                           }
                         },
@@ -110,25 +105,20 @@ class CustomerDetailsPage extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0),
-                      child: new TextFormField(
-                        showCursor: true,
-                        readOnly: true,
-                        controller: dobTextEditingController,
-                        keyboardType: TextInputType.text,
-                        decoration: new InputDecoration(
-                          border: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white)),
-                          hintText: "DOB",
-                        ),
-                        onTap: () {
-                          _showDatePicker(context);
+                      child: DateTimeField(
+                        format: format,
+                        onShowPicker: (context, currentValue) {
+                          return showDatePicker(
+                              context: context,
+                              firstDate: DateTime(1960),
+                              initialDate:
+                                  currentValue ?? DateTime.parse('2010-12-31'),
+                              lastDate: DateTime.parse('2010-12-31'));
                         },
                         validator: (value) {
-                          if (value.isEmpty)
-                            return "Choose Your DOB";
-                          else {
-                            return null;
-                          }
+                          customer.dob = value;
+
+                          return null;
                         },
                       ),
                     ),
@@ -158,32 +148,32 @@ class CustomerDetailsPage extends StatelessWidget {
         ));
   }
 
-  void _showDatePicker(context) {
-    DatePicker.showDatePicker(
-      context,
-      onMonthChangeStartWithFirstDate: true,
-      pickerTheme: DateTimePickerTheme(
-        //   showTitle: _showTitle,
-        confirm: Text('Done', style: TextStyle(color: Colors.amber)),
-      ),
-      minDateTime: DateTime.parse('1960-01-01'),
-      maxDateTime: DateTime.parse('2010-12-31'),
-      initialDateTime: DateTime.parse('2010-12-31'),
-      dateFormat: 'yyyy-MMMM-dd',
-      locale: DateTimePickerLocale.en_us,
-      onClose: () => print("----- onClose -----"),
-      onCancel: () => print('onCancel'),
-      onChange: (dateTime, List<int> index) {
-        dobTextEditingController.text =
-            new DateFormat('yyyy-MM-dd').format(dateTime);
-      },
-      onConfirm: (dateTime, List<int> index) {
-        dobTextEditingController.text =
-            new DateFormat('yyyy-MM-dd').format(dateTime);
-        customer.dob = dateTime.toString();
-      },
-    );
-  }
+//  void _showDatePicker(context) {
+//    DatePicker.showDatePicker(
+//      context,
+//      onMonthChangeStartWithFirstDate: true,
+//      pickerTheme: DateTimePickerTheme(
+//        //   showTitle: _showTitle,
+//        confirm: Text('Done', style: TextStyle(color: Colors.amber)),
+//      ),
+//      minDateTime: DateTime.parse('1960-01-01'),
+//      maxDateTime: DateTime.parse('2010-12-31'),
+//      initialDateTime: DateTime.parse('2010-12-31'),
+//      dateFormat: 'yyyy-MMMM-dd',
+//      locale: DateTimePickerLocale.en_us,
+//      onClose: () => print("----- onClose -----"),
+//      onCancel: () => print('onCancel'),
+//      onChange: (dateTime, List<int> index) {
+//        dobTextEditingController.text =
+//            new DateFormat('yyyy-MM-dd').format(dateTime);
+//      },
+//      onConfirm: (dateTime, List<int> index) {
+//        dobTextEditingController.text =
+//            new DateFormat('yyyy-MM-dd').format(dateTime);
+//        customer.dob = dateTime.toString();
+//      },
+//    );
+//  }
 
   void handleNext(context) {
     if (_formKey.currentState.validate()) {

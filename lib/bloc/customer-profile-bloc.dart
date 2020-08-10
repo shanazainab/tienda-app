@@ -21,11 +21,11 @@ class CustomerProfileBloc
   Stream<CustomerProfileStates> mapEventToState(
       CustomerProfileEvents event) async* {
     if (event is OfflineLoadCustomerData) {
-      SharedPreferences sharedPreferences = await SharedPreferences
-          .getInstance();
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
       Customer customer = Customer.fromJson(
           json.decode(sharedPreferences.getString("customer")));
-          yield OfflineLoadCustomerDataSuccess(customerDetails: customer);
+      yield OfflineLoadCustomerDataSuccess(customerDetails: customer);
     }
     if (event is FetchCustomerProfile) {
       yield* _mapFetchCustomerProfileToStates(event);
@@ -41,27 +41,23 @@ class CustomerProfileBloc
 
   Stream<CustomerProfileStates> _mapUpdateProfilePictureToStates(
       UpdateProfilePicture event) async* {
-
     ///convert file image to base64
     List<int> imageBytes = event.profileImage.readAsBytesSync();
     print(imageBytes);
     String encodedImage = base64Encode(imageBytes);
 
-
     /// data:image/jpeg;base64,
-
 
     String mimeType = mime(event.profileImage.path);
 
     String formattedCode = 'data:$mimeType;base64,$encodedImage';
 
-
     final dio = new Dio();
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
     CustomerProfileApiClient customerProfileApiClient =
-    CustomerProfileApiClient(dio,
-        baseUrl: GlobalConfiguration().getString("baseURL"));
+        CustomerProfileApiClient(dio,
+            baseUrl: GlobalConfiguration().getString("baseURL"));
 
     String status;
     await customerProfileApiClient
@@ -82,23 +78,24 @@ class CustomerProfileBloc
     });
 
     Customer customer = await callFetchCustomerProfileApi();
-
     Logger().e("customer:$customer");
-    if (status == "success")
-      yield LoadCustomerProfileSuccess(customerDetails: customer);
-  }
 
+    if (customer != null) {
+      updateCustomerProfileLocally(customer);
+      yield LoadCustomerProfileSuccess(customerDetails: customer);
+    }
+  }
 
   Stream<CustomerProfileStates> _mapEditCustomerProfileToStates(
       EditCustomerProfile event) async* {
-    print("CALLED");
-
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString('customer-name', event.customer.fullName);
     final dio = new Dio();
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
     CustomerProfileApiClient customerProfileApiClient =
-    CustomerProfileApiClient(dio,
-        baseUrl: GlobalConfiguration().getString("baseURL"));
+        CustomerProfileApiClient(dio,
+            baseUrl: GlobalConfiguration().getString("baseURL"));
 
     String status;
     await customerProfileApiClient
@@ -117,10 +114,19 @@ class CustomerProfileBloc
         Logger().e("EDIT-CUSTOMER-PROFILE-ERROR:", error);
       }
     });
-    print("CALLEDs");
+    Customer customer = await callFetchCustomerProfileApi();
+    Logger().e("customer:$customer");
 
-    if (status == "success")
-      yield EditCustomerProfileSuccess(customer: event.customer);
+    if (customer != null) {
+      updateCustomerProfileLocally(customer);
+      yield LoadCustomerProfileSuccess(customerDetails: customer);
+    } else {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      Customer customer = Customer.fromJson(
+          json.decode(sharedPreferences.getString("customer")));
+      yield LoadCustomerProfileSuccess(customerDetails: customer);
+    }
   }
 
   Future<Customer> callFetchCustomerProfileApi() async {
@@ -131,8 +137,8 @@ class CustomerProfileBloc
     Customer customer;
 
     CustomerProfileApiClient customerProfileApiClient =
-    CustomerProfileApiClient(dio,
-        baseUrl: GlobalConfiguration().getString("baseURL"));
+        CustomerProfileApiClient(dio,
+            baseUrl: GlobalConfiguration().getString("baseURL"));
     await customerProfileApiClient.getCustomerProfile().then((response) {
       Logger().d("GET-CUSTOMER-PROFILE-RESPONSE:$response");
       switch (json.decode(response)['status']) {
@@ -149,16 +155,21 @@ class CustomerProfileBloc
     });
 
     return customer;
-
   }
+
   Stream<CustomerProfileStates> _mapFetchCustomerProfileToStates(
       FetchCustomerProfile event) async* {
-
     Customer customer = await callFetchCustomerProfileApi();
     Logger().e("customer:$customer");
 
     if (customer != null) {
       updateCustomerProfileLocally(customer);
+      yield LoadCustomerProfileSuccess(customerDetails: customer);
+    } else {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      Customer customer = Customer.fromJson(
+          json.decode(sharedPreferences.getString("customer")));
       yield LoadCustomerProfileSuccess(customerDetails: customer);
     }
   }

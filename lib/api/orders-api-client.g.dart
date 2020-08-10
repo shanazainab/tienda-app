@@ -42,7 +42,25 @@ class _OrdersApiClient implements OrdersApiClient {
     final Response<String> _result = await _dio.request('/cancel_order/',
         queryParameters: queryParameters,
         options: RequestOptions(
-            method: 'GET',
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
+    return value;
+  }
+
+  @override
+  Future<String> returnOrder(int orderId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{"order_id": orderId};
+
+    final Response<String> _result = await _dio.request('/request_return//',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
             headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),

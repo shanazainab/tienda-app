@@ -15,7 +15,7 @@ import 'package:tienda/view/widgets/network-state-wrapper.dart';
 import '../../localization.dart';
 
 class TiendaHomePage extends StatelessWidget {
-  PageController controller;
+   PageController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class TiendaHomePage extends StatelessWidget {
             showLogo: true,
           )),
       body: NetworkStateWrapper(
-        networkState: (value){},
+          networkState: (value) {},
           child: TiendaHomePageContents(controller: controller)),
     );
   }
@@ -59,13 +59,7 @@ class TiendaHomePageContents extends StatelessWidget {
               child: PageView(
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => VideoStreamFullScreenView()),
-                      );
-                    },
+                    onTap: () {},
                     child: Container(
                       color: Colors.grey[200],
                       child: Center(

@@ -101,7 +101,6 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
 
   Stream<ProductStates> _mapFetchMoreProductListToStates(
       FetchMoreProductList event) async* {
-    yield Loading();
 
     ProductListResponse productListResponse;
 

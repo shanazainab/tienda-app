@@ -40,7 +40,7 @@ class _SearchApiClient implements SearchApiClient {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{'page': pageNumber};
     final _data = searchBody ==  null?{}:searchBody.toJson();
-    Logger().e(_data);
+    Logger().d("SEARCH INPUTS: $_data");
 
     final Response<String> _result = await _dio.request(
         '/search_products/$query',

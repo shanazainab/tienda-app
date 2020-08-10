@@ -11,6 +11,8 @@ import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/model/delivery-address.dart';
 import 'package:tienda/model/order.dart';
 import 'package:tienda/view/address/add-address-page.dart';
+import 'package:tienda/view/address/choose-address-page.dart';
+import 'package:tienda/view/login/login-main-page.dart';
 
 class OrderAddressContainer extends StatelessWidget {
   final chosenAddress = new BehaviorSubject<int>();
@@ -19,11 +21,29 @@ class OrderAddressContainer extends StatelessWidget {
   Widget build(BuildContext contextA) {
     return BlocListener<AddressBloc, AddressStates>(listener: (context, state) {
       if (state is LoadAddressSuccess) {
-        for (final address in state.deliveryAddresses) {
-          if (address.isDefault) {
-            chosenAddress.add(address.id);
+        if(state.deliveryAddresses.length == 1){
+          chosenAddress.add(state.deliveryAddresses[0].id);
+        }else {
+          for (final address in state.deliveryAddresses) {
+            if (address.isDefault) {
+              chosenAddress.add(address.id);
+            }
           }
         }
+      } else if (state is AuthorizationFailed) {
+        Navigator.push(
+          contextA,
+          MaterialPageRoute(builder: (context) => LoginMainPage()),
+        );
+      } else if (state is AddressEmpty) {
+        Navigator.push(
+          contextA,
+          MaterialPageRoute(
+              builder: (context) => BlocProvider.value(
+                    value: BlocProvider.of<AddressBloc>(contextA),
+                    child: ChooseAddressPage(),
+                  )),
+        );
       }
     }, child:
         BlocBuilder<AddressBloc, AddressStates>(builder: (context, state) {
@@ -54,6 +74,7 @@ class OrderAddressContainer extends StatelessWidget {
                           padding: const EdgeInsets.only(right: 8.0),
                           child: RaisedButton(
                             onPressed: () {
+
                               if (chosenAddress.value == null) {
                                 Fluttertoast.showToast(
                                     msg: "Choose a delivery address");
@@ -76,6 +97,30 @@ class OrderAddressContainer extends StatelessWidget {
             })
           ],
         );
+//      else if (state is AddressEmpty)
+//        return Container(
+//          child: Column(
+//            children: [
+//              Text("Add delivery address"),
+//              OutlineButton(
+//                onPressed: () {
+//                  Navigator.push(
+//                    contextA,
+//                    MaterialPageRoute(
+//                        builder: (context) => BlocProvider.value(
+//                              value: BlocProvider.of<AddressBloc>(contextA),
+//                              child: ChooseAddressPage(),
+//                            )),
+//                  );
+//                },
+//                child: Text(
+//                  "+ ADD NEW ADDRESS",
+//                  style: TextStyle(fontSize: 12),
+//                ),
+//              ),
+//            ],
+//          ),
+//        );
       else
         return Container();
     }));

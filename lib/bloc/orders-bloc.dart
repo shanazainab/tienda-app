@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -22,16 +21,45 @@ class OrdersBloc extends Bloc<OrderEvents, OrderStates> {
     if (event is CancelOrder) {
       yield* _mapCancelOrderToStates(event);
     }
+    if (event is ReturnOrder) {
+      yield* _mapReturnOrderToStates(event);
+    }
+
+    if (event is FetchReturnOrders) {
+      yield* _mapReturnsToStates(event);
+    }
   }
 
-  Stream<OrderStates> _mapCancelOrderToStates(CancelOrder event) async* {
+  Stream<OrderStates> _mapReturnOrderToStates(ReturnOrder event) async* {
     final dio = Dio();
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
 
     OrdersApiClient ordersApiClient = OrdersApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
-    await ordersApiClient.cancelOrder(event.orderId).then((response) {
+    await ordersApiClient.returnOrder(event.order.id).then((response) {
+      Logger().d("RETURN-ORDER-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          break;
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+        Logger().e("RETURN-ORDER-ERROR:", error);
+      }
+    });
+  }
+
+  Stream<OrderStates> _mapCancelOrderToStates(CancelOrder event) async* {
+
+    final dio = Dio();
+    String value = await FlutterSecureStorage().read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
+
+    OrdersApiClient ordersApiClient = OrdersApiClient(dio,
+        baseUrl: GlobalConfiguration().getString("baseURL"));
+    await ordersApiClient.cancelOrder(event.order.id).then((response) {
       Logger().d("CANCEL-ORDER-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
@@ -43,12 +71,6 @@ class OrdersBloc extends Bloc<OrderEvents, OrderStates> {
         Logger().e("CANCEL-ORDER-ERROR:", error);
       }
     });
-
-
-//      yield LoadOrderDataSuccess(
-//          allOrders: event.,
-//          deliveredOrders: deliveredOrders,
-//          processingOrders: processingOrders);
   }
 
   Stream<OrderStates> _mapOrdersToStates(LoadOrders event) async* {
@@ -76,19 +98,43 @@ class OrdersBloc extends Bloc<OrderEvents, OrderStates> {
 
     Logger().d("ORDER DATA: $orders");
 
-    List<Order> processingOrders = new List();
-    List<Order> deliveredOrders = new List();
-
-    for (final order in orders) {
-      if (order.status == "processing")
-        processingOrders.add(order);
-      else if (order.status == "delivered") deliveredOrders.add(order);
-    }
-
     if (orders != null)
       yield LoadOrderDataSuccess(
-          allOrders: orders,
-          deliveredOrders: deliveredOrders,
-          processingOrders: processingOrders);
+        allOrders: orders,
+      );
+  }
+
+  Stream<OrderStates> _mapReturnsToStates(FetchReturnOrders event) async* {
+    final dio = Dio();
+    String value = await FlutterSecureStorage().read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
+
+    List<Order> orders;
+
+    OrdersApiClient ordersApiClient = OrdersApiClient(dio,
+        baseUrl: GlobalConfiguration().getString("baseURL"));
+    await ordersApiClient.getOrders().then((response) {
+      Logger().d("GET-ORDERS-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          orders = orderFromJson(json.encode(json.decode(response)['orders']));
+          break;
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+        Logger().e("GET-ORDERS-ERROR:", error);
+      }
+    });
+
+    Logger().d("ORDER DATA: $orders");
+    List<Order> returnOrders = new List();
+
+    for (final order in orders) {
+      if (order.status == 'request_return') {
+        returnOrders.add(order);
+      }
+    }
+    if (returnOrders != null) yield FetchReturnOrdersSuccess(returnOrders);
   }
 }

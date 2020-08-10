@@ -1,19 +1,24 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:badges/badges.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_vlc_player/flutter_vlc_player.dart' as VLC;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
+import 'package:tienda/bloc/live-stream-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
+import 'package:tienda/bloc/states/live-stream-states.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/view/live-stream/add-to-cart-popup.dart';
 import 'package:tienda/view/live-stream/cart-checkout-pop-up.dart';
 import 'package:tienda/view/live-stream/live-comment-box.dart';
+import 'package:tienda/view/live-stream/video-playout.dart';
 import 'package:tienda/view/wishlist/wishlist-page.dart';
-
 
 class VideoStreamFullScreenView extends StatefulWidget {
   @override
@@ -24,10 +29,12 @@ class VideoStreamFullScreenView extends StatefulWidget {
 class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
   PanelController addToCartPanelController = new PanelController();
   PanelController checkoutPanelController = new PanelController();
+  VLC.VlcPlayerController _videoViewController2;
 
   final productsVisibility = BehaviorSubject<bool>();
 
   final backButtonVisibility = BehaviorSubject<bool>();
+  VLC.VlcPlayerController _videoViewController;
 
   FocusNode textFocusNode = new FocusNode();
 
@@ -35,6 +42,13 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    _videoViewController = new VLC.VlcPlayerController(onInit: () {
+      _videoViewController.play();
+    });
+    _videoViewController.addListener(() {
+      setState(() {});
+    });
     productsVisibility.add(true);
     backButtonVisibility.add(false);
     textFocusNode.addListener(() {
@@ -70,7 +84,6 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
                   icon: Icon(Icons.arrow_back_ios),
                 );
             }),
-        title: Text("Influencer name"),
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
@@ -124,8 +137,9 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
               );
             },
             icon: Icon(
-              Icons.bookmark,
+              FontAwesomeIcons.heart,
               size: 20,
+              color: Colors.black,
             ),
           ),
           IconButton(
@@ -147,6 +161,7 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
                     child: Icon(
                       Icons.shopping_basket,
                       size: 20,
+                      color: Colors.black,
                     ),
                   );
                 } else if (state is LoadCartSuccess) {
@@ -158,12 +173,14 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
                     child: Icon(
                       Icons.shopping_basket,
                       size: 20,
+                      color: Colors.black,
                     ),
                   );
                 } else
                   return Icon(
                     Icons.shopping_basket,
                     size: 20,
+                    color: Colors.black,
                   );
               })),
           SizedBox(
@@ -175,60 +192,103 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
         children: <Widget>[
           SingleChildScrollView(
             physics: NeverScrollableScrollPhysics(),
-            child: GestureDetector(
-              onPanStart: (panStartDetails) {
-                print("PAN START");
-                FocusManager.instance.primaryFocus.unfocus();
-                backButtonVisibility.add(!backButtonVisibility.value);
-              },
-              child: Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: Image.asset(
-                  'assets/icons/sample.jpg',
-                  fit: BoxFit.fitHeight,
-                ),
-              ),
-            ),
-          ),
-          StreamBuilder<bool>(
-              stream: productsVisibility,
-              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                if (snapshot.data != null && snapshot.data)
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 100.0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 4,
-                        child: ListView.builder(
-                            itemCount: 3,
-                            padding: EdgeInsets.all(0),
-                            itemBuilder: (BuildContext context, int index) =>
-                                GestureDetector(
-                                  onTap: () {
-                                    if (checkoutPanelController.isPanelOpen)
-                                      checkoutPanelController.close();
-                                    addToCartPanelController.open();
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Container(
-                                        height: 90,
-                                        width: 30,
-                                        color: Colors.black.withOpacity(0.1),
-                                      ),
-                                    ),
-                                  ),
-                                )),
+            child: GestureDetector(onPanStart: (panStartDetails) {
+              FocusManager.instance.primaryFocus.unfocus();
+              backButtonVisibility.add(!backButtonVisibility.value);
+            }, child: BlocBuilder<LiveStreamBloc, LiveStreamStates>(
+                builder: (context, state) {
+              if (state is JoinLiveSuccess) {
+                return SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: new VLC.VlcPlayer(
+                    aspectRatio: MediaQuery.of(context).size.width /
+                        MediaQuery.of(context).size.height,
+                    url: state.liveResponse.url,
+                    controller: _videoViewController,
+                    // Play with vlc options
+                    options: [
+                      '--quiet',
+                      '--no-drop-late-frames',
+                      '--no-skip-frames',
+                      '--rtsp-tcp'
+                    ],
+                    hwAcc: VLC.HwAcc.DISABLED,
+                    // or {HwAcc.AUTO, HwAcc.DECODING, HwAcc.FULL}
+                    placeholder: Container(
+                      height: 250.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[CircularProgressIndicator()],
                       ),
                     ),
-                  );
-                else
-                  return Container();
-              }),
+                  ),
+                );
+              } else
+                return Container();
+            })),
+          ),
+          BlocBuilder<LiveStreamBloc, LiveStreamStates>(
+              builder: (context, state) {
+            if (state is JoinLiveSuccess) {
+              return StreamBuilder<bool>(
+                  stream: productsVisibility,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                    if (snapshot.data != null && snapshot.data)
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 100.0),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width / 4,
+                            child: ListView.builder(
+                                itemCount: state.liveResponse.products.length,
+                                padding: EdgeInsets.all(0),
+                                itemBuilder: (BuildContext context,
+                                        int index) =>
+                                    GestureDetector(
+                                      onTap: () {
+                                        if (checkoutPanelController.isPanelOpen)
+                                          checkoutPanelController.close();
+                                        addToCartPanelController.open();
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: Container(
+                                            height: 90,
+                                            width: 30,
+                                           child: CachedNetworkImage(
+                                             imageUrl:
+                                             state.liveResponse.products[index].thumbnail,
+                                             width: MediaQuery.of(context).size.width / 2,
+                                             height: 220,
+                                             fit: BoxFit.cover,
+                                             placeholder: (context, url) => Container(
+                                               height: 220,
+                                               color: Color(0xfff2f2e4),
+                                             ),
+                                             errorWidget: (context, url, error) => Container(
+                                               height: 220,
+                                               color: Color(0xfff2f2e4),
+                                             ),
+                                           ),
+                                          ),
+                                        ),
+                                      ),
+                                    )),
+                          ),
+                        ),
+                      );
+                    else
+                      return Container();
+                  });
+            } else
+              return Container();
+          }),
           Padding(
             padding: const EdgeInsets.only(bottom: 60.0),
             child: Align(
@@ -276,7 +336,8 @@ class _VideoStreamFullScreenViewState extends State<VideoStreamFullScreenView> {
                                 ),
                                 borderSide: BorderSide(
                                     color: Colors.black.withOpacity(0.1))),
-                            hintText: AppLocalizations.of(context).translate("type-your-comment")),
+                            hintText: AppLocalizations.of(context)
+                                .translate("type-your-comment")),
                       ),
                     ),
                     Padding(

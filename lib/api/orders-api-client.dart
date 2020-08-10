@@ -13,4 +13,7 @@ abstract class OrdersApiClient {
 
   @POST("/cancel_order/")
   Future<String> cancelOrder(@Body() int orderId);
+
+  @POST("/request_return//")
+  Future<String> returnOrder(@Body() int orderId);
 }

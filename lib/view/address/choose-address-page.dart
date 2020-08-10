@@ -8,13 +8,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import "package:google_maps_webservice/geocoding.dart";
 
-import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
 import 'package:tienda/bloc/address-bloc.dart';
 import 'package:tienda/model/delivery-address.dart';
-import 'package:tienda/model/reverse-geocoded-mapbox-data.dart';
 import 'package:tienda/view/address/add-address-page.dart';
-import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class ChooseAddressPage extends StatefulWidget {
 
@@ -239,7 +235,7 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
   }
 
   void handleConfirmAddress(contextA) {
-    Navigator.push(
+    Navigator.pushReplacement(
       contextA,
       MaterialPageRoute(
           builder: (context) =>

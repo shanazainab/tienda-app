@@ -6,10 +6,10 @@ import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/localization.dart';
 
-class BottomContainer extends StatelessWidget {
+class LogoutContainer extends StatelessWidget {
   final bool isLoggedIn;
 
-  BottomContainer(this.isLoggedIn);
+  LogoutContainer(this.isLoggedIn);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class BottomContainer extends StatelessWidget {
               ? Center(
             child: FlatButton(
               child: Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                padding: const EdgeInsets.only(left: 8, right: 8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,

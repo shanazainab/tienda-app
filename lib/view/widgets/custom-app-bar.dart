@@ -48,6 +48,7 @@ class CustomAppBar extends StatelessWidget {
         style: TextStyle(fontSize: showLogo?20:14,color: Colors.grey),
       ),
       centerTitle: false,
+
       automaticallyImplyLeading: true,
       bottom: bottom != null ? bottom : null,
       actions: <Widget>[

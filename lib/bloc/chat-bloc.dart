@@ -84,7 +84,7 @@ class ChatBloc extends Bloc<ChatEvents, ChatStates> {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        log("GET-CONVERSATION-MESSAGE-ERROR:, ${error.response.data}");
+        log("GET-CONVERSATION-MESSAGE-ERROR:, ${error.response}");
         log("GET-CONVERSATION-MESSAGE-ERROR:, ${error.request.data}");
       }
     });

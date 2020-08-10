@@ -18,7 +18,7 @@ class ReferAndEarn extends StatelessWidget {
             child: Scaffold(
               appBar: AppBar(
                 brightness: Brightness.light,
-                title: Text("Refer & Earn"),
+                title: Text("Refer & Earn".toUpperCase()),
                 bottom: TabBar(
                   unselectedLabelColor: Colors.grey[200],
                   indicatorColor: Colors.lightBlue,

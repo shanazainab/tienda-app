@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tienda/bloc/events/order-events.dart';
+import 'package:tienda/bloc/orders-bloc.dart';
 import 'package:tienda/model/order.dart';
+import 'package:tienda/view/order/order-cancel-page.dart';
 import 'package:tienda/view/order/order-tracking-page.dart';
 import 'package:tienda/view/order/order-tracking-time-line.dart';
 
-import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class OrdersDetailsPage extends StatelessWidget {
   final Order order;
@@ -12,21 +15,15 @@ class OrdersDetailsPage extends StatelessWidget {
   OrdersDetailsPage(this.order);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext contextA) {
     return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(44.0), // here the desired height
-
-          child: CustomAppBar(
-            title: "Order Details",
-            showWishList: false,
-            showSearch: false,
-            showCart: false,
-            showLogo: false,
-          )),
+      appBar:AppBar(
+        title: Text("ORDER DETAILS"),
+        centerTitle: false,
+      ),
       body: SingleChildScrollView(
         child: Container(
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery.of(contextA).size.width,
           color: Colors.grey[200],
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -186,7 +183,7 @@ class OrdersDetailsPage extends StatelessWidget {
                         FlatButton(
                           onPressed: () {
                             Navigator.push(
-                              context,
+                              contextA,
                               MaterialPageRoute(
                                   builder: (context) => OrderTrackingPage()),
                             );
@@ -209,6 +206,7 @@ class OrdersDetailsPage extends StatelessWidget {
                 height: 8,
               ),
               Container(
+                width: MediaQuery.of(contextA).size.width,
                 color: Colors.white,
                 padding: const EdgeInsets.only(
                     top: 16, left: 24, right: 24.0, bottom: 16),
@@ -238,7 +236,7 @@ class OrdersDetailsPage extends StatelessWidget {
                 height: 8,
               ),
               Container(
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery.of(contextA).size.width,
                 color: Colors.white,
                 padding: const EdgeInsets.only(
                     top: 16, left: 24, right: 24.0, bottom: 16),
@@ -258,18 +256,58 @@ class OrdersDetailsPage extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(
-                height: 20,
-              ),
-              Center(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width - 100,
-                  child: RaisedButton(
-                    onPressed: () {},
-                    child: Text("CANCEL ORDER"),
-                  ),
+              Container(
+                width: MediaQuery.of(contextA).size.width,
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        order.status == "delivered"
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: OutlineButton(
+                                  onPressed: () {
+                                    BlocProvider.of<OrdersBloc>(contextA)
+                                        .add(ReturnOrder(order));
+                                  },
+                                  child: Text("RETURN ORDER"),
+                                ),
+                              )
+                            : Container(),
+                        order.status == "pending" || (order.status != "delivered" && order.status != "canceled")
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: OutlineButton(
+                                  onPressed: () {
+
+
+
+                                    Navigator.pushReplacement(
+                                      contextA,
+                                      MaterialPageRoute(
+                                          builder: (context) => BlocProvider.value(
+                                            value: BlocProvider.of<OrdersBloc>(contextA),
+                                            child: OrderCancelPage(order),
+                                          )),
+                                    );
+
+
+                                  },
+                                  child: Text("CANCEL ORDER"),
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                  ],
                 ),
-              )
+              ),
             ],
           ),
         ),

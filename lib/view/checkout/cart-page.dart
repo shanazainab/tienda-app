@@ -51,10 +51,11 @@ class _CartPageState extends State<CartPage> {
                   padding: EdgeInsets.only(bottom: 100),
                   children: <Widget>[
                     ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: state.cart.products.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return new Card(
+                        return new Container(
                             child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,109 +110,100 @@ class _CartPageState extends State<CartPage> {
                                                 fontWeight: FontWeight.bold),
                                           ),
                                         ),
-                                        Container(
-                                            width: 122,
-                                            child: Row(
-                                              children: <Widget>[
-                                                ButtonTheme(
-                                                  height: 10,
-                                                  minWidth: 10,
-                                                  child: RaisedButton(
-                                                      color: Colors.grey[200],
-                                                      onPressed: () {
-                                                        if (state
-                                                                .cart
-                                                                .products[index]
-                                                                .quantity ==
-                                                            1) {
-                                                          ///delete the item
-                                                          ///or don do anything
-                                                        } else {
-                                                          state
-                                                              .cart
-                                                              .products[index]
-                                                              .quantity = state
-                                                                  .cart
-                                                                  .products[
-                                                                      index]
-                                                                  .quantity -
-                                                              1;
-                                                          BlocProvider.of<
-                                                              CartBloc>(context)
-                                                            ..add(EditCartItem(
-                                                                cart:
-                                                                    state.cart,
-                                                                editType:
-                                                                    "QUANTITY EDIT",
-                                                                cartItem: state
-                                                                        .cart
-                                                                        .products[
-                                                                    index]));
-                                                        }
-                                                      },
-                                                      child: Text("-")),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 8.0, right: 8),
-                                                  child: Text(state.cart
-                                                      .products[index].quantity
-                                                      .toString()),
-                                                ),
-                                                ButtonTheme(
-                                                  height: 10,
-                                                  minWidth: 10,
-                                                  child: RaisedButton(
-                                                      color: Colors.grey[200],
-                                                      onPressed: () {
-                                                        state
-                                                            .cart
-                                                            .products[index]
-                                                            .quantity = state
-                                                                .cart
-                                                                .products[index]
-                                                                .quantity +
-                                                            1;
-
-                                                        BlocProvider.of<
-                                                            CartBloc>(context)
-                                                          ..add(EditCartItem(
-                                                              cart: state.cart,
-                                                              editType:
-                                                                  "QUANTITY EDIT",
-                                                              cartItem: state
-                                                                      .cart
-                                                                      .products[
-                                                                  index]));
-                                                      },
-                                                      child: Text('+')),
-                                                )
-                                              ],
-                                            )),
-                                        GestureDetector(
-                                          onTap: () {
-                                            if (_selectedCartItem.value !=
-                                                index)
-                                              _selectedCartItem.add(index);
-                                            else
-                                              _selectedCartItem.add(null);
-                                          },
-                                          child: Container(
-                                            color: Colors.grey[200],
-                                            child: Row(
-                                              children: <Widget>[
-                                                Text("Size:"),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 8.0, right: 8),
-                                                  child: Text("ONESIZE"),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+                                        SizedBox(
+                                          height: 16,
                                         ),
+                                        Row(
+                                          children: <Widget>[
+                                            GestureDetector(
+
+                                              onTap: () {
+                                                if (state.cart.products[index]
+                                                        .quantity ==
+                                                    1) {
+                                                  ///delete the item
+                                                  ///or don do anything
+                                                } else {
+                                                  state.cart.products[index]
+                                                      .quantity = state
+                                                          .cart
+                                                          .products[index]
+                                                          .quantity -
+                                                      1;
+                                                  BlocProvider.of<CartBloc>(
+                                                      context)
+                                                    ..add(EditCartItem(
+                                                        cart: state.cart,
+                                                        editType:
+                                                            "QUANTITY EDIT",
+                                                        cartItem: state.cart
+                                                            .products[index]));
+                                                }
+                                              },
+                                              child: Icon(
+                                                Icons.arrow_back_ios,
+                                                color: Colors.grey,
+                                                size: 14,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0, right: 8),
+                                              child: Text(state
+                                                  .cart.products[index].quantity
+                                                  .toString()),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                state.cart.products[index]
+                                                    .quantity = state
+                                                        .cart
+                                                        .products[index]
+                                                        .quantity +
+                                                    1;
+
+                                                BlocProvider.of<CartBloc>(
+                                                    context)
+                                                  ..add(EditCartItem(
+                                                      cart: state.cart,
+                                                      editType: "QUANTITY EDIT",
+                                                      cartItem: state.cart
+                                                          .products[index]));
+                                              },
+                                              child: Icon(
+                                                Icons.arrow_forward_ios,
+                                                color: Colors.grey,
+                                                size: 14,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+
+                                        ///TODO : PRODUCT OPTION CHANGE
+
+//                                        GestureDetector(
+//                                          onTap: () {
+//                                            if (_selectedCartItem.value !=
+//                                                index)
+//                                              _selectedCartItem.add(index);
+//                                            else
+//                                              _selectedCartItem.add(null);
+//                                          },
+//                                          child: Container(
+//                                            color: Colors.grey[200],
+//                                            child: Row(
+//                                              children: <Widget>[
+//                                                Text("Size:"),
+//                                                Padding(
+//                                                  padding:
+//                                                      const EdgeInsets.only(
+//                                                          left: 8.0, right: 8),
+//                                                  child: Text("ONESIZE"),
+//                                                ),
+//                                              ],
+//                                            ),
+//                                          ),
+//                                        ),
                                         SizedBox(
                                           height: 10,
                                         ),
@@ -300,6 +292,9 @@ class _CartPageState extends State<CartPage> {
                                 FlatButton(
                                   padding: EdgeInsets.all(0),
                                   onPressed: () {
+
+
+
                                     BlocProvider.of<WishListBloc>(context)
                                         .add(AddToWishList(
                                             wishListItem: new WishListItem(

@@ -9,6 +9,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/api/cart-api-client.dart';
 import 'package:tienda/api/customer-profile-api-client.dart';
 import 'package:tienda/api/login-api-client.dart';
@@ -42,7 +43,7 @@ class LoginController {
     await client.sendOTP(loginRequest).then((response) {
       Logger().d("LOGIN-SEND-OTP-RESPONSE:$response");
       switch (json.decode(response)['status']) {
-        case 200:
+        case 201:
           status = "success";
           break;
         case 407:
@@ -251,7 +252,12 @@ class LoginController {
   }
 
   registerCustomer(Customer customer) async {
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString('customer-name', customer.fullName);
+
     String status;
+
 
     final dio = Dio();
     String value = await _secureStorage.read(key: "session-id");

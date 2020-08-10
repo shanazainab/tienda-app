@@ -134,11 +134,14 @@ class _ProductDescriptionContainerState
                       itemCount: widget.productSpec.length,
                       itemBuilder: (BuildContext context, int index) =>
                           widget.productSpec[index].key == "Description"
-                              ? Text(widget.productSpec[index].value,style: TextStyle(
+                              ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(widget.productSpec[index].value,style: TextStyle(
                             fontSize: 12,
                           ),
-                          textAlign: TextAlign.justify,)
-                              : Text("")),
+                          textAlign: TextAlign.justify,),
+                              )
+                              : Container()),
                 ][_tabIndex],
               ),
             ],

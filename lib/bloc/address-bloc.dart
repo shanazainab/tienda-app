@@ -33,16 +33,19 @@ class AddressBloc extends Bloc<AddressEvents, AddressStates> {
 
   Stream<AddressStates> _mapLoadSavedAddressToStates(
       LoadSavedAddress event) async* {
+    yield Loading();
     List<DeliveryAddress> addresses = await callLoadAddressApi();
     if (addresses.isNotEmpty)
       yield LoadAddressSuccess(deliveryAddresses: addresses);
-    //if (status == "Not Authorized") yield AuthorizationFailed();
+    else if (addresses.isEmpty)
+      yield AddressEmpty();
+    else
+      yield AuthorizationFailed();
   }
 
   Future<List<DeliveryAddress>> callLoadAddressApi() async {
     List<DeliveryAddress> addresses = new List();
     final dio = Dio();
-    String status;
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
     final client = AddressApiClient(dio,
@@ -55,13 +58,11 @@ class AddressBloc extends Bloc<AddressEvents, AddressStates> {
         case 200:
           if (data.addresses.isNotEmpty) {
             addresses = data.addresses;
-            status = "success";
-          } else
-            status = "empty";
+          }
 
           break;
         case 401:
-          status = "Not Authorized";
+          addresses = null;
       }
     }).catchError((err) {
       if (err is DioError) {
@@ -77,6 +78,8 @@ class AddressBloc extends Bloc<AddressEvents, AddressStates> {
 
   Stream<AddressStates> _mapAddSavedAddressToStates(
       AddSavedAddress event) async* {
+    yield Loading();
+
     final dio = Dio();
     String status;
     String value = await FlutterSecureStorage().read(key: "session-id");

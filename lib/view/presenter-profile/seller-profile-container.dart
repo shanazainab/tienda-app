@@ -42,7 +42,7 @@ class _SellerProfileContainerState extends State<SellerProfileContainer> {
               Column(
                 children: <Widget>[
                   Text(
-                    widget.presenter.featuredProducts.length.toString(),
+                    widget.presenter.products.toString(),
                     style: TextStyle(
                         color: Colors.blue,
                         fontSize: 20,
@@ -62,7 +62,7 @@ class _SellerProfileContainerState extends State<SellerProfileContainer> {
               Column(
                 children: <Widget>[
                   Text(
-                    widget.presenter.popularVideos.length.toString(),
+                    widget.presenter.videos.toString(),
                     style: TextStyle(
                         color: Colors.blue,
                         fontSize: 20,
@@ -121,12 +121,18 @@ class _SellerProfileContainerState extends State<SellerProfileContainer> {
                     fontWeight: FontWeight.bold))),
 
         ///NOTE: only https video
-        SizedBox(
-            height: 400,
-            width: MediaQuery.of(context).size.width,
-            child: Container(
-              color: Colors.grey,
-            )),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SizedBox(
+              height: 200,
+              width: MediaQuery.of(context).size.width,
+              child: Container(
+                color: Colors.grey,
+                child: Center(
+                  child: Icon(Icons.play_circle_outline),
+                ),
+              )),
+        ),
 //
 //        VideoPlayout(
 //          url: 'http://192.168.1.93:1935/test_presenter/myStream/playlist.m3u8',
@@ -153,14 +159,11 @@ class _SellerProfileContainerState extends State<SellerProfileContainer> {
                   style: TextStyle(color: Colors.lightBlue),
                 ))),
 
-        FeaturedProductList(),
-        Center(
-            child: FlatButton(
-                onPressed: () {},
-                child: Text(
-                  AppLocalizations.of(context).translate("see-all"),
-                  style: TextStyle(color: Colors.lightBlue),
-                ))),
+        widget.presenter.featuredProducts.isNotEmpty
+            ? FeaturedProductList(
+                products: widget.presenter.featuredProducts,
+              )
+            : Container(),
       ],
     );
   }

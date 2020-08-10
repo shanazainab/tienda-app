@@ -27,6 +27,7 @@ import 'package:tienda/bloc/states/startup-states.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/chewie-demo.dart';
 import 'package:tienda/localization.dart';
+import 'package:tienda/my-app.dart';
 import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/live-stream/shop-live-screen.dart';
 import 'package:tienda/view/startup/country-choose-page.dart';
@@ -46,7 +47,6 @@ Future<void> main() async {
 
 //  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 ////  sharedPreferences.clear();
-
 
   ///Enable firebase crash analytics
   // Crashlytics.instance.enableInDevMode = true;
@@ -137,7 +137,8 @@ Future<void> main() async {
           create: (context) => PreferenceBloc(),
         ),
         BlocProvider<LoginBloc>(
-          create: (BuildContext context) => LoginBloc()..add(CheckLoginStatus()),
+          create: (BuildContext context) =>
+              LoginBloc()..add(CheckLoginStatus()),
         ),
         BlocProvider<WishListBloc>(
           create: (BuildContext context) => WishListBloc(),
@@ -245,15 +246,11 @@ class App extends StatelessWidget {
                   ),
                 ),
                 appBarTheme: AppBarTheme(
-
+                  elevation: 0,
                   brightness: Brightness.light,
                   color: Colors.white,
                   textTheme: TextTheme(
-                    title: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16
-                    )
-                  ),
+                      title: TextStyle(color: Colors.grey, fontSize: 14)),
                   iconTheme: IconThemeData(color: Color(0xffC0C0C0)),
                 ),
                 accentColor: Colors.black,

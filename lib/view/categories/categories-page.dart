@@ -110,7 +110,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                 width: 4))
                                                         : null),
                                                 height: 50,
-                                                //   alignment: Alignment.center,
                                                 child: Padding(
                                                   padding:
                                                       const EdgeInsets.only(
@@ -147,14 +146,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                   curve: Curves.easeOut,
                                   duration: const Duration(milliseconds: 300),
                                 );
-//                              if (itemPositionsListener
-//                                      .itemPositions.value.last.index <
-//                                  4)
-//                                mainCategoryScroll.animateTo(
-//                                  0.0,
-//                                  curve: Curves.easeOut,
-//                                  duration: const Duration(milliseconds: 300),
-//                                );
+
                               selectedCategoryIndex.add(itemPositionsListener
                                   .itemPositions.value.last.index);
                               return true;
@@ -206,6 +198,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                 leading: CircleAvatar(
                                                   backgroundColor:
                                                       Colors.grey[200],
+                                                  backgroundImage: NetworkImage(
+                                                    state.categories[index].thumbnail
+                                                  ),
                                                   radius: 20,
                                                 ),
                                                 backgroundColor: Colors.white,
@@ -304,6 +299,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                             )
                           ],
                           child: ProductListPage(
+                            title: thirdLevelCategory[i].nameEn,
                             query: 'get_category',
                             searchBody: new SearchBody(
                                 category: thirdLevelCategory[i].id),

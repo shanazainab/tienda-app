@@ -25,7 +25,6 @@ class WishListBloc extends Bloc<WishListEvents, WishListStates> {
           await SharedPreferences.getInstance();
       WishList wishList = WishList.fromJson(
           json.decode(sharedPreferences.getString('wishlist')));
-      print("Wislist: $wishList");
       yield LoadWishListSuccess(wishList: wishList);
     }
     if (event is LoadWishListProducts) {
@@ -70,8 +69,12 @@ class WishListBloc extends Bloc<WishListEvents, WishListStates> {
   Stream<WishListStates> _mapDeleteWishListItemToStates(
       DeleteWishListItem event) async* {
     if (event.wishList != null) {
-      event.wishList.wishListItems.remove(event.wishListItem);
-      yield DeleteWishListItemSuccess(wishList: event.wishList);
+      event.wishList.wishListItems.removeWhere((element) => element.product.id == event.wishListItem.product.id);
+      print(event.wishList);
+
+      if(event.wishList.wishListItems.isEmpty)
+        yield EmptyWishList();
+      else yield DeleteWishListItemSuccess(wishList: event.wishList);
     }
 
     final dio = Dio();
@@ -100,7 +103,6 @@ class WishListBloc extends Bloc<WishListEvents, WishListStates> {
             .d("DELETE-FROM-WISH-LIST-ERROR-REQUEST:${error.request?.data}");
       }
     });
-//    if (status == "success")
   }
 
   Stream<WishListStates> _mapLoadWishListProductsToStates(
@@ -142,7 +144,7 @@ class WishListBloc extends Bloc<WishListEvents, WishListStates> {
     });
 
     if (wishList.wishListItems.isNotEmpty) updateWisListLocally(wishList);
-
+    if(status == "empty") yield EmptyWishList();
     if (status == "success") yield LoadWishListSuccess(wishList: wishList);
     if (status == "Not Authorized") yield AuthorizationFailed();
   }

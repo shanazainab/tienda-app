@@ -1,11 +1,9 @@
-import 'package:equatable/equatable.dart';
+import 'dart:io';
+
 import 'package:tienda/model/customer.dart';
 
-abstract class CustomerProfileStates extends Equatable {
+abstract class CustomerProfileStates {
   CustomerProfileStates();
-
-  @override
-  List<Object> get props => null;
 }
 
 class Loading extends CustomerProfileStates {
@@ -16,34 +14,18 @@ class OfflineLoadCustomerDataSuccess extends CustomerProfileStates {
   final Customer customerDetails;
 
   OfflineLoadCustomerDataSuccess({this.customerDetails}) : super();
-
-  @override
-  List<Object> get props => [customerDetails];
 }
 
 class LoadCustomerProfileSuccess extends CustomerProfileStates {
   final Customer customerDetails;
+  final File profileImage;
 
-  LoadCustomerProfileSuccess({this.customerDetails}) : super();
-
-  @override
-  List<Object> get props => [customerDetails];
+  LoadCustomerProfileSuccess({this.customerDetails, this.profileImage})
+      : super();
 }
+class UpdateProfilePictureInProgress extends CustomerProfileStates {
+  final Customer customerDetails;
 
-class LoadCustomerProfileFail extends CustomerProfileStates {
-  final dynamic error;
-
-  LoadCustomerProfileFail(this.error) : super();
-
-  @override
-  List<Object> get props => error;
-}
-
-class EditCustomerProfileSuccess extends CustomerProfileStates {
-  final Customer customer;
-
-  EditCustomerProfileSuccess({this.customer}) : super();
-
-  @override
-  List<Object> get props => [];
+  UpdateProfilePictureInProgress({this.customerDetails})
+      : super();
 }

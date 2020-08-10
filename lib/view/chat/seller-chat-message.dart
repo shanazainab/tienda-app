@@ -5,11 +5,12 @@ import 'package:intl/intl.dart';
 import 'package:tienda/bloc/chat-bloc.dart';
 import 'package:tienda/bloc/events/chat-events.dart';
 import 'package:tienda/bloc/states/chat-states.dart';
+import 'package:tienda/model/presenter.dart';
 
 class SellerDirectMessage extends StatefulWidget {
-  final int presenterId;
+  final Presenter presenter;
 
-  SellerDirectMessage(this.presenterId);
+  SellerDirectMessage(this.presenter);
 
   @override
   _SellerDirectMessageState createState() => _SellerDirectMessageState();
@@ -30,7 +31,7 @@ class _SellerDirectMessageState extends State<SellerDirectMessage> {
     super.initState();
 
     chatBloc.add(Initialize());
-    chatBloc.add(GetConversation(senderId: "100", receiverId: widget.presenterId.toString()));
+    chatBloc.add(GetConversation(senderId: "100", receiverId: widget.presenter.id.toString()));
   }
 
   @override
@@ -48,7 +49,7 @@ class _SellerDirectMessageState extends State<SellerDirectMessage> {
                 appBar: AppBar(
                   brightness: Brightness.light,
                   elevation: 0,
-                  title: Text("Presenter name"),
+                  title: Text(widget.presenter.name),
                 ),
                 body: BlocBuilder<ChatBloc, ChatStates>(
                     builder: (context, state) {

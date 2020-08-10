@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -51,10 +52,8 @@ class PresenterBloc extends Bloc<PresenterEvents, PresenterStates> {
 
     if (presenterCategory != null) {
       List<Presenter> presenter = new List();
-      for (int i = 0; i < 10; ++i) {
-        for (final item in presenterCategory.response) {
-          for (final pre in item.presenters) presenter.add(pre);
-        }
+      for (final item in presenterCategory.response) {
+        for (final pre in item.presenters) presenter.add(pre);
       }
       yield LoadPresenterListSuccess(presenterCategory, presenter);
     }
@@ -72,7 +71,7 @@ class PresenterBloc extends Bloc<PresenterEvents, PresenterStates> {
     await presenterApiClient
         .getPresenterDetails(event.presenterId.toString())
         .then((response) {
-      Logger().d("GET-PRESENTER-DETAILS-RESPONSE:$response");
+      log("GET-PRESENTER-DETAILS-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           presenter = presenterFromJson(

@@ -6,11 +6,12 @@ import 'package:tienda/bloc/product-bloc.dart';
 import 'package:tienda/model/search-body.dart';
 import 'package:tienda/model/suggestion-response.dart';
 import 'package:tienda/view/products/product-list-page.dart';
-
+typedef CloseSearchAutoComplete(bool);
 class SearchAutoComplete extends StatelessWidget {
   final List<Suggestion> suggestions;
 
-  SearchAutoComplete(this.suggestions);
+  final CloseSearchAutoComplete closeSearchAutoComplete;
+  SearchAutoComplete(this.suggestions,this.closeSearchAutoComplete);
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +28,8 @@ class SearchAutoComplete extends StatelessWidget {
           padding: const EdgeInsets.only(left: 16.0, right: 16),
           child: GestureDetector(
             onTap: () {
-              print("TAPPED");
 
-
+              closeSearchAutoComplete(true);
 
               Navigator.push(
                   context,
@@ -46,6 +46,7 @@ class SearchAutoComplete extends StatelessWidget {
                           )
                         ],
                         child: ProductListPage(
+                          title: suggestions[index].suggestion,
                           query: suggestions[index].suggestion,
                           searchBody: new SearchBody(),
                         ),

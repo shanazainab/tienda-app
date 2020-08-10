@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
 import 'package:mime_type/mime_type.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/api/orders-api-client.dart';
 import 'package:tienda/api/review-api-client.dart';
 import 'package:tienda/bloc/events/review-events.dart';
@@ -74,10 +75,10 @@ class ReviewBloc extends Bloc<ReviewEvents, ReviewStates> {
         Logger().e("ADD-REVIEWS-ERROR:", error);
       }
     });
-
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     Review review = new Review(
         body: event.reviewRequest.body,
-        customerName: "customername",
+        customerName: sharedPreferences.getString("customer-name"),
         rating: event.reviewRequest.rating,
         fileImages: event.reviewRequest.images,
         elapsedTime: "a sec ago");

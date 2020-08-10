@@ -1,11 +1,7 @@
-import 'package:equatable/equatable.dart';
 import 'package:tienda/model/order.dart';
 
-abstract class OrderStates extends Equatable {
+abstract class OrderStates {
   OrderStates();
-
-  @override
-  List<Object> get props => null;
 }
 
 class Loading extends OrderStates {
@@ -13,22 +9,27 @@ class Loading extends OrderStates {
 }
 
 class LoadOrderDataSuccess extends OrderStates {
-
   final List<Order> allOrders;
-  final List<Order> processingOrders;
-  final List<Order> deliveredOrders;
 
-  LoadOrderDataSuccess({this.allOrders,this.processingOrders,this.deliveredOrders}) : super();
-
-  @override
-  List<Object> get props => [allOrders,processingOrders,deliveredOrders];
+  LoadOrderDataSuccess({this.allOrders}) : super();
 }
 
 class LoadOrderDataFail extends OrderStates {
   final dynamic error;
 
   LoadOrderDataFail(this.error) : super();
+}
 
-  @override
-  List<Object> get props => error;
+class CancelOrderSuccess extends OrderStates {
+  CancelOrderSuccess() : super();
+}
+
+class ReturnOrderSuccess extends OrderStates {
+  ReturnOrderSuccess() : super();
+}
+
+class FetchReturnOrdersSuccess extends OrderStates {
+  final List<Order> returnOrders;
+
+  FetchReturnOrdersSuccess(this.returnOrders) : super();
 }

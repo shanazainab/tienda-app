@@ -65,6 +65,7 @@ class _SearchPageState extends State<SearchPage> {
             child: TextField(
               focusNode: searchFocus,
               controller: searchTextController,
+              autofocus: false,
               textInputAction: TextInputAction.search,
               onSubmitted: (value) {
                 print(value);
@@ -173,7 +174,13 @@ class _SearchPageState extends State<SearchPage> {
                           minHeight: 0,
                           maxHeight: 250,
                           slideDirection: SlideDirection.DOWN,
-                          panel: SearchAutoComplete(state.suggestions),
+                          panel: SearchAutoComplete(state.suggestions, (value) {
+                            if (true) {
+                              panelController.close();
+                              searchTextController.clear();
+                              searchFocus.unfocus();
+                            }
+                          }),
                         ),
                       );
                     else
@@ -184,7 +191,13 @@ class _SearchPageState extends State<SearchPage> {
                           minHeight: 0,
                           maxHeight: 250,
                           slideDirection: SlideDirection.DOWN,
-                          panel: SearchAutoComplete(new List()),
+                          panel: SearchAutoComplete(new List(), (value) {
+                            if (true) {
+                              panelController.close();
+                              searchTextController.clear();
+                              searchFocus.unfocus();
+                            }
+                          }),
                         ),
                       );
                   }),
@@ -212,6 +225,7 @@ class _SearchPageState extends State<SearchPage> {
                     )
                   ],
                   child: ProductListPage(
+                    title: text,
                     query: text,
                     searchBody: new SearchBody(),
                   ),

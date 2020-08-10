@@ -7,7 +7,12 @@ abstract class CategoryStates extends Equatable {
   @override
   List<Object> get props => null;
 }
-
+//flutter clean
+//rm ios/Podfile
+//rm ios/Podfile.lock
+//rm pubspec.lock
+//rm -rf ios/Pods ios/Runner.xcworkspace
+//flutter run
 class Loading extends CategoryStates {
   Loading() : super();
 }

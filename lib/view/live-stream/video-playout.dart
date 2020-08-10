@@ -27,15 +27,15 @@ class _VideoPlayOutState extends State<VideoPlayOut>
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, _getHLSManifestLanguages);
+   // Future.delayed(Duration.zero, _getHLSManifestLanguages);
   }
 
-  Future<void> _getHLSManifestLanguages() async {
-    if (!Platform.isIOS && widget.url != null && widget.url.isNotEmpty) {
-      _hlsLanguages = await getManifestLanguages(widget.url);
-      setState(() {});
-    }
-  }
+//  Future<void> _getHLSManifestLanguages() async {
+//    if (!Platform.isIOS && widget.url != null && widget.url.isNotEmpty) {
+//      _hlsLanguages = await getManifestLanguages(widget.url);
+//      setState(() {});
+//    }
+//  }
 
   @override
   Widget build(BuildContext context) {

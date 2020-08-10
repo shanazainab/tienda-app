@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tienda/bloc/events/filter-events.dart';
+import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/filter-bloc.dart';
 
 import 'package:tienda/bloc/product-bloc.dart';
@@ -20,9 +21,10 @@ import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class ProductListPage extends StatefulWidget {
   final String query;
+  final String title;
   final SearchBody searchBody;
 
-  ProductListPage({this.query, this.searchBody});
+  ProductListPage({this.title,this.query, this.searchBody});
 
   @override
   _ProductListPageState createState() => _ProductListPageState();
@@ -57,74 +59,78 @@ class _ProductListPageState extends State<ProductListPage> {
         ],
         child: DefaultTabController(
             length: 2,
-            child: Scaffold(
-                extendBodyBehindAppBar: true,
-                bottomNavigationBar: BlocBuilder<FilterBloc, FilterStates>(
-                    builder: (context, state) {
-                  if (state is LoadFilterSuccess) {
-                    return buildSortFilterMenu(state.filters, contextA);
-                  } else
-                    return Container();
-                }),
-                appBar: PreferredSize(
-                    preferredSize: Size.fromHeight(80.0),
-                    // here the desired height
-                    child: CustomAppBar(
-                      bottom: TabBar(
-                        labelColor: Colors.lightBlue,
-                        unselectedLabelColor: Colors.grey,
-                        indicatorColor: Colors.lightBlue,
-                        tabs: [
-                          Tab(
-                            icon: Icon(Icons.line_style),
-                          ),
-                          Tab(icon: Icon(Icons.videocam)),
+            child: WillPopScope(
+              onWillPop: (){
+                BlocProvider.of<ProductBloc>(context).add(Initialize());
+                return Future.value(true);
+              },
+              child: Scaffold(
+                  extendBodyBehindAppBar: true,
+                  bottomNavigationBar: BlocBuilder<FilterBloc, FilterStates>(
+                      builder: (context, state) {
+                    if (state is LoadFilterSuccess) {
+                      return buildSortFilterMenu(state.filters, contextA);
+                    } else
+                      return Container();
+                  }),
+                  appBar: PreferredSize(
+                      preferredSize: Size.fromHeight(80.0),
+                      // here the desired height
+                      child: CustomAppBar(
+                        bottom: TabBar(
+                          labelColor: Colors.lightBlue,
+                          unselectedLabelColor: Colors.grey,
+                          indicatorColor: Colors.lightBlue,
+                          tabs: [
+                            Tab(
+                              icon: Icon(Icons.line_style),
+                            ),
+                            Tab(icon: Icon(Icons.videocam)),
+                          ],
+                        ),
+                        title: widget.title.toUpperCase(),
+                        showWishList: true,
+                        showSearch: false,
+                        showCart: true,
+                        showLogo: false,
+                      )),
+                  body: BlocBuilder<ProductBloc, ProductStates>(
+                      builder: (context, state) {
+                    if (state is LoadProductListSuccess) {
+                      return TabBarView(
+                        children: [
+                          ProductListContainer(
+                              state.productListResponse, widget.query,
+                              searchBody: widget.searchBody),
+                          Container(),
                         ],
-                      ),
-                      title: "Products",
-                      showWishList: true,
-                      showSearch: false,
-                      showCart: true,
-                      showLogo: false,
-                    )),
-                body: BlocBuilder<ProductBloc, ProductStates>(
-                    builder: (context, state) {
-                  if (state is LoadProductListSuccess) {
-                    return TabBarView(
-                      children: [
-                        ProductListContainer(
-                            state.productListResponse, widget.query,
-                            searchBody: widget.searchBody),
-                        Container(),
-                      ],
-                    );
-                  }
-                  if (state is UpdateProductListSuccess) {
-                    return TabBarView(
-                      children: [
-                        ProductListContainer(
-                          state.productListResponse,
-                          widget.query,
-                          searchBody: widget.searchBody,
-                        ),
-                        Container()
-                      ],
-                    );
-                  } else {
-                    return Container(
-                      child: Center(
-                        child: Container(
-                          height: 30,
-                          width: 30,
-                          child: CircularProgressIndicator(
-                            backgroundColor: Colors.black,
-                            strokeWidth: 2,
+                      );
+                    }
+                   else if (state is UpdateProductListSuccess) {
+                      return TabBarView(
+                        children: [
+                          ProductListContainer(
+                            state.productListResponse,
+                            widget.query,
+                            searchBody: widget.searchBody,
                           ),
-                        ),
-                      ),
-                    );
-                  }
-                }))));
+                          Container()
+                        ],
+                      );
+                    }
+
+                    else {
+                      return TabBarView(
+                        children: [
+                          Container(
+                            child: Text("LOADING"),
+                          ),
+                          Container()
+                        ],
+                      );
+                    }
+                  })),
+            )));
   }
 
   buildSortFilterMenu(List<PLR.Filter> filters, contextA) {

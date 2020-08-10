@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/app-language.dart';
+import 'package:tienda/bloc/events/live-stream-events.dart';
+import 'package:tienda/bloc/live-stream-bloc.dart';
 import 'package:tienda/bloc/presenter-bloc.dart';
 import 'package:tienda/bloc/states/presenter-states.dart';
 import 'package:tienda/localization.dart';
@@ -90,22 +92,9 @@ class SellerProfilesListView extends StatelessWidget {
                                 child: Container(
                                   decoration: BoxDecoration(
                                       image: DecorationImage(
-//                                          image: NetworkImage(
-//                                        "${GlobalConfiguration().getString("baseURL")}/${cat.presenters[index].profilePicture}",
-//                                      )
-                                      image:  AssetImage(
-                                          "assets/images/avatartwo.jpeg"
-                                      )
-
-
-//                                      Image.asset(
-//                                        "assets/images/avatartwo.jpeg",
-//                                        height: 450,
-//                                        fit: BoxFit.cover,
-//
-//                                        width: 350,
-//                                      )
-                                      ),
+                                          image: NetworkImage(
+                                        "${GlobalConfiguration().getString("baseURL")}/${cat.presenters[index].profilePicture}",
+                                      )),
                                       borderRadius: BorderRadius.circular(4),
                                       border: cat.presenters[index].isLive
                                           ? Border.all(color: Colors.lightBlue)
@@ -171,11 +160,14 @@ class SellerProfilesListView extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(4)),
                             onPressed: () {
                               Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        VideoStreamFullScreenView()),
-                              );
+                                  context,
+                                  MaterialPageRoute(
+                                  builder: (context) => BlocProvider(
+                                create: (BuildContext context) =>
+                                LiveStreamBloc()
+                                  ..add(JoinLive(cat.presenters[index].id)),
+                                child: VideoStreamFullScreenView(),
+                              )));
                             },
                             color: Colors.blue,
                             child: Text(
@@ -193,7 +185,7 @@ class SellerProfilesListView extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => SellerDirectMessage(
-                                        cat.presenters[index].id)),
+                                        cat.presenters[index])),
                               );
                             },
                             color: Colors.grey,

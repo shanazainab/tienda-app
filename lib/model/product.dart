@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:logger/logger.dart';
+import 'package:tienda/model/presenter.dart';
 
 class Product extends Equatable {
   Product(
@@ -25,6 +26,7 @@ class Product extends Equatable {
       this.ratings,
       this.isReviewed,
       this.discount,
+      this.presenter,
       this.isPurchased,
       this.brand});
 
@@ -52,11 +54,16 @@ class Product extends Equatable {
   int quantity;
   int discount;
 
+  Presenter presenter;
+
   factory Product.fromJson(Map<String, dynamic> json) {
     Product product;
     try {
       product = Product(
           id: json["id"],
+          presenter: json["presenter"] != null
+              ? Presenter.fromJson(json["presenter"])
+              : null,
           nameAr: json["name_ar"],
           nameEn: json["name_en"],
           categoryId: json["category_id"],
@@ -101,6 +108,7 @@ class Product extends Equatable {
     try {
       j = {
         "id": id,
+        "presenter": presenter != null ? presenter.toJson() : null,
         "name_ar": nameAr,
         "name_en": nameEn,
         "category_id": categoryId,
@@ -130,7 +138,7 @@ class Product extends Equatable {
             : null,
       };
     } catch (e) {
-      print('99999999999INside : $e');
+      print('PRODUCT TOJSON CONVERSION ERROR : $e');
     }
 
     return j;

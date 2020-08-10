@@ -152,70 +152,70 @@ class ProductListContainer extends StatelessWidget {
                                           maxLines: 1,
                                         ),
                                       ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          if (productListResponse
-                                                  .products[index].isWishListed ==
-                                              null)
-                                            productListResponse.products[index]
-                                                .isWishListed = true;
-                                          else
-                                            productListResponse.products[index]
-                                                    .isWishListed =
-                                                !productListResponse
-                                                    .products[index].isWishListed;
-
-                                          if (productListResponse
-                                              .products[index].isWishListed) {
-                                            Fluttertoast.showToast(
-                                                fontSize: 12,
-                                                toastLength: Toast.LENGTH_LONG,
-                                                msg: AppLocalizations.of(context)
-                                                    .translate(
-                                                        "added-to-wishlist"),
-                                                gravity: ToastGravity.BOTTOM);
-                                            BlocProvider.of<WishListBloc>(context)
-                                                .add(AddToWishList(
-                                                    wishListItem: new WishListItem(
-                                                        product:
-                                                            productListResponse
-                                                                    .products[
-                                                                index])));
-                                          } else {
-                                            Fluttertoast.showToast(
-                                                msg: AppLocalizations.of(context)
-                                                    .translate(
-                                                        "removed-from-wishlist"),
-                                                gravity: ToastGravity.BOTTOM);
-
-                                            BlocProvider.of<WishListBloc>(context)
-                                                .add(DeleteWishListItem(
-                                                    wishListItem: new WishListItem(
-                                                        product:
-                                                            productListResponse
-                                                                    .products[
-                                                                index])));
-                                          }
-
-                                          context.bloc<ProductBloc>().add(
-                                              UpdateMarkAsWishListed(
-                                                  productListResponse:
-                                                      productListResponse));
-                                        },
-                                        child: Icon(
-                                          FontAwesomeIcons.heart,
-                                          size: 20,
-                                          color: productListResponse
-                                                          .products[index]
-                                                          .isWishListed !=
-                                                      null &&
-                                                  productListResponse
-                                                      .products[index]
-                                                      .isWishListed
-                                              ? Colors.pink
-                                              : Colors.grey,
-                                        ),
-                                      )
+//                                      GestureDetector(
+//                                        onTap: () {
+//                                          if (productListResponse
+//                                                  .products[index].isWishListed ==
+//                                              null)
+//                                            productListResponse.products[index]
+//                                                .isWishListed = true;
+//                                          else
+//                                            productListResponse.products[index]
+//                                                    .isWishListed =
+//                                                !productListResponse
+//                                                    .products[index].isWishListed;
+//
+//                                          if (productListResponse
+//                                              .products[index].isWishListed) {
+//                                            Fluttertoast.showToast(
+//                                                fontSize: 12,
+//                                                toastLength: Toast.LENGTH_LONG,
+//                                                msg: AppLocalizations.of(context)
+//                                                    .translate(
+//                                                        "added-to-wishlist"),
+//                                                gravity: ToastGravity.BOTTOM);
+//                                            BlocProvider.of<WishListBloc>(context)
+//                                                .add(AddToWishList(
+//                                                    wishListItem: new WishListItem(
+//                                                        product:
+//                                                            productListResponse
+//                                                                    .products[
+//                                                                index])));
+//                                          } else {
+//                                            Fluttertoast.showToast(
+//                                                msg: AppLocalizations.of(context)
+//                                                    .translate(
+//                                                        "removed-from-wishlist"),
+//                                                gravity: ToastGravity.BOTTOM);
+//
+//                                            BlocProvider.of<WishListBloc>(context)
+//                                                .add(DeleteWishListItem(
+//                                                    wishListItem: new WishListItem(
+//                                                        product:
+//                                                            productListResponse
+//                                                                    .products[
+//                                                                index])));
+//                                          }
+//
+//                                          context.bloc<ProductBloc>().add(
+//                                              UpdateMarkAsWishListed(
+//                                                  productListResponse:
+//                                                      productListResponse));
+//                                        },
+//                                        child: Icon(
+//                                          FontAwesomeIcons.heart,
+//                                          size: 20,
+//                                          color: productListResponse
+//                                                          .products[index]
+//                                                          .isWishListed !=
+//                                                      null &&
+//                                                  productListResponse
+//                                                      .products[index]
+//                                                      .isWishListed
+//                                              ? Colors.pink
+//                                              : Colors.grey,
+//                                        ),
+//                                      )
                                     ],
                                   ),
                                   Padding(
@@ -274,27 +274,110 @@ class ProductListContainer extends StatelessWidget {
                     )),
 
                     ///overall rating
-                    productListResponse.products[index].overallRating != 0.0
-                        ? Align(
-                            alignment: Alignment.topRight,
-                            child: Card(
-                              elevation: 0,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Text(productListResponse
-                                      .products[index].overallRating
-                                      .toString()),
-                                  Icon(
-                                    Icons.star,
-                                    size: 16,
-                                    color: Colors.blueGrey[900],
-                                  )
-                                ],
+                    Align(
+                      alignment: Alignment.topRight,
+
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              productListResponse.products[index].overallRating != 0.0
+                                  ? Card(
+                                    elevation: 0,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Text(productListResponse
+                                            .products[index].overallRating
+                                            .toString()),
+                                        Icon(
+                                          Icons.star,
+                                          size: 16,
+                                          color: Colors.blueGrey[900],
+                                        )
+                                      ],
+                                    ),
+                                  ):Container(),
+
+
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: 14,
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    icon: Icon(
+                                      FontAwesomeIcons.heart,
+                                      size: 14,
+                                      color: productListResponse
+                                          .products[index]
+                                          .isWishListed !=
+                                          null &&
+                                          productListResponse
+                                              .products[index]
+                                              .isWishListed
+                                          ? Colors.pink
+                                          : Colors.grey,
+                                    ),
+                                    color: Colors.white,
+                                    onPressed: () {
+                                      if (productListResponse
+                                          .products[index].isWishListed ==
+                                          null)
+                                        productListResponse.products[index]
+                                            .isWishListed = true;
+                                      else
+                                        productListResponse.products[index]
+                                            .isWishListed =
+                                        !productListResponse
+                                            .products[index].isWishListed;
+
+                                      if (productListResponse
+                                          .products[index].isWishListed) {
+                                        Fluttertoast.showToast(
+                                            fontSize: 12,
+                                            toastLength: Toast.LENGTH_LONG,
+                                            msg: AppLocalizations.of(context)
+                                                .translate(
+                                                "added-to-wishlist"),
+                                            gravity: ToastGravity.BOTTOM);
+                                        BlocProvider.of<WishListBloc>(context)
+                                            .add(AddToWishList(
+                                            wishListItem: new WishListItem(
+                                                product:
+                                                productListResponse
+                                                    .products[
+                                                index])));
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg: AppLocalizations.of(context)
+                                                .translate(
+                                                "removed-from-wishlist"),
+                                            gravity: ToastGravity.BOTTOM);
+
+                                        BlocProvider.of<WishListBloc>(context)
+                                            .add(DeleteWishListItem(
+                                            wishListItem: new WishListItem(
+                                                product:
+                                                productListResponse
+                                                    .products[
+                                                index])));
+                                      }
+
+                                      context.bloc<ProductBloc>().add(
+                                          UpdateMarkAsWishListed(
+                                              productListResponse:
+                                              productListResponse));
+                                    },
+                                  ),
+                                ),
                               ),
-                            ),
-                          )
-                        : Container()
+                            ],
+                          ),
+                  )
+
                   ],
                 ),
               );

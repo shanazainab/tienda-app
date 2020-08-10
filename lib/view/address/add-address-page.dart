@@ -8,7 +8,6 @@ import 'package:tienda/bloc/states/address-states.dart';
 import 'package:tienda/model/delivery-address.dart';
 import 'package:tienda/view/address/saved-address-page.dart';
 
-
 class AddAddressPage extends StatefulWidget {
   final bool isEditMode;
 
@@ -45,13 +44,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
       listener: (context, state) {
         if (state is LoadAddressSuccess &&
             (widget.fromCheckOut == null || !widget.fromCheckOut))
-          Navigator.pushReplacement(
-            contextA,
-            MaterialPageRoute(
-                builder: (context) => BlocProvider.value(
-                    value: BlocProvider.of<AddressBloc>(contextA),
-                    child: SavedAddressPage())),
-          );
+          Navigator.of(context).pop();
         else if (state is LoadAddressSuccess && widget.fromCheckOut)
           Navigator.of(context).pop();
       },
@@ -61,6 +54,16 @@ class _AddAddressPageState extends State<AddAddressPage> {
             brightness: Brightness.light,
             title: Text("Add Address"),
           ),
+          bottomNavigationBar: BlocBuilder<AddressBloc, AddressStates>(
+              builder: (context, state) {
+            if (state is Loading)
+              return LinearProgressIndicator();
+            else
+              return Container(
+                height: 0,
+                width: 0,
+              );
+          }),
           body: GestureDetector(
             onTap: () {
               FocusScope.of(context).unfocus();
@@ -131,7 +134,11 @@ class _AddAddressPageState extends State<AddAddressPage> {
                                       MediaQuery.of(context).size.width - 100,
                                   child: RaisedButton(
                                     onPressed: () {
-                                      handleSaveAddress(context);
+                                      FocusScope.of(context).unfocus();
+                                      if (BlocProvider.of<AddressBloc>(context)
+                                          .state is Loading) {
+                                      } else
+                                        handleSaveAddress(context);
                                     },
                                     child: Text(
                                       widget.isEditMode

@@ -1,8 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:global_configuration/global_configuration.dart';
+import 'package:tienda/bloc/events/live-stream-events.dart';
+import 'package:tienda/bloc/live-stream-bloc.dart';
 import 'package:tienda/bloc/presenter-bloc.dart';
 import 'package:tienda/bloc/states/presenter-states.dart';
 import 'package:tienda/localization.dart';
+import 'package:tienda/view/live-stream/video-stream-full-screen.dart';
 import 'package:tienda/view/presenter-profile/seller-profile-main-page.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 
@@ -43,7 +48,6 @@ class _State extends State<SellerProfilesGridView> {
                   child: Padding(
                 padding: const EdgeInsets.only(top: 100.0, bottom: 100),
                 child: GridView.builder(
-
                   controller: scrollController,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3, childAspectRatio: 1.4),
@@ -60,12 +64,25 @@ class _State extends State<SellerProfilesGridView> {
                         children: <Widget>[
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SellerProfilePage(
-                                        state.presenters[index].id)),
-                              );
+                              if (state.presenters[index].isLive) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => BlocProvider(
+                                            create: (BuildContext context) =>
+                                                LiveStreamBloc()
+                                                  ..add(JoinLive(state
+                                                      .presenters[index].id)),
+                                            child: VideoStreamFullScreenView(),
+                                          )),
+                                );
+                              } else
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SellerProfilePage(
+                                          state.presenters[index].id)),
+                                );
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -74,36 +91,27 @@ class _State extends State<SellerProfilesGridView> {
                                 child: Stack(
                                   fit: StackFit.expand,
                                   children: <Widget>[
-//                                  CachedNetworkImage(
-//                                    imageUrl:
-//                                        "${GlobalConfiguration().getString("baseURL")}/${state.presenters[index].profilePicture}",
-//                                    height: 450,
-//                                    width: 350,
-//                                    fit: BoxFit.cover,
-//                                    placeholder: (context, url) => ClipRRect(
-//                                      borderRadius: BorderRadius.circular(16),
-//                                      child: Container(
-//                                        height: 450,
-//                                        width: 350,
-//                                        color: Color(0xfff2f2e4),
-//                                      ),
-//                                    ),
-//                                    errorWidget: (context, url, error) =>
-//                                        Container(
-//                                      height: 450,
-//                                      width: 350,
-//                                      color: Color(0xfff2f2e4),
-//                                    ),
-//                                  ),
-
-                                         Image.asset(
-                                            "assets/images/avatartwo.jpeg",
-                                            height: 450,
-                                                                         fit: BoxFit.cover,
-
+                                    CachedNetworkImage(
+                                      imageUrl:
+                                          "${GlobalConfiguration().getString("baseURL")}/${state.presenters[index].profilePicture}",
+                                      height: 450,
                                       width: 350,
-                                          ),
-
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => ClipRRect(
+                                        borderRadius: BorderRadius.circular(16),
+                                        child: Container(
+                                          height: 450,
+                                          width: 350,
+                                          color: Color(0xfff2f2e4),
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                        height: 450,
+                                        width: 350,
+                                        color: Color(0xfff2f2e4),
+                                      ),
+                                    ),
                                     Align(
                                       alignment: Alignment.bottomCenter,
                                       child: Padding(

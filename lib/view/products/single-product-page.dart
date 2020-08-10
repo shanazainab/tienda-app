@@ -6,15 +6,19 @@ import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/events/review-events.dart';
+import 'package:tienda/bloc/events/wishlist-events.dart';
 import 'package:tienda/bloc/review-bloc.dart';
 import 'package:tienda/bloc/single-product-bloc.dart';
 import 'package:tienda/bloc/states/product-states.dart';
+import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/cart.dart';
+import 'package:tienda/model/wishlist.dart';
 import 'package:tienda/view/live-stream/video-playout.dart';
 import 'package:tienda/view/products/add-customer-review-container.dart';
 import 'package:tienda/view/products/customer-overall-rating-block.dart';
 import 'package:tienda/view/products/customer-reviews-container.dart';
+import 'package:tienda/view/products/presenter-info-container.dart';
 import 'package:tienda/view/products/product-description-container.dart';
 import 'package:tienda/view/products/product-info-container.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
@@ -70,7 +74,13 @@ class _SingleProductPageState extends State<SingleProductPage> {
                   children: <Widget>[
                     Expanded(
                       child: FlatButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          ///ADD TO WISHLIST
+                          BlocProvider.of<WishListBloc>(context).add(
+                              AddToWishList(
+                                  wishListItem: new WishListItem(
+                                      product: state.product)));
+                        },
                         child: Text(AppLocalizations.of(context)
                             .translate('wishlist')
                             .toUpperCase()),
@@ -158,10 +168,22 @@ class _SingleProductPageState extends State<SingleProductPage> {
                             )
                           : Container(),
                       ProductInfoContainer(state.product),
+                      state.product.presenter != null
+                          ? Column(
+                              children: [
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                PresenterInfoContainer(state.product.presenter),
+                              ],
+                            )
+                          : Container(),
+
                       SizedBox(
                         height: 10,
                       ),
                       ProductDescriptionContainer(state.product.specs),
+
                       SizedBox(
                         height: 10,
                       ),
@@ -203,15 +225,14 @@ class _SingleProductPageState extends State<SingleProductPage> {
                                             height: 10,
                                           )
                                         : Container(),
-                                     BlocProvider.value(
-                                            value: BlocProvider.of<ReviewBloc>(
-                                                context)
-                                              ..add(LoadReview(
-                                                  state.product.reviews)),
-                                            child: CustomerReviewContainer(
-                                                state.product.reviews),
-                                          )
-
+                                    BlocProvider.value(
+                                      value: BlocProvider.of<ReviewBloc>(
+                                          context)
+                                        ..add(
+                                            LoadReview(state.product.reviews)),
+                                      child: CustomerReviewContainer(
+                                          state.product.reviews),
+                                    )
                                   ],
                                 ),
                               ),
@@ -221,7 +242,19 @@ class _SingleProductPageState extends State<SingleProductPage> {
                   ),
                 );
               } else
-                return Container();
+                return Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  ),
+                );
             })));
   }
 }
