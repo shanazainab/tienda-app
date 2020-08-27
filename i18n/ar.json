@@ -23,7 +23,7 @@
   "edit-profile": "تعديل الملف الشخصي",
   "following": "التالية",
   "help": "مساعدة",
-
+  "messages": "الرسائل",
 
   "2": "HOME PAGE BOTTOM NAV BAR",
   "home": "الرئيسية",
@@ -56,7 +56,8 @@
   "order-number": "رقم الأمر",
   "ordered": "طلب",
   "delivery": "ايصال",
-
+  "canceled": "ألغيت",
+  "order-details": "تفاصيل الطلب",
 
 
   "6": "CART PAGE",
@@ -71,8 +72,9 @@
   "delivery-charge": "رسوم التوصيل",
   "total": "مجموع",
   "free": "مجانا",
-
-
+  "shopping-bag": "كيس التسوق",
+  "subtotal": "المجموع الفرعي",
+  "total-discount": "إجمالي الخصم",
 
   "7": "WISHLIST PAGE",
   "move-to-cart": "أضف الى الحقيبة",
@@ -94,6 +96,13 @@
   "9": "FILTER AND SORT",
   "filter": "مرشح",
   "sort": "فرز",
+  "clear-all": "امسح الكل",
+  "close": "أغلق",
+  "apply": "التنفيذ",
+  "sort-by": "صنف حسب",
+  "rating": "تقييم",
+  "price-low-to-high": "السعر من الأقل إلى الأعلى",
+  "price-high-to-low": "السعر من الأعلى إلى الأقل",
 
 
   "10": "SELLER PROFILE MAIN PAGE",
@@ -152,7 +161,7 @@
   "specification": "يعدل أو يكيف",
   "description":"وصف",
   "customer-rating": "تقييم العملاء",
-  "customer-review": "رأي العملاء",
+  "reviews": "مراجعة",
   "add-to-cart": "أضف إلى السلة",
   "add-your-review": "أضف تعليقك",
   "submit": "إرسال",
@@ -162,7 +171,38 @@
 
   "17": "PRODUCT LIST CONTAINER",
   "added-to-wishlist": "أضيف لقائمة الأماني",
-  "removed-from-wishlist": "تمت إزالته من قائمة الرغبات"
+  "removed-from-wishlist": "تمت إزالته من قائمة الرغبات",
+
+  "18": "ORDER DETAILS PAGE",
+  "order-status": "حالة الطلب",
+  "delivery-address": "عنوان التسليم",
+  "payment-method": "طريقة الدفع او السداد",
+  "cash-on-delivery": "الدفع عند الاستلام",
+  "cancel-order": "إلغاء الأمر",
+  "return-order": "أمر العودة",
+
+
+
+  "19": "DELIVERY ADDRESS",
+  "add-new-address": "أضف عنوانا جديدا",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "fetching-address": "إحضار العنوان",
+  "confirm-location": "تأكيد الموقع",
+  "contact-person": "الشخص الذي يمكن الاتصال به",
+  "name": "اسم",
+  "phone-number": "رقم الهاتف",
+  "location": "موقعك",
+  "apartment": "شقة",
+  "villa": "فيلا",
+  "office": "مكتب",
+  "floor-number": "رقم الطابق",
+  "set-as-default": "تعيين كافتراضي",
+  "save-address": "حفظ العنوان",
+  "add-address": "اضف عنوان",
+  "instruction": "تعليمات"
+
+
 
 
 }

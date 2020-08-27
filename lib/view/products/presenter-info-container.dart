@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:tienda/bloc/events/follow-events.dart';
 import 'package:tienda/bloc/follow-bloc.dart';
 import 'package:tienda/bloc/states/follow-states.dart';
@@ -44,6 +45,9 @@ class _PresenterInfoContainerState extends State<PresenterInfoContainer> {
                 children: [
                   CircleAvatar(
                     maxRadius: 20,
+                    backgroundColor: Colors.grey[200],
+                    backgroundImage: NetworkImage(
+                        "${GlobalConfiguration().getString("imageURL")}/${widget.presenter.profilePicture}"),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
@@ -52,15 +56,18 @@ class _PresenterInfoContainerState extends State<PresenterInfoContainer> {
                 ],
               ),
               BlocBuilder<FollowBloc, FollowStates>(
-                  bloc: followBloc,
+                  cubit: followBloc,
                   builder: (context, substate) {
                     if (substate is ChangeFollowStatusSuccess)
-                      return RaisedButton(
+                      return OutlineButton(
+                        color: Colors.black,
+                        borderSide: BorderSide(
+                            color: Colors.black
+                        ),
                         onPressed: () {
                           followBloc
                               .add(ChangeFollowStatus(widget.presenter.id));
                         },
-                        color: Colors.blue,
                         child: substate.isFollowing
                             ? Row(
                               children: [
@@ -68,20 +75,24 @@ class _PresenterInfoContainerState extends State<PresenterInfoContainer> {
                                   color: Colors.white
                                 ),),
                                 Icon(Icons.check,
-                                 color: Colors.white,
                                 size: 14,)
                               ],
                             )
                             : Text(AppLocalizations.of(context)
                                 .translate("follow")),
                       );
-                    return RaisedButton(
+                    return OutlineButton(
+                      color: Colors.black,
+                      borderSide: BorderSide(
+                        color: Colors.black
+                      ),
                       onPressed: () {
                         followBloc.add(ChangeFollowStatus(widget.presenter.id));
                       },
-                      color: Colors.blue,
                       child: widget.presenter.isFollowed
-                          ? Text("Following")
+                          ? Text("Following",style: TextStyle(
+
+                      ),)
                           : Text(
                               AppLocalizations.of(context).translate("follow")),
                     );

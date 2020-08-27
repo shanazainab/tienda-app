@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/localization.dart';
+import 'package:tienda/model/product.dart';
 
 import '../../app-language.dart';
 
 class DealsBlock extends StatelessWidget {
+  final List<Product> dealOfTheDayList;
+
+
+  DealsBlock(this.dealOfTheDayList);
+
   @override
   Widget build(BuildContext context) {
     var appLanguage = Provider.of<AppLanguage>(context);
@@ -29,14 +35,14 @@ class DealsBlock extends StatelessWidget {
     height: appLanguage.appLocal == Locale('en')?120:145,
 
             child:ListView.builder(
-                itemCount: 10,
+                itemCount: dealOfTheDayList.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (BuildContext context,int index){
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
                   elevation: 0,
-                  color: Colors.grey,
+                  color: index.isEven?Colors.grey:Colors.black,
                   child: Padding(
                     padding: const EdgeInsets.only(top:24,left:8.0,right: 24),
                     child: Column(
@@ -44,15 +50,20 @@ class DealsBlock extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text("Up To",style: TextStyle(
-                          fontSize: 14
+                          fontSize: 14,
+                            color:index.isEven?Colors.black:Colors.white
                         ),),
-                        Text("50%",
+                        Text("${dealOfTheDayList[index].discount} % OFF",
                         style: TextStyle(
-                          fontSize: 24
+                          fontSize: 24,
+                            color:index.isEven?Colors.black:Colors.white
+
                         ),),
                         Text("OFF",
                         style: TextStyle(
-                          fontSize: 14
+                          fontSize: 14,
+                            color:index.isEven?Colors.black:Colors.white
+
                         ),)
                       ],
                     ),

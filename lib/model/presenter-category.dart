@@ -17,26 +17,30 @@ class PresenterCategory {
   PresenterCategory({
     this.status,
     this.response,
+    this.membership,
   });
 
+  /// "membership": "premium"
   int status;
   List<Response> response;
+  String membership;
 
   factory PresenterCategory.fromJson(Map<String, dynamic> json) =>
       PresenterCategory(
-        status: json["status"],
-        response: List<Response>.from(
-            json["response"].map((x) => Response.fromJson(x))),
-      );
+          status: json["status"],
+          response: List<Response>.from(
+              json["response"].map((x) => Response.fromJson(x))),
+          membership: json['membership']);
 
   Map<String, dynamic> toJson() => {
         "status": status,
         "response": List<dynamic>.from(response.map((x) => x.toJson())),
+        "membership": membership
       };
 
   @override
   String toString() {
-    return 'PresenterCategory{status: $status, response: $response}';
+    return 'PresenterCategory{status: $status, response: $response, membership: $membership}';
   }
 }
 
@@ -54,7 +58,7 @@ class Response {
   List<Presenter> presenters;
 
   factory Response.fromJson(Map<String, dynamic> json) {
-    Response response ;
+    Response response;
     try {
       response = Response(
         nameEn: json["name_en"],
@@ -63,7 +67,7 @@ class Response {
         presenters: List<Presenter>.from(
             json["presenters"].map((x) => Presenter.fromJson(x))),
       );
-    }catch(err){
+    } catch (err) {
       Logger().e(err);
     }
 

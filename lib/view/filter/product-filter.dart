@@ -9,6 +9,8 @@ import 'package:tienda/view/filter/filter-grid-view-container.dart';
 import 'package:tienda/view/filter/filter-listview-search-container.dart';
 import 'package:tienda/view/filter/fliter-slider-container.dart';
 
+import '../../localization.dart';
+
 class ProductFilter extends StatefulWidget {
   final List<PLR.Filter> availableFilters;
   final String query;
@@ -36,14 +38,14 @@ class _ProductFilterState extends State<ProductFilter> {
       appBar: AppBar(
         elevation: 0,
         brightness: Brightness.light,
-        title: Text("Filters"),
+        title: Text(AppLocalizations.of(context).translate('filter')),
         actions: <Widget>[
           FlatButton(
             onPressed: () {
               handleFilterClear();
             },
             child: Text(
-              "CLEAR ALL",
+              AppLocalizations.of(context).translate('clear-all').toUpperCase(),
               style: TextStyle(fontSize: 12),
             ),
           )
@@ -56,7 +58,7 @@ class _ProductFilterState extends State<ProductFilter> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('CLOSE'),
+              child: Text(AppLocalizations.of(context).translate('close').toUpperCase()),
             ),
           ),
           Expanded(
@@ -64,7 +66,7 @@ class _ProductFilterState extends State<ProductFilter> {
               onPressed: () {
                 handleFilterApply(contextA);
               },
-              child: Text('APPLY'),
+              child: Text(AppLocalizations.of(context).translate('apply').toUpperCase()),
             ),
           ),
         ],

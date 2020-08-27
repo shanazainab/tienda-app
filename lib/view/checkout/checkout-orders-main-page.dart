@@ -47,7 +47,7 @@ class _CheckoutOrdersMainPageState extends State<CheckoutOrdersMainPage> {
               elevation: 0,
               brightness: Brightness.light,
               title: Text(
-                'Cart',
+                '',
                 style: TextStyle(color: Colors.black, fontSize: 14),
               ),
             ),

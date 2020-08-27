@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,9 +16,11 @@ import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/localization.dart';
+import 'package:tienda/main.dart';
 import 'package:tienda/model/order.dart';
 import 'package:tienda/model/wishlist.dart';
 import 'package:tienda/view/login/login-main-page.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -27,7 +28,6 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  final _selectedCartItem = BehaviorSubject<int>();
 
   @override
   void initState() {
@@ -48,8 +48,17 @@ class _CartPageState extends State<CartPage> {
             children: <Widget>[
               Container(
                 child: ListView(
-                  padding: EdgeInsets.only(bottom: 100),
+                  padding: EdgeInsets.only(bottom: 100,left: 16,right:16),
                   children: <Widget>[
+
+                    Text(AppLocalizations.of(context).translate("shopping-bag"),style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20
+                    ),),
+
+                    SizedBox(
+                      height: 30,
+                    ),
                     ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
@@ -64,21 +73,20 @@ class _CartPageState extends State<CartPage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                CachedNetworkImage(
-                                  imageUrl:
+                                FadeInImage.memoryNetwork(
+
+
+                                  image:
                                       state.cart.products[index].thumbnail,
-                                  width: 150,
-                                  height: 150,
-                                  fit: BoxFit.contain,
-                                  placeholder: (context, url) => Container(
-                                    color: Color(0xfff2f2e4),
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      Icon(Icons.error),
+                                  width: 100,
+                                  height: 120,
+                                  fit: BoxFit.cover,
+                                  placeholder: kTransparentImage,
+
                                 ),
                                 Flexible(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
+                                    padding: const EdgeInsets.only(left:16.0,right:16),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -116,7 +124,6 @@ class _CartPageState extends State<CartPage> {
                                         Row(
                                           children: <Widget>[
                                             GestureDetector(
-
                                               onTap: () {
                                                 if (state.cart.products[index]
                                                         .quantity ==
@@ -124,6 +131,7 @@ class _CartPageState extends State<CartPage> {
                                                   ///delete the item
                                                   ///or don do anything
                                                 } else {
+
                                                   state.cart.products[index]
                                                       .quantity = state
                                                           .cart
@@ -142,8 +150,8 @@ class _CartPageState extends State<CartPage> {
                                               },
                                               child: Icon(
                                                 Icons.arrow_back_ios,
-                                                color: Colors.grey,
-                                                size: 14,
+                                                color: Colors.black,
+                                                size: 16,
                                               ),
                                             ),
                                             Padding(
@@ -151,7 +159,9 @@ class _CartPageState extends State<CartPage> {
                                                   left: 8.0, right: 8),
                                               child: Text(state
                                                   .cart.products[index].quantity
-                                                  .toString()),
+                                                  .toString(),style: TextStyle(
+                                                fontSize: 16
+                                              ),),
                                             ),
                                             GestureDetector(
                                               onTap: () {
@@ -172,84 +182,12 @@ class _CartPageState extends State<CartPage> {
                                               },
                                               child: Icon(
                                                 Icons.arrow_forward_ios,
-                                                color: Colors.grey,
-                                                size: 14,
+                                                color: Colors.black,
+                                                size: 16,
                                               ),
                                             )
                                           ],
                                         ),
-
-                                        ///TODO : PRODUCT OPTION CHANGE
-
-//                                        GestureDetector(
-//                                          onTap: () {
-//                                            if (_selectedCartItem.value !=
-//                                                index)
-//                                              _selectedCartItem.add(index);
-//                                            else
-//                                              _selectedCartItem.add(null);
-//                                          },
-//                                          child: Container(
-//                                            color: Colors.grey[200],
-//                                            child: Row(
-//                                              children: <Widget>[
-//                                                Text("Size:"),
-//                                                Padding(
-//                                                  padding:
-//                                                      const EdgeInsets.only(
-//                                                          left: 8.0, right: 8),
-//                                                  child: Text("ONESIZE"),
-//                                                ),
-//                                              ],
-//                                            ),
-//                                          ),
-//                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        StreamBuilder<int>(
-                                            stream: _selectedCartItem,
-                                            builder: (BuildContext context,
-                                                AsyncSnapshot<int> snapshot) {
-                                              if (snapshot.data != null &&
-                                                  snapshot.data == index) {
-                                                return Container(
-                                                  height: 30,
-                                                  child: ListView.builder(
-                                                      itemCount: 4,
-                                                      shrinkWrap: true,
-                                                      scrollDirection:
-                                                          Axis.horizontal,
-                                                      itemBuilder: (BuildContext
-                                                                  context,
-                                                              int index) =>
-                                                          Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      right:
-                                                                          4.0),
-                                                              child: Container(
-                                                                width: 40,
-                                                                height: 40,
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center,
-                                                                child:
-                                                                    Text("L"),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  shape: BoxShape
-                                                                      .circle,
-                                                                  border: Border.all(
-                                                                      color: Colors
-                                                                          .grey),
-                                                                ),
-                                                              ))),
-                                                );
-                                              } else
-                                                return Container();
-                                            }),
                                       ],
                                     ),
                                   ),
@@ -292,9 +230,6 @@ class _CartPageState extends State<CartPage> {
                                 FlatButton(
                                   padding: EdgeInsets.all(0),
                                   onPressed: () {
-
-
-
                                     BlocProvider.of<WishListBloc>(context)
                                         .add(AddToWishList(
                                             wishListItem: new WishListItem(
@@ -331,7 +266,7 @@ class _CartPageState extends State<CartPage> {
                         ));
                       },
                     ),
-                    if (state.cart != null) priceContainer(state.cart.cartPrice)
+                   // if (state.cart != null) priceContainer(state.cart.cartPrice)
                   ],
                 ),
               ),
@@ -340,39 +275,46 @@ class _CartPageState extends State<CartPage> {
                   alignment: Alignment.bottomCenter,
                   child: Card(
                     margin: EdgeInsets.all(0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            "${AppLocalizations.of(context).translate('aed')} ${(state.cart.cartPrice - 0).toStringAsFixed(2)}",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              "TOTAL: ${AppLocalizations.of(context).translate('aed')} ${(state.cart.cartPrice - 0).toStringAsFixed(2)}",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: RaisedButton(
-                            onPressed: () {
-                              BlocProvider.of<LoginBloc>(context).state
-                                      is GuestUser
-                                  ? Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              LoginMainPage()),
-                                    )
-                                  : BlocProvider.of<CheckOutBloc>(context).add(
-                                      DoUpdateCheckOutProgress(
-                                          order: new Order(),
-                                          status: "ADDRESS"));
-                            },
-                            child: Text(AppLocalizations.of(context)
-                                .translate('checkout')),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width - 50,
+                              child: RaisedButton(
+                                onPressed: () {
+                                  BlocProvider.of<LoginBloc>(context).state
+                                          is GuestUser
+                                      ? Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  LoginMainPage()),
+                                        )
+                                      : BlocProvider.of<CheckOutBloc>(context).add(
+                                          DoUpdateCheckOutProgress(
+                                              order: new Order(),
+                                              status: "ADDRESS"));
+                                },
+                                child: Text(AppLocalizations.of(context)
+                                    .translate('checkout')),
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -381,7 +323,22 @@ class _CartPageState extends State<CartPage> {
         else
           return Container(
             child: Center(
-              child: Text("Cart is Empty"),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.shopping_basket,
+                    size: 40,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top:8.0),
+                    child: Text(
+                      "Your Cart is Empty",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
       },

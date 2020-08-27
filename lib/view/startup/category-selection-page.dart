@@ -11,7 +11,6 @@ import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/preference-states.dart';
 import 'package:tienda/model/category.dart';
 import 'package:tienda/view/home/home-page.dart';
-import 'package:zoom_widget/zoom_widget.dart';
 
 class CategorySelectionPage extends StatefulWidget {
   @override
@@ -31,6 +30,8 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
     super.initState();
     preferenceBloc.add(FetchPreferredCategoryList());
   }
+
+  final transformationController = TransformationController();
 
   @override
   Widget build(BuildContext context) {
@@ -53,25 +54,30 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                 BlocBuilder<PreferenceBloc, PreferenceStates>(
                     builder: (context, state) {
                   if (state is LoadPreferredCategoryListSuccess)
-                    return Zoom(
-                        opacityScrollBars: 0.0,
-                        backgroundColor: Colors.white,
-                        canvasColor: Colors.white,
-                        centerOnScale: true,
-                        enableScroll: true,
-                        doubleTapZoom: true,
-                        zoomSensibility: 2.3,
-                        initZoom: 0.0,
-                        width: 1000,
-                        height: 1800,
-                        child: Center(
-                            child: Padding(
-                          padding:
-                              const EdgeInsets.only(top: 500.0, bottom: 200),
-                          child: ScrollConfiguration(
-                            behavior: CustomBehaviour(),
+                    return Center(
+                      child: SizedBox(
+                        height: 400,
+                        child: InteractiveViewer(
+                            boundaryMargin:
+                                EdgeInsets.only(top: 100.0, bottom: 100),
+                            transformationController: transformationController,
+
+//                        minScale: 0.1,
+//                        maxScale: 1.6,
+
+                            // You can off zooming by setting scaleEnable to false
+                            //scaleEnabled: false,
+                            onInteractionStart: (_) =>
+                                print("Interaction Started"),
+                            onInteractionEnd: (details) {
+                              setState(() {
+                                transformationController.toScene(Offset.zero);
+                              });
+                            },
+                            onInteractionUpdate: (_) =>
+                                print("Interaction Updated"),
                             child: StaggeredGridView.countBuilder(
-                              crossAxisCount: 6,
+                              crossAxisCount: 4,
                               itemCount: state.categories.length,
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (BuildContext context, int index) =>
@@ -96,109 +102,119 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                                     handleNext(context);
                                   }
                                 },
+                                child: Container(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Card(
+                                        elevation: categoryPreferences[state
+                                                        .categories[index]] !=
+                                                    null &&
+                                                categoryPreferences[
+                                                    state.categories[index]]
+                                            ? 8
+                                            : 0,
+                                        clipBehavior: Clip.antiAlias,
+                                        child: CircleAvatar(
+                                          maxRadius: 50.0,
+                                          backgroundColor: Colors.grey[200],
+                                          backgroundImage: NetworkImage(
+                                            state.categories[index].thumbnail,
+                                          ),
+                                        ),
+                                        shape: CircleBorder(),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 4.0),
+                                        child: new Text(
+                                          state.categories[index].nameEn,
+                                          style: TextStyle(
+                                            color: categoryPreferences[
+                                                            state.categories[
+                                                                index]] !=
+                                                        null &&
+                                                    categoryPreferences[
+                                                        state.categories[index]]
+                                                ? Colors.lightBlue
+                                                : Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              staggeredTileBuilder: (int index) =>
+                                  new StaggeredTile.count(
+                                      2, index.isEven ? 2 : 1),
+                              mainAxisSpacing: 4.0,
+                              crossAxisSpacing: 4.0,
+                            )),
+                      ),
+                    );
+                  else
+                    return Center(
+                      child: SizedBox(
+                        height: 400,
+                        child: InteractiveViewer(
+                            boundaryMargin:
+                                EdgeInsets.only(top: 100.0, bottom: 100),
+                            transformationController: transformationController,
+
+//                        minScale: 0.1,
+//                        maxScale: 1.6,
+
+                            // You can off zooming by setting scaleEnable to false
+                            //scaleEnabled: false,
+                            onInteractionStart: (_) =>
+                                print("Interaction Started"),
+                            onInteractionEnd: (details) {
+                              setState(() {
+                                transformationController.toScene(Offset.zero);
+                              });
+                            },
+                            onInteractionUpdate: (_) =>
+                                print("Interaction Updated"),
+                            child: StaggeredGridView.countBuilder(
+                              crossAxisCount: 4,
+                              itemCount: 8,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (BuildContext context, int index) =>
+                                  Container(
                                 child: Column(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     Card(
-                                      elevation: categoryPreferences[state
-                                                      .categories[index]] !=
-                                                  null &&
-                                              categoryPreferences[
-                                                  state.categories[index]]
-                                          ? 8
-                                          : 0,
+                                      elevation: 0,
                                       clipBehavior: Clip.antiAlias,
                                       child: CircleAvatar(
-                                        maxRadius: 120.0,
+                                        maxRadius: 50.0,
                                         backgroundColor: Colors.grey[200],
-                                        backgroundImage: NetworkImage(
-                                          state.categories[index].thumbnail,
-                                        ),
                                       ),
                                       shape: CircleBorder(),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 16.0),
-                                      child: new Text(
-                                        state.categories[index].nameEn,
-                                        style: TextStyle(
-                                          color: categoryPreferences[state
-                                                          .categories[index]] !=
-                                                      null &&
-                                                  categoryPreferences[
-                                                      state.categories[index]]
-                                              ? Colors.lightBlue
-                                              : Colors.black,
-                                          fontSize: 36,
-                                        ),
-                                      ),
+                                      padding: const EdgeInsets.only(top: 4.0),
+                                      child: new Text(""),
                                     ),
                                   ],
                                 ),
                               ),
                               staggeredTileBuilder: (int index) =>
                                   new StaggeredTile.count(
-                                      2, index.isEven ? 3 : 2),
-                              mainAxisSpacing: 20.0,
-                              crossAxisSpacing: 20.0,
-                            ),
-                          ),
-                        )));
-                  else
-                    return Zoom(
-                        opacityScrollBars: 0.0,
-                        backgroundColor: Colors.white,
-                        canvasColor: Colors.white,
-                        centerOnScale: true,
-                        enableScroll: true,
-                        doubleTapZoom: true,
-                        zoomSensibility: 2.3,
-                        initZoom: 0.0,
-                        width: 1000,
-                        height: 1800,
-                        child: Center(
-                            child: Padding(
-                          padding:
-                              const EdgeInsets.only(top: 500.0, bottom: 200),
-                          child: StaggeredGridView.countBuilder(
-                            crossAxisCount: 6,
-                            itemCount: 8,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (BuildContext context, int index) =>
-                                Column(
-                              children: <Widget>[
-                                Card(
-                                  elevation: 0,
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CircleAvatar(
-                                    maxRadius: 120.0,
-                                    backgroundColor: Colors.grey[200],
-                                  ),
-                                  shape: CircleBorder(),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 16.0),
-                                  child: new Text(
-                                    "",
-                                    style: TextStyle(
-                                      fontSize: 36,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            staggeredTileBuilder: (int index) =>
-                                new StaggeredTile.count(
-                                    2, index.isEven ? 3 : 2),
-                            mainAxisSpacing: 20.0,
-                            crossAxisSpacing: 20.0,
-                          ),
-                        )));
+                                      2, index.isEven ? 2 : 1),
+                              mainAxisSpacing: 4.0,
+                              crossAxisSpacing: 4.0,
+                            )),
+                      ),
+                    );
                 }),
                 Align(
                     alignment: Alignment.topCenter,
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 100.0, left: 16, right: 16),
+                      padding:
+                          const EdgeInsets.only(top: 80.0, left: 16, right: 16),
                       child: Text(
                         message,
                         textAlign: TextAlign.center,

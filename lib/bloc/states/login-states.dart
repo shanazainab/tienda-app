@@ -1,10 +1,5 @@
-import 'package:equatable/equatable.dart';
-
-abstract class LoginStates extends Equatable {
+abstract class LoginStates {
   LoginStates();
-
-  @override
-  List<Object> get props => null;
 }
 
 class LoginInitiated extends LoginStates {
@@ -13,45 +8,30 @@ class LoginInitiated extends LoginStates {
 
 class LoginInProgress extends LoginStates {
   LoginInProgress() : super();
-
-  @override
-  List<Object> get props => null;
 }
 
 class LoginSendOTPSuccess extends LoginStates {
   final dynamic response;
 
   LoginSendOTPSuccess(this.response) : super();
-
-  @override
-  List<Object> get props => response;
 }
 
 class LoginSendOTPError extends LoginStates {
   final dynamic error;
 
   LoginSendOTPError({this.error}) : super();
-
-  @override
-  List<Object> get props => error;
 }
 
 class LoginVerifyOTPSuccess extends LoginStates {
   final bool isNewUser;
 
   LoginVerifyOTPSuccess({this.isNewUser}) : super();
-
-  @override
-  List<Object> get props => [isNewUser];
 }
 
 class LoginVerifyOTPError extends LoginStates {
   final String error;
 
   LoginVerifyOTPError({this.error}) : super();
-
-  @override
-  List<Object> get props => [error];
 }
 
 class GoogleSignInResponse extends LoginStates {
@@ -62,9 +42,6 @@ class GoogleSignInResponse extends LoginStates {
   final int response;
 
   GoogleSignInResponse({this.response}) : super();
-
-  @override
-  List<Object> get props => [response];
 }
 
 class FacebookSignInResponse extends LoginStates {
@@ -75,51 +52,30 @@ class FacebookSignInResponse extends LoginStates {
   final int response;
 
   FacebookSignInResponse({this.response}) : super();
-
-  @override
-  List<Object> get props => [response];
 }
 
 class CustomerRegistrationInProgress extends LoginStates {
   CustomerRegistrationInProgress() : super();
-
-  @override
-  List<Object> get props => null;
 }
 
 class CustomerRegistrationSuccess extends LoginStates {
   CustomerRegistrationSuccess() : super();
-
-  @override
-  List<Object> get props => null;
 }
 
 class LogoutSuccess extends LoginStates {
   LogoutSuccess() : super();
-
-  @override
-  List<Object> get props => [];
 }
 
 class LogoutError extends LoginStates {
   final String error;
 
   LogoutError({this.error}) : super();
-
-  @override
-  List<Object> get props => [error];
 }
 
 class LoggedInUser extends LoginStates {
   LoggedInUser() : super();
-
-  @override
-  List<Object> get props => null;
 }
 
 class GuestUser extends LoginStates {
   GuestUser() : super();
-
-  @override
-  List<Object> get props => null;
 }

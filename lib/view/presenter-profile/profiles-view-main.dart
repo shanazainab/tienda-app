@@ -12,12 +12,19 @@ class SellerProfileViewsMain extends StatefulWidget {
 
 class _SellerProfileViewsMainState extends State<SellerProfileViewsMain> {
   List<bool> isSelected = [true, false];
+  PresenterBloc presenterBloc = new PresenterBloc();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    presenterBloc.add(LoadPresenterList());
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) =>
-          PresenterBloc()..add(LoadPresenterList()),
+      create: (BuildContext context) => presenterBloc,
       child: Scaffold(
         body: Stack(
           children: <Widget>[

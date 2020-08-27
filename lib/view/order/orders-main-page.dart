@@ -23,49 +23,46 @@ class OrdersMainPage extends StatelessWidget {
                   isScrollable: true,
                   indicatorColor: Colors.blue,
                   labelColor: Colors.grey,
-                  labelStyle: TextStyle(
-                    fontSize: 12
-                  ),
+                  labelStyle: TextStyle(fontSize: 12),
                   unselectedLabelColor: Colors.grey,
                   unselectedLabelStyle: TextStyle(color: Colors.grey),
                   tabs: [
                     Tab(
-                      text: AppLocalizations.of(context).translate("all"),
+                      text: AppLocalizations.of(context).translate("all").toUpperCase(),
                     ),
                     Tab(
-                      text: AppLocalizations.of(context).translate("delivered"),
+                      text: AppLocalizations.of(context).translate("delivered").toUpperCase(),
                     ),
                     Tab(
-                      text: 'CANCELED',
+                      text: AppLocalizations.of(context).translate("canceled").toUpperCase(),
                     ),
                     Tab(
-                      text: 'RETURNS',
+                      text: AppLocalizations.of(context).translate("returns").toUpperCase(),
                     ),
                   ]),
             ),
             body: state is LoadOrderDataSuccess
                 ? TabBarView(children: [
-                    OrdersListContainer(context,state.allOrders, "all"),
-              OrdersListContainer(context,state.allOrders, 'canceled'),
-                    OrdersListContainer(context,state.allOrders, 'delivered'),
-              OrdersListContainer(context,state.allOrders, 'return-_request'),
-
-            ])
+                    OrdersListContainer(context, state.allOrders, "all"),
+                    OrdersListContainer(context, state.allOrders, 'delivered'),
+                    OrdersListContainer(context, state.allOrders, 'canceled'),
+                    OrdersListContainer(
+                        context, state.allOrders, 'return_request'),
+                  ])
                 : Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: Colors.white,
-              child: Center(
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    color: Colors.white,
+                    child: Center(
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-
-            ),
           ));
     });
   }

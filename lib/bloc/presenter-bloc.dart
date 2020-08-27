@@ -10,12 +10,12 @@ import 'package:tienda/api/presenter-api-client.dart';
 import 'package:tienda/bloc/events/presenter-events.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/bloc/states/presenter-states.dart';
+import 'package:tienda/model/live-presenter-response.dart';
 import 'package:tienda/model/presenter-category.dart';
 import 'package:tienda/model/presenter.dart';
 
 class PresenterBloc extends Bloc<PresenterEvents, PresenterStates> {
-  @override
-  PresenterStates get initialState => Loading();
+  PresenterBloc() : super(Loading());
 
   @override
   Stream<PresenterStates> mapEventToState(PresenterEvents event) async* {
@@ -24,6 +24,37 @@ class PresenterBloc extends Bloc<PresenterEvents, PresenterStates> {
     }
     if (event is LoadPresenterDetails) {
       yield* _mapLoadPresenterDetailsToStates(event);
+    }
+    if (event is LoadLivePresenter) {
+      yield* _mapLivePresentersToStates(event);
+    }
+  }
+
+  Stream<PresenterStates> _mapLivePresentersToStates(
+      LoadLivePresenter event) async* {
+    LivePresenterResponse livePresenterResponse;
+
+    final dio = Dio();
+    String value = await FlutterSecureStorage().read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
+    PresenterApiClient presenterApiClient = PresenterApiClient(dio,
+        baseUrl: GlobalConfiguration().getString("baseURL"));
+    await presenterApiClient.getLivePresenters().then((response) {
+      log("GET-LIVE-PRESENTERS-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          livePresenterResponse = livePresenterResponseFromJson(response);
+          break;
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+        Logger().e("GET-LIVE-PRESENTERS-ERROR:", error);
+      }
+    });
+
+    if (livePresenterResponse != null) {
+      yield LoadLivePresenterSuccess(livePresenterResponse.presenters);
     }
   }
 
@@ -37,7 +68,7 @@ class PresenterBloc extends Bloc<PresenterEvents, PresenterStates> {
     PresenterApiClient presenterApiClient = PresenterApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await presenterApiClient.getPresenterList().then((response) {
-      Logger().d("GET-PRESENTER-LIST-RESPONSE:$response");
+      log("GET-PRESENTER-LIST-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           presenterCategory = presenterCategoryFromJson(response);
@@ -62,6 +93,7 @@ class PresenterBloc extends Bloc<PresenterEvents, PresenterStates> {
   Stream<PresenterStates> _mapLoadPresenterDetailsToStates(
       LoadPresenterDetails event) async* {
     final dio = Dio();
+    String status;
     Presenter presenter;
 
     String value = await FlutterSecureStorage().read(key: "session-id");
@@ -74,8 +106,12 @@ class PresenterBloc extends Bloc<PresenterEvents, PresenterStates> {
       log("GET-PRESENTER-DETAILS-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
+          status = "SUCCESS";
           presenter = presenterFromJson(
               json.encode(json.decode(response)['presenter']));
+          break;
+        case 404:
+          status = "NOT_AUTHORIZED";
           break;
       }
     }).catchError((err) {

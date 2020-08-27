@@ -40,7 +40,7 @@ class CountryListCard extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               leading: Image.network(
-                "${GlobalConfiguration().getString("baseURL")}${countries[index].thumbnail}",
+                "${GlobalConfiguration().getString("imageURL")}${countries[index].thumbnail}",
                 width: 30,
                 height: 20,
                 fit: BoxFit.cover,
@@ -48,7 +48,6 @@ class CountryListCard extends StatelessWidget {
               trailing: Text(
                 "+${NumberFormat().format(int.parse(countries[index].countryCode))}",
                 locale: Locale('ar'),
-
               ),
             );
           }),

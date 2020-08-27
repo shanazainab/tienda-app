@@ -108,7 +108,7 @@ class _LoginWithMobileNumberState extends State<LoginWithMobileNumber> {
                         child: Row(
                           children: <Widget>[
                             Image.network(
-                              "${GlobalConfiguration().getString("baseURL")}${appCountry.chosenCountry.thumbnail}",
+                              "${GlobalConfiguration().getString("imageURL")}${appCountry.chosenCountry.thumbnail}",
                               width: 25,
                               height: 15,
                               fit: BoxFit.cover,

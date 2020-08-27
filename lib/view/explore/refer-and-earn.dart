@@ -119,7 +119,7 @@ class Invite extends StatelessWidget {
   Future<void> handleReferralShare(context) async {
     ///create dynamic link for referral
     final DynamicLinkParameters parameters = DynamicLinkParameters(
-      uriPrefix: 'https://beuniquegroup.page.link/amTC',
+      uriPrefix: 'https://l.tienda.ae/referral',
       link: Uri.parse('https://tienda.ae/'),
       androidParameters: AndroidParameters(
         packageName: 'com.beuniquegroup.tienda',
@@ -129,10 +129,10 @@ class Invite extends StatelessWidget {
       ),
     );
 
-    final Uri dynamicUrl = await parameters.buildUrl();
-
+    final ShortDynamicLink shortDynamicLink = await parameters.buildShortLink();
+    final Uri shortUrl = shortDynamicLink.shortUrl;
     final RenderBox box = context.findRenderObject();
-    Share.share("$dynamicUrl",
+    Share.share("$shortUrl",
         subject: "It doesn't get better than this! Download Tienda App Now !!",
         sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
   }

@@ -1,21 +1,26 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/events/order-events.dart';
 import 'package:tienda/bloc/orders-bloc.dart';
+import 'package:tienda/localization.dart';
 import 'package:tienda/model/order.dart';
 import 'package:tienda/view/order/order-details-page.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class OrdersListContainer extends StatelessWidget {
   final BuildContext contextA;
   final List<Order> orders;
   final String type;
 
-  OrdersListContainer(this.contextA,this.orders, this.type);
+  OrdersListContainer(this.contextA, this.orders, this.type);
 
   @override
   Widget build(BuildContext context) {
+    var appLanguage = Provider.of<AppLanguage>(context);
+
     return Container(
       color: Colors.grey[200],
       child: ListView.builder(
@@ -30,7 +35,8 @@ class OrdersListContainer extends StatelessWidget {
                           contextA,
                           MaterialPageRoute(
                               builder: (context) => BlocProvider.value(
-                                    value: BlocProvider.of<OrdersBloc>(contextA),
+                                    value:
+                                        BlocProvider.of<OrdersBloc>(contextA),
                                     child: OrdersDetailsPage(orders[index]),
                                   )),
                         );
@@ -42,8 +48,26 @@ class OrdersListContainer extends StatelessWidget {
                           padding: EdgeInsets.all(16),
                           shrinkWrap: true,
                           children: <Widget>[
-                            Text(
-                              "ORDER NO: ${orders[index].orderUuid}",
+                            ///  order-number
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${AppLocalizations.of(context).translate('order-number')}: ",
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                  Text(
+                                    "${orders[index].orderUuid}",
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
@@ -53,7 +77,7 @@ class OrdersListContainer extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Text(
-                                    DateFormat('dd-MM-yyyy')
+                                    new DateFormat.yMMMMd('en_US')
                                         .format(orders[index].createdAt),
                                   ),
                                   Text(
@@ -91,20 +115,15 @@ class OrdersListContainer extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
-                                            CachedNetworkImage(
-                                              imageUrl: orders[index]
+                                            FadeInImage.memoryNetwork(
+                                              image: orders[index]
                                                   .products[subIndex]
                                                   .thumbnail,
                                               width: 90,
                                               height: 90,
                                               fit: BoxFit.cover,
-                                              placeholder: (context, url) =>
-                                                  Container(
-                                                color: Color(0xfff2f2e4),
-                                              ),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      Icon(Icons.error),
+                                              placeholder: kTransparentImage,
+
                                             ),
                                             Padding(
                                               padding:
@@ -121,9 +140,16 @@ class OrdersListContainer extends StatelessWidget {
                                                       MainAxisAlignment.start,
                                                   children: <Widget>[
                                                     Text(
-                                                      orders[index]
-                                                          .products[subIndex]
-                                                          .nameEn,
+                                                      appLanguage.appLocal ==
+                                                              Locale("en")
+                                                          ? orders[index]
+                                                              .products[
+                                                                  subIndex]
+                                                              .nameEn
+                                                          : orders[index]
+                                                              .products[
+                                                                  subIndex]
+                                                              .nameAr,
                                                       softWrap: true,
                                                       overflow:
                                                           TextOverflow.ellipsis,
@@ -133,7 +159,7 @@ class OrdersListContainer extends StatelessWidget {
                                                           const EdgeInsets.only(
                                                               top: 8.0),
                                                       child: Text(
-                                                          "AED ${orders[index].products[subIndex].price}"),
+                                                          "${AppLocalizations.of(context).translate('aed')} ${orders[index].products[subIndex].price}"),
                                                     ),
                                                   ],
                                                 ),

@@ -8,7 +8,7 @@ typedef SelectedImage = Function(File image);
 class ImageOptionDialogue extends StatelessWidget {
   final SelectedImage selectedImage;
 
-  ImageOptionDialogue({ this.selectedImage});
+  ImageOptionDialogue({this.selectedImage});
 
   final picker = ImagePicker();
 
@@ -19,11 +19,12 @@ class ImageOptionDialogue extends StatelessWidget {
   }
 
   Future takeImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    print("CAMERA IMAGE");
+    final pickedFile = await picker
+        .getImage(source: ImageSource.camera);
 
     selectedImage(File(pickedFile.path));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +37,7 @@ class ImageOptionDialogue extends StatelessWidget {
               onPressed: () {
                 ///close the modal bottom sheet
                 Navigator.of(context).pop();
-
-
+                takeImage();
               },
               child: Text("Take A Photo")),
           FlatButton(

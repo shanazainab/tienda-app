@@ -14,7 +14,7 @@ class RecentSearchBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SearchHistoryBloc, SearchStates>(
-        bloc: SearchHistoryBloc()..add(LoadSearchHistory()),
+        cubit: SearchHistoryBloc()..add(LoadSearchHistory()),
         builder: (context, state) {
           if (state is LoadSearchHistoryComplete)
             return state.searchHistoryResponse.history.isNotEmpty
@@ -67,7 +67,7 @@ class RecentSearchBlock extends StatelessWidget {
                                                       )
                                                     ],
                                                     child: ProductListPage(
-                                                      title: state
+                                                      titleInEnglish: state
                                                           .searchHistoryResponse
                                                           .history[index]
                                                           .query,

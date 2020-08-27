@@ -138,18 +138,10 @@ PODS:
     - Flutter
     - Mantle
     - SDWebImageWebPCoder
-  - flutter_playout (0.0.1):
-    - Flutter
   - flutter_secure_storage (3.3.1):
     - Flutter
-  - flutter_vlc_player (3.0.2):
-    - Flutter
-    - MobileVLCKit (~> 3.3.12)
   - fluttertoast (0.0.2):
     - Flutter
-  - FMDB (2.7.5):
-    - FMDB/standard (= 2.7.5)
-  - FMDB/standard (2.7.5)
   - "geolocator (5.3.2+2)":
     - Flutter
   - google_maps_flutter (0.0.1):
@@ -237,7 +229,6 @@ PODS:
   - Mantle (2.1.1):
     - Mantle/extobjc (= 2.1.1)
   - Mantle/extobjc (2.1.1)
-  - MobileVLCKit (3.3.13)
   - nanopb (1.30905.0):
     - nanopb/decode (= 1.30905.0)
     - nanopb/encode (= 1.30905.0)
@@ -265,13 +256,8 @@ PODS:
   - speech_to_text (0.0.1):
     - Flutter
     - Try
-  - sqflite (0.0.1):
-    - Flutter
-    - FMDB (~> 2.7.2)
   - Try (2.1.1)
   - video_player (0.0.1):
-    - Flutter
-  - wakelock (0.0.1):
     - Flutter
   - ZendeskAnswerBotProvidersSDK (2.0.5):
     - ZendeskSupportProvidersSDK (~> 5.0.5)
@@ -312,9 +298,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_facebook_login (from `.symlinks/plugins/flutter_facebook_login/ios`)
   - flutter_image_compress (from `.symlinks/plugins/flutter_image_compress/ios`)
-  - flutter_playout (from `.symlinks/plugins/flutter_playout/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
-  - flutter_vlc_player (from `.symlinks/plugins/flutter_vlc_player/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - geolocator (from `.symlinks/plugins/geolocator/ios`)
   - google_maps_flutter (from `.symlinks/plugins/google_maps_flutter/ios`)
@@ -327,9 +311,7 @@ DEPENDENCIES:
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sms_autofill (from `.symlinks/plugins/sms_autofill/ios`)
   - speech_to_text (from `.symlinks/plugins/speech_to_text/ios`)
-  - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - video_player (from `.symlinks/plugins/video_player/ios`)
-  - wakelock (from `.symlinks/plugins/wakelock/ios`)
   - ZendeskAnswerBotSDK
   - ZendeskChatSDK
   - ZendeskSupportSDK
@@ -354,7 +336,6 @@ SPEC REPOS:
     - FirebaseMLVisionBarcodeModel
     - FirebaseMLVisionLabelModel
     - FirebaseMLVisionTextModel
-    - FMDB
     - GoogleAPIClientForREST
     - GoogleAppMeasurement
     - GoogleDataTransport
@@ -367,7 +348,6 @@ SPEC REPOS:
     - GTMSessionFetcher
     - libwebp
     - Mantle
-    - MobileVLCKit
     - nanopb
     - OneSignal
     - PromisesObjC
@@ -411,12 +391,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_facebook_login/ios"
   flutter_image_compress:
     :path: ".symlinks/plugins/flutter_image_compress/ios"
-  flutter_playout:
-    :path: ".symlinks/plugins/flutter_playout/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
-  flutter_vlc_player:
-    :path: ".symlinks/plugins/flutter_vlc_player/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   geolocator:
@@ -441,12 +417,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sms_autofill/ios"
   speech_to_text:
     :path: ".symlinks/plugins/speech_to_text/ios"
-  sqflite:
-    :path: ".symlinks/plugins/sqflite/ios"
   video_player:
     :path: ".symlinks/plugins/video_player/ios"
-  wakelock:
-    :path: ".symlinks/plugins/wakelock/ios"
 
 SPEC CHECKSUMS:
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
@@ -478,11 +450,8 @@ SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_facebook_login: cfb5659f686b1c575ef205c6b6fd20db9679d3c4
   flutter_image_compress: 082f8daaf6c1b0c9fe798251c750ef0ecd98d7ae
-  flutter_playout: a5aed32b3003b02eb4432815ecfe0c0e42a801ff
   flutter_secure_storage: 7953c38a04c3fdbb00571bcd87d8e3b5ceb9daec
-  flutter_vlc_player: 64a2c27b2c99bc4fb954c5ff9d1cc278c87702ee
   fluttertoast: b644586ef3b16f67fae9a1f8754cef6b2d6b634b
-  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator: f7622e0e7e2a24718285b73916d60c4a54b9f5b6
   google_maps_flutter: df4e7de95264aa0a2f11aac0fc7e313acb8ffc7e
   google_sign_in: 6bd214b9c154f881422f5fe27b66aaa7bbd580cc
@@ -500,7 +469,6 @@ SPEC CHECKSUMS:
   libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
   location_permissions: 7e0f9aa0f60deb8ff93ddf0e2a164c7e8197bc94
   Mantle: 35238ae6f2e2b2d474fa7b67fee82a59fea71915
-  MobileVLCKit: 92e1ea43124259417f481c890821efb2399d25e3
   nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
   OneSignal: 7dfe466265c05f02b95a274b9c997a0619ad2117
   onesignal_flutter: 129551f13dc887d88aaf837e2cd823e1926e8159
@@ -514,10 +482,8 @@ SPEC CHECKSUMS:
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sms_autofill: c461043483362c3f1709ee76eaae6eb570b31686
   speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
-  sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0
   Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
   video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e
-  wakelock: 0d4a70faf8950410735e3f61fb15d517c8a6efc4
   ZendeskAnswerBotProvidersSDK: 294a835f26545e5da4e0e9b168cceab8aca930c6
   ZendeskAnswerBotSDK: 58889818d89e041478e2fa8266f159f4851b6ec3
   ZendeskChatProvidersSDK: 478e7eb4c725c7b4c1c64fa1206ec369346267e4

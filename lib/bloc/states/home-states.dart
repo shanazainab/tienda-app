@@ -1,10 +1,8 @@
-import 'package:equatable/equatable.dart';
 
-abstract class HomeStates extends Equatable {
+import 'package:tienda/model/home-screen-data-response.dart';
+
+abstract class HomeStates {
   HomeStates();
-
-  @override
-  List<Object> get props => null;
 }
 
 class Loading extends HomeStates {
@@ -12,19 +10,13 @@ class Loading extends HomeStates {
 }
 
 class LoadDataSuccess extends HomeStates {
-  final dynamic data;
+  final HomeScreenResponse homeScreenResponse;
 
-  LoadDataSuccess(this.data) : super();
-
-  @override
-  List<Object> get props => data;
+  LoadDataSuccess(this.homeScreenResponse) : super();
 }
 
 class LoadDataFail extends HomeStates {
   final dynamic error;
 
   LoadDataFail(this.error) : super();
-
-  @override
-  List<Object> get props => error;
 }

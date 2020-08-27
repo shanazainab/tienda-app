@@ -1,12 +1,20 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/checkout-bloc.dart';
+import 'package:tienda/bloc/events/cart-events.dart';
+import 'package:tienda/bloc/events/wishlist-events.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
+import 'package:tienda/bloc/wishlist-bloc.dart';
+import 'package:tienda/model/wishlist.dart';
 import 'package:tienda/view/checkout/checkout-orders-main-page.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class CartCheckOutPopUp extends StatelessWidget {
+  final BuildContext contextA;
+
+  CartCheckOutPopUp(this.contextA);
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CartBloc, CartStates>(builder: (context, state) {
@@ -43,7 +51,6 @@ class CartCheckOutPopUp extends StatelessWidget {
                     RaisedButton(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4)),
-                      color: Colors.lightBlue,
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -68,81 +75,120 @@ class CartCheckOutPopUp extends StatelessWidget {
                     padding: EdgeInsets.all(16),
                     shrinkWrap: true,
                     itemCount: state.cart.products.length,
-                    itemBuilder: (BuildContext context, int index) => Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              CachedNetworkImage(
-                                imageUrl: state
-                                    .cart.products[index].thumbnail,
-                                height: 90,
-                                width: 80,
-                                fit: BoxFit.contain,
-                                placeholder: (context, url) => Container(
-                                  color: Color(0xfff2f2e4),
+                    itemBuilder: (BuildContext context, int index) => Padding(
+                      padding: const EdgeInsets.only(bottom:8.0),
+                      child: Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                FadeInImage.memoryNetwork(
+                                  image: state.cart.products[index].thumbnail,
+                                  height: 120,
+                                  width: 100,
+                                  fit: BoxFit.cover,
+                                  placeholder: kTransparentImage,
+
                                 ),
-                                errorWidget: (context, url, error) =>
-                                    Icon(Icons.error),
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width - 200,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(state
-                                        .cart.products[index].brand),
-                                    Text(
-                                      state
-                                          .cart.products[index].nameEn,
-                                      softWrap: true,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Delete",
-                                            style: TextStyle(
-                                              decoration:
-                                                  TextDecoration.underline,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8.0),
-                                            child: Text(
-                                              "Move to Wishlist",
-                                              style: TextStyle(
-                                                decoration:
-                                                    TextDecoration.underline,
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Container(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(state.cart.products[index].brand),
+                                      Text(
+                                        state.cart.products[index].nameEn,
+                                        softWrap: true,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        "AED ${state.cart.products[index].price}",
+                                        style: TextStyle(fontWeight: FontWeight.w700),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 8.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            FlatButton(
+                                              onPressed: (){
+                                                BlocProvider.of<CartBloc>(context).add(
+                                                    DeleteCartItem(
+                                                        cart: state.cart,
+                                                        cartItem:
+                                                        state.cart.products[index]));
+                                              },
+                                              child: Text(
+                                                "Delete",
+                                                style: TextStyle(
+                                                    decoration:
+                                                        TextDecoration.underline,
+                                                    color: Colors.grey),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
+                                            FlatButton(
+                                              onPressed: (){
+                                                BlocProvider.of<WishListBloc>(context)
+                                                    .add(AddToWishList(
+                                                    wishListItem: new WishListItem(
+                                                      product: state.cart.products[index],
+                                                    )));
+
+                                                BlocProvider.of<CartBloc>(context).add(
+                                                    DeleteCartItem(
+                                                        cart: state.cart,
+                                                        cartItem:
+                                                        state.cart.products[index]));
+                                              },
+                                              child: Text(
+                                                "Move to Wishlist",
+                                                style: TextStyle(
+                                                    decoration:
+                                                        TextDecoration.underline,
+                                                    color: Colors.grey),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                "AED ${state.cart.products[index].price}",
-                                style: TextStyle(fontWeight: FontWeight.w700),
-                              ),
-                            ],
+
+                              ],
+                            ),
                           ),
-                        )),
+                    )),
               )
             ],
           ),
         );
       else
-        return Container();
+        return Container(
+          alignment: Alignment.center,
+          child: Column(
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Container(
+                    height: 3,
+                    width: 80,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+              Center(child: Padding(
+                padding: const EdgeInsets.only(top:50.0),
+                child: Text("Your Cart is Empty !!",style: TextStyle(
+                  fontWeight: FontWeight.bold
+                ),),
+              )),
+            ],
+          ),
+        );
     });
   }
 }

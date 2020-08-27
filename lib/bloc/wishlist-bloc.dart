@@ -15,8 +15,7 @@ import 'package:tienda/model/wishlist.dart';
 class WishListBloc extends Bloc<WishListEvents, WishListStates> {
   final FlutterSecureStorage _secureStorage = new FlutterSecureStorage();
 
-  @override
-  WishListStates get initialState => Loading();
+  WishListBloc() : super(Loading());
 
   @override
   Stream<WishListStates> mapEventToState(WishListEvents event) async* {
@@ -69,12 +68,14 @@ class WishListBloc extends Bloc<WishListEvents, WishListStates> {
   Stream<WishListStates> _mapDeleteWishListItemToStates(
       DeleteWishListItem event) async* {
     if (event.wishList != null) {
-      event.wishList.wishListItems.removeWhere((element) => element.product.id == event.wishListItem.product.id);
+      event.wishList.wishListItems.removeWhere(
+          (element) => element.product.id == event.wishListItem.product.id);
       print(event.wishList);
 
-      if(event.wishList.wishListItems.isEmpty)
+      if (event.wishList.wishListItems.isEmpty)
         yield EmptyWishList();
-      else yield DeleteWishListItemSuccess(wishList: event.wishList);
+      else
+        yield DeleteWishListItemSuccess(wishList: event.wishList);
     }
 
     final dio = Dio();
@@ -144,7 +145,7 @@ class WishListBloc extends Bloc<WishListEvents, WishListStates> {
     });
 
     if (wishList.wishListItems.isNotEmpty) updateWisListLocally(wishList);
-    if(status == "empty") yield EmptyWishList();
+    if (status == "empty") yield EmptyWishList();
     if (status == "success") yield LoadWishListSuccess(wishList: wishList);
     if (status == "Not Authorized") yield AuthorizationFailed();
   }

@@ -9,7 +9,7 @@ class FAQ extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FAQBloc, FAQStates>(
-        bloc: FAQBloc()..add(LoadReferralQuestions()),
+        cubit: FAQBloc()..add(LoadReferralQuestions()),
         builder: (context, state) {
           if (state is LoadGeneralQuestionsSuccess)
             return Container(

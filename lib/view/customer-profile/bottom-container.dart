@@ -14,9 +14,9 @@ class LogoutContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 160,
-      color: Colors.grey[200],
+      alignment: Alignment.bottomCenter,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
          isLoggedIn
               ? Center(
@@ -124,7 +124,7 @@ class LogoutContainer extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
+                  padding: const EdgeInsets.only(top: 8.0,bottom: 50),
                   child: Row(
                     children: <Widget>[
                       Spacer(

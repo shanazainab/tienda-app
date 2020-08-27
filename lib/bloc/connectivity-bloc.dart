@@ -20,7 +20,6 @@ class ConnectivityBloc {
         .checkConnectivity()
         .then((value) => connectivityStream.sink.add(value));
     connectivity.onConnectivityChanged.listen((result) {
-      print("CHANGEEEEEEEEEEE :$result");
       connectivityStream.sink.add(result);
     });
   }

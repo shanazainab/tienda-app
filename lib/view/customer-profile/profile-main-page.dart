@@ -22,7 +22,7 @@ import 'package:tienda/bloc/states/preference-states.dart';
 import 'package:tienda/controller/customer-care-controller.dart';
 import 'package:tienda/view/address/saved-address-page.dart';
 import 'package:tienda/view/customer-profile/bottom-container.dart';
-import 'package:tienda/view/customer-profile/login-bar.dart';
+import 'package:tienda/view/customer-profile/customer-login-menu.dart';
 import 'package:tienda/view/explore/help.dart';
 import 'package:tienda/view/explore/memberships.dart';
 import 'package:tienda/view/customer-profile/profile-card.dart';
@@ -60,45 +60,194 @@ class CustomerProfile extends StatelessWidget {
           ),
         ],
         child: BlocBuilder<LoginBloc, LoginStates>(builder: (context, state) {
-          return Scaffold(
-              body: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  state is GuestUser
-                      ? CustomerLoginMenu()
-                      : NetworkStateWrapper(
-                    opacity: 0,
-
-                    ///Don show overlap
-                    networkState: (value) {
-                      if (value == ConnectivityResult.none) {
-                        BlocProvider.of<CustomerProfileBloc>(context)
-                            .add(OfflineLoadCustomerData());
-                      }
-                    },
-                    child: BlocBuilder<CustomerProfileBloc,
-                        CustomerProfileStates>(builder: (context, state) {
-                      if (state is LoadCustomerProfileSuccess)
-                        return CustomerProfileCard(state.customerDetails);
-                      if (state is OfflineLoadCustomerDataSuccess)
-                        return CustomerProfileCard(state.customerDetails);
-                      else
-                        return Container( height: 260,);
-                    }),
-                  ),
-                  Expanded(
+          if (state is GuestUser)
+            return Scaffold(
+                body: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                CustomerLoginMenu(),
+                Expanded(
+                  child: Container(
+                    color: Colors.white,
                     child: ListView(
                       padding: EdgeInsets.all(0),
                       children: <Widget>[
                         state is LoggedInUser
                             ? _buildLoggedInUserMenus(appLanguage, context)
                             : Container(),
-                        _buildMenuList(appLanguage, state, appCountry, context)
+                        _buildMenuList(appLanguage, state, appCountry, context),
+                        LogoutContainer(state is LoggedInUser)
                       ],
                     ),
-                  )
-                ],
-              ));
+                  ),
+                )
+              ],
+            ));
+          else {
+            return NetworkStateWrapper(
+              opacity: 0,
+
+              ///Don show overlap
+              networkState: (value) {
+                if (value == ConnectivityResult.none) {
+                  BlocProvider.of<CustomerProfileBloc>(context)
+                      .add(OfflineLoadCustomerData());
+                }
+              },
+              child: BlocBuilder<CustomerProfileBloc, CustomerProfileStates>(
+                  builder: (context, substate) {
+                if (substate is LoadCustomerProfileSuccess)
+                  return Scaffold(
+                    body: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CustomerProfileCard(substate.customerDetails),
+                        Expanded(
+                          child: Container(
+                            color: Colors.white,
+                            child: ListView(
+                              padding: EdgeInsets.all(0),
+                              children: <Widget>[
+                                state is LoggedInUser
+                                    ? _buildLoggedInUserMenus(
+                                        appLanguage, context)
+                                    : Container(),
+                                _buildMenuList(
+                                    appLanguage, state, appCountry, context),
+                                LogoutContainer(state is LoggedInUser)
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                if (substate is OfflineLoadCustomerDataSuccess)
+                  return Scaffold(
+                    body: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CustomerProfileCard(substate.customerDetails),
+                        Expanded(
+                          child: Container(
+                            color: Colors.white,
+                            child: ListView(
+                              padding: EdgeInsets.all(0),
+                              children: <Widget>[
+                                state is LoggedInUser
+                                    ? _buildLoggedInUserMenus(
+                                        appLanguage, context)
+                                    : Container(),
+                                _buildMenuList(
+                                    appLanguage, state, appCountry, context),
+                                LogoutContainer(state is LoggedInUser)
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                else
+                  return Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: Center(
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    ),
+                  );
+              }),
+            );
+
+//            return Scaffold(
+//                body: Column(
+//                  mainAxisSize: MainAxisSize.min,
+//                  children: <Widget>[
+//                    NetworkStateWrapper(
+//                      opacity: 0,
+//
+//                      ///Don show overlap
+//                      networkState: (value) {
+//                        if (value == ConnectivityResult.none) {
+//                          BlocProvider.of<CustomerProfileBloc>(context)
+//                              .add(OfflineLoadCustomerData());
+//                        }
+//                      },
+//                      child:
+//                      BlocBuilder<CustomerProfileBloc, CustomerProfileStates>(
+//                          builder: (context, state) {
+//                            if (state is LoadCustomerProfileSuccess)
+//                              return Column(
+//                                children: [
+//                                  CustomerProfileCard(state.customerDetails),
+//                                  Expanded(
+//                                    child: Container(
+//                                      color: Colors.white,
+//                                      child: ListView(
+//                                        padding: EdgeInsets.all(0),
+//                                        children: <Widget>[
+//                                          state is LoggedInUser
+//                                              ? _buildLoggedInUserMenus(appLanguage, context)
+//                                              : Container(),
+//                                          _buildMenuList(appLanguage, state, appCountry, context),
+//                                          LogoutContainer(state is LoggedInUser)
+//                                        ],
+//                                      ),
+//                                    ),
+//                                  )
+//                                ],
+//                              );
+//                            if (state is OfflineLoadCustomerDataSuccess)
+//                              return Column(
+//                                children: [
+//                                  CustomerProfileCard(state.customerDetails),
+//                                  Expanded(
+//                                    child: Container(
+//                                      color: Colors.white,
+//                                      child: ListView(
+//                                        padding: EdgeInsets.all(0),
+//                                        children: <Widget>[
+//                                          state is LoggedInUser
+//                                              ? _buildLoggedInUserMenus(appLanguage, context)
+//                                              : Container(),
+//                                          _buildMenuList(appLanguage, state, appCountry, context),
+//                                          LogoutContainer(state is LoggedInUser)
+//                                        ],
+//                                      ),
+//                                    ),
+//                                  )
+//                                ],
+//                              );
+//                            else
+//                              return Container(
+//                                height: 260,
+//                              );
+//                          }),
+//                    ),
+//                    Expanded(
+//                      child: Container(
+//                        color: Colors.white,
+//                        child: ListView(
+//                          padding: EdgeInsets.all(0),
+//                          children: <Widget>[
+//                            state is LoggedInUser
+//                                ? _buildLoggedInUserMenus(appLanguage, context)
+//                                : Container(),
+//                            _buildMenuList(appLanguage, state, appCountry, context),
+//                            LogoutContainer(state is LoggedInUser)
+//                          ],
+//                        ),
+//                      ),
+//                    )
+//                  ],
+//                ));
+          }
         }));
   }
 
@@ -108,10 +257,7 @@ class CustomerProfile extends StatelessWidget {
       children: <Widget>[
         Container(
           height: 50,
-          width: MediaQuery
-              .of(context)
-              .size
-              .width,
+          width: MediaQuery.of(context).size.width,
           color: Colors.grey[200],
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
@@ -140,8 +286,7 @@ class CustomerProfile extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Image.network(
-                    "${GlobalConfiguration().getString("baseURL")}${appCountry
-                        .chosenCountry.thumbnail}",
+                    "${GlobalConfiguration().getString("imageURL")}${appCountry.chosenCountry.thumbnail}",
                     width: 22,
                     height: 12,
                     fit: BoxFit.cover,
@@ -168,29 +313,29 @@ class CustomerProfile extends StatelessWidget {
                 builder: (BuildContext bc) {
                   return BlocProvider<PreferenceBloc>(
                     create: (context) =>
-                    PreferenceBloc()
-                      ..add(FetchCountryList()),
+                        PreferenceBloc()..add(FetchCountryList()),
                     child: BlocBuilder<PreferenceBloc, PreferenceStates>(
                         builder: (context, state) {
-                          if (state is LoadCountryListSuccess)
-                            return CountryListCard(
-                              countries: state.countries,
-                              function: (selectedCountry) {
-                                appCountry.changeCountry(selectedCountry);
-                              },
-                            );
-                          else
-                            return Container(
-                                height: 200,
-                                alignment: Alignment.center,
-                                child: Container(
-                                  height: 30,
-                                  width: 30,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                ));
-                        }),
+                      if (state is LoadCountryListSuccess)
+                        return CountryListCard(
+                          countries: state.countries,
+                          function: (selectedCountry) {
+                            appCountry.changeCountry(selectedCountry);
+                            Navigator.pop(context);
+                          },
+                        );
+                      else
+                        return Container(
+                            height: 200,
+                            alignment: Alignment.center,
+                            child: Container(
+                              height: 30,
+                              width: 30,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            ));
+                    }),
                   );
                 });
           },
@@ -199,10 +344,7 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              FaIcon(
-                FontAwesomeIcons.flag,
-                  size: 14
-              ),
+              FaIcon(FontAwesomeIcons.flag, size: 14),
             ],
           ),
           title: Text(
@@ -210,35 +352,35 @@ class CustomerProfile extends StatelessWidget {
           ),
           trailing: appLanguage.appLocal != Locale('en')
               ? Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Text("English"),
-              Padding(
-                padding: const EdgeInsets.only(left: 4.0, right: 4.0),
-                child: Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                ),
-              )
-            ],
-          )
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text("English"),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                      ),
+                    )
+                  ],
+                )
               : Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Text("العربية"),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text("العربية"),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
           onTap: () {
             appLanguage.changeLanguage(appLanguage.appLocal == Locale('en')
                 ? Locale('ar')
@@ -246,10 +388,7 @@ class CustomerProfile extends StatelessWidget {
           },
         ),
         Container(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width,
+          width: MediaQuery.of(context).size.width,
           height: 50,
           color: Colors.grey[200],
           child: Padding(
@@ -282,7 +421,7 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.message,   size: 18),
+              Icon(Icons.message, size: 18),
             ],
           ),
           trailing: Icon(
@@ -300,7 +439,7 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.message,   size: 18),
+              Icon(Icons.message, size: 18),
             ],
           ),
           trailing: Icon(
@@ -320,7 +459,6 @@ class CustomerProfile extends StatelessWidget {
         SizedBox(
           height: 20,
         ),
-        LogoutContainer(state is LoggedInUser)
       ],
     );
   }
@@ -347,12 +485,10 @@ class CustomerProfile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      BlocProvider(
-                          create: (BuildContext context) =>
-                          OrdersBloc()
-                            ..add(LoadOrders()),
-                          child: OrdersMainPage())),
+                  builder: (context) => BlocProvider(
+                      create: (BuildContext context) =>
+                          OrdersBloc()..add(LoadOrders()),
+                      child: OrdersMainPage())),
             );
           },
           trailing: Icon(
@@ -364,7 +500,8 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(FontAwesomeIcons.heart,
+              Icon(
+                FontAwesomeIcons.heart,
                 size: 18,
               ),
             ],
@@ -388,7 +525,9 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.location_on,                size: 18,
+              Icon(
+                Icons.location_on,
+                size: 18,
               ),
             ],
           ),
@@ -404,9 +543,7 @@ class CustomerProfile extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) {
                 return BlocProvider(
-                  create: (context) =>
-                  AddressBloc()
-                    ..add(LoadSavedAddress()),
+                  create: (context) => AddressBloc()..add(LoadSavedAddress()),
                   child: SavedAddressPage(),
                 );
               }),
@@ -417,7 +554,9 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.credit_card,                size: 18,
+              Icon(
+                Icons.credit_card,
+                size: 18,
               ),
             ],
           ),
@@ -432,10 +571,7 @@ class CustomerProfile extends StatelessWidget {
         ),
         Container(
           height: 50,
-          width: MediaQuery
-              .of(context)
-              .size
-              .width,
+          width: MediaQuery.of(context).size.width,
           color: Colors.grey[200],
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
@@ -448,9 +584,7 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.star,
-                  size: 18
-              ),
+              Icon(Icons.star, size: 18),
             ],
           ),
           title: Text(
@@ -471,9 +605,7 @@ class CustomerProfile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.apps,
-                  size: 18
-              ),
+              Icon(Icons.apps, size: 18),
             ],
           ),
           trailing: Icon(

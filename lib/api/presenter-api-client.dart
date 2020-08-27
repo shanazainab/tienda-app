@@ -15,6 +15,11 @@ abstract class PresenterApiClient {
 
 
 
-  @GET("change_following_status/{presenterId}")
+  @GET("/change_following_status/{presenterId}")
   Future<String> changeFollowingStatus(@Path('presenterId') String presenterId);
+
+
+  @GET("/get_live_presenters/")
+  Future<String> getLivePresenters();
+
 }

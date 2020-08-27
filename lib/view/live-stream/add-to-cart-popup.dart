@@ -1,103 +1,173 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:tienda/app-language.dart';
+import 'package:tienda/bloc/cart-bloc.dart';
+import 'package:tienda/bloc/events/cart-events.dart';
+import 'package:tienda/bloc/events/live-stream-events.dart';
+import 'package:tienda/bloc/live-stream-checkout-bloc.dart';
+import 'package:tienda/bloc/states/live-stream-states.dart';
+import 'package:tienda/localization.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class AddToCartPopUp extends StatelessWidget {
-  final List<String> sizeChart = ['S', 'M', 'L', 'XL'];
+  final BuildContext contextA;
+
+  AddToCartPopUp(this.contextA);
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Container(
-              height: 3,
-              width: 80,
-              color: Colors.grey,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: Container(
-              height: 100,
-              width: 200,
-              color: Colors.grey[200],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    var appLanguage = Provider.of<AppLanguage>(context);
+
+    return BlocBuilder<LiveStreamCheckoutBloc, LiveStreamStates>(
+        builder: (context, state) {
+      if (state is ShowProductSuccess)
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Flexible(flex: 2, child: Container()),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[Text("Product name"), Text("description")],
-                ),
-                Flexible(flex: 1, child: Container()),
-                Text("AED XXX"),
-                Flexible(flex: 2, child: Container()),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Spacer(
-                flex: 2,
-              ),
-              Row(
-                children: <Widget>[
-                  Container(
-                    height: 40,
-                    width: 100,
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: sizeChart.length,
-                        itemBuilder: (BuildContext context, int index) =>
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CircleAvatar(
-                                backgroundColor: Colors.grey[200],
-                                radius: 10,
-                                child: Text(sizeChart[index]),
-                              ),
-                            )),
-                  ),
-                ],
-              ),
-              Spacer(
-                flex: 1,
-              ),
-              Row(
-                children: <Widget>[
-                  CircleAvatar(
-                    radius: 10,
-                    backgroundColor: Colors.blue,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                      radius: 10,
-                      backgroundColor: Colors.black,
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    FadeInImage.memoryNetwork(
+                      image: state.product.thumbnail,
+                      width: 100,
+                      height: 120,
+                      fit: BoxFit.cover,
+                      placeholder: kTransparentImage,
+
                     ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16.0, right: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            state.product.brand != null
+                                ? Text(
+                                    state.product.brand,
+                                    softWrap: true,
+                                    overflow: TextOverflow.ellipsis,
+                                  )
+                                : Container(),
+                            Text(
+                              appLanguage.appLocal == Locale('en')
+                                  ? state.product.nameEn
+                                  : state.product.nameAr,
+                              softWrap: true,
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                '${AppLocalizations.of(context).translate('aed')} ${state.product.price.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                GestureDetector(
+                                  onTap: () {
+                                    print("TAPPED");
+
+                                    if (state.product.quantity == 1) {
+                                      ///delete the item
+                                      ///or don do anything
+                                    } else {
+                                      if (state.product.quantity == null) {
+                                        state.product.quantity = 1;
+                                      } else
+                                        state.product.quantity =
+                                            state.product.quantity - 1;
+                                      BlocProvider.of<CartBloc>(contextA)
+                                        ..add(EditCartItem(
+                                            //  cart: state.cart,
+                                            editType: "QUANTITY EDIT",
+                                            cartItem: state.product));
+                                      BlocProvider.of<LiveStreamCheckoutBloc>(
+                                          contextA)
+                                        ..add(ShowProduct(state.product));
+                                    }
+                                  },
+                                  child: Icon(
+                                    Icons.arrow_back_ios,
+                                    color: Colors.grey,
+                                    size: 16,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 8.0, right: 8),
+                                  child: Text(
+                                    state.product.quantity == null
+                                        ? "1"
+                                        : state.product.quantity.toString(),
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    print("TAPPED");
+
+                                    if (state.product.quantity == null) {
+                                      state.product.quantity = 2;
+                                    } else
+                                      state.product.quantity =
+                                          state.product.quantity + 1;
+
+                                    BlocProvider.of<CartBloc>(contextA)
+                                      ..add(EditCartItem(
+                                          //    cart: state.cart,
+                                          editType: "QUANTITY EDIT",
+                                          cartItem: state.product));
+
+                                    BlocProvider.of<LiveStreamCheckoutBloc>(
+                                        contextA)
+                                      ..add(ShowProduct(state.product));
+                                  },
+                                  child: Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.grey,
+                                    size: 16,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 100,
+                  child: RaisedButton(
+                    onPressed: () {
+                      BlocProvider.of<CartBloc>(context)
+                          .add(AddCartItem(cartItem: state.product));
+                    },
+                    child: Text("ADD TO CART"),
                   ),
-                  CircleAvatar(
-                    radius: 10,
-                    backgroundColor: Colors.red,
-                  ),
-                ],
-              ),
-              Spacer(
-                flex: 2,
-              ),
-            ],
-          ),
-          RaisedButton(
-            onPressed: () {},
-            child: Text("ADD TO CART"),
-          )
-        ]);
+                )
+              ]),
+        );
+      else
+        return Container();
+    });
   }
 }

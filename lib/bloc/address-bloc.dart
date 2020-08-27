@@ -10,8 +10,9 @@ import 'package:dio/dio.dart';
 import 'package:tienda/model/delivery-address.dart';
 
 class AddressBloc extends Bloc<AddressEvents, AddressStates> {
-  @override
-  AddressStates get initialState => Loading();
+  AddressBloc() : super(Loading());
+
+
 
   @override
   Stream<AddressStates> mapEventToState(AddressEvents event) async* {

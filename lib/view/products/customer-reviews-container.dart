@@ -1,13 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:tienda/bloc/review-bloc.dart';
 import 'package:tienda/bloc/states/review-states.dart';
 import 'package:tienda/model/product.dart' as PR;
+import 'package:transparent_image/transparent_image.dart';
 
 class CustomerReviewContainer extends StatelessWidget {
-  List<PR.Review> reviews;
+  final List<PR.Review> reviews;
 
   CustomerReviewContainer(this.reviews);
 
@@ -33,7 +33,7 @@ class CustomerReviewContainer extends StatelessWidget {
           reviews.isEmpty
               ? Container()
               : ListView.separated(
-            reverse: true,
+                  reverse: true,
                   physics: NeverScrollableScrollPhysics(),
                   separatorBuilder: (BuildContext context, int index) =>
                       Divider(
@@ -60,8 +60,7 @@ class CustomerReviewContainer extends StatelessWidget {
                                       reviews[index].body,
                                       softWrap: true,
                                       style: TextStyle(
-                                        fontStyle: FontStyle.italic
-                                      ),
+                                          fontStyle: FontStyle.italic),
                                       textAlign: TextAlign.justify,
                                     ),
                                   ),
@@ -73,7 +72,6 @@ class CustomerReviewContainer extends StatelessWidget {
                                         Icon(
                                           Icons.star,
                                           size: 14,
-                                          color: Colors.blueGrey,
                                         )
                                       ],
                                     ),
@@ -84,72 +82,74 @@ class CustomerReviewContainer extends StatelessWidget {
                             SizedBox(
                               height: 4,
                             ),
-                            reviews[index].images!=null?SizedBox(
-                              height: 50,
-                              child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: reviews[index].images.length,
-                                  itemBuilder: (BuildContext context,
-                                          int subIndex) =>
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 8.0),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: Container(
-                                            height: 40,
-                                            width: 40,
-                                            color: Colors.grey[200],
-                                            child: CachedNetworkImage(
-                                              imageUrl:
-                                                  "${GlobalConfiguration().getString("baseURL")}/${reviews[index].images[subIndex].image}",
-                                              height: 40,
-                                              fit: BoxFit.cover,
-                                              placeholder: (context, url) =>
-                                                  Container(
-                                                height: 40,
-                                                width: 40,
-                                                color: Color(0xfff2f2e4),
-                                              ),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      Container(
-                                                height: 40,
-                                                width: 40,
-                                                color: Color(0xfff2f2e4),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      )),
-                            ):Container(),
-                            reviews[index].fileImages!=null?SizedBox(
-                              height: 50,
-                              child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: reviews[index].fileImages.length,
-                                  itemBuilder: (BuildContext context,
-                                      int subIndex) =>
-                                      Padding(
-                                        padding:
-                                        const EdgeInsets.only(right: 8.0),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                          BorderRadius.circular(8),
-                                          child: reviews[index].fileImages[subIndex] != null?Container(
+                            reviews[index].images != null
+                                ? SizedBox(
+                                    height: 50,
+                                    child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: reviews[index].images.length,
+                                        itemBuilder: (BuildContext context,
+                                                int subIndex) =>
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 8.0),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: Container(
+                                                  height: 40,
+                                                  width: 40,
+                                                  color: Colors.grey[200],
+                                                  child:
+                                                  FadeInImage.memoryNetwork(
+                                                    placeholder: kTransparentImage,
+                                                    image:  "${GlobalConfiguration().getString("imageURL")}/${reviews[index].images[subIndex].image}",
+                                                    height: 40,
+                                                    fit: BoxFit.cover,
 
-                                            height: 40,
-                                            width: 40,
-                                            color: Colors.grey[200],
-                                            child: Image.file(reviews[index].fileImages[subIndex],
-                                            height: 40,
-                                            width: 40,
-                                            fit: BoxFit.cover,)
-                                          ):Container(),
-                                        ),
-                                      )),
-                            ):Container(),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                  )
+                                : Container(),
+                            reviews[index].fileImages != null
+                                ? SizedBox(
+                                    height: 50,
+                                    child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount:
+                                            reviews[index].fileImages.length,
+                                        itemBuilder: (BuildContext context,
+                                                int subIndex) =>
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 8.0),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: reviews[index]
+                                                                .fileImages[
+                                                            subIndex] !=
+                                                        null
+                                                    ? Container(
+                                                        height: 40,
+                                                        width: 40,
+                                                        color: Colors.grey[200],
+                                                        child: Image.file(
+                                                          reviews[index]
+                                                                  .fileImages[
+                                                              subIndex],
+                                                          height: 40,
+                                                          width: 40,
+                                                          fit: BoxFit.cover,
+                                                        ))
+                                                    : Container(),
+                                              ),
+                                            )),
+                                  )
+                                : Container(),
                             SizedBox(
                               height: 16,
                             ),

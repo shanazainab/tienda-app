@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:page_indicator/page_indicator.dart';
-import 'package:tienda/view/home/banner-bottom.dart';
-import 'package:tienda/view/home/now-trending-block.dart';
+import 'package:tienda/bloc/events/home-events.dart';
+import 'package:tienda/bloc/home-bloc.dart';
+import 'package:tienda/bloc/states/home-states.dart';
+import 'package:tienda/view/home/live-stream-banner.dart';
 import 'package:tienda/view/home/deals-block.dart';
 import 'package:tienda/view/home/featured-brands.dart';
 import 'package:tienda/view/home/featured-sellers-list.dart';
 import 'package:tienda/view/home/new-arrivals-list.dart';
 import 'package:tienda/view/home/recommended-list.dart';
 import 'package:tienda/view/home/top-categories.dart';
-import 'package:tienda/view/live-stream/video-stream-full-screen.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 import 'package:tienda/view/widgets/network-state-wrapper.dart';
 
-import '../../localization.dart';
-
 class TiendaHomePage extends StatelessWidget {
-   PageController controller;
+  PageController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class TiendaHomePage extends StatelessWidget {
   }
 }
 
-class TiendaHomePageContents extends StatelessWidget {
+class TiendaHomePageContents extends StatefulWidget {
   const TiendaHomePageContents({
     Key key,
     @required this.controller,
@@ -48,112 +48,97 @@ class TiendaHomePageContents extends StatelessWidget {
   final PageController controller;
 
   @override
+  _TiendaHomePageContentsState createState() => _TiendaHomePageContentsState();
+}
+
+class _TiendaHomePageContentsState extends State<TiendaHomePageContents>
+    with AutomaticKeepAliveClientMixin<TiendaHomePageContents> {
+  HomeBloc homeBloc = new HomeBloc();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    homeBloc.add(FetchHomeData());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ListView(
-        padding: EdgeInsets.all(0),
-        children: <Widget>[
-          Container(
-            height: 400,
-            child: PageIndicatorContainer(
-              child: PageView(
+    return BlocBuilder<HomeBloc, HomeStates>(
+        cubit: homeBloc,
+        builder: (context, state) {
+          if (state is LoadDataSuccess)
+            return Container(
+              child: ListView(
+                padding: EdgeInsets.only(bottom: 50),
                 children: <Widget>[
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      color: Colors.grey[200],
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              width: 200,
-                              child: RaisedButton(
-                                onPressed: () {},
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.shop,
-                                      color: Colors.white,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 8.0, right: 8.0),
-                                      child: Text(
-                                        AppLocalizations.of(context)
-                                            .translate('shop-live'),
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                  Container(
+                    height: MediaQuery.of(context).size.height - 50,
+                    child: PageIndicatorContainer(
+                      child: PageView.builder(
+                        itemBuilder: (BuildContext context, int index) {
+                          return LiveStreamBanner(
+                              state.homeScreenResponse.liveStreams[index]);
+                        },
+                        controller: widget.controller,
                       ),
+                      align: IndicatorAlign.bottom,
+                      length: state.homeScreenResponse.liveStreams.length,
+                      padding: const EdgeInsets.all(10),
+                      indicatorColor: Colors.white,
+                      indicatorSelectorColor: Colors.blue,
+                      shape: IndicatorShape.circle(size: 4),
                     ),
                   ),
-                  Container(
-                    color: Colors.grey[200],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: FeaturedPresentersList(
+                        state.homeScreenResponse.featuredPresenters),
                   ),
-                  Container(
-                    color: Colors.grey[200],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child:
+                        TopCategories(state.homeScreenResponse.topCategories),
                   ),
-                  Container(
-                    color: Colors.grey[200],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: DealsBlock(state.homeScreenResponse.dealsOfTheDay),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: RecommendedList(
+                        state.homeScreenResponse.recommendedProducts),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: NewArrivalList(state.homeScreenResponse.newArrivals),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child:
+                        FeaturedBrands(state.homeScreenResponse.featuredBrands),
                   )
                 ],
-                controller: controller,
               ),
-              align: IndicatorAlign.bottom,
-              length: 4,
-              indicatorSpace: 20.0,
-              padding: const EdgeInsets.all(10),
-              indicatorColor: Colors.white,
-              indicatorSelectorColor: Colors.blue,
-              shape: IndicatorShape.circle(size: 8),
-              // shape: IndicatorShape.roundRectangleShape(size: Size.square(12),cornerSize: Size.square(3)),
-              // shape: IndicatorShape.oval(size: Size(12, 8)),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: NowTrendingBlock(),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: FeaturedSellersList(),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: TopCategories(),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: DealsBlock(),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: RecommendedList(),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: BannerBottom(),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: NewArrivalList(),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: FeaturedBrands(),
-          )
-        ],
-      ),
-    );
+            );
+          else
+            return Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Center(
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
+                ),
+              ),
+            );
+        });
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

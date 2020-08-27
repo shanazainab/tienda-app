@@ -11,9 +11,12 @@ import 'package:tienda/bloc/states/live-stream-states.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/live-response.dart';
 
+
+
 class LiveStreamBloc extends Bloc<LiveStreamEvents, LiveStreamStates> {
-  @override
-  LiveStreamStates get initialState => Loading();
+  LiveStreamBloc() : super(Loading());
+
+
 
   @override
   Stream<LiveStreamStates> mapEventToState(LiveStreamEvents event) async* {
@@ -26,6 +29,7 @@ class LiveStreamBloc extends Bloc<LiveStreamEvents, LiveStreamStates> {
     final dio = Dio();
 
     LiveResponse liveResponse;
+    bool isLogged = true;
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
     LiveStreamApiClient liveStreamApiClient = LiveStreamApiClient(dio,
@@ -36,6 +40,9 @@ class LiveStreamBloc extends Bloc<LiveStreamEvents, LiveStreamStates> {
         case 200:
           liveResponse = liveResponseFromJson(response);
           break;
+        case 401:
+          isLogged = false;
+          break;
       }
     }).catchError((err) {
       if (err is DioError) {
@@ -44,8 +51,8 @@ class LiveStreamBloc extends Bloc<LiveStreamEvents, LiveStreamStates> {
       }
     });
 
-    if(liveResponse != null)
+    if (liveResponse != null)
       yield JoinLiveSuccess(liveResponse);
-
+    else if (!isLogged) yield NotAuthorized();
   }
 }

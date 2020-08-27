@@ -14,8 +14,9 @@ import 'package:tienda/model/product.dart';
 import 'package:tienda/model/search-body.dart';
 
 class ProductBloc extends Bloc<ProductEvents, ProductStates> {
-  @override
-  ProductStates get initialState => Loading();
+  ProductBloc() : super(Loading());
+
+
 
   @override
   Stream<ProductStates> mapEventToState(ProductEvents event) async* {

@@ -28,7 +28,7 @@ class Category {
     nameEn: json["name_en"],
     nameAr: json["name_ar"],
     thumbnail: json["thumbnail"],
-    subCats: List<SubCat>.from(json["sub_cats"].map((x) => SubCat.fromJson(x))),
+    subCats: json["sub_cats"]!=null?List<SubCat>.from(json["sub_cats"].map((x) => SubCat.fromJson(x))):null,
   );
 
   Map<String, dynamic> toJson() => {

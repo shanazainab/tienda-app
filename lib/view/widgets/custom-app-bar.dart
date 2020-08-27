@@ -11,7 +11,6 @@ import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/view/checkout/checkout-orders-main-page.dart';
 import 'package:tienda/view/login/login-main-page.dart';
-import 'package:tienda/view/notification/notification-screen.dart';
 import 'package:tienda/view/search/search-page.dart';
 import 'package:tienda/view/wishlist/wishlist-page.dart';
 
@@ -48,8 +47,7 @@ class CustomAppBar extends StatelessWidget {
         style: TextStyle(fontSize: showLogo?20:14,color: Colors.grey),
       ),
       centerTitle: false,
-
-      automaticallyImplyLeading: true,
+ automaticallyImplyLeading: showLogo?false:true,
       bottom: bottom != null ? bottom : null,
       actions: <Widget>[
         if (showSearch)
@@ -67,21 +65,21 @@ class CustomAppBar extends StatelessWidget {
               Icons.search,
             ),
           ),
-        if (showNotification != null && showNotification)
-          IconButton(
-            constraints: BoxConstraints.tight(Size.square(40)),
-            padding: EdgeInsets.all(0),
-            visualDensity: VisualDensity.compact,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NotificationScreen()),
-              );
-            },
-            icon: Icon(
-              Icons.notifications_none,
-            ),
-          ),
+//        if (showNotification != null && showNotification)
+//          IconButton(
+//            constraints: BoxConstraints.tight(Size.square(40)),
+//            padding: EdgeInsets.all(0),
+//            visualDensity: VisualDensity.compact,
+//            onPressed: () {
+//              Navigator.push(
+//                context,
+//                MaterialPageRoute(builder: (context) => NotificationScreen()),
+//              );
+//            },
+//            icon: Icon(
+//              Icons.notifications_none,
+//            ),
+//          ),
         if (showWishList)
           IconButton(
             visualDensity: VisualDensity.compact,
@@ -106,7 +104,7 @@ class CustomAppBar extends StatelessWidget {
         if (showCart)
           IconButton(
               visualDensity: VisualDensity.compact,
-              constraints: BoxConstraints.tight(Size.square(40)),
+              constraints: BoxConstraints.tight(Size.square(50)),
               padding: EdgeInsets.all(0),
               onPressed: () {
                 Navigator.push(

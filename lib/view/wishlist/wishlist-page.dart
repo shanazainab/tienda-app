@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +12,7 @@ import 'package:tienda/bloc/states/wishlist-states.dart';
 
 import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/model/wishlist.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import '../../localization.dart';
 
@@ -47,7 +47,6 @@ class _State extends State<WishListPage> {
           brightness: Brightness.light,
         ),
         body: BlocBuilder<WishListBloc, WishListStates>(
-//            bloc: _wishListBloc..add(LoadWishListProducts()),
             builder: (context, state) {
           if (state is LoadWishListSuccess) {
             return buildWishList(state.wishList, context, appLanguage);
@@ -87,6 +86,7 @@ class _State extends State<WishListPage> {
     return Container(
       color: Colors.white,
       child: ListView(
+        physics: ScrollPhysics(),
         padding: EdgeInsets.only(bottom: 50),
         children: [
           Padding(
@@ -95,12 +95,13 @@ class _State extends State<WishListPage> {
                 style: Theme.of(context).textTheme.headline2),
           ),
           GridView.builder(
+            physics: NeverScrollableScrollPhysics(),
             padding: EdgeInsets.only(bottom: 50),
             shrinkWrap: true,
             itemCount: wishList.wishListItems.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: MediaQuery.of(context).size.width /
-                    (MediaQuery.of(context).size.height / 1.2),
+                childAspectRatio: (MediaQuery.of(context).size.width / 2) /
+                    (appLanguage.appLocal == Locale("en") ? 280 : 300),
                 crossAxisCount: 2),
             itemBuilder: (BuildContext context, int index) {
               return Padding(
@@ -114,17 +115,13 @@ class _State extends State<WishListPage> {
                       children: <Widget>[
                         Stack(
                           children: <Widget>[
-                            CachedNetworkImage(
-                              imageUrl: wishList
+                            FadeInImage.memoryNetwork(
+                              placeholder: kTransparentImage,
+                              image: wishList
                                   .wishListItems[index].product.thumbnail,
                               width: MediaQuery.of(context).size.width / 2,
                               height: 180,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
-                                color: Color(0xfff2f2e4),
-                              ),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
                             ),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.end,

@@ -16,14 +16,13 @@ class ProductInfoContainer extends StatelessWidget {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(left:16,right: 16,bottom: 16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(appLanguage.appLocal == Locale('en')?product.nameEn:product.nameAr),
             Padding(
-              padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
+              padding: const EdgeInsets.only(bottom: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,9 +49,18 @@ class ProductInfoContainer extends StatelessWidget {
                       style: TextStyle(color: Colors.pink),
                     ),
                   ):Container(),
+
                 ],
               ),
             ),
+
+            !product.isReturnable?Container(
+              color: Colors.blue.withOpacity(0.1),
+              child: Text(
+                'NOT RETURNABLE',
+                style: TextStyle(color: Colors.blue),
+              ),
+            ):Container()
           ],
         ),
       ),

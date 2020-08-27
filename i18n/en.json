@@ -24,6 +24,7 @@
   "edit-profile": "EDIT",
   "following": "FOLLOWING",
   "help": "Help",
+  "messages": "messages",
 
 
 
@@ -58,10 +59,11 @@
   "all": "ALL",
   "in-process": "IN PROCESS",
   "delivered": "DELIVERED",
-  "order-number": "Order No:",
+  "order-number": "Order No",
   "ordered": "Ordered",
   "delivery": "Delivery",
-
+  "canceled": "Canceled",
+  "order-details": "Order details",
 
 
   "6": "CART PAGE",
@@ -76,7 +78,9 @@
   "delivery-charge": "Delivery Charge",
   "total": "Total",
   "free": "FREE",
-
+  "shopping-bag": "Shopping Bag",
+  "subtotal": "Subtotal",
+  "total-discount": "Total Discount",
 
   "7": "WISHLIST PAGE",
   "move-to-cart": "MOVE TO CART",
@@ -96,6 +100,14 @@
   "9": "FILTER AND SORT",
   "filter": "FILTER",
   "sort": "SORT",
+  "clear-all": "clear all",
+  "close": "close",
+  "apply": "apply",
+  "sort-by":"Sort by",
+  "rating": "Rating",
+  "price-low-to-high": "Price low to high",
+  "price-high-to-low": "Price high to low",
+
 
   "10": "SELLER PROFILE MAIN PAGE",
   "follow": "Follow",
@@ -149,7 +161,7 @@
   "specification": "Specification",
   "description":"Description",
   "customer-rating":"Customer Ratings",
-  "customer-review": "Customer Reviews",
+  "reviews": "Reviews",
   "add-to-cart": "ADD TO CART",
   "add-your-review": "Add Your Review",
   "submit": "SUBMIT",
@@ -160,7 +172,36 @@
 
   "17": "PRODUCT LIST CONTAINER",
   "added-to-wishlist": "Added to Wishlist",
-  "removed-from-wishlist": "Removed from Wishlist"
+  "removed-from-wishlist": "Removed from Wishlist",
+
+
+  "18": "ORDER DETAILS PAGE",
+  "order-status": "Order Status",
+  "delivery-address": "Delivery Address",
+  "payment-method": "Payment Method",
+  "cash-on-delivery": "Cash on Delivery",
+  "cancel-order": "Cancel Order",
+  "return-order": "Return order",
+
+
+  "19": "DELIVERY ADDRESS",
+  "add-new-address": "Add new address",
+  "edit": "edit",
+  "delete": "delete",
+  "fetching-address": "fetching address",
+  "confirm-location":"confirm location",
+  "contact-person": "contact person",
+  "name": "name",
+  "phone-number": "phone number",
+  "location": "location",
+  "apartment": "apartment",
+  "villa": "villa",
+  "office": "office",
+  "floor-number": "Floor Number",
+  "set-as-default": "Set as default",
+  "save-address": "save address",
+  "add-address": "add address",
+  "instruction": "instruction"
 
 }
 

@@ -200,6 +200,8 @@ class _CountryChoosePageState extends State<CountryChoosePage>
                           return CountryListCard(
                             countries: state.countries,
                             function: (selectedCountry) {
+                              appCountry.changeCountry(selectedCountry);
+
                               setState(() {
                                 currentCountry =
                                     appLanguage.appLocal == Locale('en')
@@ -207,7 +209,6 @@ class _CountryChoosePageState extends State<CountryChoosePage>
                                         : selectedCountry.nameArabic;
                                 panelController.close();
                               });
-                              appCountry.changeCountry(selectedCountry);
                             },
                           );
                         else

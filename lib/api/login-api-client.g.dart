@@ -65,7 +65,7 @@ class _LoginApiClient implements LoginApiClient {
     ArgumentError.checkNotNull(accessToken, 'accessToken');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = accessToken;
+    final _data = <String, dynamic>{'access_token':accessToken};
     final Response<Map<String, dynamic>> _result = await _dio.request(
         '/check_google_token/',
         queryParameters: queryParameters,
@@ -90,7 +90,7 @@ class _LoginApiClient implements LoginApiClient {
     ArgumentError.checkNotNull(accessToken, 'accessToken');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = accessToken;
+    final _data = <String, dynamic>{'access_token':accessToken};
     final Response<Map<String, dynamic>> _result = await _dio.request(
         '/check_facebook_token/',
         queryParameters: queryParameters,

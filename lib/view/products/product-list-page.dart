@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/events/filter-events.dart';
 import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/filter-bloc.dart';
@@ -21,10 +23,12 @@ import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class ProductListPage extends StatefulWidget {
   final String query;
-  final String title;
+  final String titleInEnglish;
+  final String titleInArabic;
+
   final SearchBody searchBody;
 
-  ProductListPage({this.title,this.query, this.searchBody});
+  ProductListPage({this.titleInEnglish,this.titleInArabic,this.query, this.searchBody});
 
   @override
   _ProductListPageState createState() => _ProductListPageState();
@@ -39,6 +43,10 @@ class _ProductListPageState extends State<ProductListPage> {
 
   @override
   Widget build(BuildContext contextA) {
+
+    var appLanguage = Provider.of<AppLanguage>(context);
+
+
     return MultiBlocListener(
         listeners: [
           BlocListener<ProductBloc, ProductStates>(listener: (context, state) {
@@ -66,15 +74,17 @@ class _ProductListPageState extends State<ProductListPage> {
               },
               child: Scaffold(
                   extendBodyBehindAppBar: true,
-                  bottomNavigationBar: BlocBuilder<FilterBloc, FilterStates>(
-                      builder: (context, state) {
-                    if (state is LoadFilterSuccess) {
-                      return buildSortFilterMenu(state.filters, contextA);
-                    } else
-                      return Container();
-                  }),
+                  bottomNavigationBar: SafeArea(
+                    child: BlocBuilder<FilterBloc, FilterStates>(
+                        builder: (context, state) {
+                      if (state is LoadFilterSuccess) {
+                        return buildSortFilterMenu(state.filters, contextA);
+                      } else
+                        return Container();
+                    }),
+                  ),
                   appBar: PreferredSize(
-                      preferredSize: Size.fromHeight(80.0),
+                      preferredSize: Size.fromHeight(100.0),
                       // here the desired height
                       child: CustomAppBar(
                         bottom: TabBar(
@@ -88,7 +98,7 @@ class _ProductListPageState extends State<ProductListPage> {
                             Tab(icon: Icon(Icons.videocam)),
                           ],
                         ),
-                        title: widget.title.toUpperCase(),
+                        title: appLanguage.appLocal == Locale('en')?widget.titleInEnglish.toUpperCase():widget.titleInArabic,
                         showWishList: true,
                         showSearch: false,
                         showCart: true,

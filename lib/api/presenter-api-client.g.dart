@@ -73,7 +73,7 @@ class _PresenterApiClient implements PresenterApiClient {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final Response<String> _result = await _dio.request(
-        'change_following_status/$presenterId',
+        '/change_following_status/$presenterId',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -81,6 +81,25 @@ class _PresenterApiClient implements PresenterApiClient {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
+
+    final value = _result.data;
+    return value;
+  }
+
+  @override
+  Future<String> getLivePresenters() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final Response<String> _result = await _dio.request('/get_live_presenters/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+
     final value = _result.data;
     return value;
   }

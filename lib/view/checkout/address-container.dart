@@ -21,9 +21,9 @@ class OrderAddressContainer extends StatelessWidget {
   Widget build(BuildContext contextA) {
     return BlocListener<AddressBloc, AddressStates>(listener: (context, state) {
       if (state is LoadAddressSuccess) {
-        if(state.deliveryAddresses.length == 1){
+        if (state.deliveryAddresses.length == 1) {
           chosenAddress.add(state.deliveryAddresses[0].id);
-        }else {
+        } else {
           for (final address in state.deliveryAddresses) {
             if (address.isDefault) {
               chosenAddress.add(address.id);
@@ -58,34 +58,38 @@ class OrderAddressContainer extends StatelessWidget {
                 return Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
+                    width: MediaQuery.of(context).size.width,
                     color: Colors.grey[200],
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
+                          padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                            "AED ${state.cart.cartPrice - 0}",
+                            "TOTAL: AED ${state.cart.cartPrice - 0}",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: RaisedButton(
-                            onPressed: () {
-
-                              if (chosenAddress.value == null) {
-                                Fluttertoast.showToast(
-                                    msg: "Choose a delivery address");
-                              } else
-                                BlocProvider.of<CheckOutBloc>(context).add(
-                                    DoUpdateCheckOutProgress(
-                                        order: new Order(
-                                            addressId: chosenAddress.value),
-                                        status: "PAYMENT"));
-                            },
-                            child: Text("CONTINUE"),
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width - 50,
+                            child: RaisedButton(
+                              onPressed: () {
+                                if (chosenAddress.value == null) {
+                                  Fluttertoast.showToast(
+                                      msg: "Choose a delivery address");
+                                } else
+                                  BlocProvider.of<CheckOutBloc>(context).add(
+                                      DoUpdateCheckOutProgress(
+                                          order: new Order(
+                                              addressId: chosenAddress.value),
+                                          status: "PAYMENT"));
+                              },
+                              child: Text("CONTINUE"),
+                            ),
                           ),
                         ),
                       ],
@@ -129,6 +133,14 @@ class OrderAddressContainer extends StatelessWidget {
   buildDefaultAddressBlock(List<DeliveryAddress> savedAddresses, contextA) {
     return ListView(
       children: <Widget>[
+
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text("Delivery Address",style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold
+          ),),
+        ),
         ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),

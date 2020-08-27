@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tienda/bloc/address-bloc.dart';
 import 'package:tienda/bloc/events/address-events.dart';
 import 'package:tienda/bloc/states/address-states.dart';
+import 'package:tienda/localization.dart';
 import 'package:tienda/model/delivery-address.dart';
 import 'package:tienda/view/address/add-address-page.dart';
 import 'package:tienda/view/address/choose-address-page.dart';
@@ -26,7 +27,7 @@ class SavedAddressPage extends StatelessWidget {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Text("Delivery Address",
+                    child: Text(AppLocalizations.of(contextB).translate('delivery-address'),
                         style: Theme.of(contextB).textTheme.headline2),
                   ),
                   BlocBuilder<AddressBloc, AddressStates>(
@@ -78,7 +79,7 @@ class SavedAddressPage extends StatelessWidget {
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(4.0),
-                        child: Text("ADD NEW ADDRESS"),
+                        child: Text(AppLocalizations.of(contextB).translate('add-new-address').toUpperCase()),
                       ),
                     ),
                   ),
@@ -218,7 +219,7 @@ class SavedAddressPage extends StatelessWidget {
                                     width: 4,
                                   ),
                                   Text(
-                                    "DELETE",
+                                    AppLocalizations.of(contextA).translate('delete'),
                                     style: TextStyle(fontSize: 12),
                                   ),
                                 ],
@@ -249,7 +250,7 @@ class SavedAddressPage extends StatelessWidget {
                                   SizedBox(
                                     width: 4,
                                   ),
-                                  Text("EDIT", style: TextStyle(fontSize: 12)),
+                                  Text(AppLocalizations.of(contextA).translate('edit'), style: TextStyle(fontSize: 12)),
                                 ],
                               ),
                             )

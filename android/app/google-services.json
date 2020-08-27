@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "874733787854-j050433ph0p9ps5irl57rdq9ief5on15.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.beuniquegroup.tienda",
+            "certificate_hash": "d3ed4607eb856d0d0c1f3a2bb42870684e3dc199"
+          }
+        },
+        {
+          "client_id": "874733787854-j3tof3am2lhdl2qupib42m3nr25chdv4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.beuniquegroup.tienda",
+            "certificate_hash": "d21584c31f98179cfe8315fbb7ca113247dacd13"
+          }
+        },
+        {
           "client_id": "874733787854-fk8kgcrq19j03ddp71kiklheff3gsd6g.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -38,6 +54,13 @@
             {
               "client_id": "874733787854-76ovj4aoc6h1m8bsu860b72t6230kvv7.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "874733787854-t0qffsmrc4impkqgd31b3e1h053l59ke.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.beuniquegroup.tienda"
+              }
             }
           ]
         }

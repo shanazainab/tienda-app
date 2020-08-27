@@ -14,8 +14,8 @@ import 'package:tienda/model/cart.dart';
 import 'package:tienda/model/product.dart';
 
 class CartBloc extends Bloc<CartEvents, CartStates> {
-  @override
-  CartStates get initialState => Initialized();
+  CartBloc() : super(Initialized());
+
 
   @override
   Stream<CartStates> mapEventToState(CartEvents event) async* {
@@ -256,7 +256,7 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        print("err: ${error.response.data}");
+        Logger().e("err: ${error.response.data}");
       }
     });
 

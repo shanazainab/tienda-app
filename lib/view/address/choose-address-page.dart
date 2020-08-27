@@ -9,6 +9,7 @@ import 'package:google_maps_webservice/places.dart';
 import "package:google_maps_webservice/geocoding.dart";
 
 import 'package:tienda/bloc/address-bloc.dart';
+import 'package:tienda/localization.dart';
 import 'package:tienda/model/delivery-address.dart';
 import 'package:tienda/view/address/add-address-page.dart';
 
@@ -68,7 +69,7 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
             onCameraMove: (cameraPosition) {
               chosenLocation = new LatLng(cameraPosition.target.latitude,
                   cameraPosition.target.longitude);
-              address = 'fetching address..';
+              address = '${AppLocalizations.of(context).translate("fetching-address")}..';
               setState(() {});
             },
             onCameraIdle: () async {
@@ -96,7 +97,7 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
           )
               : Container(),
           Padding(
-            padding: const EdgeInsets.only(top: 20.0),
+            padding: const EdgeInsets.only(top: 30.0),
             child: Align(
               alignment: Alignment.topCenter,
               child: Column(
@@ -107,7 +108,7 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
-                    margin: EdgeInsets.only(left: 16, right: 16),
+                    margin: EdgeInsets.only(left: 50, right: 16),
                     color: Colors.white,
                     child: Padding(
                         padding: const EdgeInsets.only(right: 8.0),
@@ -115,15 +116,15 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
                           onTap: () {
                             showPrediction();
                           },
-                          child: Row(children: <Widget>[
-                            Flexible(
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: ListTile(
-                                  leading: Icon(Icons.location_on),
-                                  title: Text(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left:8.0,right:8.0,top:12.0,bottom: 12.0),
+                            child: Row(children: <Widget>[
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Text(
                                     address == null
-                                        ? "fetching address.."
+                                        ? "${AppLocalizations.of(context).translate("fetching-address")}.."
                                         : address,
                                     style: TextStyle(
                                         color: Color(0xFF2A2E43), fontSize: 14),
@@ -132,8 +133,8 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
                                   ),
                                 ),
                               ),
-                            ),
-                          ]),
+                            ]),
+                          ),
                         )),
                   ),
                   Padding(
@@ -148,7 +149,7 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
                           handleConfirmAddress(contextA);
                         },
                         child: Text(
-                          "CONFIRM LOCATION",
+                          AppLocalizations.of(context).translate("confirm-location").toUpperCase(),
                         ),
                       ),
                     ),

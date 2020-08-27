@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:provider/provider.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/events/live-stream-events.dart';
 import 'package:tienda/bloc/live-stream-bloc.dart';
+import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/presenter-bloc.dart';
+import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/presenter-states.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/presenter-category.dart';
-import 'package:tienda/view/live-stream/video-stream-full-screen.dart';
-import 'package:tienda/view/chat/seller-chat-message.dart';
-import 'package:tienda/view/presenter-profile/seller-profile-main-page.dart';
+import 'package:tienda/view/live-stream/live-stream-screen.dart';
+import 'package:tienda/view/chat/presenter-direct-message.dart';
+import 'package:tienda/view/login/login-main-page.dart';
+import 'package:tienda/view/presenter-profile/presenter-profile-page.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class SellerProfilesListView extends StatelessWidget {
   @override
@@ -40,8 +45,7 @@ class SellerProfilesListView extends StatelessWidget {
                 ),
               ),
               body: TabBarView(
-                children:
-                    getTabBarViewWidgets(state.presenterCategory.response),
+                children: getTabBarViewWidgets(state.presenterCategory),
               ),
             ),
           ),
@@ -61,9 +65,9 @@ class SellerProfilesListView extends StatelessWidget {
     return categories;
   }
 
-  getTabBarViewWidgets(List<Response> response) {
+  getTabBarViewWidgets(PresenterCategory presenterCategory) {
     List<Widget> views = new List();
-    for (final cat in response) {
+    for (final cat in presenterCategory.response) {
       views.add(new ListView.builder(
           itemCount: cat.presenters.length,
           itemBuilder: (BuildContext context, int index) {
@@ -81,28 +85,64 @@ class SellerProfilesListView extends StatelessWidget {
                           child: Stack(
                             children: <Widget>[
                               GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SellerProfilePage(
-                                            cat.presenters[index].id)),
-                                  );
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: NetworkImage(
-                                        "${GlobalConfiguration().getString("baseURL")}/${cat.presenters[index].profilePicture}",
-                                      )),
-                                      borderRadius: BorderRadius.circular(4),
-                                      border: cat.presenters[index].isLive
-                                          ? Border.all(color: Colors.lightBlue)
-                                          : null),
-                                  height: 90,
-                                  width: 70,
-                                ),
-                              ),
+                                  onTap: () {
+                                    bool isGuestUser =
+                                        BlocProvider.of<LoginBloc>(context)
+                                            .state is GuestUser;
+
+                                    isGuestUser
+                                        ? Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    LoginMainPage()),
+                                          )
+                                        : Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    PresenterProfilePage(cat
+                                                        .presenters[index].id)),
+                                          );
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Container(
+                                      height: 90,
+                                      width: 70,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                          border: cat.presenters[index].isLive
+                                              ? Border.all(
+                                                  color: Colors.lightBlue)
+                                              : null),
+                                      child: FadeInImage.memoryNetwork(
+                                        image:
+                                            "${GlobalConfiguration().getString("imageURL")}/${cat.presenters[index].profilePicture}",
+                                        height: 90,
+                                        width: 70,
+                                        fit: BoxFit.cover,
+                                        placeholder: kTransparentImage,
+                                      ),
+                                    ),
+                                  )
+
+//                                Container(
+//                                  decoration: BoxDecoration(
+//                                      image: DecorationImage(
+//                                        fit: BoxFit.cover,
+//                                          image: NetworkImage(
+//                                        "${GlobalConfiguration().getString("baseURL")}/${cat.presenters[index].profilePicture}",
+//                                      )),
+//                                      borderRadius: BorderRadius.circular(4),
+//                                      border: cat.presenters[index].isLive
+//                                          ? Border.all(color: Colors.lightBlue)
+//                                          : null),
+//                                  height: 90,
+//                                  width: 70,
+//                                ),
+                                  ),
                               cat.presenters[index].isLive
                                   ? Align(
                                       alignment: Alignment.bottomCenter,
@@ -162,12 +202,14 @@ class SellerProfilesListView extends StatelessWidget {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                  builder: (context) => BlocProvider(
-                                create: (BuildContext context) =>
-                                LiveStreamBloc()
-                                  ..add(JoinLive(cat.presenters[index].id)),
-                                child: VideoStreamFullScreenView(),
-                              )));
+                                      builder: (context) => BlocProvider(
+                                            create: (BuildContext context) =>
+                                                LiveStreamBloc()
+                                                  ..add(JoinLive(cat
+                                                      .presenters[index].id)),
+                                            child: LiveStreamScreen(
+                                                cat.presenters[index]),
+                                          )));
                             },
                             color: Colors.blue,
                             child: Text(
@@ -181,12 +223,33 @@ class SellerProfilesListView extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4)),
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SellerDirectMessage(
-                                        cat.presenters[index])),
-                              );
+                              if (presenterCategory.membership != "premium") {
+                                ///show premium alert
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text('Go Premium'),
+                                        content: Text(
+                                            'Grab a premium membership to send messages'),
+                                        actions: <Widget>[
+                                          Center(
+                                            child: RaisedButton(
+                                              onPressed: () {},
+                                              child: Text('CONTINUE'),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              } else
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          PresenterDirectMessage(
+                                              cat.presenters[index])),
+                                );
                             },
                             color: Colors.grey,
                             child: Text(
@@ -196,7 +259,7 @@ class SellerProfilesListView extends StatelessWidget {
                               style:
                                   TextStyle(fontSize: 12, color: Colors.white),
                             ),
-                          ),
+                          )
                   ],
                 ),
               ),

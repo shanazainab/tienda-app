@@ -1,13 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tienda/bloc/events/order-events.dart';
 import 'package:tienda/bloc/orders-bloc.dart';
+import 'package:tienda/localization.dart';
 import 'package:tienda/model/order.dart';
 import 'package:tienda/view/order/order-cancel-page.dart';
 import 'package:tienda/view/order/order-tracking-page.dart';
 import 'package:tienda/view/order/order-tracking-time-line.dart';
-
+import 'package:transparent_image/transparent_image.dart';
 
 class OrdersDetailsPage extends StatelessWidget {
   final Order order;
@@ -17,8 +17,8 @@ class OrdersDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext contextA) {
     return Scaffold(
-      appBar:AppBar(
-        title: Text("ORDER DETAILS"),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(contextA).translate("order-details")),
         centerTitle: false,
       ),
       body: SingleChildScrollView(
@@ -30,13 +30,30 @@ class OrdersDetailsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(16.0),
                 color: Colors.white,
                 child: Column(
                   children: <Widget>[
-                    Text("ORDER NO: ${order.orderUuid}"),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${AppLocalizations.of(contextA).translate('order-number')}: ",
+                            maxLines: 1,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "${order.orderUuid}",
+                            maxLines: 1,
+                          ),
+                        ],
+                      ),
+                    ),
                     SizedBox(
-                      height: 50,
+                      height: 20,
                     ),
                     Container(
                       height: 160,
@@ -53,16 +70,13 @@ class OrdersDetailsPage extends StatelessWidget {
                                 width: 120,
                                 child: Stack(
                                   children: <Widget>[
-                                    CachedNetworkImage(
-                                      imageUrl: order.products[index].thumbnail,
+                                    FadeInImage.memoryNetwork(
+                                      image: order.products[index].thumbnail,
                                       height: 160,
                                       width: 120,
                                       fit: BoxFit.cover,
-                                      placeholder: (context, url) => Container(
-                                        color: Color(0xfff2f2e4),
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          Icon(Icons.error),
+                                      placeholder: kTransparentImage,
+
                                     ),
                                     Align(
                                       alignment: Alignment.bottomLeft,
@@ -77,14 +91,21 @@ class OrdersDetailsPage extends StatelessWidget {
                                             Text(
                                               order.products[index].nameEn,
                                               softWrap: true,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                   top: 8.0),
                                               child: Text(
-                                                "AED ${order.products[index].price}",
+                                                "${AppLocalizations.of(contextA).translate('aed')} ${order.products[index].price}",
                                                 overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                                 softWrap: true,
                                               ),
                                             )
@@ -115,7 +136,8 @@ class OrdersDetailsPage extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: Text(
-                        "Price Details",
+                        AppLocalizations.of(contextA)
+                            .translate("price-details"),
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
@@ -123,8 +145,10 @@ class OrdersDetailsPage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text("Subtotal"),
-                        Text("AED ${order.totalPrice}")
+                        Text(AppLocalizations.of(contextA)
+                            .translate("subtotal")),
+                        Text(
+                            "${AppLocalizations.of(contextA).translate("aed")} ${order.totalPrice}")
                       ],
                     ),
                     Padding(
@@ -132,8 +156,10 @@ class OrdersDetailsPage extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text("Total Discount"),
-                          Text("AED 0")
+                          Text(AppLocalizations.of(contextA)
+                              .translate("total-discount")),
+                          Text(
+                              "${AppLocalizations.of(contextA).translate("aed")} 0")
                         ],
                       ),
                     ),
@@ -142,8 +168,10 @@ class OrdersDetailsPage extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text("Delivery charge"),
-                          Text("AED 0")
+                          Text(AppLocalizations.of(contextA)
+                              .translate("delivery-charge")),
+                          Text(
+                              "${AppLocalizations.of(contextA).translate("aed")} 0")
                         ],
                       ),
                     ),
@@ -153,8 +181,10 @@ class OrdersDetailsPage extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text("Total"),
-                          Text("AED ${order.totalPrice}")
+                          Text(
+                              AppLocalizations.of(contextA).translate("total")),
+                          Text(
+                              "${AppLocalizations.of(contextA).translate("aed")} ${order.totalPrice}")
                         ],
                       ),
                     )
@@ -176,7 +206,8 @@ class OrdersDetailsPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
-                          "Order Status",
+                          AppLocalizations.of(contextA)
+                              .translate("order-status"),
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
@@ -215,7 +246,8 @@ class OrdersDetailsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      "Delivery address",
+                      AppLocalizations.of(contextA)
+                          .translate("delivery-address"),
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -245,13 +277,14 @@ class OrdersDetailsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      "Payment Method",
+                      AppLocalizations.of(contextA).translate("payment-method"),
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0),
-                      child: Text("Cash on Delivery"),
+                      child: Text(AppLocalizations.of(contextA)
+                          .translate("cash-on-delivery")),
                     )
                   ],
                 ),
@@ -273,30 +306,34 @@ class OrdersDetailsPage extends StatelessWidget {
                                     BlocProvider.of<OrdersBloc>(contextA)
                                         .add(ReturnOrder(order));
                                   },
-                                  child: Text("RETURN ORDER"),
+                                  child: Text(AppLocalizations.of(contextA)
+                                      .translate("return-order")
+                                      .toUpperCase()),
                                 ),
                               )
                             : Container(),
-                        order.status == "pending" || (order.status != "delivered" && order.status != "canceled")
+                        order.status == "pending" ||
+                                (order.status != "delivered" &&
+                                    order.status != "canceled")
                             ? Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: OutlineButton(
                                   onPressed: () {
-
-
-
                                     Navigator.pushReplacement(
                                       contextA,
                                       MaterialPageRoute(
-                                          builder: (context) => BlocProvider.value(
-                                            value: BlocProvider.of<OrdersBloc>(contextA),
-                                            child: OrderCancelPage(order),
-                                          )),
+                                          builder: (context) =>
+                                              BlocProvider.value(
+                                                value:
+                                                    BlocProvider.of<OrdersBloc>(
+                                                        contextA),
+                                                child: OrderCancelPage(order),
+                                              )),
                                     );
-
-
                                   },
-                                  child: Text("CANCEL ORDER"),
+                                  child: Text(AppLocalizations.of(contextA)
+                                      .translate("cancel-order")
+                                      .toUpperCase()),
                                 ),
                               )
                             : Container(),

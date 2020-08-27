@@ -14,8 +14,9 @@ import 'package:tienda/bloc/states/review-states.dart';
 import 'package:tienda/model/product.dart';
 
 class ReviewBloc extends Bloc<ReviewEvents, ReviewStates> {
-  @override
-  ReviewStates get initialState => Loading();
+  ReviewBloc() : super(Loading());
+
+
 
   @override
   Stream<ReviewStates> mapEventToState(ReviewEvents event) async* {

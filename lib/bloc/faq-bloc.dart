@@ -10,8 +10,9 @@ import 'package:dio/dio.dart';
 import 'package:tienda/model/faq.dart';
 
 class FAQBloc extends Bloc<FAQEvents, FAQStates> {
-  @override
-  FAQStates get initialState => Loading();
+  FAQBloc() : super(Loading());
+
+
 
   @override
   Stream<FAQStates> mapEventToState(FAQEvents event) async* {

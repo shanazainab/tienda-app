@@ -46,7 +46,7 @@ class SearchAutoComplete extends StatelessWidget {
                           )
                         ],
                         child: ProductListPage(
-                          title: suggestions[index].suggestion,
+                          titleInEnglish: suggestions[index].suggestion,
                           query: suggestions[index].suggestion,
                           searchBody: new SearchBody(),
                         ),

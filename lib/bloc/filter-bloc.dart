@@ -4,10 +4,10 @@ import 'package:tienda/bloc/states/filter-states.dart';
 
 
 class FilterBloc extends Bloc<FilterEvents, FilterStates> {
+  FilterBloc() : super(Loading());
 
 
-  @override
-  FilterStates get initialState => Loading();
+
 
   @override
   Stream<FilterStates> mapEventToState(FilterEvents event) async* {

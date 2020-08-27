@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:tienda/bloc/address-bloc.dart';
 import 'package:tienda/bloc/events/address-events.dart';
 import 'package:tienda/bloc/states/address-states.dart';
+import 'package:tienda/localization.dart';
 import 'package:tienda/model/delivery-address.dart';
 import 'package:tienda/view/address/saved-address-page.dart';
 
@@ -26,13 +27,14 @@ class _AddAddressPageState extends State<AddAddressPage> {
 
   bool isSwitched = false;
 
-  String labelOne = "Apartment name";
-  String labelTwo = "Floor number";
+  String labelOne;
+  String labelTwo;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
     widget.deliveryAddress.addressType = "apartment";
     widget.deliveryAddress.apartment = "null";
     widget.deliveryAddress.isDefault = false;
@@ -52,7 +54,9 @@ class _AddAddressPageState extends State<AddAddressPage> {
           appBar: AppBar(
             elevation: 0,
             brightness: Brightness.light,
-            title: Text("Add Address"),
+            title: Text(AppLocalizations.of(context)
+                .translate("add-address")
+                .toUpperCase()),
           ),
           bottomNavigationBar: BlocBuilder<AddressBloc, AddressStates>(
               builder: (context, state) {
@@ -107,7 +111,8 @@ class _AddAddressPageState extends State<AddAddressPage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  Text("Set as default"),
+                                  Text(AppLocalizations.of(context)
+                                      .translate("set-as-default")),
                                   Switch(
                                     value: widget.isEditMode
                                         ? widget.deliveryAddress.isDefault
@@ -142,8 +147,12 @@ class _AddAddressPageState extends State<AddAddressPage> {
                                     },
                                     child: Text(
                                       widget.isEditMode
-                                          ? "UPDATE"
-                                          : "SAVE ADDRESS",
+                                          ? AppLocalizations.of(context)
+                                              .translate("update")
+                                              .toUpperCase()
+                                          : AppLocalizations.of(context)
+                                              .translate("save-address")
+                                              .toUpperCase(),
                                     ),
                                   ),
                                 ),
@@ -173,7 +182,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Text("CONTACT PERSON"),
+            Text(AppLocalizations.of(context).translate("contact-person")),
             SizedBox(
               height: 8,
             ),
@@ -188,7 +197,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
                   filled: true,
                   labelStyle: TextStyle(fontSize: 12),
                   fillColor: Colors.grey[100],
-                  labelText: 'Name'),
+                  labelText: AppLocalizations.of(context).translate("name")),
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please provide a contact name';
@@ -213,7 +222,8 @@ class _AddAddressPageState extends State<AddAddressPage> {
                     labelStyle: TextStyle(fontSize: 12),
                     filled: true,
                     fillColor: Colors.grey[100],
-                    labelText: 'Mobile Number'),
+                    labelText:
+                        AppLocalizations.of(context).translate("phone-number")),
                 validator: (value) {
                   if (value.isEmpty) {
                     return 'Please provide a contact number';
@@ -238,7 +248,9 @@ class _AddAddressPageState extends State<AddAddressPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text("LOCATION"),
+            Text(AppLocalizations.of(context)
+                .translate("location")
+                .toUpperCase()),
             SizedBox(
               height: 16,
             ),
@@ -250,8 +262,10 @@ class _AddAddressPageState extends State<AddAddressPage> {
                   onTap: () {
                     widget.deliveryAddress.addressType = "apartment";
                     setState(() {
-                      labelOne = "Apartment name";
-                      labelTwo = "Floor Number";
+                      labelOne =
+                          "${AppLocalizations.of(context).translate("apartment")} ${AppLocalizations.of(context).translate("name")}";
+                      labelTwo = AppLocalizations.of(context)
+                          .translate("floor-number");
                     });
                   },
                   child: Card(
@@ -259,7 +273,9 @@ class _AddAddressPageState extends State<AddAddressPage> {
                       padding: const EdgeInsets.only(
                           left: 16.0, right: 16.0, top: 4, bottom: 4),
                       child: Text(
-                        "APARTMENT",
+                        AppLocalizations.of(context)
+                            .translate("apartment")
+                            .toUpperCase(),
                         style: TextStyle(fontSize: 12),
                       ),
                     ),
@@ -275,7 +291,8 @@ class _AddAddressPageState extends State<AddAddressPage> {
                   onTap: () {
                     widget.deliveryAddress.addressType = "villa";
                     setState(() {
-                      labelOne = "Villa name";
+                      labelOne =
+                          "${AppLocalizations.of(context).translate("villa")} ${AppLocalizations.of(context).translate("name")}";
                       labelTwo = "Street";
                     });
                   },
@@ -290,7 +307,9 @@ class _AddAddressPageState extends State<AddAddressPage> {
                         padding: const EdgeInsets.only(
                             left: 16.0, right: 16.0, top: 4, bottom: 4),
                         child: Text(
-                          "VILLA",
+                          AppLocalizations.of(context)
+                              .translate("villa")
+                              .toUpperCase(),
                           style: TextStyle(
                             fontSize: 12,
                           ),
@@ -301,8 +320,10 @@ class _AddAddressPageState extends State<AddAddressPage> {
                   onTap: () {
                     widget.deliveryAddress.addressType = "office";
                     setState(() {
-                      labelOne = "Office";
-                      labelTwo = "Floor number";
+                      labelOne =
+                          AppLocalizations.of(context).translate("office");
+                      labelTwo = AppLocalizations.of(context)
+                          .translate("floor-number");
                     });
                   },
                   child: Card(
@@ -316,7 +337,9 @@ class _AddAddressPageState extends State<AddAddressPage> {
                         padding: const EdgeInsets.only(
                             left: 16.0, right: 16.0, top: 4, bottom: 4),
                         child: Text(
-                          "OFFICE",
+                          AppLocalizations.of(context)
+                              .translate("office")
+                              .toUpperCase(),
                           style: TextStyle(fontSize: 12),
                         ),
                       )),
@@ -346,7 +369,9 @@ class _AddAddressPageState extends State<AddAddressPage> {
                         filled: true,
                         labelStyle: TextStyle(fontSize: 12),
                         fillColor: Colors.grey[100],
-                        labelText: labelOne),
+                        labelText: labelOne == null
+                            ? "${AppLocalizations.of(context).translate("apartment")} ${AppLocalizations.of(context).translate("name")}"
+                            : labelOne),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 16.0),
@@ -368,7 +393,9 @@ class _AddAddressPageState extends State<AddAddressPage> {
                           filled: true,
                           labelStyle: TextStyle(fontSize: 12),
                           fillColor: Colors.grey[100],
-                          labelText: labelTwo),
+                          labelText: labelOne == null
+                              ? "${AppLocalizations.of(context).translate("floor-number")}"
+                              : labelOne),
                     ),
                   ),
                 ],
@@ -389,7 +416,9 @@ class _AddAddressPageState extends State<AddAddressPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Text("INSTRUCTION"),
+            Text(AppLocalizations.of(context)
+                .translate("instruction")
+                .toUpperCase()),
             SizedBox(
               height: 8,
             ),
@@ -411,7 +440,7 @@ class _AddAddressPageState extends State<AddAddressPage> {
                   filled: true,
                   labelStyle: TextStyle(fontSize: 12),
                   fillColor: Colors.grey[100],
-                  labelText: 'Instructions'),
+                  labelText: 'eg: leave at reception'),
             ),
           ],
         ),

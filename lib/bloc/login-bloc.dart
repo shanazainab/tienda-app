@@ -7,22 +7,15 @@ import 'events/login-events.dart';
 import 'package:dio/dio.dart';
 
 class LoginBloc extends Bloc<LoginEvents, LoginStates> {
-  LoginApiClient loginApiClient;
-  LoginController loginController;
+  LoginBloc() : super(LoginInitiated());
 
-  LoginBloc() {
-    final dio = Dio();
-    loginApiClient = LoginApiClient(dio);
-    loginController = new LoginController();
-  }
 
-  @override
-  LoginStates get initialState => LoginInitiated();
 
   @override
   Stream<LoginStates> mapEventToState(LoginEvents event) async* {
-    if (event is CheckLoginStatus) yield* _doCheckLogin(event);
-    if (event is SendOTP)
+    if (event is CheckLoginStatus){
+      yield* _doCheckLogin(event);}
+    else if (event is SendOTP)
       yield* _doLoginSendOTP(event);
     else if (event is VerifyOTP)
       yield* _doLoginVerifyOTP(event);
@@ -36,7 +29,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
   }
 
   Stream<LoginStates> _doCheckLogin(CheckLoginStatus event) async* {
-    bool isLoggedIn = await loginController.checkLoginStatus();
+    bool isLoggedIn = await LoginController().checkLoginStatus();
     if (isLoggedIn)
       yield LoggedInUser();
     else
@@ -49,11 +42,11 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
 
     ///call backend api for login send
 
-    String status = await loginController.signWithMobileNumber(loginRequest);
+    String status = await LoginController().signWithMobileNumber(loginRequest);
     if (status == "success")
       yield LoginSendOTPSuccess("success");
     else
-      yield LoginSendOTPError(error: status);
+      yield LoginSendOTPError(error: "Something went wrong");
   }
 
   Stream<LoginStates> _doLoginVerifyOTP(VerifyOTP event) async* {
@@ -62,7 +55,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
 
     ///call backend api for login verify
 
-    String status = await loginController.verifyLoginOTP(loginVerifyRequest);
+    String status = await LoginController().verifyLoginOTP(loginVerifyRequest);
     if (status == "Existing User")
       yield LoginVerifyOTPSuccess(isNewUser: false);
     if (status == "New User")
@@ -72,12 +65,12 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
   }
 
   Stream<LoginStates> _doCustomerRegistration(RegisterCustomer event) async* {
-    await loginController.registerCustomer(event.customer);
+    await LoginController().registerCustomer(event.customer);
     yield CustomerRegistrationSuccess();
   }
 
   Stream<LoginStates> _doLogout(Logout event) async* {
-    String status = await loginController.logOut();
+    String status = await LoginController().logOut();
 
     switch (status) {
       case "success":
@@ -89,7 +82,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
   }
 
   Stream<LoginStates> _doGoogleSignIn(DoGoogleSignIn event) async* {
-    String status = await loginController.signInWithGoogle();
+    String status = await LoginController().signInWithGoogle();
     switch (status) {
       case "success":
         yield GoogleSignInResponse(response: GoogleSignInResponse.SUCCESS);
@@ -103,7 +96,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
   }
 
   Stream<LoginStates> _doFacebookSignIn(DoFacebookSignIn event) async* {
-    String status = await loginController.signInWithFacebook();
+    String status = await LoginController().signInWithFacebook();
     switch (status) {
       case "success":
         yield FacebookSignInResponse(response: FacebookSignInResponse.SUCCESS);

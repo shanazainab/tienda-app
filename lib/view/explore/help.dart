@@ -22,7 +22,7 @@ class Help extends StatelessWidget {
           ),
         ),
         body: BlocBuilder<FAQBloc, FAQStates>(
-            bloc: FAQBloc()..add(LoadGeneralQuestions()),
+            cubit: FAQBloc()..add(LoadGeneralQuestions()),
             builder: (context, state) {
               if (state is LoadGeneralQuestionsSuccess)
                 return Container(

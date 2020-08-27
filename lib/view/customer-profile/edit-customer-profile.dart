@@ -103,7 +103,7 @@ class _EdiCustomerProfilePageState extends State<EdiCustomerProfilePage> {
                                 radius: 75,
                                 backgroundColor: Color(0xfff2f2e4),
                                 backgroundImage: NetworkImage(
-                                    "${GlobalConfiguration().getString("baseURL")}/${customerDetails.profilePicture}"))),
+                                    "${GlobalConfiguration().getString("imageURL")}/${customerDetails.profilePicture}"))),
                   ),
                   Align(
                       alignment: Alignment.bottomCenter,

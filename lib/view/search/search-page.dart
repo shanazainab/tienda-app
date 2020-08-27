@@ -147,7 +147,7 @@ class _SearchPageState extends State<SearchPage> {
           ],
         ),
         body: BlocListener<SearchBloc, SearchStates>(
-          bloc: searchBloc,
+          cubit: searchBloc,
           listener: (context, state) {
             if (state is ProductSearchAutoCompleteSuccess) {
               panelController.open();
@@ -164,7 +164,7 @@ class _SearchPageState extends State<SearchPage> {
                 },
               ),
               BlocBuilder<SearchBloc, SearchStates>(
-                  bloc: searchBloc,
+                  cubit: searchBloc,
                   builder: (context, state) {
                     if (state is ProductSearchAutoCompleteSuccess)
                       return Align(
@@ -225,7 +225,7 @@ class _SearchPageState extends State<SearchPage> {
                     )
                   ],
                   child: ProductListPage(
-                    title: text,
+                    titleInEnglish: text,
                     query: text,
                     searchBody: new SearchBody(),
                   ),

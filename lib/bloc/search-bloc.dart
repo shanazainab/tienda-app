@@ -13,8 +13,9 @@ import 'package:tienda/model/suggestion-response.dart';
 import 'events/search-events.dart';
 
 class SearchHistoryBloc extends Bloc<SearchEvents, SearchStates> {
-  @override
-  SearchStates get initialState => Loading();
+  SearchHistoryBloc() : super(Loading());
+
+
 
   @override
   Stream<SearchStates> mapEventToState(SearchEvents event) async* {
@@ -50,8 +51,9 @@ class SearchHistoryBloc extends Bloc<SearchEvents, SearchStates> {
 }
 
 class SearchBloc extends Bloc<SearchEvents, SearchStates> {
-  @override
-  SearchStates get initialState => Loading();
+  SearchBloc() : super(Loading());
+
+
 
   @override
   Stream<SearchStates> mapEventToState(SearchEvents event) async* {

@@ -10,14 +10,9 @@ import 'package:tienda/controller/login-controller.dart';
 import 'events/startup-events.dart';
 
 class StartupBloc extends Bloc<StartupEvents, StartupStates> {
-  LoginController loginController;
+  StartupBloc() : super(Initialized());
 
-  StartupBloc() {
-    loginController = new LoginController();
-  }
 
-  @override
-  StartupStates get initialState => Initialized();
 
   @override
   Stream<StartupStates> mapEventToState(StartupEvents event) async* {
@@ -27,12 +22,9 @@ class StartupBloc extends Bloc<StartupEvents, StartupStates> {
     if (event is UpdatePreferenceFlow) {
       _updateThePreferenceFlow(event.route);
     }
-
   }
 
   Stream<StartupStates> _mapAppStartedToState() async* {
-
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String route = '/welcomeScreen';
     if (prefs.containsKey("preference-flow")) {

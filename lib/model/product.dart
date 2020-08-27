@@ -28,7 +28,7 @@ class Product extends Equatable {
       this.discount,
       this.presenter,
       this.isPurchased,
-      this.brand});
+      this.brand,this.isReturnable,this.lastVideo});
 
   int id;
   String brand;
@@ -51,6 +51,8 @@ class Product extends Equatable {
   bool isReviewed;
   bool isPurchased;
 
+  String lastVideo;
+  bool isReturnable;
   int quantity;
   int discount;
 
@@ -95,7 +97,9 @@ class Product extends Equatable {
                   .map((k, v) => MapEntry<String, int>(k, v))
               : null,
           quantity: json['quantity'],
-          brand: json["brand"]);
+          brand: json["brand"],
+      isReturnable: json["is_returnable"],
+      lastVideo: json["last_video"]);
     } catch (err) {
       Logger().e(err);
     }
@@ -136,6 +140,8 @@ class Product extends Equatable {
         "ratings": ratings != null
             ? Map.from(ratings).map((k, v) => MapEntry<String, dynamic>(k, v))
             : null,
+        "is_returnable":isReturnable,
+        "last_video":lastVideo
       };
     } catch (e) {
       print('PRODUCT TOJSON CONVERSION ERROR : $e');

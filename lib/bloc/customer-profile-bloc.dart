@@ -14,8 +14,8 @@ import 'package:tienda/model/customer.dart';
 
 class CustomerProfileBloc
     extends Bloc<CustomerProfileEvents, CustomerProfileStates> {
-  @override
-  CustomerProfileStates get initialState => Loading();
+  CustomerProfileBloc() : super(Loading());
+
 
   @override
   Stream<CustomerProfileStates> mapEventToState(
@@ -160,7 +160,11 @@ class CustomerProfileBloc
   Stream<CustomerProfileStates> _mapFetchCustomerProfileToStates(
       FetchCustomerProfile event) async* {
     Customer customer = await callFetchCustomerProfileApi();
-    Logger().e("customer:$customer");
+    Logger().e("customer:${customer.id}");
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setInt('customer-id', customer.id);
+    sharedPreferences.setString('customer-name', customer.fullName);
 
     if (customer != null) {
       updateCustomerProfileLocally(customer);
@@ -168,14 +172,19 @@ class CustomerProfileBloc
     } else {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
-      Customer customer = Customer.fromJson(
-          json.decode(sharedPreferences.getString("customer")));
-      yield LoadCustomerProfileSuccess(customerDetails: customer);
+      if(sharedPreferences.containsKey("customer")) {
+        Customer customer = Customer.fromJson(
+            json.decode(sharedPreferences.getString("customer")));
+        yield LoadCustomerProfileSuccess(customerDetails: customer);
+      }
+
+
     }
+
   }
 
   Future<void> updateCustomerProfileLocally(Customer customer) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    sharedPreferences.setString("customer", json.encode(customer));
+    sharedPreferences.setString("customer", customerToJson(customer));
   }
 }

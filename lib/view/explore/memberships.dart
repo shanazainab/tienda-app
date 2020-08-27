@@ -7,7 +7,7 @@ class Memberships extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(44),
+        preferredSize: Size.fromHeight(48),
         child: CustomAppBar(
           showLogo: false,
           showCart: false,
@@ -22,23 +22,36 @@ class Memberships extends StatelessWidget {
         children: <Widget>[
           ///Main card
           Card(
-            color: Colors.grey,
+            color: Colors.grey[200],
             child: Container(
-              height: 200,
+              height: 400,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      title: Text('Connect with presenters'),
+                    ),
+                    ListTile(
+                      title: Text('Early access to deals'),
+                    ),
+                    ListTile(
+                      title:  Text('Faster delivery')
+                    ),
+
+                  ],
+                ),
+              ),
               width: MediaQuery.of(context).size.width - 24,
             ),
           ),
+          RaisedButton(
+            onPressed: (){
 
-          GridView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-            itemBuilder: (_, index) =>  Card(
-              color: Colors.grey,
-              child: Container(
-              ),
-            ),
-            itemCount: 8,
+            },
+            child: Text("GO PREMIUM"),
           )
         ],
       ) ,

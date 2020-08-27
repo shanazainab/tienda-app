@@ -13,8 +13,9 @@ import 'package:tienda/model/country.dart';
 import 'events/preference-events.dart';
 
 class PreferenceBloc extends Bloc<PreferenceEvents, PreferenceStates> {
-  @override
-  PreferenceStates get initialState => Loading();
+  PreferenceBloc() : super(Loading());
+
+
 
   @override
   Stream<PreferenceStates> mapEventToState(PreferenceEvents event) async* {

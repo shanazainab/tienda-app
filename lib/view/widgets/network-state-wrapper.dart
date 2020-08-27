@@ -1,9 +1,7 @@
-import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:tienda/bloc/connectivity-bloc.dart';
-import 'dart:developer' as developer;
 
 typedef NetworkState(ConnectivityResult result);
 
@@ -29,10 +27,7 @@ class NetworkStateWrapper extends StatelessWidget {
             print("CONNECTIVITY: CELLULAR");
             networkState(ConnectivityResult.mobile);
 
-            return Opacity(
-              opacity: opacity,
-              child: child,
-            );
+            return child;
           }
           if (snapShot.data == ConnectivityResult.none) {
             print("CONNECTIVITY: NONE");

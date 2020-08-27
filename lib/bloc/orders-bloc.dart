@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -10,8 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:tienda/model/order.dart';
 
 class OrdersBloc extends Bloc<OrderEvents, OrderStates> {
-  @override
-  OrderStates get initialState => Loading();
+  OrdersBloc() : super(Loading());
 
   @override
   Stream<OrderStates> mapEventToState(OrderEvents event) async* {
@@ -52,7 +52,6 @@ class OrdersBloc extends Bloc<OrderEvents, OrderStates> {
   }
 
   Stream<OrderStates> _mapCancelOrderToStates(CancelOrder event) async* {
-
     final dio = Dio();
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
@@ -83,7 +82,7 @@ class OrdersBloc extends Bloc<OrderEvents, OrderStates> {
     OrdersApiClient ordersApiClient = OrdersApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await ordersApiClient.getOrders().then((response) {
-      Logger().d("GET-ORDERS-RESPONSE:$response");
+      log("GET-ORDERS-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           orders = orderFromJson(json.encode(json.decode(response)['orders']));

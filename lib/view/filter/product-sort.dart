@@ -4,6 +4,8 @@ import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/product-bloc.dart';
 import 'package:tienda/model/search-body.dart';
 
+import '../../localization.dart';
+
 class ProductSort extends StatelessWidget {
   final String query;
 
@@ -22,7 +24,7 @@ class ProductSort extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              "Sort by",
+              AppLocalizations.of(context).translate('sort-by'),
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -31,14 +33,14 @@ class ProductSort extends StatelessWidget {
             endIndent: 16,
           ),
           ListTile(
-            onTap: (){
+            onTap: () {
               searchBody.sortBy = SearchBody.RATING_HIGH_LOW;
               BlocProvider.of<ProductBloc>(context)
                 ..add(FetchFilteredProductList(
                     query: query, searchBody: searchBody));
               Navigator.of(context).pop();
             },
-            title: Text("Rating"),
+            title: Text(AppLocalizations.of(context).translate('rating')),
           ),
           ListTile(
             onTap: () {
@@ -48,7 +50,8 @@ class ProductSort extends StatelessWidget {
                     query: query, searchBody: searchBody));
               Navigator.of(context).pop();
             },
-            title: Text("Price low to high"),
+            title: Text(
+                AppLocalizations.of(context).translate('price-low-to-high')),
           ),
           ListTile(
             onTap: () {
@@ -57,9 +60,9 @@ class ProductSort extends StatelessWidget {
                 ..add(FetchFilteredProductList(
                     query: query, searchBody: searchBody));
               Navigator.of(context).pop();
-
             },
-            title: Text("Price high to low"),
+            title: Text(
+                AppLocalizations.of(context).translate('price-high-to-low')),
           )
         ],
       ),

@@ -2,11 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:tienda/model/presenter-category.dart';
 import 'package:tienda/model/presenter.dart';
 
-abstract class PresenterStates extends Equatable {
+abstract class PresenterStates {
   PresenterStates();
-
-  @override
-  List<Object> get props => null;
 }
 
 class Loading extends PresenterStates {
@@ -18,17 +15,20 @@ class LoadPresenterListSuccess extends PresenterStates {
   final List<Presenter> presenters;
 
   LoadPresenterListSuccess(this.presenterCategory, this.presenters) : super();
-
-  @override
-  List<Object> get props => [presenterCategory];
 }
 
 class LoadPresenterDetailsSuccess extends PresenterStates {
   final Presenter presenter;
 
   LoadPresenterDetailsSuccess(this.presenter) : super();
-
-  @override
-  List<Object> get props => [presenter];
 }
 
+class LoadLivePresenterSuccess extends PresenterStates {
+  final List<Presenter> presenters;
+
+  LoadLivePresenterSuccess(this.presenters) : super();
+}
+
+class NotAuthorized extends PresenterStates {
+  NotAuthorized() : super();
+}

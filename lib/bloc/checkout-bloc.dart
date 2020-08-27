@@ -10,8 +10,9 @@ import 'package:tienda/bloc/states/checkout-states.dart';
 import 'package:dio/dio.dart';
 
 class CheckOutBloc extends Bloc<CheckoutEvents, CheckoutStates> {
-  @override
-  CheckoutStates get initialState => Loading();
+  CheckOutBloc() : super(Loading());
+
+
 
   @override
   Stream<CheckoutStates> mapEventToState(CheckoutEvents event) async* {

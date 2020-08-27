@@ -10,8 +10,9 @@ import 'package:tienda/model/category.dart';
 import 'package:dio/dio.dart';
 
 class CategoryBlock extends Bloc<CategoryEvents, CategoryStates> {
-  @override
-  CategoryStates get initialState => Loading();
+  CategoryBlock() : super(Loading());
+
+
 
   @override
   Stream<CategoryStates> mapEventToState(CategoryEvents event) async* {
