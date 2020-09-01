@@ -41,7 +41,7 @@ class ProductListResponse {
         products: List<Product>.from(
             json["products"].map((x) => Product.fromJson(x))),
         catId: json["cat_id"],
-        productsCount: json["products_count"],
+        productsCount: json["results"],
         navigator: json["navigator"] != null
             ? Navigator.fromJson(json["navigator"])
             : null,
@@ -57,7 +57,7 @@ class ProductListResponse {
         "status": status,
         "products": List<dynamic>.from(products.map((x) => x.toJson())),
         "cat_id": catId,
-        "products_count": productsCount,
+        "results": productsCount,
         "navigator": navigator.toJson(),
         "filters": List<dynamic>.from(filters.map((x) => x.toJson())),
       };

@@ -84,20 +84,20 @@ class _ProductListPageState extends State<ProductListPage> {
                     }),
                   ),
                   appBar: PreferredSize(
-                      preferredSize: Size.fromHeight(100.0),
+                      preferredSize: Size.fromHeight(48.0),
                       // here the desired height
                       child: CustomAppBar(
-                        bottom: TabBar(
-                          labelColor: Colors.lightBlue,
-                          unselectedLabelColor: Colors.grey,
-                          indicatorColor: Colors.lightBlue,
-                          tabs: [
-                            Tab(
-                              icon: Icon(Icons.line_style),
-                            ),
-                            Tab(icon: Icon(Icons.videocam)),
-                          ],
-                        ),
+//                        bottom: TabBar(
+//                          labelColor: Colors.lightBlue,
+//                          unselectedLabelColor: Colors.grey,
+//                          indicatorColor: Colors.lightBlue,
+//                          tabs: [
+//                            Tab(
+//                              icon: Icon(Icons.line_style),
+//                            ),
+//                            Tab(icon: Icon(Icons.videocam)),
+//                          ],
+//                        ),
                         title: appLanguage.appLocal == Locale('en')?widget.titleInEnglish.toUpperCase():widget.titleInArabic,
                         showWishList: true,
                         showSearch: false,
@@ -107,36 +107,52 @@ class _ProductListPageState extends State<ProductListPage> {
                   body: BlocBuilder<ProductBloc, ProductStates>(
                       builder: (context, state) {
                     if (state is LoadProductListSuccess) {
-                      return TabBarView(
-                        children: [
-                          ProductListContainer(
-                              state.productListResponse, widget.query,
-                              searchBody: widget.searchBody),
-                          Container(),
-                        ],
-                      );
+                      return      ProductListContainer(
+                          state.productListResponse, widget.query,
+                          searchBody: widget.searchBody);
+
+
+//                        TabBarView(
+//                        children: [
+//                          ProductListContainer(
+//                              state.productListResponse, widget.query,
+//                              searchBody: widget.searchBody),
+//                          Container(),
+//                        ],
+//                      );
                     }
                    else if (state is UpdateProductListSuccess) {
-                      return TabBarView(
-                        children: [
-                          ProductListContainer(
-                            state.productListResponse,
-                            widget.query,
-                            searchBody: widget.searchBody,
-                          ),
-                          Container()
-                        ],
+                      return  ProductListContainer(
+                        state.productListResponse,
+                        widget.query,
+                        searchBody: widget.searchBody,
                       );
+
+
+//                        TabBarView(
+//                        children: [
+//                          ProductListContainer(
+//                            state.productListResponse,
+//                            widget.query,
+//                            searchBody: widget.searchBody,
+//                          ),
+//                          Container()
+//                        ],
+//                      );
                     }
 
                     else {
-                      return TabBarView(
-                        children: [
-                          Container(
-                            child: Text("LOADING"),
+                      return  Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
                           ),
-                          Container()
-                        ],
+                        ),
                       );
                     }
                   })),

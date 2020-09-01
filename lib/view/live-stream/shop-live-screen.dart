@@ -2,10 +2,18 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:tienda/bloc/events/live-stream-events.dart';
 import 'package:tienda/bloc/events/presenter-events.dart';
+import 'package:tienda/bloc/live-stream-bloc.dart';
+import 'package:tienda/bloc/live-stream-checkout-bloc.dart';
+import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/presenter-bloc.dart';
+import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/presenter-states.dart';
 import 'package:tienda/model/presenter.dart';
+import 'package:tienda/view/live-stream/live-stream-screen.dart';
+import 'package:tienda/view/login/login-main-page.dart';
+import 'package:tienda/view/presenter-profile/presenter-profile-page.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class ShopLiveScreen extends StatefulWidget {
@@ -118,7 +126,60 @@ class _ShopLiveScreenState extends State<ShopLiveScreen> {
               height: 10,
             ),
             RaisedButton(
-              onPressed: (){},
+              onPressed: (){
+                bool isGuestUser =
+                BlocProvider.of<LoginBloc>(context).state
+                is GuestUser;
+
+                print(
+                    "CHECK ISGUESTUSER: ${BlocProvider.of<LoginBloc>(context).state}");
+
+                if (presenter.isLive) {
+                  isGuestUser
+                      ? Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            LoginMainPage()),
+                  )
+                      : Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MultiBlocProvider(
+                              providers: [
+                                BlocProvider(
+                                  create: (BuildContext
+                                  context) =>
+                                      LiveStreamCheckoutBloc(),
+                                ),
+                                BlocProvider(
+                                    create: (BuildContext
+                                    context) =>
+                                    LiveStreamBloc()
+                                      ..add(JoinLive(presenter
+                                          .id))),
+                              ],
+                              child: LiveStreamScreen(
+                                  presenter),
+                            )),
+                  );
+                } else
+                  isGuestUser
+                      ? Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            LoginMainPage()),
+                  )
+                      : Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            PresenterProfilePage(presenter.id)),
+                  );
+
+              },
               child: Text("JOIN LIVE"),
             )
           ],

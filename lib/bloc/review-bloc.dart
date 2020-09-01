@@ -33,26 +33,28 @@ class ReviewBloc extends Bloc<ReviewEvents, ReviewStates> {
   }
 
   Stream<ReviewStates> _mapAddToReviewToStates(AddReview event) async* {
+
     if (event.reviewRequest.images != null &&
         event.reviewRequest.images.isNotEmpty) {
       event.reviewRequest.isPhotos = true;
       event.reviewRequest.photos = new List();
+      ///convert file image to base64
+      for (final image in event.reviewRequest.images) {
+        if (image != null) {
+          List<int> imageBytes = image.readAsBytesSync();
+          print(imageBytes);
+          String encodedImage = base64Encode(imageBytes);
+          String mimeType = mime(image.path);
+          String formattedCode = 'data:$mimeType;base64,$encodedImage';
+
+          event.reviewRequest.photos.add(formattedCode);
+        }
+      }
     }
     else
       event.reviewRequest.isPhotos = false;
 
-    ///convert file image to base64
-    for (final image in event.reviewRequest.images) {
-      if (image != null) {
-        List<int> imageBytes = image.readAsBytesSync();
-        print(imageBytes);
-        String encodedImage = base64Encode(imageBytes);
-        String mimeType = mime(image.path);
-        String formattedCode = 'data:$mimeType;base64,$encodedImage';
 
-        event.reviewRequest.photos.add(formattedCode);
-      }
-    }
 
     /// data:image/jpeg;base64,
 
@@ -76,17 +78,22 @@ class ReviewBloc extends Bloc<ReviewEvents, ReviewStates> {
         Logger().e("ADD-REVIEWS-ERROR:", error);
       }
     });
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    Review review = new Review(
-        body: event.reviewRequest.body,
-        customerName: sharedPreferences.getString("customer-name"),
-        rating: event.reviewRequest.rating,
-        fileImages: event.reviewRequest.images,
-        elapsedTime: "a sec ago");
-    event.reviews..add(review);
 
 
-    print(event.reviews);
-    if (status == "success") yield AddReviewSuccess(event.reviews);
+    if(event.reviews != null) {
+      SharedPreferences sharedPreferences = await SharedPreferences
+          .getInstance();
+      Review review = new Review(
+          body: event.reviewRequest.body,
+          customerName: sharedPreferences.getString("customer-name"),
+          rating: event.reviewRequest.rating,
+          fileImages: event.reviewRequest.images,
+          elapsedTime: "a sec ago");
+      event.reviews..add(review);
+
+
+      print(event.reviews);
+      if (status == "success") yield AddReviewSuccess(event.reviews);
+    }
   }
 }

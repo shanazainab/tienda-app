@@ -10,10 +10,14 @@ import 'package:tienda/bloc/states/live-stream-states.dart';
 import 'package:tienda/localization.dart';
 import 'package:transparent_image/transparent_image.dart';
 
+typedef AddedToCart = Function(bool value);
+
 class AddToCartPopUp extends StatelessWidget {
   final BuildContext contextA;
 
-  AddToCartPopUp(this.contextA);
+  final AddedToCart addedToCart;
+
+  AddToCartPopUp(this.contextA,this.addedToCart);
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +103,8 @@ class AddToCartPopUp extends StatelessWidget {
                                       BlocProvider.of<LiveStreamCheckoutBloc>(
                                           contextA)
                                         ..add(ShowProduct(state.product));
+
+
                                     }
                                   },
                                   child: Icon(
@@ -160,6 +166,7 @@ class AddToCartPopUp extends StatelessWidget {
                     onPressed: () {
                       BlocProvider.of<CartBloc>(context)
                           .add(AddCartItem(cartItem: state.product));
+                      addedToCart(true);
                     },
                     child: Text("ADD TO CART"),
                   ),

@@ -92,7 +92,7 @@ class _ProductDescriptionContainerState
                               "Description"
                           ? Padding(
                               padding:
-                                  const EdgeInsets.only(top: 16.0,bottom: 16.0),
+                                  const EdgeInsets.only(top: 4.0,bottom: 2.0),
                               child: Row(
                                 children: <Widget>[
                                   Container(

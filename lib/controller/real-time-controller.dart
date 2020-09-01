@@ -1,6 +1,8 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
@@ -12,8 +14,6 @@ import 'package:tienda/model/get-chat-message-response.dart';
 import 'package:tienda/model/live-chat.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/unread-messages.dart';
-
-
 
 class RealTimeController {
   final liveChatStream = new BehaviorSubject<List<LiveChat>>();
@@ -40,14 +40,15 @@ class RealTimeController {
   }
 
   showLiveReaction(int presenterId) {
-    socket.emit('react', {
-      'reaction':'love',
-      'room_name': "PR-$presenterId"});
-
+    socket.emit('react', {'reaction': 'love', 'room_name': "PR-$presenterId"});
   }
 
   stopLiveReaction() {
     liveReaction.sink.add(false);
+  }
+
+  clearLiveChat() {
+    liveChatStream.sink.add(null);
   }
 
   addToAllMessageStream(Message message) {
@@ -225,7 +226,6 @@ class RealTimeController {
           for (final message in getChatMessageResponse.messages) {
             chatMessages.add(message);
           }
-
           directMessageStream.sink.add(chatMessages.reversed.toList());
           break;
         case 404:
@@ -238,6 +238,27 @@ class RealTimeController {
         Logger().e("GET-CHAT-MESSAGES-ERROR:", error);
       }
     });
+  }
+
+  Map<String, List<DirectMessage>> groupMessagesByDate(List<DirectMessage> chatMessages) {
+    Map<String, List<DirectMessage>> groupedMessages = new HashMap();
+    for (final chatMessage in chatMessages) {
+      if (groupedMessages.containsKey(
+          chatMessage.createdAt.toIso8601String().substring(0, 10))) {
+        groupedMessages[
+                chatMessage.createdAt.toIso8601String().substring(0, 10)]
+            .add(chatMessage);
+      } else {
+        groupedMessages[chatMessage.createdAt
+            .toIso8601String()
+            .substring(0, 10)] = [chatMessage];
+      }
+    }
+
+    log(groupedMessages.toString());
+
+    return groupedMessages;
+
   }
 
   Future<void> getAllPresenterChats() async {

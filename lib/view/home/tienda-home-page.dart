@@ -70,6 +70,7 @@ class _TiendaHomePageContentsState extends State<TiendaHomePageContents>
           if (state is LoadDataSuccess)
             return Container(
               child: ListView(
+                cacheExtent: 1000,
                 padding: EdgeInsets.only(bottom: 50),
                 children: <Widget>[
                   Container(

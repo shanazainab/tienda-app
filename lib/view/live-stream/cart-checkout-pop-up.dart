@@ -82,18 +82,38 @@ class CartCheckOutPopUp extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                FadeInImage.memoryNetwork(
-                                  image: state.cart.products[index].thumbnail,
-                                  height: 120,
-                                  width: 100,
-                                  fit: BoxFit.cover,
-                                  placeholder: kTransparentImage,
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      right: BorderSide(
+                                        color: Colors.grey[200]
+                                      ),
+                                      bottom: BorderSide(
+                                          color: Colors.grey[200]
+                                      ),
+                                      left: BorderSide(
+                                          color: Colors.grey[200]
+                                      ),
+                                      top: BorderSide(
+                                          color: Colors.grey[200]
+                                      )
+                                    )
+                                  ),
 
+                                  child: FadeInImage.memoryNetwork(
+                                    image: state.cart.products[index].thumbnail,
+                                    height: 120,
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                    placeholder: kTransparentImage,
+
+                                  ),
                                 ),
                                 SizedBox(
                                   width: 8,
                                 ),
                                 Container(
+                                  width: MediaQuery.of(context).size.width - 145,
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -113,6 +133,7 @@ class CartCheckOutPopUp extends StatelessWidget {
                                         child: Row(
                                           children: <Widget>[
                                             FlatButton(
+                                              padding: EdgeInsets.all(0),
                                               onPressed: (){
                                                 BlocProvider.of<CartBloc>(context).add(
                                                     DeleteCartItem(

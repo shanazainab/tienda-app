@@ -9,6 +9,7 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,7 +29,7 @@ import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/localization.dart';
-import 'package:tienda/testfile.dart';
+import 'package:tienda/test.dart';
 import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/live-stream/shop-live-screen.dart';
 import 'package:tienda/view/startup/country-choose-page.dart';
@@ -57,8 +58,10 @@ Future<void> main() async {
   ///To track bloc pattern states and transitions
   // BlocSupervisor.delegate = await HydratedBlocDelegate.build();
   Bloc.observer = TrackBlocDelegate();
-  HydratedBloc.storage = await HydratedStorage.build();
-//  await FlutterSecureStorage().delete(key: "session-id");
+  //HydratedBloc.storage = await HydratedStorage.build();
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: await getApplicationDocumentsDirectory(),
+  );
   RealTimeController().initialize();
 
   ///load global app settings
@@ -71,7 +74,7 @@ Future<void> main() async {
   await appCountry.fetchCountry();
 
   await SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp]); // To turn off landscape mode
+      [DeviceOrientation.portraitUp]);
 
   runZoned<Future<void>>(() async {
     runApp(MultiBlocProvider(

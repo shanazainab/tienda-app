@@ -1,0 +1,655 @@
+{
+	"version": 24,
+	"artboards": [
+		{
+			"name": "Artboard",
+			"translation": [
+				-160.41259765625,
+				19.80401611328125
+			],
+			"width": 300,
+			"height": 1000,
+			"origin": [
+				0,
+				0
+			],
+			"clipContents": true,
+			"color": [
+				0.364705890417099,
+				0.364705890417099,
+				0.364705890417099,
+				1
+			],
+			"nodes": [
+				{
+					"name": "heart",
+					"translation": [
+						335,
+						180
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Shape",
+					"parent": 1,
+					"translation": [
+						187.9185028076172,
+						200.9199981689453
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"isVisible": true,
+					"blendMode": 3,
+					"drawOrder": 1,
+					"transformAffectsStroke": false,
+					"type": "shape"
+				},
+				{
+					"name": "Color",
+					"parent": 2,
+					"opacity": 1,
+					"color": [
+						0.843137264251709,
+						0.2666666805744171,
+						0.24313725531101227,
+						1
+					],
+					"fillRule": 1,
+					"type": "colorFill"
+				},
+				{
+					"name": "Path",
+					"parent": 2,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"bones": [],
+					"isVisible": true,
+					"isClosed": true,
+					"points": [
+						{
+							"pointType": 2,
+							"translation": [
+								89.3385009765625,
+								-160.39199829101562
+							],
+							"in": [
+								89.3385009765625,
+								-160.39199829101562
+							],
+							"out": [
+								148.0814971923828,
+								-160.1060028076172
+							]
+						},
+						{
+							"pointType": 2,
+							"translation": [
+								195.9185028076172,
+								-53.81199645996094
+							],
+							"in": [
+								195.6324920654297,
+								-112.55599975585938
+							],
+							"out": [
+								195.9185028076172,
+								53.8120002746582
+							]
+						},
+						{
+							"pointType": 1,
+							"translation": [
+								0.0004971923772245646,
+								160.39199829101562
+							],
+							"in": [
+								0.0004971923772245646,
+								160.39199829101562
+							],
+							"out": [
+								0.0004971923772245646,
+								160.39199829101562
+							]
+						},
+						{
+							"pointType": 3,
+							"translation": [
+								-195.9185028076172,
+								-53.81199645996094
+							],
+							"in": [
+								-195.9185028076172,
+								52.24500274658203
+							],
+							"out": [
+								-195.9185028076172,
+								-112.67399597167969
+							]
+						},
+						{
+							"pointType": 2,
+							"translation": [
+								-89.3385009765625,
+								-160.39199829101562
+							],
+							"in": [
+								-148.20150756835938,
+								-160.39199829101562
+							],
+							"out": [
+								-89.3385009765625,
+								-160.39199829101562
+							]
+						},
+						{
+							"pointType": 2,
+							"translation": [
+								-89.3385009765625,
+								-160.39199829101562
+							],
+							"in": [
+								-89.3385009765625,
+								-160.39199829101562
+							],
+							"out": [
+								-53.30650329589844,
+								-160.67300415039062
+							]
+						},
+						{
+							"pointType": 2,
+							"translation": [
+								0.0004971923772245646,
+								-112.32699584960938
+							],
+							"in": [
+								-19.620502471923828,
+								-142.5500030517578
+							],
+							"out": [
+								19.755496978759766,
+								-142.4029998779297
+							]
+						},
+						{
+							"pointType": 2,
+							"translation": [
+								89.3385009765625,
+								-160.39199829101562
+							],
+							"in": [
+								53.354496002197266,
+								-160.47900390625
+							],
+							"out": [
+								89.3385009765625,
+								-160.39199829101562
+							]
+						}
+					],
+					"type": "path"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				},
+				{
+					"name": "Node",
+					"parent": 0,
+					"translation": [
+						0,
+						0
+					],
+					"rotation": 0,
+					"scale": [
+						1,
+						1
+					],
+					"opacity": 1,
+					"isCollapsed": false,
+					"clips": [],
+					"type": "node"
+				}
+			],
+			"animations": [
+				{
+					"name": "Start",
+					"fps": 60,
+					"duration": 2.5,
+					"isLooping": true,
+					"keyed": [
+						{
+							"component": 0,
+							"posY": [
+								[
+									{
+										"time": 1.5785900000014976,
+										"interpolatorType": 1,
+										"value": 300
+									}
+								]
+							],
+							"posX": [
+								[
+									{
+										"time": 0.8531050000006911,
+										"interpolatorType": 1,
+										"value": 15.869574546813965
+									},
+									{
+										"time": 1.3235000000007144,
+										"interpolatorType": 1,
+										"value": 0
+									},
+									{
+										"time": 1.3747500000011814,
+										"interpolatorType": 1,
+										"value": 0
+									},
+									{
+										"time": 1.5785900000014976,
+										"interpolatorType": 1,
+										"value": -100
+									},
+									{
+										"time": 2.466150000000623,
+										"interpolatorType": 1,
+										"value": 20
+									}
+								]
+							]
+						},
+						{
+							"component": 2,
+							"scaleX": [
+								[
+									{
+										"time": 0,
+										"interpolatorType": 2,
+										"cubicX1": 1,
+										"cubicY1": 0,
+										"cubicX2": 1,
+										"cubicY2": 1.010752688172043,
+										"value": 0.3189198970794678
+									}
+								]
+							],
+							"scaleY": [
+								[
+									{
+										"time": 0,
+										"interpolatorType": 2,
+										"cubicX1": 1,
+										"cubicY1": 0,
+										"cubicX2": 1,
+										"cubicY2": 1.010752688172043,
+										"value": 0.33058658242225647
+									}
+								]
+							],
+							"posY": [
+								[
+									{
+										"time": 0,
+										"interpolatorType": 2,
+										"cubicX1": 1,
+										"cubicY1": 0,
+										"cubicX2": 1,
+										"cubicY2": 1.010752688172043,
+										"value": 485.91998291015625
+									},
+									{
+										"time": 0.03552999999957497,
+										"interpolatorType": 1,
+										"value": 559.1937866210938
+									},
+									{
+										"time": 2.0166666666666666,
+										"interpolatorType": 2,
+										"cubicX1": 1,
+										"cubicY1": 0.0026881720430107503,
+										"cubicX2": 1,
+										"cubicY2": 0.9838709677419355,
+										"value": -79.08003234863281
+									}
+								]
+							],
+							"posX": [
+								[
+									{
+										"time": 0,
+										"interpolatorType": 2,
+										"cubicX1": 1,
+										"cubicY1": 0,
+										"cubicX2": 1,
+										"cubicY2": 1.010752688172043,
+										"value": 189.58518981933594
+									},
+									{
+										"time": 0.03552999999957497,
+										"interpolatorType": 1,
+										"value": 122.9174575805664
+									},
+									{
+										"time": 1.3536200000003527,
+										"interpolatorType": 1,
+										"value": 122.9174575805664
+									},
+									{
+										"time": 2.0166666666666666,
+										"interpolatorType": 2,
+										"cubicX1": 1,
+										"cubicY1": 0.0026881720430107503,
+										"cubicX2": 1,
+										"cubicY2": 0.9838709677419355,
+										"value": 179.58518981933594
+									}
+								]
+							]
+						},
+						{
+							"component": 3,
+							"fillOpacity": [
+								[
+									{
+										"time": 0,
+										"interpolatorType": 2,
+										"cubicX1": 1,
+										"cubicY1": 0,
+										"cubicX2": 1,
+										"cubicY2": 1.010752688172043,
+										"value": 1
+									},
+									{
+										"time": 2.0166666666666666,
+										"interpolatorType": 1,
+										"value": 0
+									}
+								]
+							]
+						}
+					],
+					"animationStart": 0,
+					"animationEnd": 2.466150000000623,
+					"type": "animation"
+				}
+			],
+			"type": "artboard"
+		}
+	]
+}

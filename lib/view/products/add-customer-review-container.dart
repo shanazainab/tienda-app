@@ -34,10 +34,13 @@ class _AddCustomerReviewContainerState
   final TextEditingController reviewTextEditingController =
       new TextEditingController();
 
+  double rating = null;
   ExpandableController expandableController = new ExpandableController();
   final _formKey = GlobalKey<FormState>();
 
   bool valid = false;
+
+  bool showMessage = false;
 
   @override
   void initState() {
@@ -100,10 +103,47 @@ class _AddCustomerReviewContainerState
                           SizedBox(
                             height: 10,
                           ),
+                          Center(
+                            child: RatingBar(
+                              initialRating: 0,
+                              minRating: 1,
+                              direction: Axis.horizontal,
+                              allowHalfRating: true,
+                              itemCount: 5,
+                              itemSize: 30,
+                              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                              itemBuilder: (context, _) => Icon(
+                                Icons.star,
+                                color: Colors.blueGrey,
+                              ),
+                              onRatingUpdate: (value) {
+                                print(value);
+                                rating = value;
+                                print(rating);
+                                setState(() {
+                                  showMessage = false;
+                                });
+                              },
+                            ),
+                          ),
+                          Visibility(
+                            visible: showMessage,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top:8.0,bottom: 8.0),
+                              child: Text(
+                                  'Tell us your opinion by assigning a rating',
+                              style: TextStyle(
+                                color: Colors.redAccent
+                              ),),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
                           TextFormField(
                             controller: reviewTextEditingController,
-                            minLines: 2,
-                            maxLines: 4,
+                            minLines: 1,
+                            maxLines: 2,
                             validator: (value) {
                               if (value.isEmpty)
                                 return "Please provide your comment";
@@ -220,13 +260,18 @@ class _AddCustomerReviewContainerState
                                 color: valid ? Colors.black : Colors.grey,
                                 padding: EdgeInsets.all(0),
                                 onPressed: () {
-                                  if (_formKey.currentState.validate()) {
+                                  if (rating != null) {
                                     reviewRequest.productId = widget.productId;
                                     reviewRequest.body =
                                         reviewTextEditingController.text;
-
+                                    reviewRequest.rating = rating;
                                     BlocProvider.of<ReviewBloc>(context).add(
-                                        AddReview(state.reviews, reviewRequest));
+                                        AddReview(
+                                            state.reviews, reviewRequest));
+                                  } else {
+                                    setState(() {
+                                      showMessage = true;
+                                    });
                                   }
                                 },
                                 child: Text(

@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:share/share.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
+import 'package:tienda/bloc/checkout-bloc.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/events/review-events.dart';
@@ -17,6 +18,7 @@ import 'package:tienda/controller/video-controls.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/main.dart';
 import 'package:tienda/model/wishlist.dart';
+import 'package:tienda/view/checkout/checkout-orders-main-page.dart';
 import 'package:tienda/view/products/add-customer-review-container.dart';
 import 'package:tienda/view/products/customer-overall-rating-block.dart';
 import 'package:tienda/view/products/customer-reviews-container.dart';
@@ -49,21 +51,48 @@ class _SingleProductPageState extends State<SingleProductPage> {
     singleProductBloc.add(FetchProductDetails(productId: widget.productId));
 
     addToCartStream.listen((value) {
-      if(value != null && value){
+      if (value != null && value) {
         showDialog(
             context: context,
             builder: (_) => new AlertDialog(
-              title: new Text("Material Dialog"),
-              content: new Text("Product is added to cart"),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Close me!'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            ));
+                  contentPadding: EdgeInsets.all(8),
+                  title: Center(child: new Text("Item Added to Cart")),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          OutlineButton(
+                              color: Colors.black,
+                              borderSide: BorderSide(color: Colors.black),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('Continue Shopping')),
+                          OutlineButton(
+                            child: Text('CheckOut'),
+                            color: Colors.black,
+                            borderSide: BorderSide(color: Colors.black),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) {
+                                  return BlocProvider(
+                                    create: (context) => CheckOutBloc(),
+                                    child: CheckoutOrdersMainPage(),
+                                  );
+                                }),
+                              );
+                            },
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                  actions: <Widget>[],
+                ));
       }
     });
   }
@@ -151,14 +180,21 @@ class _SingleProductPageState extends State<SingleProductPage> {
                 if (state is FetchProductDetailsSuccess) {
                   return Container(
                     color: Colors.grey[200],
-                    child: ListView(
-                      padding: EdgeInsets.all(0),
-                      controller: scrollController,
+                    child: Column(
+                     
                       children: <Widget>[
                         ProductVideoContent(state.product),
-                        ProductInfoContainer(state.product),
-                        state.product.images.isNotEmpty
-                            ? Container(
+                        
+                        
+                        Expanded(
+                          child: ListView(
+                            shrinkWrap: true,
+                            padding: EdgeInsets.all(0),
+                            controller: scrollController,
+                            children: [
+                              ProductInfoContainer(state.product),
+                              state.product.images.isNotEmpty
+                                  ? Container(
                                 color: Colors.white,
                                 child: SizedBox(
                                   height: 120,
@@ -166,13 +202,13 @@ class _SingleProductPageState extends State<SingleProductPage> {
                                       scrollDirection: Axis.horizontal,
                                       itemCount: state.product.images.length,
                                       itemBuilder: (BuildContext context,
-                                              int index) =>
+                                          int index) =>
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Container(
                                               child: FadeInImage.memoryNetwork(
                                                 image:
-                                                    state.product.images[index],
+                                                state.product.images[index],
                                                 width: 120,
                                                 height: 120,
                                                 fit: BoxFit.cover,
@@ -182,9 +218,9 @@ class _SingleProductPageState extends State<SingleProductPage> {
                                           )),
                                 ),
                               )
-                            : Container(),
-                        state.product.presenter != null
-                            ? Column(
+                                  : Container(),
+                              state.product.presenter != null
+                                  ? Column(
                                 children: [
                                   SizedBox(
                                     height: 10,
@@ -193,23 +229,52 @@ class _SingleProductPageState extends State<SingleProductPage> {
                                       state.product.presenter),
                                 ],
                               )
-                            : Container(),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        ProductDescriptionContainer(state.product.specs),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        CustomerOverallRatingBlock(state.product.overallRating,
-                            state.product.ratings, state.product.isPurchased),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        (!state.product.isReviewed &&
-                                    state.product.isPurchased) ||
-                                state.product.reviews.isNotEmpty
-                            ? Container(
+                                  : Container(),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                color: Colors.white,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Wrap(
+                                    runAlignment: WrapAlignment.center,
+                                    crossAxisAlignment: WrapCrossAlignment.center,
+                                    alignment: WrapAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.loyalty,
+                                        size: 18,
+                                      ),
+                                      Text(
+                                        "You will earn 100 Tienda points on purchase of this product",
+                                        softWrap: true,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              ProductDescriptionContainer(state.product.specs),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              CustomerOverallRatingBlock(
+                                  state.product.id,
+                                  state.product.overallRating,
+                                  state.product.ratings,
+                                  state.product.isPurchased),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              (!state.product.isReviewed &&
+                                  state.product.isPurchased) ||
+                                  state.product.reviews.isNotEmpty
+
+                                  ? Container(
                                 color: Colors.white,
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),
@@ -218,51 +283,51 @@ class _SingleProductPageState extends State<SingleProductPage> {
                                     shrinkWrap: true,
                                     physics: NeverScrollableScrollPhysics(),
                                     children: <Widget>[
-                                      Text(
+                                      !(state.product.reviews.length == 1 && state.product.reviews[0].body == "")? Text(
                                         AppLocalizations.of(context)
                                             .translate('reviews'),
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
-                                      ),
-                                      SizedBox(
+                                      ):Container(),
+                                      !(state.product.reviews.length == 1 && state.product.reviews[0].body == "")? SizedBox(
                                         height: 16,
-                                      ),
+                                      ):Container(),
                                       !state.product.isReviewed &&
-                                              state.product.isPurchased
+                                          state.product.isPurchased
                                           ? BlocProvider.value(
-                                              value:
-                                                  BlocProvider.of<ReviewBloc>(
-                                                      context)
-                                                    ..add(LoadReview(
-                                                        state.product.reviews)),
-                                              child: AddCustomerReviewContainer(
-                                                  state.product.id, (value) {
-                                                print("CALL BACK RECEIVED");
-                                                scrollController
-                                                    .animateTo(
-                                                        scrollController
-                                                                .position
-                                                                .maxScrollExtent +
-                                                            500,
-                                                        duration: Duration(
-                                                            milliseconds: 300),
-                                                        curve: Curves.easeIn)
-                                                    .then((value) =>
-                                                        print("ANIMATE DONE"));
-                                              }),
-                                            )
+                                        value:
+                                        BlocProvider.of<ReviewBloc>(
+                                            context)
+                                          ..add(LoadReview(
+                                              state.product.reviews)),
+                                        child: AddCustomerReviewContainer(
+                                            state.product.id, (value) {
+                                          print("CALL BACK RECEIVED");
+                                          scrollController
+                                              .animateTo(
+                                              scrollController
+                                                  .position
+                                                  .maxScrollExtent +
+                                                  500,
+                                              duration: Duration(
+                                                  milliseconds: 300),
+                                              curve: Curves.easeIn)
+                                              .then((value) =>
+                                              print("ANIMATE DONE"));
+                                        }),
+                                      )
                                           : Container(),
-                                      !state.product.isReviewed &&
-                                              state.product.isPurchased
-                                          ? SizedBox(
-                                              height: 10,
-                                            )
-                                          : Container(),
+//                                      !state.product.isReviewed &&
+//                                              state.product.isPurchased
+//                                          ? SizedBox(
+//                                              height: 10,
+//                                            )
+//                                          : Container(),
                                       BlocProvider.value(
                                         value:
-                                            BlocProvider.of<ReviewBloc>(context)
-                                              ..add(LoadReview(
-                                                  state.product.reviews)),
+                                        BlocProvider.of<ReviewBloc>(context)
+                                          ..add(LoadReview(
+                                              state.product.reviews)),
                                         child: CustomerReviewContainer(
                                             state.product.reviews),
                                       )
@@ -270,7 +335,11 @@ class _SingleProductPageState extends State<SingleProductPage> {
                                   ),
                                 ),
                               )
-                            : Container()
+                                  : Container()
+                            ],
+                          ),
+                        )
+                    
                       ],
                     ),
                   );

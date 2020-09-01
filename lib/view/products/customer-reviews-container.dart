@@ -27,12 +27,14 @@ class CustomerReviewContainer extends StatelessWidget {
     return Container(
       color: Colors.white,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          reviews.isEmpty
+          reviews.isEmpty || (reviews.length == 1 && reviews[0].body == "")
               ? Container()
               : ListView.separated(
+            padding: EdgeInsets.all(0),
                   reverse: true,
                   physics: NeverScrollableScrollPhysics(),
                   separatorBuilder: (BuildContext context, int index) =>
@@ -42,7 +44,9 @@ class CustomerReviewContainer extends StatelessWidget {
                       ),
                   shrinkWrap: true,
                   itemCount: reviews.length,
-                  itemBuilder: (BuildContext context, int index) => Padding(
+                  itemBuilder: (BuildContext context, int index) =>
+
+                      reviews[index].body == ""?Container():Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

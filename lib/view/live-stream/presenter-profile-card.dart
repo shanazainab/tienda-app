@@ -56,6 +56,8 @@ class _PresenterProfileCardState extends State<PresenterProfileCard> {
                     style: TextStyle(color: Colors.white),
                   ),
                   Row(
+                    mainAxisSize: MainAxisSize.min,
+
                     children: [
                       CircleAvatar(
                         backgroundColor: Colors.white,
@@ -110,7 +112,7 @@ class _PresenterProfileCardState extends State<PresenterProfileCard> {
               ),
               SizedBox(
                 height: 20,
-                width: 75,
+
                 child: RaisedButton(
                     onPressed: () {
                       setState(() {

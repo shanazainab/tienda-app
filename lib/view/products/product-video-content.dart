@@ -20,7 +20,7 @@ class _ProductVideoContentState extends State<ProductVideoContent> {
   double _value;
   VideoControls videoControls = new VideoControls();
 
-  double _height = 300;
+  double _height = 200;
 
   @override
   void initState() {
@@ -126,7 +126,7 @@ class _ProductVideoContentState extends State<ProductVideoContent> {
                                 onPressed: () {
                                   if (_height ==
                                       MediaQuery.of(context).size.height - 100)
-                                    _height = 300;
+                                    _height = 200;
                                   else
                                     _height =
                                         MediaQuery.of(context).size.height - 100;

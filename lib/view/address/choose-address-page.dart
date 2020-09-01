@@ -236,16 +236,21 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
   }
 
   void handleConfirmAddress(contextA) {
-    Navigator.pushReplacement(
-      contextA,
-      MaterialPageRoute(
-          builder: (context) =>
-              BlocProvider.value(
-                  value: BlocProvider.of<AddressBloc>(contextA),
-                  child: AddAddressPage(
-                    isEditMode: false,
-                    deliveryAddress: deliveryAddress,
-                  ))),
-    );
+
+
+    if(deliveryAddress != null) {
+      Navigator.pushReplacement(
+          contextA,
+          MaterialPageRoute(
+              builder: (context) =>
+                  BlocProvider.value(
+                      value: BlocProvider.of<AddressBloc>(contextA),
+                      child: AddAddressPage(
+                        isEditMode: false,
+                        deliveryAddress: deliveryAddress,
+                      )))
+
+      );
+    }
   }
 }

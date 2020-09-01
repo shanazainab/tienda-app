@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/events/wishlist-events.dart';
@@ -25,6 +26,8 @@ class ProductListContainer extends StatelessWidget {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
+  final showProductCount = BehaviorSubject<bool>();
+
   final String query;
   final SearchBody searchBody;
 
@@ -32,57 +35,337 @@ class ProductListContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     var appLanguage = Provider.of<AppLanguage>(context);
 
     return Stack(
       alignment: Alignment.topCenter,
       children: <Widget>[
         SmartRefresher(
-            enablePullDown: false,
-            enablePullUp: true,
-            header: WaterDropHeader(),
-            footer: CustomFooter(
-              builder: (BuildContext context, LoadStatus mode) {
-                Widget body;
-                if (mode == LoadStatus.idle) {
-                  body = CircularProgressIndicator(
-                    strokeWidth: 2,
-                  );
-                } else if (mode == LoadStatus.loading) {
-                  body = CupertinoActivityIndicator();
-                } else if (mode == LoadStatus.failed) {
-                  body = Text("Load Failed!Click retry!");
-                } else if (mode == LoadStatus.canLoading) {
-                  body = Text("release to load more");
-                } else {
-                  body = Text("No more Data");
-                }
-                return Container(
-                  height: 55.0,
-                  child: Center(child: body),
+          enablePullDown: false,
+          enablePullUp: true,
+          header: WaterDropHeader(),
+          footer: CustomFooter(
+            builder: (BuildContext context, LoadStatus mode) {
+              Widget body;
+              if (mode == LoadStatus.idle) {
+                body = CircularProgressIndicator(
+                  strokeWidth: 2,
                 );
-              },
-            ),
-            controller: _refreshController,
-            onRefresh: () async {
-              print("REFRESH");
-              _refreshController.refreshCompleted();
+              } else if (mode == LoadStatus.loading) {
+                body = CupertinoActivityIndicator();
+              } else if (mode == LoadStatus.failed) {
+                body = Text("Load Failed!Click retry!");
+              } else if (mode == LoadStatus.canLoading) {
+                body = Text("release to load more");
+              } else {
+                body = Text("No more Data");
+              }
+              return Container(
+                height: 55.0,
+                child: Center(child: body),
+              );
             },
-            onLoading: () async {
-              ///from category
-              if (productListResponse.navigator != null)
-                BlocProvider.of<ProductBloc>(context).add(FetchMoreProductList(
-                    products: productListResponse.products,
-                    query: query,
-                    searchBody: searchBody,
-                    pageNumber: productListResponse.navigator.nextPage));
+          ),
+          controller: _refreshController,
+          onRefresh: () async {
+            print("REFRESH");
+            _refreshController.refreshCompleted();
+          },
+          onLoading: () async {
+            ///from category
+            if (productListResponse.navigator != null)
+              BlocProvider.of<ProductBloc>(context).add(FetchMoreProductList(
+                  products: productListResponse.products,
+                  query: query,
+                  searchBody: searchBody,
+                  pageNumber: productListResponse.navigator.nextPage));
 
-              print("LOADING");
-              _refreshController.loadComplete();
+            print("LOADING");
+            _refreshController.loadComplete();
+          },
+          child: GridView.builder(
+            padding: EdgeInsets.only(top: 70, bottom: 100),
+            shrinkWrap: true,
+            controller: scrollController
+              ..addListener(() {
+                if (scrollController.offset >=
+                        20 &&
+                    !scrollController.position.outOfRange) {
+                  showProductCount.sink.add(true);
+                  debugPrint("reach the top");
+                }
+                if (scrollController.offset <=
+                        scrollController.position.minScrollExtent &&
+                    !scrollController.position.outOfRange) {
+                  showProductCount.sink.add(false);
+
+                  debugPrint("reach the top");
+                }
+              }),
+            physics: ScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            itemCount: productListResponse.products.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                childAspectRatio: (MediaQuery.of(context).size.width / 2) /
+                    (appLanguage.appLocal == Locale("en") ? 280 : 300),
+                crossAxisCount: 2),
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: const EdgeInsets.all(1.0),
+                child: Stack(
+                  children: <Widget>[
+                    new Container(
+                        color: Colors.white,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SingleProductPage(
+                                          productListResponse
+                                              .products[index].id)),
+                                );
+                              },
+                              child: FadeInImage.memoryNetwork(
+                                placeholder: kTransparentImage,
+                                image: productListResponse
+                                    .products[index].thumbnail,
+                                width: MediaQuery.of(context).size.width / 2,
+                                height: 220,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 8, bottom: 4, left: 8, right: 8),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Flexible(
+                                            child: Text(
+                                              appLanguage.appLocal ==
+                                                      Locale('en')
+                                                  ? productListResponse
+                                                      .products[index].nameEn
+                                                  : productListResponse
+                                                      .products[index].nameAr,
+                                              overflow: TextOverflow.ellipsis,
+                                              softWrap: false,
+                                              maxLines: 1,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 4.0),
+                                          child: FittedBox(
+                                            fit: BoxFit.fitWidth,
+                                            child: Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  "${AppLocalizations.of(context).translate("aed")} " +
+                                                      productListResponse
+                                                          .products[index].price
+                                                          .toString(),
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700),
+                                                ),
+                                                productListResponse
+                                                            .products[index]
+                                                            .discount !=
+                                                        0
+                                                    ? Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                left: 4.0,
+                                                                right: 4.0),
+                                                        child: Text(
+                                                          '${AppLocalizations.of(context).translate("aed")} ${productListResponse.products[index].price / productListResponse.products[index].discount * 100}',
+                                                          style: TextStyle(
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .lineThrough),
+                                                        ),
+                                                      )
+                                                    : Container(),
+                                                productListResponse
+                                                            .products[index]
+                                                            .discount !=
+                                                        0
+                                                    ? Container(
+                                                        color: Colors.pink
+                                                            .withOpacity(0.1),
+                                                        child: Text(
+                                                          '${productListResponse.products[index].discount}% OFF',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.pink),
+                                                        ),
+                                                      )
+                                                    : Container(),
+                                              ],
+                                            ),
+                                          ))
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        )),
+
+                    ///overall rating
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          productListResponse.products[index].overallRating !=
+                                  0.0
+                              ? Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Text(
+                                        productListResponse
+                                            .products[index].overallRating
+                                            .toString(),
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 12),
+                                      ),
+                                      Icon(
+                                        Icons.star,
+                                        size: 14,
+                                        color: Colors.grey,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 14,
+                              child: IconButton(
+                                padding: EdgeInsets.zero,
+                                icon: Icon(
+                                  FontAwesomeIcons.heart,
+                                  size: 14,
+                                  color: productListResponse.products[index]
+                                                  .isWishListed !=
+                                              null &&
+                                          productListResponse
+                                              .products[index].isWishListed
+                                      ? Colors.pink
+                                      : Colors.grey,
+                                ),
+                                color: Colors.white,
+                                onPressed: () {
+                                  if (productListResponse
+                                          .products[index].isWishListed ==
+                                      null)
+                                    productListResponse
+                                        .products[index].isWishListed = true;
+                                  else
+                                    productListResponse
+                                            .products[index].isWishListed =
+                                        !productListResponse
+                                            .products[index].isWishListed;
+
+                                  if (productListResponse
+                                      .products[index].isWishListed) {
+                                    Fluttertoast.showToast(
+                                        fontSize: 12,
+                                        toastLength: Toast.LENGTH_LONG,
+                                        msg: AppLocalizations.of(context)
+                                            .translate("added-to-wishlist"),
+                                        gravity: ToastGravity.BOTTOM);
+                                    BlocProvider.of<WishListBloc>(context).add(
+                                        AddToWishList(
+                                            wishListItem: new WishListItem(
+                                                product: productListResponse
+                                                    .products[index])));
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: AppLocalizations.of(context)
+                                            .translate("removed-from-wishlist"),
+                                        gravity: ToastGravity.BOTTOM);
+
+                                    BlocProvider.of<WishListBloc>(context).add(
+                                        DeleteWishListItem(
+                                            wishListItem: new WishListItem(
+                                                product: productListResponse
+                                                    .products[index])));
+                                  }
+
+                                  context.bloc<ProductBloc>().add(
+                                      UpdateMarkAsWishListed(
+                                          productListResponse:
+                                              productListResponse));
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              );
             },
-            child:
+          ),
+        ),
+        StreamBuilder<bool>(
+            stream: showProductCount,
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              if (snapshot.data != null && snapshot.data)
+                return Positioned(
+                  top: 70,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
+                      color: Colors.black.withOpacity(0.1),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16.0, right: 16, top: 4, bottom: 4),
+                        child: Text(
+                          "${productListResponse.productsCount} ${AppLocalizations.of(context).translate("products")}",
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              return Container();
+            }),
+      ],
+    );
+  }
+}
 
-            ///staggered view if wanted
+///staggered view if wanted
 //            new StaggeredGridView.countBuilder(
 //              padding: EdgeInsets.only(top:100,bottom: 100),
 //              primary: false,
@@ -310,268 +593,3 @@ class ProductListContainer extends StatelessWidget {
 //              ),
 //              staggeredTileBuilder: (index) => new StaggeredTile.fit(2),
 //            )
-
-          GridView.builder(
-            padding: EdgeInsets.only(top: 120, bottom: 100),
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            itemCount: productListResponse.products.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: (MediaQuery.of(context).size.width/2) /(appLanguage.appLocal == Locale("en")?280: 300),
-                crossAxisCount: 2),
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.all(1.0),
-                child: Stack(
-                  children: <Widget>[
-                    new Container(
-                        color: Colors.white,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SingleProductPage(
-                                          productListResponse
-                                              .products[index].id)),
-                                );
-                              },
-                              child: FadeInImage.memoryNetwork(
-                                placeholder: kTransparentImage,
-                                image: productListResponse
-                                    .products[index].thumbnail,
-                                width: MediaQuery.of(context).size.width / 2,
-                                height: 220,
-                                fit: BoxFit.cover,
-
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 8, bottom: 4, left: 8, right: 8),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Flexible(
-                                            child: Text(
-                                              appLanguage.appLocal ==
-                                                      Locale('en')
-                                                  ? productListResponse
-                                                      .products[index].nameEn
-                                                  : productListResponse
-                                                      .products[index].nameAr,
-                                              overflow: TextOverflow.ellipsis,
-                                              softWrap: false,
-                                              maxLines: 1,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 4.0),
-                                          child: FittedBox(
-                                            fit: BoxFit.fitWidth,
-                                            child: Row(
-                                              children: <Widget>[
-                                                Text(
-                                                  "${AppLocalizations.of(context).translate("aed")} " +
-                                                      productListResponse
-                                                          .products[index].price
-                                                          .toString(),
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w700),
-                                                ),
-                                                productListResponse
-                                                            .products[index]
-                                                            .discount !=
-                                                        0
-                                                    ? Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                left: 4.0,
-                                                                right: 4.0),
-                                                        child: Text(
-                                                          '${AppLocalizations.of(context).translate("aed")} ${productListResponse.products[index].price / productListResponse.products[index].discount * 100}',
-                                                          style: TextStyle(
-                                                              decoration:
-                                                                  TextDecoration
-                                                                      .lineThrough),
-                                                        ),
-                                                      )
-                                                    : Container(),
-                                                productListResponse
-                                                            .products[index]
-                                                            .discount !=
-                                                        0
-                                                    ? Container(
-                                                        color: Colors.pink
-                                                            .withOpacity(0.1),
-                                                        child: Text(
-                                                          '${productListResponse.products[index].discount}% OFF',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.pink),
-                                                        ),
-                                                      )
-                                                    : Container(),
-                                              ],
-                                            ),
-                                          ))
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        )),
-
-                    ///overall rating
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          productListResponse.products[index].overallRating !=
-                                  0.0
-                              ? Padding(
-                            padding: const EdgeInsets.all(4.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-
-                                    Text(productListResponse
-                                        .products[index].overallRating
-                                        .toString(),style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 12
-                                    ),),
-                                    Icon(
-                                      Icons.star,
-                                      size: 14,
-                                      color: Colors.grey,
-                                    ),
-
-                                  ],
-                                ),
-                              )
-                              : Container(),
-                          Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: 14,
-                              child: IconButton(
-                                padding: EdgeInsets.zero,
-                                icon: Icon(
-                                  FontAwesomeIcons.heart,
-                                  size: 14,
-                                  color: productListResponse.products[index]
-                                                  .isWishListed !=
-                                              null &&
-                                          productListResponse
-                                              .products[index].isWishListed
-                                      ? Colors.pink
-                                      : Colors.grey,
-                                ),
-                                color: Colors.white,
-                                onPressed: () {
-                                  if (productListResponse
-                                          .products[index].isWishListed ==
-                                      null)
-                                    productListResponse
-                                        .products[index].isWishListed = true;
-                                  else
-                                    productListResponse
-                                            .products[index].isWishListed =
-                                        !productListResponse
-                                            .products[index].isWishListed;
-
-                                  if (productListResponse
-                                      .products[index].isWishListed) {
-                                    Fluttertoast.showToast(
-                                        fontSize: 12,
-                                        toastLength: Toast.LENGTH_LONG,
-                                        msg: AppLocalizations.of(context)
-                                            .translate("added-to-wishlist"),
-                                        gravity: ToastGravity.BOTTOM);
-                                    BlocProvider.of<WishListBloc>(context).add(
-                                        AddToWishList(
-                                            wishListItem: new WishListItem(
-                                                product: productListResponse
-                                                    .products[index])));
-                                  } else {
-                                    Fluttertoast.showToast(
-                                        msg: AppLocalizations.of(context)
-                                            .translate("removed-from-wishlist"),
-                                        gravity: ToastGravity.BOTTOM);
-
-                                    BlocProvider.of<WishListBloc>(context).add(
-                                        DeleteWishListItem(
-                                            wishListItem: new WishListItem(
-                                                product: productListResponse
-                                                    .products[index])));
-                                  }
-
-                                  context.bloc<ProductBloc>().add(
-                                      UpdateMarkAsWishListed(
-                                          productListResponse:
-                                              productListResponse));
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              );
-            },
-          ),
-
-
-            ),
-
-        ///Product count
-        productListResponse.productsCount != null
-            ? Positioned(
-                top: 100,
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    color: Colors.black.withOpacity(0.1),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 16.0, right: 16, top: 4, bottom: 4),
-                      child: Text(
-                        "${productListResponse.productsCount} ${AppLocalizations.of(context).translate("products")}",
-                        style: TextStyle(color: Colors.white, fontSize: 12),
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            : Container()
-      ],
-    );
-  }
-}

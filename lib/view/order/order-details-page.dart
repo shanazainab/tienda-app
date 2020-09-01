@@ -7,6 +7,7 @@ import 'package:tienda/model/order.dart';
 import 'package:tienda/view/order/order-cancel-page.dart';
 import 'package:tienda/view/order/order-tracking-page.dart';
 import 'package:tienda/view/order/order-tracking-time-line.dart';
+import 'package:tienda/view/products/single-product-page.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class OrdersDetailsPage extends StatelessWidget {
@@ -65,55 +66,65 @@ class OrdersDetailsPage extends StatelessWidget {
                           itemBuilder: (BuildContext ctxt, int index) {
                             return Padding(
                               padding: const EdgeInsets.only(left: 8.0),
-                              child: Container(
-                                height: 160,
-                                width: 120,
-                                child: Stack(
-                                  children: <Widget>[
-                                    FadeInImage.memoryNetwork(
-                                      image: order.products[index].thumbnail,
-                                      height: 160,
-                                      width: 120,
-                                      fit: BoxFit.cover,
-                                      placeholder: kTransparentImage,
+                              child: GestureDetector(
+                                onTap: (){
+                                  Navigator.push(
+                                    contextA,
+                                    MaterialPageRoute(
+                                        builder: (context) => SingleProductPage(
+                                            order.products[index].id)),
+                                  );
+                                },
+                                child: Container(
+                                  height: 160,
+                                  width: 120,
+                                  child: Stack(
+                                    children: <Widget>[
+                                      FadeInImage.memoryNetwork(
+                                        image: order.products[index].thumbnail,
+                                        height: 160,
+                                        width: 120,
+                                        fit: BoxFit.cover,
+                                        placeholder: kTransparentImage,
 
-                                    ),
-                                    Align(
-                                      alignment: Alignment.bottomLeft,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              order.products[index].nameEn,
-                                              softWrap: true,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 8.0),
-                                              child: Text(
-                                                "${AppLocalizations.of(contextA).translate('aed')} ${order.products[index].price}",
-                                                overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Align(
+                                        alignment: Alignment.bottomLeft,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                order.products[index].nameEn,
+                                                softWrap: true,
                                                 style: TextStyle(
                                                     color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                                softWrap: true,
+                                                    fontWeight: FontWeight.bold),
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                            )
-                                          ],
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 8.0),
+                                                child: Text(
+                                                  "${AppLocalizations.of(contextA).translate('aed')} ${order.products[index].price}",
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  softWrap: true,
+                                                ),
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             );

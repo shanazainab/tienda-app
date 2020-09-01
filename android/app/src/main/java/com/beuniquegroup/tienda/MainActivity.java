@@ -7,6 +7,7 @@ import android.os.Bundle;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.GeneratedPluginRegistrant;
 import zendesk.answerbot.AnswerBot;
 import zendesk.answerbot.AnswerBotEngine;
 import zendesk.chat.Chat;
@@ -23,7 +24,11 @@ public class MainActivity extends FlutterActivity {
 
     @Override
     public void configureFlutterEngine(FlutterEngine flutterEngine) {
+
         super.configureFlutterEngine(flutterEngine);
+     //   GeneratedPluginRegistrant.registerWith(flutterEngine);
+
+
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL)
                 .setMethodCallHandler(
                         (call, result) -> {

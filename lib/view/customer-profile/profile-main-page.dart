@@ -62,25 +62,14 @@ class CustomerProfile extends StatelessWidget {
         child: BlocBuilder<LoginBloc, LoginStates>(builder: (context, state) {
           if (state is GuestUser)
             return Scaffold(
-                body: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
+                body: ListView(
+shrinkWrap: true,              children: <Widget>[
                 CustomerLoginMenu(),
-                Expanded(
-                  child: Container(
-                    color: Colors.white,
-                    child: ListView(
-                      padding: EdgeInsets.all(0),
-                      children: <Widget>[
-                        state is LoggedInUser
-                            ? _buildLoggedInUserMenus(appLanguage, context)
-                            : Container(),
-                        _buildMenuList(appLanguage, state, appCountry, context),
-                        LogoutContainer(state is LoggedInUser)
-                      ],
-                    ),
-                  ),
-                )
+                  state is LoggedInUser
+                      ? _buildLoggedInUserMenus(appLanguage, context)
+                      : Container(),
+                  _buildMenuList(appLanguage, state, appCountry, context),
+                  LogoutContainer(state is LoggedInUser)
               ],
             ));
           else {
@@ -98,27 +87,16 @@ class CustomerProfile extends StatelessWidget {
                   builder: (context, substate) {
                 if (substate is LoadCustomerProfileSuccess)
                   return Scaffold(
-                    body: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
+                    body: ListView(
+shrinkWrap: true,                      children: [
                         CustomerProfileCard(substate.customerDetails),
-                        Expanded(
-                          child: Container(
-                            color: Colors.white,
-                            child: ListView(
-                              padding: EdgeInsets.all(0),
-                              children: <Widget>[
-                                state is LoggedInUser
-                                    ? _buildLoggedInUserMenus(
-                                        appLanguage, context)
-                                    : Container(),
-                                _buildMenuList(
-                                    appLanguage, state, appCountry, context),
-                                LogoutContainer(state is LoggedInUser)
-                              ],
-                            ),
-                          ),
-                        )
+                      state is LoggedInUser
+                          ? _buildLoggedInUserMenus(
+                          appLanguage, context)
+                          : Container(),
+                      _buildMenuList(
+                          appLanguage, state, appCountry, context),
+                      LogoutContainer(state is LoggedInUser)
                       ],
                     ),
                   );

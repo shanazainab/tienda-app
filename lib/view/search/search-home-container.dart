@@ -25,7 +25,9 @@ class SearchHomeContainer extends StatelessWidget {
         },
         child: SingleChildScrollView(
           child: Column(
-            children: <Widget>[RecentSearchBlock(), PopularSearchBlock()],
+            children: <Widget>[RecentSearchBlock(),
+              //PopularSearchBlock()
+           ],
           ),
         ),
       ),
