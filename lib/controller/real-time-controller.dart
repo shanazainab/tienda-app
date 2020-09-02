@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:collection/collection.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
@@ -14,6 +13,8 @@ import 'package:tienda/model/get-chat-message-response.dart';
 import 'package:tienda/model/live-chat.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/unread-messages.dart';
+
+
 
 class RealTimeController {
   final liveChatStream = new BehaviorSubject<List<LiveChat>>();
@@ -40,26 +41,26 @@ class RealTimeController {
   }
 
   showLiveReaction(int presenterId) {
-    socket.emit('react', {'reaction': 'love', 'room_name': "PR-$presenterId"});
+    socket.emit('react', {
+      'reaction':'love',
+      'room_name': "PR-$presenterId"});
+
   }
 
   stopLiveReaction() {
     liveReaction.sink.add(false);
   }
 
-  clearLiveChat() {
-    liveChatStream.sink.add(null);
-  }
-
   addToAllMessageStream(Message message) {
     List<Message> existingAllMessageInStream = allMessageStream.value;
-
-    for (int i = 0; i < existingAllMessageInStream.length; ++i) {
-      if (existingAllMessageInStream[i].id == message.id) {
-        existingAllMessageInStream[i].lastMessage = message.lastMessage;
+    if(existingAllMessageInStream != null) {
+      for (int i = 0; i < existingAllMessageInStream.length; ++i) {
+        if (existingAllMessageInStream[i].id == message.id) {
+          existingAllMessageInStream[i].lastMessage = message.lastMessage;
+        }
       }
+      allMessageStream.sink.add(existingAllMessageInStream.reversed.toList());
     }
-    allMessageStream.sink.add(existingAllMessageInStream.reversed.toList());
 
     Logger().d("ALL STREAM CALLED");
   }
@@ -150,10 +151,12 @@ class RealTimeController {
       socket.on('new_message', (data) {
         Logger().d("NEW_MESSAGE:$data ");
 
+
+        Logger().d("TIMESTAMP DATE:${DateTime.fromMicrosecondsSinceEpoch(data['timestamp'])}");
         if (directMessageStream.value == null) {
           ///NEW_MESSAGE:{receiver_id: 50, body: dsadsd, timestamp: 1597646863657}
           ///{receiver_id: 50, body: terr, timestamp: 1597835356414, sender_id: 10}
-          directMessageStream.add([
+          directMessageStream.sink.add([
             new DirectMessage(
                 body: data['body'],
                 receiverId: data['receiver_id'],
@@ -166,10 +169,10 @@ class RealTimeController {
               body: data['body'],
               receiverId: data['receiver_id'],
               createdAt:
-                  new DateTime.fromMicrosecondsSinceEpoch(data['timestamp'])));
+                  new DateTime.fromMicrosecondsSinceEpoch(data['timestamp']* 1000)));
           chatMessages.addAll(directMessageStream.value);
 
-          directMessageStream.add(chatMessages);
+          directMessageStream.sink.add(chatMessages);
         }
         addToAllMessageStream(Message(
           elapsedTime: "a sec ago",
@@ -226,6 +229,7 @@ class RealTimeController {
           for (final message in getChatMessageResponse.messages) {
             chatMessages.add(message);
           }
+
           directMessageStream.sink.add(chatMessages.reversed.toList());
           break;
         case 404:
@@ -239,27 +243,23 @@ class RealTimeController {
       }
     });
   }
-
-  Map<String, List<DirectMessage>> groupMessagesByDate(List<DirectMessage> chatMessages) {
-    Map<String, List<DirectMessage>> groupedMessages = new HashMap();
-    for (final chatMessage in chatMessages) {
-      if (groupedMessages.containsKey(
-          chatMessage.createdAt.toIso8601String().substring(0, 10))) {
-        groupedMessages[
-                chatMessage.createdAt.toIso8601String().substring(0, 10)]
-            .add(chatMessage);
-      } else {
-        groupedMessages[chatMessage.createdAt
-            .toIso8601String()
-            .substring(0, 10)] = [chatMessage];
+  clearLiveChat() {
+    liveChatStream.sink.add(null);
+  }
+  Map<String,List<DirectMessage>> groupedTheMessages(List<DirectMessage> chatMessages){
+    Map<String,List<DirectMessage>> groupedMessages = new HashMap();
+    for(final message in chatMessages){
+      if(groupedMessages.containsKey(message.createdAt.toIso8601String().substring(0,10))){
+        groupedMessages[message.createdAt.toIso8601String().substring(0,10)].add(message);
+      }else{
+        groupedMessages[message.createdAt.toIso8601String().substring(0,10)] = new List()..add(message);
       }
     }
-
-    log(groupedMessages.toString());
 
     return groupedMessages;
 
   }
+
 
   Future<void> getAllPresenterChats() async {
     final dio = Dio();

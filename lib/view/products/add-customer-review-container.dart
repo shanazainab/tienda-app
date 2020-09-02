@@ -37,10 +37,10 @@ class _AddCustomerReviewContainerState
   double rating = null;
   ExpandableController expandableController = new ExpandableController();
   final _formKey = GlobalKey<FormState>();
+  bool showMessage = false;
 
   bool valid = false;
 
-  bool showMessage = false;
 
   @override
   void initState() {
@@ -131,10 +131,10 @@ class _AddCustomerReviewContainerState
                             child: Padding(
                               padding: const EdgeInsets.only(top:8.0,bottom: 8.0),
                               child: Text(
-                                  'Tell us your opinion by assigning a rating',
-                              style: TextStyle(
-                                color: Colors.redAccent
-                              ),),
+                                'Tell us your opinion by assigning a rating',
+                                style: TextStyle(
+                                    color: Colors.redAccent
+                                ),),
                             ),
                           ),
                           SizedBox(

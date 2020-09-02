@@ -63,10 +63,10 @@ class _State extends State<LiveCommentBox> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Card(
-                            color: Colors.black54,
+                            color:  snapshot.data[index].isPremium != null && snapshot.data[index].isPremium?Colors.redAccent:Colors.black54,
 
                             // color: Colors.black.withOpacity(0.1),
-                            elevation: 0,
+                            elevation: snapshot.data[index].isPremium != null && snapshot.data[index].isPremium?8:0,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16)),
                             child: Padding(
@@ -128,8 +128,8 @@ class _State extends State<LiveCommentBox> {
                                             ),
                                           ],
                                         ),
-                                        snapshot.data[index].isPremium != null && snapshot.data[index].isPremium?Icon(Icons.star,
-                                        color: Colors.amber,):Container()
+                                        // snapshot.data[index].isPremium != null && snapshot.data[index].isPremium?Icon(Icons.star,
+                                        // color: Colors.amber,):Container()
                                       ],
                                     ),
                                   ),

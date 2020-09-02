@@ -53,165 +53,136 @@ class _State extends State<SellerProfilesGridView> {
                 onInteractionUpdate: (_) => print("Interaction Updated"),
                 child: Center(
                     child: Padding(
-                        padding: const EdgeInsets.only(top: 80.0, bottom: 20),
-                        child: new OrientationBuilder(
-                          builder: (context, orientation) {
-                            return new GridView.builder(
-                              controller: scrollController,
-                              cacheExtent: MediaQuery.of(context).size.height,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount:
-                                          orientation == Orientation.portrait
-                                              ? 3
-                                              : 2,
-                                      childAspectRatio:
-                                          orientation == Orientation.portrait
-                                              ? 1.4
-                                              : 1.0),
-                              itemCount: state.presenters.length,
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (BuildContext context, int index) =>
-                                  Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Container(
-                                  child: Stack(
-                                    fit: StackFit.expand,
-                                    alignment: Alignment.center,
-                                    children: <Widget>[
-                                      GestureDetector(
-                                        onTap: () {
-                                          bool isGuestUser =
-                                              BlocProvider.of<LoginBloc>(
-                                                      context)
-                                                  .state is GuestUser;
+                  padding: const EdgeInsets.only(top: 80.0, bottom: 20),
+                  child: GridView.builder(
+                    controller: scrollController,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3, childAspectRatio: 1.4),
+                    itemCount: state.presenters.length,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext context, int index) => Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Container(
+                        child: Stack(
+                          fit: StackFit.expand,
+                          alignment: Alignment.center,
+                          children: <Widget>[
+                            GestureDetector(
+                              onTap: () {
+                                bool isGuestUser =
+                                    BlocProvider.of<LoginBloc>(context).state
+                                        is GuestUser;
 
-                                          print(
-                                              "CHECK ISGUESTUSER: ${BlocProvider.of<LoginBloc>(context).state}");
+                                print(
+                                    "CHECK ISGUESTUSER: ${BlocProvider.of<LoginBloc>(context).state}");
 
-                                          if (state.presenters[index].isLive) {
-                                            isGuestUser
-                                                ? Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            LoginMainPage()),
-                                                  )
-                                                : Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            MultiBlocProvider(
-                                                              providers: [
-                                                                BlocProvider(
-                                                                  create: (BuildContext
-                                                                          context) =>
-                                                                      LiveStreamCheckoutBloc(),
-                                                                ),
-                                                                BlocProvider(
-                                                                    create: (BuildContext context) => LiveStreamBloc()
-                                                                      ..add(JoinLive(state
-                                                                          .presenters[
-                                                                              index]
-                                                                          .id))),
-                                                              ],
-                                                              child: LiveStreamScreen(
-                                                                  state.presenters[
-                                                                      index]),
-                                                            )),
-                                                  );
-                                          } else
-                                            isGuestUser
-                                                ? Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            LoginMainPage()),
-                                                  )
-                                                : Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            PresenterProfilePage(
-                                                                state
+                                if (state.presenters[index].isLive) {
+                                  isGuestUser
+                                      ? Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  LoginMainPage()),
+                                        )
+                                      : Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MultiBlocProvider(
+                                                    providers: [
+                                                      BlocProvider(
+                                                        create: (BuildContext
+                                                                context) =>
+                                                            LiveStreamCheckoutBloc(),
+                                                      ),
+                                                      BlocProvider(
+                                                          create: (BuildContext
+                                                                  context) =>
+                                                              LiveStreamBloc()
+                                                                ..add(JoinLive(state
                                                                     .presenters[
                                                                         index]
-                                                                    .id)),
-                                                  );
-                                        },
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: Stack(
-                                            fit: StackFit.expand,
-                                            children: <Widget>[
-                                              FadeInImage.memoryNetwork(
-                                                image:
-                                                    "${GlobalConfiguration().getString("imageURL")}/${state.presenters[index].profilePicture}",
-                                                height: orientation ==
-                                                        Orientation.portrait
-                                                    ? 450
-                                                    : 550,
-                                                width: orientation ==
-                                                        Orientation.portrait
-                                                    ? 350
-                                                    : 500,
-                                                fit: BoxFit.cover,
-                                                placeholder: kTransparentImage,
-                                              ),
-                                              Align(
-                                                alignment:
-                                                    Alignment.bottomCenter,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          bottom: 24.0),
-                                                  child: Text(
-                                                    state
-                                                        .presenters[index].name,
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                                                    .id))),
+                                                    ],
+                                                    child: LiveStreamScreen(
+                                                        state
+                                                            .presenters[index]),
+                                                  )),
+                                        );
+                                } else
+                                  isGuestUser
+                                      ? Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  LoginMainPage()),
+                                        )
+                                      : Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PresenterProfilePage(state
+                                                      .presenters[index].id)),
+                                        );
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: <Widget>[
+                                    FadeInImage.memoryNetwork(
+                                      image:
+                                          "${GlobalConfiguration().getString("imageURL")}/${state.presenters[index].profilePicture}",
+                                      height: 450,
+                                      width: 350,
+                                      fit: BoxFit.cover,
+                                      placeholder: kTransparentImage,
+                                    ),
+                                    Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 24.0),
+                                        child: Text(
+                                          state.presenters[index].name,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                       ),
-                                      state.presenters[index].isLive
-                                          ? Align(
-                                              alignment: Alignment.bottomCenter,
-                                              child: Card(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            2)),
-                                                color: Colors.black,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(2.0),
-                                                  child: Text(
-                                                    AppLocalizations.of(context)
-                                                        .translate("live")
-                                                        .toUpperCase(),
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-                                              ),
-                                            )
-                                          : Container()
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            );
-                          },
-                        )))));
+                            ),
+                            state.presenters[index].isLive
+                                ? Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(2)),
+                                      color: Colors.black,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: Text(
+                                          AppLocalizations.of(context)
+                                              .translate("live")
+                                              .toUpperCase(),
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container()
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ))));
       else
         return Shimmer.fromColors(
           baseColor: Colors.grey[300],

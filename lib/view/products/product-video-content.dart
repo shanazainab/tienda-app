@@ -20,7 +20,14 @@ class _ProductVideoContentState extends State<ProductVideoContent> {
   double _value;
   VideoControls videoControls = new VideoControls();
 
-  double _height = 200;
+  double _height;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _controller.dispose();
+  }
 
   @override
   void initState() {
@@ -30,8 +37,11 @@ class _ProductVideoContentState extends State<ProductVideoContent> {
     _controller = VideoPlayerController.network(widget.product.lastVideo)
       ..initialize().then((_) {
         print("DURATION:${_controller.value.duration.inMinutes}");
+
+
         videoControls.updateControls(
             new Controls(isPlaying: true, show: false, showProgress: false));
+
       })
       ..play();
 
@@ -64,12 +74,12 @@ class _ProductVideoContentState extends State<ProductVideoContent> {
                   },
                   child: AnimatedContainer(
                     duration: Duration(milliseconds: 500),
-                    height: _height,
+                    height: _height == null
+                        ? MediaQuery.of(context).size.height / 2
+                        : _height,
                     width: MediaQuery.of(context).size.width,
                     child: Stack(
-                      children: [
-                        VideoPlayer(_controller),
-                      ],
+                      children: [VideoPlayer(_controller)],
                     ),
                   )),
               StreamBuilder<Controls>(
@@ -125,11 +135,11 @@ class _ProductVideoContentState extends State<ProductVideoContent> {
                               IconButton(
                                 onPressed: () {
                                   if (_height ==
-                                      MediaQuery.of(context).size.height - 100)
-                                    _height = 200;
+                                      MediaQuery.of(context).size.height/2)
+                                    _height = MediaQuery.of(context).size.height / 2 + 200;
                                   else
                                     _height =
-                                        MediaQuery.of(context).size.height - 100;
+                                        MediaQuery.of(context).size.height /2;
                                   setState(() {});
                                 },
                                 icon: Icon(

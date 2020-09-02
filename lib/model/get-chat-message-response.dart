@@ -26,6 +26,7 @@ class GetChatMessageResponse {
     "status": status,
     "messages": List<dynamic>.from(messages.map((x) => x.toJson())),
   };
+
 }
 
 class DirectMessage {
@@ -46,6 +47,11 @@ class DirectMessage {
   int receiverId;
   DateTime createdAt;
   bool received;
+
+  @override
+  String toString() {
+    return 'DirectMessage{body: $body}';
+  }
 
   factory DirectMessage.fromJson(Map<String, dynamic> json) => DirectMessage(
     id: json["id"],

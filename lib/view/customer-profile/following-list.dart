@@ -96,7 +96,7 @@ class FollowingList extends StatelessWidget {
                                             decoration: BoxDecoration(
                                                 image: DecorationImage(
                                                     image: NetworkImage(
-                                                  "${GlobalConfiguration().getString("baseURL")}/${followedPresenters[index].profilePicture}",
+                                                  "${GlobalConfiguration().getString("imageURL")}/${followedPresenters[index].profilePicture}",
                                                 )),
                                                 borderRadius:
                                                     BorderRadius.circular(4),
