@@ -28,10 +28,21 @@ class _CustomerOverallRatingBlockState
 
   bool showRatingBar;
 
+  int totalRatingCount;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    ///process rating
+    totalRatingCount = 0;
+    for (final value in widget.ratings.values.toList()) {
+      totalRatingCount = totalRatingCount + value;
+    }
+    setState(() {
+
+    });
     showRatingBar = widget.isPurchased;
   }
 
@@ -52,7 +63,7 @@ class _CustomerOverallRatingBlockState
                       children: <Widget>[
                         Text(
                           AppLocalizations.of(context)
-                              .translate('customer-rating'),
+                              .translate('customer-rating').toUpperCase(),
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         SizedBox(
@@ -96,6 +107,7 @@ class _CustomerOverallRatingBlockState
                                       Padding(
                                         padding: const EdgeInsets.all(0.0),
                                         child: Row(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             Row(
                                               children: <Widget>[
@@ -119,7 +131,11 @@ class _CustomerOverallRatingBlockState
                                             StepProgressIndicator(
                                               totalSteps: 100,
                                               currentStep: widget.ratings.values
-                                                  .toList()[index] == 0?0:32,
+                                                          .toList()[index] ==
+                                                      0
+                                                  ? 0
+                                                  :  ((widget.ratings.values
+                                                  .toList()[index]/totalRatingCount) *100).toInt(),
                                               size: 8,
                                               padding: 0,
                                               selectedColor: Colors.black,

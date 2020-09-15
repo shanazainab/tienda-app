@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -21,85 +22,101 @@ class FeaturedPresentersList extends StatelessWidget {
   Widget build(BuildContext context) {
     var appLanguage = Provider.of<AppLanguage>(context);
 
-    return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: Text(
-                    AppLocalizations.of(context).translate('featured-sellers'),
-                    style: TextStyle(color: Colors.black, fontSize: 20)),
-              )),
-          SizedBox(
-            height: appLanguage.appLocal == Locale('en') ? 230 : 250,
-            child: ListView.builder(
-                itemCount: featurePresenters.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (BuildContext cxt, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        GestureDetector(
-                          onTap: () {
-                            bool isGuestUser =
-                                BlocProvider.of<LoginBloc>(context).state
-                                    is GuestUser;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+                AppLocalizations.of(context)
+                    .translate('featured-sellers')
+                    .toUpperCase(),
+                style: TextStyle(color: Colors.grey))),
+        ConstrainedBox(
+          constraints: new BoxConstraints(
+            minHeight: 200.0,
+            maxHeight: 220.0,
+          ),
+          child: ListView.builder(
+              itemCount: featurePresenters.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (BuildContext cxt, int index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: () {
+                          bool isGuestUser = BlocProvider.of<LoginBloc>(context)
+                              .state is GuestUser;
 
-                            isGuestUser
-                                ? Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => LoginMainPage()),
-                                  )
-                                : Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            PresenterProfilePage(
-                                                featurePresenters[index].id)),
-                                  );
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Container(
+                          isGuestUser
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginMainPage()),
+                                )
+                              : Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          PresenterProfilePage(
+                                            presenterId: featurePresenters[index].id,
+                                            presenterName: featurePresenters[index].name,
+                                            profileImageURL: featurePresenters[index].profilePicture,
+                                              )),
+
+                                );
+                        },
+                        child:
+
+                            // ClipRRect(
+                            //   borderRadius: BorderRadius.circular(50.0),
+                            //   child: FadeInImage.memoryNetwork(
+                            //     image:
+                            //         "${GlobalConfiguration().getString("imageURL")}/${featurePresenters[index].profilePicture}",
+                            //     fit: BoxFit.cover,
+                            //     width: 100,
+                            //     height: 100,
+                            //     placeholder: kTransparentImage,
+                            //   ),
+                            // )
+
+                            ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Container(
+                            height: 160,
+                            width: 120,
+                            color: Colors.grey[200],
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  "${GlobalConfiguration().getString("imageURL")}/${featurePresenters[index].profilePicture}",
                               height: 160,
                               width: 120,
-                              color: Colors.grey[200],
-                              child: FadeInImage.memoryNetwork(
-                                image:
-                                    "${GlobalConfiguration().getString("imageURL")}/${featurePresenters[index].profilePicture}",
-                                height: 160,
-                                width: 120,
-                                fit: BoxFit.cover,
-                                placeholder: kTransparentImage,
-
-                              ),
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            featurePresenters[index].name,
-                            style: TextStyle(fontSize: 16),
-                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          featurePresenters[index].name,
+                          style: TextStyle(fontSize: 16),
                         ),
-                        // Text("Rating")
-                      ],
-                    ),
-                  );
-                }),
-          )
-        ],
-      ),
+                      ),
+                      // Text("Rating")
+                    ],
+                  ),
+                );
+              }),
+        )
+      ],
     );
   }
 }

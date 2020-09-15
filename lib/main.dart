@@ -5,13 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:tienda/app-country.dart';
 import 'package:tienda/app-language.dart';
@@ -23,13 +21,14 @@ import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/customer-profile-events.dart';
 import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/events/startup-events.dart';
+import 'package:tienda/bloc/loading-bloc.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/preference-bloc.dart';
 import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/localization.dart';
-import 'package:tienda/test.dart';
+import 'package:tienda/video-overlays/overlay_handler.dart';
 import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/live-stream/shop-live-screen.dart';
 import 'package:tienda/view/startup/country-choose-page.dart';
@@ -46,14 +45,18 @@ import 'controller/real-time-controller.dart';
 ///Author: Shahana
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-//  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-//  sharedPreferences.clear();
-
+  //
+  // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  // sharedPreferences.clear();
   ///Enable firebase crash analytics
   Crashlytics.instance.enableInDevMode = true;
+
+  // Pass all uncaught errors from the framework to Crashlytics.
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
 
   ///To track bloc pattern states and transitions
   // BlocSupervisor.delegate = await HydratedBlocDelegate.build();
@@ -73,8 +76,8 @@ Future<void> main() async {
   AppCountry appCountry = AppCountry();
   await appCountry.fetchCountry();
 
-  await SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp]);
+  // await SystemChrome.setPreferredOrientations(
+  //     [DeviceOrientation.portraitUp]);
 
   runZoned<Future<void>>(() async {
     runApp(MultiBlocProvider(
@@ -97,6 +100,10 @@ Future<void> main() async {
         BlocProvider<CustomerProfileBloc>(
           create: (BuildContext context) =>
               CustomerProfileBloc()..add(FetchCustomerProfile()),
+        ),
+        BlocProvider<LoadingBloc>(
+          create: (BuildContext context) =>
+          LoadingBloc()
         ),
         BlocProvider<CartBloc>(
           create: (BuildContext context) => CartBloc()..add(FetchCartData()),
@@ -126,6 +133,9 @@ class App extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: (_) => appLanguage),
           ChangeNotifierProvider(create: (_) => appCountry),
+          ChangeNotifierProvider<OverlayHandlerProvider>(
+            create: (_) => OverlayHandlerProvider(),
+          )
         ],
         child: Consumer<AppLanguage>(builder: (context, model, child) {
           return MaterialApp(

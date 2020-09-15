@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/model/product.dart';
+import 'package:tienda/video-overlays/overlay_service.dart';
 import 'package:tienda/view/products/single-product-page.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -22,8 +23,8 @@ class NewArrivalList extends StatelessWidget {
         children: <Widget>[
           Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(AppLocalizations.of(context).translate('new-arrival'),
-                  style: TextStyle(color: Colors.black, fontSize: 20))),
+              child: Text(AppLocalizations.of(context).translate('new-arrival').toUpperCase(),
+                  style: TextStyle(color: Colors.grey))),
           Container(
             height:appLanguage.appLocal == Locale('en')?210:240,
             child: ListView.builder(
@@ -35,12 +36,9 @@ class NewArrivalList extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: GestureDetector(
                       onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SingleProductPage(
-                                  newArrivals[index].id)),
-                        );
+                        OverlayService().addVideoTitleOverlay(context,SingleProductPage(
+                            newArrivals[index].id),false);
+
                       },
                       child: Container(
                         width: 120,

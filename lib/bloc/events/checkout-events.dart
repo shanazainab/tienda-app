@@ -1,27 +1,24 @@
 import 'package:equatable/equatable.dart';
 import 'package:tienda/model/order.dart';
+import 'package:tienda/model/payment-card.dart';
 
-abstract class CheckoutEvents extends Equatable {
+abstract class CheckoutEvents {
   CheckoutEvents();
-
-  @override
-  List<Object> get props => null;
 }
 
 class Initialize extends CheckoutEvents {
   Initialize() : super();
-
-  @override
-  List<Object> get props => [];
 }
 
 class DoCartCheckout extends CheckoutEvents {
   final int addressId;
+  final PaymentCard card;
 
-  DoCartCheckout({this.addressId}) : super();
+  final int cardId;
 
-  @override
-  List<Object> get props => [addressId];
+  final int cvv;
+
+  DoCartCheckout({this.addressId, this.card, this.cardId, this.cvv}) : super();
 }
 
 class DoUpdateCheckOutProgress extends CheckoutEvents {
@@ -29,7 +26,4 @@ class DoUpdateCheckOutProgress extends CheckoutEvents {
   final String status;
 
   DoUpdateCheckOutProgress({this.status, this.order}) : super();
-
-  @override
-  List<Object> get props => [status];
 }

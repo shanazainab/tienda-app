@@ -16,17 +16,26 @@ class ProductInfoContainer extends StatelessWidget {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left:16,right: 16,bottom: 16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Text(
+              product.nameEn,
+              style: TextStyle(
+                fontSize: 16
+              ),
+            ),
+
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+
+
                   Text(
                     '${AppLocalizations.of(context).translate('aed')} ${product.price}',
                     style: TextStyle(fontWeight: FontWeight.bold),

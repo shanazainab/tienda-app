@@ -24,8 +24,8 @@ class FeaturedBrands extends StatelessWidget {
           Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                  AppLocalizations.of(context).translate('featured-brands'),
-                  style: TextStyle(color: Colors.black, fontSize: 20))),
+                  AppLocalizations.of(context).translate('featured-brands').toUpperCase(),
+                  style: TextStyle(color: Colors.grey))),
           SizedBox(
             height: 100,
             child: ListView.builder(

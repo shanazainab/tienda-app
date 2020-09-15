@@ -6,6 +6,8 @@ import 'package:tienda/bloc/checkout-bloc.dart';
 import 'package:tienda/bloc/events/address-events.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/checkout-events.dart';
+import 'package:tienda/bloc/events/saved-card-events.dart';
+import 'package:tienda/bloc/saved-card-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/bloc/states/checkout-states.dart';
 import 'package:tienda/model/order.dart';
@@ -15,6 +17,9 @@ import 'package:tienda/view/checkout/order-success-page.dart';
 import 'package:tienda/view/checkout/payment-container.dart';
 
 class CheckoutOrdersMainPage extends StatefulWidget {
+
+
+
   @override
   _CheckoutOrdersMainPageState createState() => _CheckoutOrdersMainPageState();
 }
@@ -66,20 +71,20 @@ class _CheckoutOrdersMainPageState extends State<CheckoutOrdersMainPage> {
                       if (state is AddressActive) {
                         pageController.animateToPage(1,
                             duration: Duration(
-                              milliseconds: 500,
+                              milliseconds: 300,
                             ),
                             curve: Curves.easeIn);
                       }
                       if (state is PaymentActive)
                         pageController.animateToPage(2,
                             duration: Duration(
-                              milliseconds: 500,
+                              milliseconds: 300,
                             ),
                             curve: Curves.easeIn);
                       if (state is CartActive)
                         pageController.animateToPage(0,
                             duration: Duration(
-                              milliseconds: 500,
+                              milliseconds: 300,
                             ),
                             curve: Curves.easeIn);
 
@@ -200,7 +205,10 @@ class _CheckoutOrdersMainPageState extends State<CheckoutOrdersMainPage> {
                                     create: (BuildContext context) =>
                                         AddressBloc()..add(LoadSavedAddress()),
                                     child: OrderAddressContainer()),
-                                PaymentContainer()
+                                BlocProvider<SavedCardBloc>(
+                                    create: (BuildContext context) =>
+                                    SavedCardBloc()..add(LoadSavedCards()),
+                                    child: PaymentContainer()),
                               ],
                             ),
                           ),

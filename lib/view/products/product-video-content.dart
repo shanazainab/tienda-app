@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/app-language.dart';
-import 'package:tienda/controller/video-controls.dart';
 import 'package:tienda/model/product.dart';
 import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
+import 'package:chewie/src/chewie_player.dart';
 
 class ProductVideoContent extends StatefulWidget {
   final Product product;
@@ -17,35 +18,31 @@ class ProductVideoContent extends StatefulWidget {
 
 class _ProductVideoContentState extends State<ProductVideoContent> {
   VideoPlayerController _controller;
-  double _value;
-  VideoControls videoControls = new VideoControls();
 
-  double _height;
+  ChewieController chewieController;
 
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
+    chewieController.dispose();
     _controller.dispose();
+    super.dispose();
   }
 
   @override
   void initState() {
-    // TODO: implement initState
+    _controller = VideoPlayerController.network(widget.product.lastVideo);
+
+    chewieController = ChewieController(
+      videoPlayerController: _controller,
+      aspectRatio: 3 / 2,
+      autoInitialize: true,
+      allowFullScreen: true,
+      allowMuting: true,
+      autoPlay: true,
+      looping: true,
+    );
     super.initState();
-    _value = 0.1;
-    _controller = VideoPlayerController.network(widget.product.lastVideo)
-      ..initialize().then((_) {
-        print("DURATION:${_controller.value.duration.inMinutes}");
-
-
-        videoControls.updateControls(
-            new Controls(isPlaying: true, show: false, showProgress: false));
-
-      })
-      ..play();
-
-    _controller.setLooping(true);
   }
 
   @override
@@ -55,107 +52,8 @@ class _ProductVideoContentState extends State<ProductVideoContent> {
     return Container(
       child: Column(
         children: [
-          Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              GestureDetector(
-                  onTap: () {
-                    if (videoControls.controls.value == null) {
-                      videoControls.updateControls(
-                          new Controls(isPlaying: true, show: true));
-                    } else {
-                      videoControls.controls.value.show =
-                          videoControls.controls.value.show == null
-                              ? true
-                              : !videoControls.controls.value.show;
-                      videoControls
-                          .updateControls(videoControls.controls.value);
-                    }
-                  },
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 500),
-                    height: _height == null
-                        ? MediaQuery.of(context).size.height / 2
-                        : _height,
-                    width: MediaQuery.of(context).size.width,
-                    child: Stack(
-                      children: [VideoPlayer(_controller)],
-                    ),
-                  )),
-              StreamBuilder<Controls>(
-                  stream: videoControls.controls,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<Controls> snapshot) {
-                    if (snapshot.data != null && snapshot.data.show)
-                      return Align(
-                        alignment: Alignment.bottomCenter,
-                        child: AnimatedContainer(
-                          duration: Duration(milliseconds: 200),
-                          height: 40,
-                          width: MediaQuery.of(context).size.width,
-                          color: Colors.black.withOpacity(0.1),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              snapshot.data.isPlaying
-                                  ? IconButton(
-                                      onPressed: () {
-                                        videoControls.controls.value.isPlaying =
-                                            false;
-                                        videoControls.updateControls(
-                                            videoControls.controls.value);
-                                        _controller.pause();
-                                      },
-                                      icon: Icon(
-                                        Icons.pause,
-                                        color: Colors.black,
-                                        size: 24,
-                                      ),
-                                    )
-                                  : IconButton(
-                                      onPressed: () {
-                                        videoControls.controls.value.isPlaying =
-                                            true;
-                                        videoControls.updateControls(
-                                            videoControls.controls.value);
-                                        _controller.play();
-                                      },
-                                      icon: Icon(
-                                        Icons.play_arrow,
-                                        color: Colors.black,
-                                        size: 24,
-                                      ),
-                                    ),
-                              Container(
-                                width: MediaQuery.of(context).size.width - 100,
-                                child: VideoProgressIndicator(_controller,
-                                    allowScrubbing: true,
-                                    padding: EdgeInsets.all(8)),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  if (_height ==
-                                      MediaQuery.of(context).size.height/2)
-                                    _height = MediaQuery.of(context).size.height / 2 + 200;
-                                  else
-                                    _height =
-                                        MediaQuery.of(context).size.height /2;
-                                  setState(() {});
-                                },
-                                icon: Icon(
-                                  Icons.fullscreen,
-                                  size: 24,
-                                  color: Colors.black,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    else
-                      return Container();
-                  })
-            ],
+          Chewie(
+            controller: chewieController,
           ),
           Container(
             color: Colors.white,

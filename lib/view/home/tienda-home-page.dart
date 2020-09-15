@@ -4,6 +4,7 @@ import 'package:page_indicator/page_indicator.dart';
 import 'package:tienda/bloc/events/home-events.dart';
 import 'package:tienda/bloc/home-bloc.dart';
 import 'package:tienda/bloc/states/home-states.dart';
+import 'package:tienda/loading-widget.dart';
 import 'package:tienda/view/home/live-stream-banner.dart';
 import 'package:tienda/view/home/deals-block.dart';
 import 'package:tienda/view/home/featured-brands.dart';
@@ -64,6 +65,7 @@ class _TiendaHomePageContentsState extends State<TiendaHomePageContents>
 
   @override
   Widget build(BuildContext context) {
+
     return BlocBuilder<HomeBloc, HomeStates>(
         cubit: homeBloc,
         builder: (context, state) {
@@ -74,7 +76,7 @@ class _TiendaHomePageContentsState extends State<TiendaHomePageContents>
                 padding: EdgeInsets.only(bottom: 50),
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height - 50,
+                    height: MediaQuery.of(context).size.height/2 ,
                     child: PageIndicatorContainer(
                       child: PageView.builder(
                         itemBuilder: (BuildContext context, int index) {
@@ -88,7 +90,7 @@ class _TiendaHomePageContentsState extends State<TiendaHomePageContents>
                       padding: const EdgeInsets.all(10),
                       indicatorColor: Colors.white,
                       indicatorSelectorColor: Colors.blue,
-                      shape: IndicatorShape.circle(size: 4),
+                      shape: IndicatorShape.circle(size: 0),
                     ),
                   ),
                   Padding(
@@ -123,19 +125,7 @@ class _TiendaHomePageContentsState extends State<TiendaHomePageContents>
               ),
             );
           else
-            return Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Center(
-                child: Container(
-                  height: 40,
-                  width: 40,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                  ),
-                ),
-              ),
-            );
+            return spinkit;
         });
   }
 

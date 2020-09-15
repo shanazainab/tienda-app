@@ -85,7 +85,6 @@ class _ProductListPageState extends State<ProductListPage> {
                   ),
                   appBar: PreferredSize(
                       preferredSize: Size.fromHeight(48.0),
-                      // here the desired height
                       child: CustomAppBar(
 //                        bottom: TabBar(
 //                          labelColor: Colors.lightBlue,

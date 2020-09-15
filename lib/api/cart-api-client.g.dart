@@ -33,7 +33,6 @@ class _CartApiClient implements CartApiClient {
             baseUrl: baseUrl),
         data: _data);
     final value = _result.data;
-    Logger().e("ADD TO CART: ${_result.request.data}");
 
     return value;
   }
@@ -57,10 +56,14 @@ class _CartApiClient implements CartApiClient {
   }
 
   @override
-  Future<String> cartCheckout(int addressId) async {
+  Future<String> cartCheckout(int addressId,PaymentCard paymentCard,int cardId,int cvv) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{'address_id': addressId};
+    final _data = <String, dynamic>{'address_id': addressId ,"card":paymentCard.toJson(),if(cardId !=null)"card_id":cardId,
+      if(cvv !=null)"cvv":cvv};
+
+    print("DATA: $_data");
+
     final Response<String> _result = await _dio.request('/checkout/',
         queryParameters: queryParameters,
         options: RequestOptions(

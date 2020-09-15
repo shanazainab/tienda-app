@@ -3,24 +3,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/checkout-bloc.dart';
 import 'package:tienda/bloc/connectivity-bloc.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/checkout-events.dart';
-import 'package:tienda/bloc/events/wishlist-events.dart';
+import 'package:tienda/bloc/events/loading-events.dart';
+import 'package:tienda/bloc/loading-bloc.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
+import 'package:tienda/bloc/states/loading-states.dart';
 import 'package:tienda/bloc/states/login-states.dart';
-import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/localization.dart';
-import 'package:tienda/main.dart';
 import 'package:tienda/model/order.dart';
-import 'package:tienda/model/wishlist.dart';
+import 'package:tienda/view/cart/cart-items-container.dart';
 import 'package:tienda/view/login/login-main-page.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -28,7 +26,6 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-
   @override
   void initState() {
     // TODO: implement initState
@@ -43,230 +40,26 @@ class _CartPageState extends State<CartPage> {
 
     return BlocBuilder<CartBloc, CartStates>(
       builder: (context, state) {
-        if (state is LoadCartSuccess && state.cart != null)
+        if (state is LoadCartSuccess && state.cart != null) {
+          BlocProvider.of<LoadingBloc>(context)..add(StopLoading());
+
           return Stack(
             children: <Widget>[
               Container(
                 child: ListView(
-                  padding: EdgeInsets.only(bottom: 100,left: 16,right:16),
+                  padding: EdgeInsets.only(bottom: 100, left: 16, right: 16),
                   children: <Widget>[
-
-                    Text(AppLocalizations.of(context).translate("shopping-bag"),style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20
-                    ),),
+                    Text(
+                      AppLocalizations.of(context).translate("shopping-bag"),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
 
                     SizedBox(
                       height: 30,
                     ),
-                    ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: state.cart.products.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return new Container(
-                            child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                FadeInImage.memoryNetwork(
-
-
-                                  image:
-                                      state.cart.products[index].thumbnail,
-                                  width: 100,
-                                  height: 120,
-                                  fit: BoxFit.cover,
-                                  placeholder: kTransparentImage,
-
-                                ),
-                                Flexible(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left:16.0,right:16),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: <Widget>[
-                                        state.cart.products[index].brand != null
-                                            ? Text(
-                                                state
-                                                    .cart.products[index].brand,
-                                                softWrap: true,
-                                                overflow: TextOverflow.ellipsis,
-                                              )
-                                            : Container(),
-                                        Text(
-                                          appLanguage.appLocal == Locale('en')
-                                              ? state
-                                                  .cart.products[index].nameEn
-                                              : state
-                                                  .cart.products[index].nameAr,
-                                          softWrap: true,
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 8.0),
-                                          child: Text(
-                                            '${AppLocalizations.of(context).translate('aed')} ${state.cart.products[index].price.toStringAsFixed(2)}',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 16,
-                                        ),
-                                        Row(
-                                          children: <Widget>[
-                                            GestureDetector(
-                                              onTap: () {
-                                                if (state.cart.products[index]
-                                                        .quantity ==
-                                                    1) {
-                                                  ///delete the item
-                                                  ///or don do anything
-                                                } else {
-
-                                                  state.cart.products[index]
-                                                      .quantity = state
-                                                          .cart
-                                                          .products[index]
-                                                          .quantity -
-                                                      1;
-                                                  BlocProvider.of<CartBloc>(
-                                                      context)
-                                                    ..add(EditCartItem(
-                                                        cart: state.cart,
-                                                        editType:
-                                                            "QUANTITY EDIT",
-                                                        cartItem: state.cart
-                                                            .products[index]));
-                                                }
-                                              },
-                                              child: Icon(
-                                                Icons.arrow_back_ios,
-                                                color: Colors.black,
-                                                size: 16,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 8.0, right: 8),
-                                              child: Text(state
-                                                  .cart.products[index].quantity
-                                                  .toString(),style: TextStyle(
-                                                fontSize: 16
-                                              ),),
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                state.cart.products[index]
-                                                    .quantity = state
-                                                        .cart
-                                                        .products[index]
-                                                        .quantity +
-                                                    1;
-
-                                                BlocProvider.of<CartBloc>(
-                                                    context)
-                                                  ..add(EditCartItem(
-                                                      cart: state.cart,
-                                                      editType: "QUANTITY EDIT",
-                                                      cartItem: state.cart
-                                                          .products[index]));
-                                              },
-                                              child: Icon(
-                                                Icons.arrow_forward_ios,
-                                                color: Colors.black,
-                                                size: 16,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                FlatButton(
-                                  padding: EdgeInsets.all(0),
-                                  onPressed: () {
-                                    BlocProvider.of<CartBloc>(context).add(
-                                        DeleteCartItem(
-                                            cart: state.cart,
-                                            cartItem:
-                                                state.cart.products[index]));
-                                  },
-                                  child: Center(
-                                      child: Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.delete,
-                                        size: 14,
-                                      ),
-                                      Text(
-                                        AppLocalizations.of(context)
-                                            .translate('remove'),
-                                        style: TextStyle(fontSize: 12),
-                                      ),
-                                    ],
-                                  )),
-                                ),
-                                Container(
-                                  height: 25,
-                                  color: Colors.grey[200],
-                                  width: 1,
-                                ),
-                                FlatButton(
-                                  padding: EdgeInsets.all(0),
-                                  onPressed: () {
-                                    BlocProvider.of<WishListBloc>(context)
-                                        .add(AddToWishList(
-                                            wishListItem: new WishListItem(
-                                      product: state.cart.products[index],
-                                    )));
-
-                                    BlocProvider.of<CartBloc>(context).add(
-                                        DeleteCartItem(
-                                            cart: state.cart,
-                                            cartItem:
-                                                state.cart.products[index]));
-                                  },
-                                  child: Center(
-                                      child: Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.bookmark,
-                                        size: 14,
-                                      ),
-                                      Text(
-                                        AppLocalizations.of(context)
-                                            .translate('move-to-wishlist')
-                                            .toUpperCase(),
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                  )),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ));
-                      },
-                    ),
-                   // if (state.cart != null) priceContainer(state.cart.cartPrice)
+                    CartItemsContainer(state.cart),
+                    // if (state.cart != null) priceContainer(state.cart.cartPrice)
                   ],
                 ),
               ),
@@ -292,26 +85,45 @@ class _CartPageState extends State<CartPage> {
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: SizedBox(
-                              width: MediaQuery.of(context).size.width - 50,
-                              child: RaisedButton(
-                                onPressed: () {
-                                  BlocProvider.of<LoginBloc>(context).state
-                                          is GuestUser
-                                      ? Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  LoginMainPage()),
-                                        )
-                                      : BlocProvider.of<CheckOutBloc>(context).add(
-                                          DoUpdateCheckOutProgress(
-                                              order: new Order(),
-                                              status: "ADDRESS"));
-                                },
-                                child: Text(AppLocalizations.of(context)
-                                    .translate('checkout')),
-                              ),
-                            ),
+                                width: MediaQuery.of(context).size.width - 50,
+                                child: BlocBuilder<LoadingBloc, LoadingStates>(
+                                    builder: (context, state) {
+                                  if (state is AppLoading) {
+                                    return RaisedButton(
+                                      onPressed: () {
+                                        //Do nothing
+                                      },
+                                      child: Container(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          backgroundColor: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    return RaisedButton(
+                                      onPressed: () {
+                                        BlocProvider.of<LoginBloc>(context)
+                                                .state is GuestUser
+                                            ? Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        LoginMainPage()),
+                                              )
+                                            : BlocProvider.of<CheckOutBloc>(
+                                                    context)
+                                                .add(DoUpdateCheckOutProgress(
+                                                    order: new Order(),
+                                                    status: "ADDRESS"));
+                                      },
+                                      child: Text(AppLocalizations.of(context)
+                                          .translate('checkout')),
+                                    );
+                                  }
+                                })),
                           ),
                         ],
                       ),
@@ -320,7 +132,7 @@ class _CartPageState extends State<CartPage> {
                 ),
             ],
           );
-        else
+        } else
           return Container(
             child: Center(
               child: Column(
@@ -331,7 +143,7 @@ class _CartPageState extends State<CartPage> {
                     size: 40,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top:8.0),
+                    padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
                       "Your Cart is Empty",
                       style: TextStyle(fontSize: 16),
@@ -372,7 +184,7 @@ class _CartPageState extends State<CartPage> {
                   AppLocalizations.of(context).translate('cart-total'),
                 ),
                 Text(
-                    "${AppLocalizations.of(context).translate('aed')} ${cartPrice}"),
+                    "${AppLocalizations.of(context).translate('aed')} $cartPrice"),
               ],
             ),
             SizedBox(
@@ -399,7 +211,7 @@ class _CartPageState extends State<CartPage> {
                   AppLocalizations.of(context).translate('order-total'),
                 ),
                 Text(
-                    "${AppLocalizations.of(context).translate('aed')} ${cartPrice}"),
+                    "${AppLocalizations.of(context).translate('aed')} $cartPrice"),
               ],
             ),
             SizedBox(
@@ -434,7 +246,7 @@ class _CartPageState extends State<CartPage> {
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
                 Text(
-                    "${AppLocalizations.of(context).translate('aed')} ${cartPrice}",
+                    "${AppLocalizations.of(context).translate('aed')} $cartPrice",
                     style: TextStyle(fontWeight: FontWeight.w700)),
               ],
             ),

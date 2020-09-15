@@ -14,8 +14,6 @@ import 'package:tienda/model/live-chat.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/unread-messages.dart';
 
-
-
 class RealTimeController {
   final liveChatStream = new BehaviorSubject<List<LiveChat>>();
   final viewCountStream = new BehaviorSubject<String>();
@@ -41,10 +39,7 @@ class RealTimeController {
   }
 
   showLiveReaction(int presenterId) {
-    socket.emit('react', {
-      'reaction':'love',
-      'room_name': "PR-$presenterId"});
-
+    socket.emit('react', {'reaction': 'love', 'room_name': "PR-$presenterId"});
   }
 
   stopLiveReaction() {
@@ -53,7 +48,7 @@ class RealTimeController {
 
   addToAllMessageStream(Message message) {
     List<Message> existingAllMessageInStream = allMessageStream.value;
-    if(existingAllMessageInStream != null) {
+    if (existingAllMessageInStream != null) {
       for (int i = 0; i < existingAllMessageInStream.length; ++i) {
         if (existingAllMessageInStream[i].id == message.id) {
           existingAllMessageInStream[i].lastMessage = message.lastMessage;
@@ -130,6 +125,14 @@ class RealTimeController {
         Logger().d("LIVE_REACTION:$data ");
         liveReaction.sink.add(true);
       });
+      socket.on('added_product_to_cart', (data) {
+        Logger().d("ADDED PRODUCT TO THE CART:$data ");
+        liveReaction.sink.add(true);
+      });
+      socket.on('product_checkout', (data) {
+        Logger().d("PRODUCT CHECK OUT:$data ");
+        liveReaction.sink.add(true);
+      });
 
       socket.on('new_live_message', (data) {
         Logger().d("NEW_LIVE_MESSAGE_EVENT:$data ");
@@ -151,8 +154,8 @@ class RealTimeController {
       socket.on('new_message', (data) {
         Logger().d("NEW_MESSAGE:$data ");
 
-
-        Logger().d("TIMESTAMP DATE:${DateTime.fromMicrosecondsSinceEpoch(data['timestamp'])}");
+        Logger().d(
+            "TIMESTAMP DATE:${DateTime.fromMicrosecondsSinceEpoch(data['timestamp'])}");
         if (directMessageStream.value == null) {
           ///NEW_MESSAGE:{receiver_id: 50, body: dsadsd, timestamp: 1597646863657}
           ///{receiver_id: 50, body: terr, timestamp: 1597835356414, sender_id: 10}
@@ -169,7 +172,7 @@ class RealTimeController {
               body: data['body'],
               receiverId: data['receiver_id'],
               createdAt:
-                  new DateTime.fromMicrosecondsSinceEpoch(data['timestamp']* 1000)));
+                  new DateTime.fromMicrosecondsSinceEpoch(data['timestamp'])));
           chatMessages.addAll(directMessageStream.value);
 
           directMessageStream.sink.add(chatMessages);
@@ -182,6 +185,16 @@ class RealTimeController {
         Logger().d("NEW_MESSAGE:$data ");
       });
     }
+  }
+
+  emitAddToCartFromLive(int productId, int presenterId) {
+    socket.emit('added_product_to_cart',
+        {'product_id': productId, 'presenter_id': presenterId});
+  }
+
+  emitCheckoutFromLive(int productId, int presenterId) {
+    socket.emit('product_checkout',
+        {'product_id': productId, 'presenter_id': presenterId});
   }
 
   emitLiveMessage(String message, int presenterId) {
@@ -229,6 +242,15 @@ class RealTimeController {
           for (final message in getChatMessageResponse.messages) {
             chatMessages.add(message);
           }
+          //
+          // ///testing message
+          // chatMessages.add(new DirectMessage(
+          //   createdAt: new DateTime(2020, 9, 1),
+          //   chatType: "customer_presenter",
+          //   receiverId: 10,
+          //   userId: 50,
+          //   body: "old message",
+          // ));
 
           directMessageStream.sink.add(chatMessages.reversed.toList());
           break;
@@ -243,23 +265,27 @@ class RealTimeController {
       }
     });
   }
+
   clearLiveChat() {
     liveChatStream.sink.add(null);
   }
-  Map<String,List<DirectMessage>> groupedTheMessages(List<DirectMessage> chatMessages){
-    Map<String,List<DirectMessage>> groupedMessages = new HashMap();
-    for(final message in chatMessages){
-      if(groupedMessages.containsKey(message.createdAt.toIso8601String().substring(0,10))){
-        groupedMessages[message.createdAt.toIso8601String().substring(0,10)].add(message);
-      }else{
-        groupedMessages[message.createdAt.toIso8601String().substring(0,10)] = new List()..add(message);
+
+  Map<String, List<DirectMessage>> groupedTheMessages(
+      List<DirectMessage> chatMessages) {
+    Map<String, List<DirectMessage>> groupedMessages = new HashMap();
+    for (final message in chatMessages) {
+      if (groupedMessages
+          .containsKey(message.createdAt.toIso8601String().substring(0, 10))) {
+        groupedMessages[message.createdAt.toIso8601String().substring(0, 10)]
+            .add(message);
+      } else {
+        groupedMessages[message.createdAt.toIso8601String().substring(0, 10)] =
+            new List()..add(message);
       }
     }
 
     return groupedMessages;
-
   }
-
 
   Future<void> getAllPresenterChats() async {
     final dio = Dio();

@@ -10,7 +10,10 @@ import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/presenter-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/presenter-states.dart';
+import 'package:tienda/loading-widget.dart';
 import 'package:tienda/model/presenter.dart';
+import 'package:tienda/video-overlays/overlay_service.dart';
+import 'package:tienda/view/live-stream/live-stream-pip-mode.dart';
 import 'package:tienda/view/live-stream/live-stream-screen.dart';
 import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/presenter-profile/presenter-profile-page.dart';
@@ -67,19 +70,7 @@ class _ShopLiveScreenState extends State<ShopLiveScreen> {
                   child: Center(child: Text("NO LIVE")),
                 );
               } else
-                return Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: Center(
-                    child: SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  ),
-                );
+                return spinkit;
             }));
   }
 
@@ -142,28 +133,48 @@ class _ShopLiveScreenState extends State<ShopLiveScreen> {
                         builder: (context) =>
                             LoginMainPage()),
                   )
-                      : Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            MultiBlocProvider(
-                              providers: [
-                                BlocProvider(
-                                  create: (BuildContext
-                                  context) =>
-                                      LiveStreamCheckoutBloc(),
-                                ),
-                                BlocProvider(
-                                    create: (BuildContext
-                                    context) =>
-                                    LiveStreamBloc()
-                                      ..add(JoinLive(presenter
-                                          .id))),
-                              ],
-                              child: LiveStreamScreen(
-                                  presenter),
-                            )),
-                  );
+                      :
+                  OverlayService().addVideoTitleOverlay(
+                      context,    MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (BuildContext
+                        context) =>
+                            LiveStreamCheckoutBloc(),
+                      ),
+                      BlocProvider(
+                          create: (BuildContext
+                          context) =>
+                          LiveStreamBloc()
+                            ..add(JoinLive(presenter
+                                .id))),
+                    ],
+                    child: LiveStreamPIPMode(
+                        presenter),
+                  ),true);
+
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (context) =>
+                  //           MultiBlocProvider(
+                  //             providers: [
+                  //               BlocProvider(
+                  //                 create: (BuildContext
+                  //                 context) =>
+                  //                     LiveStreamCheckoutBloc(),
+                  //               ),
+                  //               BlocProvider(
+                  //                   create: (BuildContext
+                  //                   context) =>
+                  //                   LiveStreamBloc()
+                  //                     ..add(JoinLive(presenter
+                  //                         .id))),
+                  //             ],
+                  //             child: LiveStreamScreen(
+                  //                 presenter),
+                  //           )),
+                  // );
                 } else
                   isGuestUser
                       ? Navigator.push(
@@ -176,7 +187,9 @@ class _ShopLiveScreenState extends State<ShopLiveScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            PresenterProfilePage(presenter.id)),
+                            PresenterProfilePage(profileImageURL: presenter.profilePicture,
+                            presenterName: presenter.name,
+                            presenterId: presenter.id,)),
                   );
 
               },

@@ -63,7 +63,6 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
     final client = SearchApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.searchProducts(query, pageNumber, searchBody).then((response) {
-      print("PRODUCT-SEARCH-RESPONSE:$response");
 
       switch (json.decode(response)['status']) {
         case 200:
@@ -95,7 +94,7 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
 
     productListResponse = await callProductSearchByQuery(
         event.query, event.pageNumber, event.searchBody);
-    print("productListResponse:$productListResponse");
+    log("FETCH PRODUCT RESPONSE:${productListResponse.products}");
     if (productListResponse != null)
       yield LoadProductListSuccess(productListResponse);
   }

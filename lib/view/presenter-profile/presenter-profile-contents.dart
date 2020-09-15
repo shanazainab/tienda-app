@@ -1,10 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:tienda/bloc/events/follow-events.dart';
 import 'package:tienda/bloc/follow-bloc.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/presenter.dart';
-import 'package:tienda/view/presenter-profile/featured-product-grid-view.dart';
+import 'package:tienda/video-overlays/overlay_service.dart';
+import 'package:tienda/view/products/single-product-page.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class PresenterProfileContents extends StatefulWidget {
   final GlobalKey pageViewGlobalKey;
@@ -31,44 +34,42 @@ class _PresenterProfileContentsState extends State<PresenterProfileContents> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.all(0),
-      shrinkWrap: true,
-      physics: ScrollPhysics(),
-      children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(
-                  "${GlobalConfiguration().getString("imageURL")}${widget.presenter.profilePicture}",
-                )),
-          ),
-          height: 200,
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              Padding(
-                padding:
-                    const EdgeInsets.only(left: 16.0, right: 16, bottom: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          widget.presenter.name,
-                          style: TextStyle(fontSize: 24, color: Colors.white),
-                        ),
-                      ],
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverAppBar(
+          expandedHeight: MediaQuery.of(context).size.height / 2,
+          centerTitle: false,
+          flexibleSpace: FlexibleSpaceBar(
+            background: CachedNetworkImage(
+              imageUrl:"${GlobalConfiguration().getString("imageURL")}${widget.presenter.profilePicture}",
+              fit: BoxFit.cover,
+            ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(widget.presenter.name),
+                    Text(
+                      widget.presenter.shortDescription,
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
                     ),
-
-                    RaisedButton(
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: ButtonTheme(
+                    height: 25,
+                    minWidth: 30,
+                    child: RaisedButton(
+                      padding:
+                      EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
+                      color: Colors.black,
                       onPressed: () {
                         setState(() {
                           following = !following;
@@ -77,221 +78,243 @@ class _PresenterProfileContentsState extends State<PresenterProfileContents> {
                       },
                       child: following
                           ? Row(
-                              children: [
-                                Text(
-                                  "Following",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                  size: 14,
-                                )
-                              ],
-                            )
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Following",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.normal),
+                          ),
+                          Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 14,
+                          )
+                        ],
+                      )
                           : Text(
-                              AppLocalizations.of(context).translate("follow"),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                    )
-
-//                    BlocBuilder<FollowBloc, FollowStates>(
-//                        bloc: followBloc,
-//                        builder: (context, substate) {
-//                          if (substate is ChangeFollowStatusSuccess)
-//                            return RaisedButton(
-//                              onPressed: () {
-//                                followBloc.add(
-//                                    ChangeFollowStatus(widget.presenter.id));
-//                              },
-//                              child: substate.isFollowing
-//                                  ? Row(
-//                                      children: [
-//                                        Text(
-//                                          "Following",
-//                                          style: TextStyle(color: Colors.white),
-//                                        ),
-//                                        Icon(
-//                                          Icons.check,
-//                                          color: Colors.white,
-//                                          size: 14,
-//                                        )
-//                                      ],
-//                                    )
-//                                  : Text(
-//                                      AppLocalizations.of(context)
-//                                          .translate("follow"),
-//                                      style: TextStyle(color: Colors.white),
-//                                    ),
-//                            );
-//                          return RaisedButton(
-//                            onPressed: () {
-//                              followBloc
-//                                  .add(ChangeFollowStatus(widget.presenter.id));
-//                            },
-//                            child: widget.presenter.isFollowed
-//                                ? Row(
-//                                    children: [
-//                                      Text(
-//                                        "Following",
-//                                        style: TextStyle(color: Colors.white),
-//                                      ),
-//                                      Icon(
-//                                        Icons.check,
-//                                        color: Colors.white,
-//                                        size: 14,
-//                                      )
-//                                    ],
-//                                  )
-//                                : Text(
-//                                    AppLocalizations.of(context)
-//                                        .translate("follow"),
-//                                    style: TextStyle(color: Colors.white),
-//                                  ),
-//                          );
-//                        })
+                        AppLocalizations.of(context).translate("follow"),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+            centerTitle: false,
+          ),
+        ),
+        SliverList(
+          delegate: SliverChildListDelegate(
+            [
+              Padding(
+                padding: const EdgeInsets.only(top: 25.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Spacer(
+                      flex: 2,
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Text(
+                          widget.presenter.products.toString(),
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.w200),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            AppLocalizations.of(context)
+                                .translate("products")
+                                .toUpperCase(),
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        )
+                      ],
+                    ),
+                    Spacer(
+                      flex: 1,
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Text(
+                          widget.presenter.videos.toString(),
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.w200),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            AppLocalizations.of(context)
+                                .translate("videos")
+                                .toUpperCase(),
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        )
+                      ],
+                    ),
+                    Spacer(
+                      flex: 1,
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Text(
+                          widget.presenter.followers.toString(),
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.w200),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            AppLocalizations.of(context)
+                                .translate("followers")
+                                .toUpperCase(),
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        )
+                      ],
+                    ),
+                    Spacer(
+                      flex: 2,
+                    ),
                   ],
                 ),
-              )
-            ],
-          ),
-        ),
-
-        Padding(
-          padding: const EdgeInsets.only(top: 25.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Spacer(
-                flex: 2,
               ),
-              Column(
-                children: <Widget>[
-                  Text(
-                    widget.presenter.products.toString(),
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w200),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4.0),
-                    child: Text(
-                      AppLocalizations.of(context)
-                          .translate("products")
-                          .toUpperCase(),
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  )
-                ],
-              ),
-              Spacer(
-                flex: 1,
-              ),
-              Column(
-                children: <Widget>[
-                  Text(
-                    widget.presenter.videos.toString(),
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w200),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4.0),
-                    child: Text(
-                      AppLocalizations.of(context)
-                          .translate("videos")
-                          .toUpperCase(),
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  )
-                ],
-              ),
-              Spacer(
-                flex: 1,
-              ),
-              Column(
-                children: <Widget>[
-                  Text(
-                    widget.presenter.followers.toString(),
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w200),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4.0),
-                    child: Text(
-                      AppLocalizations.of(context)
-                          .translate("followers")
-                          .toUpperCase(),
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  )
-                ],
-              ),
-              Spacer(
-                flex: 2,
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            widget.presenter.bio,
-            style: TextStyle(color: Colors.grey),
-            softWrap: true,
-            textAlign: TextAlign.center,
-          ),
-        ),
-        Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-                AppLocalizations.of(context).translate("popular-videos"),
-                style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold))),
-
-        ///NOTE: only https video
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SizedBox(
-              height: 200,
-              width: MediaQuery.of(context).size.width,
-              child: Container(
-                color: Colors.grey,
-                child: Center(
-                  child: Icon(Icons.play_circle_outline),
-                ),
-              )),
-        ),
-//
-//        VideoPlayout(
-//          url: 'http://192.168.1.93:1935/test_presenter/myStream/playlist.m3u8',
-//          desiredState: PlayerState.PLAYING,
-//          showPlayerControls: true,
-//        ),
-
-//        Padding(
-//            padding: const EdgeInsets.all(16.0),
-//            child: AspectRatio(
-//              aspectRatio: controller.value.aspectRatio,
-//              child: VideoPlayer(controller),
-//            )),
-
-        Center(
-            child: FlatButton(
-                onPressed: () {
-                  PageView pageView = widget.pageViewGlobalKey.currentWidget;
-                  pageView.controller.animateToPage(1,
-                      duration: Duration(seconds: 1), curve: Curves.easeIn);
-                },
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 16, top: 16),
                 child: Text(
-                  AppLocalizations.of(context).translate("see-all"),
-                  style: TextStyle(color: Colors.lightBlue),
-                ))),
+                  widget.presenter.bio,
+                  style: TextStyle(color: Colors.grey),
+                  softWrap: true,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Visibility(
+                visible: widget.presenter.popularVideos.isNotEmpty,
+                child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                        AppLocalizations.of(context)
+                            .translate("popular-videos")
+                            .toUpperCase(),
+                        style: TextStyle(
+                            color: Colors.grey, fontWeight: FontWeight.bold))),
+              ),
 
-        widget.presenter.featuredProducts.isNotEmpty
-            ? FeaturedProductGridView(
-                products: widget.presenter.featuredProducts,
-              )
-            : Container(),
+              ///NOTE: only https video
+
+              Visibility(
+                visible: widget.presenter.popularVideos.isNotEmpty,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SizedBox(
+                      height: 200,
+                      width: MediaQuery.of(context).size.width,
+                      child: Container(
+                        color: Colors.grey,
+                        child: Center(
+                          child: Icon(Icons.play_circle_outline),
+                        ),
+                      )),
+                ),
+              ),
+
+              Visibility(
+                visible: widget.presenter.popularVideos.isNotEmpty,
+                child: Center(
+                    child: FlatButton(
+                        onPressed: () {
+                          PageView pageView =
+                              widget.pageViewGlobalKey.currentWidget;
+                          pageView.controller.animateToPage(1,
+                              duration: Duration(seconds: 1),
+                              curve: Curves.easeIn);
+                        },
+                        child: Text(
+                          AppLocalizations.of(context).translate("see-all"),
+                          style: TextStyle(color: Colors.lightBlue),
+                        ))),
+              ),
+            ],
+          ),
+        ),
+        SliverList(
+            delegate: SliverChildListDelegate([
+              Visibility(
+                visible: widget.presenter.featuredProducts.isNotEmpty,
+                child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                        AppLocalizations.of(context)
+                            .translate("featured-products")
+                            .toUpperCase(),
+                        style: TextStyle(
+                            color: Colors.grey, fontWeight: FontWeight.bold))),
+              ),
+            ])),
+        SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            ///no.of items in the horizontal axis
+            crossAxisCount: 2,
+            childAspectRatio: (MediaQuery.of(context).size.width / 2) / 220,
+          ),
+          delegate:
+          SliverChildBuilderDelegate((BuildContext context, int index) {
+            /// To convert this infinite list to a list with "n" no of items,
+            /// uncomment the following line:
+            /// if (index > n) return null;
+            return Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Container(
+                height: 160,
+                width: MediaQuery.of(context).size.width / 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        OverlayService().addVideoTitleOverlay(context,SingleProductPage(
+                            widget.presenter.featuredProducts[index].id),false);
+
+                      },
+                      child: FadeInImage.memoryNetwork(
+                        image:
+                        "${widget.presenter.featuredProducts[index].thumbnail}",
+                        height: 160,
+                        width: MediaQuery.of(context).size.width / 2,
+                        fit: BoxFit.cover,
+                        placeholder: kTransparentImage,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        widget.presenter.featuredProducts[index].nameEn,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                          "AED ${widget.presenter.featuredProducts[index].price}"),
+                    )
+                  ],
+                ),
+              ),
+            );
+          }, childCount: widget.presenter.featuredProducts.length),
+        )
       ],
     );
   }
+
 }

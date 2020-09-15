@@ -20,9 +20,11 @@ import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/customer-profile-states.dart';
 import 'package:tienda/bloc/states/preference-states.dart';
 import 'package:tienda/controller/customer-care-controller.dart';
+import 'package:tienda/loading-widget.dart';
 import 'package:tienda/view/address/saved-address-page.dart';
 import 'package:tienda/view/customer-profile/bottom-container.dart';
 import 'package:tienda/view/customer-profile/customer-login-menu.dart';
+import 'package:tienda/view/customer-profile/saved-card-page.dart';
 import 'package:tienda/view/explore/help.dart';
 import 'package:tienda/view/explore/memberships.dart';
 import 'package:tienda/view/customer-profile/profile-card.dart';
@@ -63,13 +65,15 @@ class CustomerProfile extends StatelessWidget {
           if (state is GuestUser)
             return Scaffold(
                 body: ListView(
-shrinkWrap: true,              children: <Widget>[
+              cacheExtent: 500,
+              shrinkWrap: true,
+              children: <Widget>[
                 CustomerLoginMenu(),
-                  state is LoggedInUser
-                      ? _buildLoggedInUserMenus(appLanguage, context)
-                      : Container(),
-                  _buildMenuList(appLanguage, state, appCountry, context),
-                  LogoutContainer(state is LoggedInUser)
+                state is LoggedInUser
+                    ? _buildLoggedInUserMenus(appLanguage, context)
+                    : Container(),
+                _buildMenuList(appLanguage, state, appCountry, context),
+                LogoutContainer(state is LoggedInUser)
               ],
             ));
           else {
@@ -88,18 +92,33 @@ shrinkWrap: true,              children: <Widget>[
                 if (substate is LoadCustomerProfileSuccess)
                   return Scaffold(
                     body: ListView(
-shrinkWrap: true,                      children: [
+                      cacheExtent: 500,
+                      shrinkWrap: true,
+                      children: [
                         CustomerProfileCard(substate.customerDetails),
-                      state is LoggedInUser
-                          ? _buildLoggedInUserMenus(
-                          appLanguage, context)
-                          : Container(),
-                      _buildMenuList(
-                          appLanguage, state, appCountry, context),
-                      LogoutContainer(state is LoggedInUser)
+                        state is LoggedInUser
+                            ? _buildLoggedInUserMenus(appLanguage, context)
+                            : Container(),
+                        _buildMenuList(appLanguage, state, appCountry, context),
+                        LogoutContainer(state is LoggedInUser)
                       ],
                     ),
                   );
+
+                if (substate is NoCustomerData)
+                  return Scaffold(
+                      body: ListView(
+                    cacheExtent: 500,
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      CustomerLoginMenu(),
+                      state is LoggedInUser
+                          ? _buildLoggedInUserMenus(appLanguage, context)
+                          : Container(),
+                      _buildMenuList(appLanguage, state, appCountry, context),
+                      LogoutContainer(state is LoggedInUser)
+                    ],
+                  ));
                 if (substate is OfflineLoadCustomerDataSuccess)
                   return Scaffold(
                     body: Column(
@@ -130,101 +149,11 @@ shrinkWrap: true,                      children: [
                   return Container(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
-                    child: Center(
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                        ),
-                      ),
-                    ),
+                    child: Center(child: spinkit),
                   );
               }),
             );
 
-//            return Scaffold(
-//                body: Column(
-//                  mainAxisSize: MainAxisSize.min,
-//                  children: <Widget>[
-//                    NetworkStateWrapper(
-//                      opacity: 0,
-//
-//                      ///Don show overlap
-//                      networkState: (value) {
-//                        if (value == ConnectivityResult.none) {
-//                          BlocProvider.of<CustomerProfileBloc>(context)
-//                              .add(OfflineLoadCustomerData());
-//                        }
-//                      },
-//                      child:
-//                      BlocBuilder<CustomerProfileBloc, CustomerProfileStates>(
-//                          builder: (context, state) {
-//                            if (state is LoadCustomerProfileSuccess)
-//                              return Column(
-//                                children: [
-//                                  CustomerProfileCard(state.customerDetails),
-//                                  Expanded(
-//                                    child: Container(
-//                                      color: Colors.white,
-//                                      child: ListView(
-//                                        padding: EdgeInsets.all(0),
-//                                        children: <Widget>[
-//                                          state is LoggedInUser
-//                                              ? _buildLoggedInUserMenus(appLanguage, context)
-//                                              : Container(),
-//                                          _buildMenuList(appLanguage, state, appCountry, context),
-//                                          LogoutContainer(state is LoggedInUser)
-//                                        ],
-//                                      ),
-//                                    ),
-//                                  )
-//                                ],
-//                              );
-//                            if (state is OfflineLoadCustomerDataSuccess)
-//                              return Column(
-//                                children: [
-//                                  CustomerProfileCard(state.customerDetails),
-//                                  Expanded(
-//                                    child: Container(
-//                                      color: Colors.white,
-//                                      child: ListView(
-//                                        padding: EdgeInsets.all(0),
-//                                        children: <Widget>[
-//                                          state is LoggedInUser
-//                                              ? _buildLoggedInUserMenus(appLanguage, context)
-//                                              : Container(),
-//                                          _buildMenuList(appLanguage, state, appCountry, context),
-//                                          LogoutContainer(state is LoggedInUser)
-//                                        ],
-//                                      ),
-//                                    ),
-//                                  )
-//                                ],
-//                              );
-//                            else
-//                              return Container(
-//                                height: 260,
-//                              );
-//                          }),
-//                    ),
-//                    Expanded(
-//                      child: Container(
-//                        color: Colors.white,
-//                        child: ListView(
-//                          padding: EdgeInsets.all(0),
-//                          children: <Widget>[
-//                            state is LoggedInUser
-//                                ? _buildLoggedInUserMenus(appLanguage, context)
-//                                : Container(),
-//                            _buildMenuList(appLanguage, state, appCountry, context),
-//                            LogoutContainer(state is LoggedInUser)
-//                          ],
-//                        ),
-//                      ),
-//                    )
-//                  ],
-//                ));
           }
         }));
   }
@@ -485,6 +414,31 @@ shrinkWrap: true,                      children: [
             ],
           ),
           title: Text(
+            "Watch History",
+            style: TextStyle(),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => WishListPage()),
+            );
+          },
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+          ),
+        ),
+        ListTile(
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                FontAwesomeIcons.heart,
+                size: 18,
+              ),
+            ],
+          ),
+          title: Text(
             AppLocalizations.of(context).translate('wishlist'),
             style: TextStyle(),
           ),
@@ -545,7 +499,12 @@ shrinkWrap: true,                      children: [
           title: Text(
             AppLocalizations.of(context).translate('payment'),
           ),
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SavedCardPage()),
+            );
+          },
         ),
         Container(
           height: 50,

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:tienda/bloc/events/follow-events.dart';
@@ -32,7 +34,8 @@ class _PresenterProfileCardState extends State<PresenterProfileCard> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CircleAvatar(
           radius: 15,
@@ -43,7 +46,6 @@ class _PresenterProfileCardState extends State<PresenterProfileCard> {
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -113,36 +115,39 @@ class _PresenterProfileCardState extends State<PresenterProfileCard> {
               SizedBox(
                 height: 20,
 
-                child: RaisedButton(
-                    onPressed: () {
-                      setState(() {
-                        isFollowing = !isFollowing;
-                      });
-                      followBloc.add(ChangeFollowStatus(widget.presenter.id));
-                    },
-                    padding: EdgeInsets.only(top:2,bottom: 2,left: 4,right: 4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          isFollowing ? 'Following' : 'Follow',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
+                child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
+                  child: RaisedButton(
+                      onPressed: () {
+                        setState(() {
+                          isFollowing = !isFollowing;
+                        });
+                        followBloc.add(ChangeFollowStatus(widget.presenter.id));
+                      },
+                      padding: EdgeInsets.only(top:2,bottom: 2,left: 4,right: 4),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            isFollowing ? 'Following' : 'Follow',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        isFollowing
-                            ? Icon(
-                                Icons.check,
-                                size: 12,
-                              )
-                            : Container()
-                      ],
-                    )),
+                          isFollowing
+                              ? Icon(
+                                  Icons.check,
+                                  size: 12,
+                                )
+                              : Container()
+                        ],
+                      )),
+                ),
               )
             ],
           ),

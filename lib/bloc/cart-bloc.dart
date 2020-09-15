@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/api/cart-api-client.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
-import 'package:tienda/controller/login-controller.dart';
 import 'package:tienda/model/cart.dart';
 import 'package:tienda/model/product.dart';
 
@@ -105,7 +104,9 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
 
   Stream<CartStates> _mapAddCartItemToStates(AddCartItem event) async* {
     ///LoggedIn User call the cart API
-    bool isLoggedIn = await new LoginController().checkLoginStatus();
+
+    Logger().d("LOGGED IN STATUS: ${event.isLoggedIn}");
+    bool isLoggedIn = event.isLoggedIn;
     if (isLoggedIn) {
       ///Update cart to backend
       await callAddCartApi(event.cartItem);
@@ -128,7 +129,8 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
 
   Stream<CartStates> _mapEditCartItemToStates(EditCartItem event) async* {
     ///LoggedIn User call the cart API
-    bool isLoggedIn = await new LoginController().checkLoginStatus();
+    // bool isLoggedIn = await new LoginController().checkLoginStatus();
+    bool isLoggedIn = event.isLoggedIn;
     if (isLoggedIn) {
       ///Update cart to backend
       await callChangeQuantity(event.cartItem);
@@ -151,7 +153,8 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
 
   Stream<CartStates> _mapDeleteCartItemToStates(DeleteCartItem event) async* {
     ///LoggedIn User call the cart API
-    bool isLoggedIn = await new LoginController().checkLoginStatus();
+    // bool isLoggedIn = await new LoginController().checkLoginStatus();
+    bool isLoggedIn = event.isLoggedIn;
     if (isLoggedIn) {
       ///delete cart item to backend
       await callDeleteCartAPI(event.cartItem);
@@ -201,6 +204,8 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
       if (err is DioError) {
         DioError error = err;
         Logger().e("ADD-CART-ERROR:", error);
+        Logger().e("ADD-CART-ERROR:", error.request.data);
+
       }
     });
 

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -26,15 +27,12 @@ class CustomerProfileCard extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       child: Column(
         children: <Widget>[
-          SizedBox(
-            height: 20,
-          ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               customerDetails.membershipType == "premium"
-                  ? FlatButton(
+                  ? IconButton(
                       onPressed: () {
                         RealTimeController().getAllPresenterChats();
 
@@ -47,18 +45,15 @@ class CustomerProfileCard extends StatelessWidget {
                                       child: ChatHistory(),
                                     )));
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 16.0),
-                        child: Text(
-                          AppLocalizations.of(context)
-                              .translate('messages')
-                              .toUpperCase(),
-                          style: TextStyle(fontSize: 12),
-                        ),
+                      icon: Icon(
+                        Icons.comment,
+                        size: 20,
+                        color: Colors.grey,
                       ),
                     )
                   : Container(),
-              FlatButton(
+              IconButton(
+                padding: EdgeInsets.all(0),
                 onPressed: () {
                   Navigator.push(
                       context,
@@ -66,12 +61,10 @@ class CustomerProfileCard extends StatelessWidget {
                           builder: (context) =>
                               EdiCustomerProfilePage(customerDetails)));
                 },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16.0, right: 8),
-                  child: Text(
-                    AppLocalizations.of(context).translate('edit-profile'),
-                    style: TextStyle(fontSize: 12),
-                  ),
+                icon: Icon(
+                  Icons.edit,
+                  size: 20,
+                  color: Colors.grey,
                 ),
               ),
             ],
@@ -91,7 +84,7 @@ class CustomerProfileCard extends StatelessWidget {
               : CircleAvatar(
                   radius: 30,
                   backgroundColor: Color(0xfff2f2e4),
-                  backgroundImage: NetworkImage(
+                  backgroundImage: CachedNetworkImageProvider(
                       "${GlobalConfiguration().getString("imageURL")}/${customerDetails.profilePicture}")),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
@@ -101,6 +94,24 @@ class CustomerProfileCard extends StatelessWidget {
                   fontSize: 20.0,
                 )),
           ),
+          customerDetails.membershipType == "premium"
+              ? Card(
+                  color: Colors.black,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 8.0, right: 8.0, top: 4, bottom: 4),
+                    child: Text(
+                      "PREMIUM",
+                      style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey),
+                    ),
+                  ),
+                )
+              : Container(),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
             child: Row(
@@ -134,6 +145,8 @@ class CustomerProfileCard extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
+
+                    if(customerDetails.followedPresenters != null)
                     Navigator.push(
                       context,
                       MaterialPageRoute(

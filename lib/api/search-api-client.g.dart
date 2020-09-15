@@ -51,7 +51,6 @@ class _SearchApiClient implements SearchApiClient {
             extra: _extra,
             baseUrl: baseUrl),
         data: _data);
-    Logger().d("PRODUCT SEARCH REQUEST:${_result.data}");
     final value = _result.data;
     return value;
   }

@@ -36,12 +36,15 @@ class CheckOutBloc extends Bloc<CheckoutEvents, CheckoutStates> {
       DoCartCheckout event) async* {
     String status;
 
+    print("PAYMENT INITIATED");
     final dio = Dio();
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
     final client =
         CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
-    await client.cartCheckout(event.addressId).then((response) {
+    print("PAYMENT INITIATED");
+
+    await client.cartCheckout(event.addressId,event.card,event.cardId,event.cvv).then((response) {
       Logger().d("CART-CEHCKOUT-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
@@ -56,6 +59,7 @@ class CheckOutBloc extends Bloc<CheckoutEvents, CheckoutStates> {
         Logger().e("CART-CEHCKOUT-ERROR:", error);
       }
     });
+    print("PAYMENT INITIATED");
 
     if (status == "success") {
       yield InitialCheckOutSuccess();

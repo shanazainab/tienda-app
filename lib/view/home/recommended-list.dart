@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/model/product.dart';
+import 'package:tienda/video-overlays/overlay_service.dart';
 import 'package:tienda/view/products/single-product-page.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -23,10 +24,10 @@ class RecommendedList extends StatelessWidget {
         children: <Widget>[
           Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(AppLocalizations.of(context).translate('recommended-for-you'),
+              child: Text(AppLocalizations.of(context).translate('recommended-for-you').toUpperCase(),
                   style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20))),
+                      color: Colors.grey,
+                      ))),
           SizedBox(
             height:appLanguage.appLocal == Locale('en')?190:240,
             child: ListView.builder(
@@ -37,12 +38,9 @@ class RecommendedList extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: GestureDetector(
                       onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SingleProductPage(
-                                  recommendedProducts[index].id)),
-                        );
+                        OverlayService().addVideoTitleOverlay(context,SingleProductPage(
+                            recommendedProducts[index].id),false);
+
                       },
                       child: Container(
                         width: 120,

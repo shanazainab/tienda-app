@@ -26,7 +26,8 @@ class Presenter {
     this.popularVideos,
     this.featuredProducts,
     this.isFollowed,
-    this.products
+    this.products,
+    this.streamUrl
   });
   int products;
 
@@ -43,6 +44,7 @@ class Presenter {
   List<dynamic> popularVideos;
   List<Product> featuredProducts;
   bool isFollowed;
+  String streamUrl;
 
   factory Presenter.fromJson(Map<String, dynamic> json) {
     Presenter presenter;
@@ -59,6 +61,7 @@ class Presenter {
         categoryId: json["category_id"],
         shortDescription: json["short_description"],
         videos: json["videos"],
+        streamUrl: json["m3u8_url"],
         popularVideos: json["popular_videos"] != null
             ? List<dynamic>.from(json["popular_videos"].map((x) => x))
             : null,
@@ -84,6 +87,7 @@ class Presenter {
         "category_id": categoryId,
         "short_description": shortDescription,
         "videos": videos,
+    "m3u8_url":streamUrl,
         "popular_videos": List<dynamic>.from(popularVideos.map((x) => x)),
         "featured_products": List<dynamic>.from(featuredProducts.map((x) => x)),
         "is_followed": isFollowed,

@@ -15,6 +15,7 @@ import 'package:tienda/localization.dart';
 import 'package:tienda/model/product-list-response.dart' as PLR;
 import 'package:tienda/model/search-body.dart';
 import 'package:tienda/model/wishlist.dart';
+import 'package:tienda/video-overlays/overlay_service.dart';
 import 'package:tienda/view/products/single-product-page.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -49,8 +50,12 @@ class ProductListContainer extends StatelessWidget {
             builder: (BuildContext context, LoadStatus mode) {
               Widget body;
               if (mode == LoadStatus.idle) {
-                body = CircularProgressIndicator(
-                  strokeWidth: 2,
+                body = Container(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
                 );
               } else if (mode == LoadStatus.loading) {
                 body = CupertinoActivityIndicator();
@@ -123,13 +128,12 @@ class ProductListContainer extends StatelessWidget {
                           children: <Widget>[
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SingleProductPage(
-                                          productListResponse
-                                              .products[index].id)),
-                                );
+
+                                OverlayService().addVideoTitleOverlay(context,SingleProductPage(
+                                    productListResponse
+                                        .products[index].id),false);
+
+
                               },
                               child: FadeInImage.memoryNetwork(
                                 placeholder: kTransparentImage,
@@ -137,7 +141,7 @@ class ProductListContainer extends StatelessWidget {
                                     .products[index].thumbnail,
                                 width: MediaQuery.of(context).size.width / 2,
                                 height: 220,
-                                fit: BoxFit.contain,
+                                 fit: BoxFit.scaleDown,
                               ),
                             ),
                             Expanded(

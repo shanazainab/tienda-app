@@ -160,13 +160,11 @@ class CustomerProfileBloc
   Stream<CustomerProfileStates> _mapFetchCustomerProfileToStates(
       FetchCustomerProfile event) async* {
     Customer customer = await callFetchCustomerProfileApi();
-    Logger().e("customer:${customer.id}");
-
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    sharedPreferences.setInt('customer-id', customer.id);
-    sharedPreferences.setString('customer-name', customer.fullName);
 
     if (customer != null) {
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      sharedPreferences.setInt('customer-id', customer.id);
+      sharedPreferences.setString('customer-name', customer.fullName);
       updateCustomerProfileLocally(customer);
       yield LoadCustomerProfileSuccess(customerDetails: customer);
     } else {
@@ -177,8 +175,10 @@ class CustomerProfileBloc
             json.decode(sharedPreferences.getString("customer")));
         yield LoadCustomerProfileSuccess(customerDetails: customer);
       }
+      else{
+        yield NoCustomerData();
 
-
+      }
     }
 
   }

@@ -34,7 +34,6 @@ class _State extends State<LiveCommentBox> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
   }
 
   @override
@@ -51,22 +50,26 @@ class _State extends State<LiveCommentBox> {
                 return Container(
                   height: 190,
                   child: FadingEdgeScrollView.fromScrollView(
-
                     child: ListView.builder(
                       padding: EdgeInsets.only(top: 16),
                       shrinkWrap: true,
                       reverse: true,
                       controller: scrollController,
                       itemCount: snapshot.data.length,
-                      itemBuilder: (BuildContext context, int index) =>
-                     Row(
+                      itemBuilder: (BuildContext context, int index) => Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Card(
-                            color:  snapshot.data[index].isPremium != null && snapshot.data[index].isPremium?Colors.redAccent:Colors.black54,
+                            color: snapshot.data[index].isPremium != null &&
+                                    snapshot.data[index].isPremium
+                                ? Colors.redAccent
+                                : Colors.black54,
 
                             // color: Colors.black.withOpacity(0.1),
-                            elevation: snapshot.data[index].isPremium != null && snapshot.data[index].isPremium?8:0,
+                            elevation: snapshot.data[index].isPremium != null &&
+                                    snapshot.data[index].isPremium
+                                ? 8
+                                : 0,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16)),
                             child: Padding(
@@ -87,7 +90,8 @@ class _State extends State<LiveCommentBox> {
                                       mainAxisSize: MainAxisSize.min,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: [
                                         snapshot.data[index].body.length > 60
                                             ? Container(
@@ -159,16 +163,14 @@ class _State extends State<LiveCommentBox> {
                 focusNode: textFocusNode,
                 controller: textEditingController,
                 onSubmitted: (value) {
-                  if(value != null && value.length!=0) {
+                  if (value != null && value.length != 0) {
                     Logger().d(value);
                     new RealTimeController()
                         .emitLiveMessage(value, widget.presenterId);
-                     textEditingController.clear();
+                    textEditingController.clear();
                   }
                 },
-                style: TextStyle(
-                  color: Colors.white
-                ),
+                style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                     filled: true,
                     hintStyle: TextStyle(fontSize: 12, color: Colors.white),
@@ -209,3 +211,4 @@ class _State extends State<LiveCommentBox> {
     );
   }
 }
+

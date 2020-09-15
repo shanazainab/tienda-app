@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/filter-bloc.dart';
 import 'package:tienda/bloc/product-bloc.dart';
 import 'package:tienda/bloc/states/category-states.dart';
+import 'package:tienda/loading-widget.dart';
 import 'package:tienda/model/category.dart';
 import 'package:tienda/model/search-body.dart';
 import 'package:tienda/view/products/product-list-page.dart';
@@ -201,7 +203,7 @@ class _CategoriesPageState extends State<CategoriesPage>
                                                     backgroundColor:
                                                         Colors.grey[200],
                                                     backgroundImage:
-                                                        NetworkImage(state
+                                                        CachedNetworkImageProvider(state
                                                             .categories[index]
                                                             .thumbnail),
                                                     radius: 20,
@@ -248,13 +250,7 @@ class _CategoriesPageState extends State<CategoriesPage>
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
                   child: Center(
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
-                    ),
+                    child: spinkit
                   ),
                 );
             }));

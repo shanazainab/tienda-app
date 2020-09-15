@@ -48,9 +48,10 @@ class DirectMessage {
   DateTime createdAt;
   bool received;
 
+
   @override
   String toString() {
-    return 'DirectMessage{body: $body}';
+    return 'DirectMessage{body: $body, createdAt: $createdAt}';
   }
 
   factory DirectMessage.fromJson(Map<String, dynamic> json) => DirectMessage(

@@ -72,7 +72,6 @@ class _PresenterInfoContainerState extends State<PresenterInfoContainer> {
                             ? Row(
                               children: [
                                 Text("Following",style: TextStyle(
-                                  color: Colors.white
                                 ),),
                                 Icon(Icons.check,
                                 size: 14,)
@@ -90,9 +89,14 @@ class _PresenterInfoContainerState extends State<PresenterInfoContainer> {
                         followBloc.add(ChangeFollowStatus(widget.presenter.id));
                       },
                       child: widget.presenter.isFollowed
-                          ? Text("Following",style: TextStyle(
-
-                      ),)
+                          ? Row(
+                        children: [
+                          Text("Following",style: TextStyle(
+                          ),),
+                          Icon(Icons.check,
+                            size: 14,)
+                        ],
+                      )
                           : Text(
                               AppLocalizations.of(context).translate("follow")),
                     );

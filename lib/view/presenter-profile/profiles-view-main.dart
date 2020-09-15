@@ -10,51 +10,70 @@ class SellerProfileViewsMain extends StatefulWidget {
   _SellerProfileViewsMainState createState() => _SellerProfileViewsMainState();
 }
 
-class _SellerProfileViewsMainState extends State<SellerProfileViewsMain> {
+class _SellerProfileViewsMainState extends State<SellerProfileViewsMain>
+    with AutomaticKeepAliveClientMixin<SellerProfileViewsMain> {
   List<bool> isSelected = [true, false];
   PresenterBloc presenterBloc = new PresenterBloc();
-
+  SellerProfilesGridView sellerProfilesGridView = SellerProfilesGridView();
+  SellerProfileListView sellerProfileListView = SellerProfileListView();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     presenterBloc.add(LoadPresenterList());
+    selectedIndex = 0;
+    setState(() {
+
+    });
   }
+
+  int selectedIndex;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return BlocProvider(
       create: (BuildContext context) => presenterBloc,
       child: Scaffold(
-        body: Stack(
-          children: <Widget>[
-            isSelected[0] ? SellerProfilesGridView() : SellerProfilesListView(),
-            Padding(
-              padding: const EdgeInsets.only(top: 50.0, left: 16),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: ToggleButtons(
-                  children: <Widget>[
-                    Icon(Icons.grid_on),
-                    Icon(Icons.list),
-                  ],
-                  onPressed: (int index) {
-                    if (index == 0) {
-                      isSelected[0] = true;
-                      isSelected[1] = false;
-                    } else {
-                      isSelected[0] = false;
-                      isSelected[1] = true;
-                    }
-                    setState(() {});
-                  },
-                  isSelected: isSelected,
-                ),
-              ),
-            ),
-          ],
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          brightness: Brightness.light,
+          backgroundColor: Colors.transparent,
+          title: ToggleButtons(
+             color: Colors.black,
+
+            disabledColor: Colors.black,
+            fillColor: Colors.black,
+            children: <Widget>[
+              Icon(Icons.grid_on,size: 18,
+              color: selectedIndex ==0?Colors.white:Colors.grey,),
+              Icon(Icons.list,size: 18,color: selectedIndex ==1?Colors.white:Colors.grey,),
+            ],
+            onPressed: (int index) {
+              if (index == 0) {
+                selectedIndex= 0;
+                isSelected = [true,false];
+              } else {
+                selectedIndex = 1;
+                isSelected = [false,true];
+
+              }
+              setState(() {});
+            },
+            isSelected: isSelected,
+          ),
+        ),
+        body: IndexedStack(
+          index: selectedIndex,
+          children: [sellerProfilesGridView, sellerProfileListView],
         ),
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

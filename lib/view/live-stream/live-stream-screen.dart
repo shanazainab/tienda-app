@@ -1,35 +1,36 @@
 import 'dart:async';
-import 'dart:io';
+
 import 'dart:ui';
 
 import 'package:badges/badges.dart';
-import 'package:flare_dart/math/mat2d.dart';
-import 'package:flare_flutter/flare.dart';
+
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:flare_flutter/flare_controller.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
+import 'package:tienda/bloc/checkout-bloc.dart';
 import 'package:tienda/bloc/events/live-stream-events.dart';
 import 'package:tienda/bloc/live-stream-bloc.dart';
 import 'package:tienda/bloc/live-stream-checkout-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/bloc/states/live-stream-states.dart';
 import 'package:tienda/controller/real-time-controller.dart';
-import 'package:tienda/main.dart';
+import 'package:tienda/loading-widget.dart';
+import 'package:tienda/model/live-chat.dart';
 import 'package:tienda/model/presenter.dart';
 import 'package:tienda/view/live-stream/add-to-cart-popup.dart';
 import 'package:tienda/view/live-stream/cart-checkout-pop-up.dart';
-import 'package:tienda/view/live-stream/live-comment-box.dart';
+import 'package:tienda/view/live-stream/live-stream-bottom-bar.dart';
 import 'package:tienda/view/live-stream/presenter-profile-card.dart';
-import 'package:tienda/view/wishlist/wishlist-page.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:video_player/video_player.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+
+import 'live-chat-container.dart';
 
 class LiveStreamScreen extends StatefulWidget {
   final Presenter presenter;
@@ -43,14 +44,21 @@ class LiveStreamScreen extends StatefulWidget {
 class _LiveStreamScreenState extends State<LiveStreamScreen> {
   PanelController addToCartPanelController = new PanelController();
   PanelController checkoutPanelController = new PanelController();
-
   RealTimeController realTimeController = new RealTimeController();
 
   final productsVisibility = BehaviorSubject<bool>();
-  final Completer<WebViewController> _controller =
-      Completer<WebViewController>();
+  VideoPlayerController _controller;
 
-  BurstController burstController = new BurstController();
+  final FocusNode textFocusNode = new FocusNode();
+
+  ScrollController scrollController = new ScrollController();
+  TextEditingController textEditingController = new TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -72,12 +80,20 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: (){
+      onWillPop: () {
+        _controller.pause();
+
         realTimeController.clearLiveChat();
         return Future.value(true);
       },
       child: Scaffold(
           extendBodyBehindAppBar: true,
+
+          ///Live streamm top bar widget
+          ///Presenter profile
+          ///Realtime information
+          ///Cart
+
           appBar: AppBar(
             elevation: 0,
             brightness: Brightness.light,
@@ -150,10 +166,13 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
               ),
             ],
           ),
+
+          ///Live stream background
+
           body: BlocBuilder<LiveStreamBloc, LiveStreamStates>(
               builder: (context, state) {
             if (state is JoinLiveSuccess) {
-              VideoPlayerController _controller =
+              _controller =
                   VideoPlayerController.network(state.liveResponse.m3u8URL);
               return Stack(
                 children: <Widget>[
@@ -163,7 +182,6 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
                         onPanStart: (panStartDetails) {
                           FocusManager.instance.primaryFocus.unfocus();
                         },
-                        // https://assets4.lottiefiles.com/packages/lf20_YJZWEW.json
                         child: SizedBox(
                             width: MediaQuery.of(context).size.width,
                             height: MediaQuery.of(context).size.height,
@@ -173,7 +191,8 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
                                 if (_controller.value.hasError) {
                                   Logger().e("VIDEO PLAYER:");
 
-                                  Logger().e(_controller.value.errorDescription);
+                                  Logger()
+                                      .e(_controller.value.errorDescription);
 
                                   showDialog(
                                       context: context,
@@ -187,14 +206,16 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
                                               children: [
                                                 new Text("Live Has Ended"),
                                                 Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      top: 8.0),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 8.0),
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
                                                             .spaceEvenly,
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment.center,
+                                                        CrossAxisAlignment
+                                                            .center,
                                                     children: [
                                                       FlatButton(
                                                         child: Text('EXIT'),
@@ -253,7 +274,8 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
                                               }
                                             },
                                             child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(8),
@@ -292,7 +314,7 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
                           return Positioned(
                             bottom: 20,
                             right: 4,
-                            child:    Container(
+                            child: Container(
                               alignment: Alignment.bottomRight,
                               width: 200,
                               height: 500,
@@ -301,95 +323,63 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
                                   sizeFromArtboard: true,
                                   shouldClip: true,
                                   snapToEnd: true, callback: (value) {
-                                    print("HEART ANIMATION END: $value");
-                                  },
+                                print("HEART ANIMATION END: $value");
+                              },
                                   alignment: Alignment.bottomRight,
                                   animation: "Start"),
                             ),
-
-//                          Lottie.network(
-//                              'https://assets4.lottiefiles.com/packages/lf20_sXVZLv.json',
-//                            animate: true,
-//                            repeat: false,
-//
-//
-//                            alignment: Alignment.bottomRight,
-//                            height: 500,
-//                            width: 50
-//                          ),
-
-
                           );
                         else
                           return Container();
                       }),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: Colors.black54,
-                              radius: 20,
-                              child: IconButton(
-                                constraints:
-                                    BoxConstraints.tight(Size.square(40)),
-                                padding: EdgeInsets.all(0),
-                                onPressed: () {
-                                  productsVisibility
-                                      .add(!productsVisibility.value);
-                                },
-                                icon: Icon(
-                                  FontAwesomeIcons.box,
-                                  size: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              constraints: BoxConstraints.tight(Size.square(40)),
-                              padding: EdgeInsets.all(0),
-                              onPressed: () {
-                                realTimeController
-                                    .showLiveReaction(widget.presenter.id);
-                              },
-                              icon: Icon(
-                                FontAwesomeIcons.heart,
-                                size: 16,
-                                color: Colors.red,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+
+                  StreamBuilder<List<LiveChat>>(
+                      stream: realTimeController.liveChatStream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<LiveChat>> snapshot) {
+                        if (snapshot.data != null)
+                          return LiveChatContainer(
+                            scrollController: scrollController,
+                            liveChats: snapshot.data,
+                          );
+                        else
+                          return Container();
+                      }),
+
+                  Positioned(
+                    bottom: 10,
+                    child: LiveStreamBottomBar(
+                      productsVisibility: productsVisibility,
+                      presenter: widget.presenter,
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Container(
-                        width: 3 * MediaQuery.of(context).size.width / 4,
-                        child: LiveCommentBox(widget.presenter.id)),
-                  ),
+
+                  ///Sliding panels for add to cart and product details
+
                   SlidingUpPanel(
-                      maxHeight: 260,
+                      maxHeight: 320,
                       backdropTapClosesPanel: true,
                       defaultPanelState: PanelState.CLOSED,
                       minHeight: 0,
                       controller: addToCartPanelController,
                       panel: AddToCartPopUp(context, (value) {
                         if (value) addToCartPanelController.close();
-                      })),
+                      }, widget.presenter.id)),
+
                   SlidingUpPanel(
-                      maxHeight: 320,
+                      maxHeight: 3 * MediaQuery.of(context).size.height / 4,
                       backdropTapClosesPanel: true,
                       defaultPanelState: PanelState.CLOSED,
                       minHeight: 0,
                       controller: checkoutPanelController,
-                      panel: CartCheckOutPopUp(context)),
+                      panel: BlocProvider(
+                        create: (context) => CheckOutBloc(),
+                        child: CartCheckOutPopUp(context, (value) {
+                          checkoutPanelController.close();
+                        }, (shouldClose) {
+                          if (shouldClose) checkoutPanelController.close();
+                        }),
+                      )),
                 ],
               );
             } else
@@ -397,33 +387,10 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
                 child: Center(
-                  child: Container(
-                    height: 40,
-                    width: 40,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
-                  ),
+                  child: spinkit,
                 ),
               );
           })),
     );
-  }
-}
-
-class BurstController extends FlareController {
-  @override
-  bool advance(FlutterActorArtboard artboard, double elapsed) {
-    //print("BURST CONTROLLER ADVANCE  : ${artboard.} ");
-  }
-
-  @override
-  void initialize(FlutterActorArtboard artboard) {
-    print("BURST CONTROLLER : INITIALISED IS CALLED");
-  }
-
-  @override
-  void setViewTransform(Mat2D viewTransform) {
-    print("BURST CONTROLLER : INITIALISED IS CALLED");
   }
 }

@@ -27,7 +27,9 @@ class AddCartItem extends CartEvents {
   final Cart cart;
   final Product cartItem;
 
-  AddCartItem({this.cart, this.cartItem}) : super();
+  final bool isLoggedIn;
+
+  AddCartItem({this.cart, this.cartItem, this.isLoggedIn}) : super();
 
   @override
   List<Object> get props => [cartItem];
@@ -37,8 +39,10 @@ class EditCartItem extends CartEvents {
   final Cart cart;
   final String editType;
   final Product cartItem;
+  final bool isLoggedIn;
 
-  EditCartItem({this.cartItem, this.editType, this.cart}) : super();
+  EditCartItem({this.cartItem, this.editType, this.cart, this.isLoggedIn})
+      : super();
 
   @override
   List<Object> get props => [cartItem];
@@ -47,8 +51,9 @@ class EditCartItem extends CartEvents {
 class DeleteCartItem extends CartEvents {
   final Cart cart;
   final Product cartItem;
+  final bool isLoggedIn;
 
-  DeleteCartItem({this.cartItem, this.cart}) : super();
+  DeleteCartItem({this.cartItem, this.cart, this.isLoggedIn}) : super();
 
   @override
   List<Object> get props => [cartItem];

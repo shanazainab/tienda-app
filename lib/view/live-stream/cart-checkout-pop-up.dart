@@ -1,215 +1,250 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tienda/bloc/address-bloc.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/checkout-bloc.dart';
+import 'package:tienda/bloc/events/address-events.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
-import 'package:tienda/bloc/events/wishlist-events.dart';
+import 'package:tienda/bloc/events/checkout-events.dart';
+import 'package:tienda/bloc/events/saved-card-events.dart';
+import 'package:tienda/bloc/login-bloc.dart';
+import 'package:tienda/bloc/saved-card-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
-import 'package:tienda/bloc/wishlist-bloc.dart';
-import 'package:tienda/model/wishlist.dart';
-import 'package:tienda/view/checkout/checkout-orders-main-page.dart';
-import 'package:transparent_image/transparent_image.dart';
+import 'package:tienda/bloc/states/checkout-states.dart';
+import 'package:tienda/bloc/states/login-states.dart';
+import 'package:tienda/model/order.dart';
+import 'package:tienda/view/cart/cart-items-container.dart';
+import 'package:tienda/view/checkout/payment-container.dart';
+import 'package:tienda/view/live-stream/payment-container.dart';
+import 'package:tienda/view/login/login-main-page.dart';
 
+import '../../localization.dart';
+import 'choose-delivery-address.dart';
+
+typedef CheckOutStatus = Function(bool done);
+typedef CartCheckOutPopVisibility = Function(bool shouldClose);
+final PageController pageController = new PageController(
+  initialPage: 0,
+);
 class CartCheckOutPopUp extends StatelessWidget {
   final BuildContext contextA;
 
-  CartCheckOutPopUp(this.contextA);
+  final CheckOutStatus checkOutStatus;
+
+  final CartCheckOutPopVisibility cartCheckOutPopVisibility;
+
+  CartCheckOutPopUp(this.contextA, this.checkOutStatus,this.cartCheckOutPopVisibility);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CartBloc, CartStates>(builder: (context, state) {
-      if (state is LoadCartSuccess && state.cart != null)
-        return Container(
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Container(
-                    height: 3,
-                    width: 80,
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      "Cart",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey),
+    return MultiBlocListener(
+        listeners: [
+          BlocListener<CartBloc, CartStates>(
+            listener: (contextA, state) {
+              if (state is LoadCartSuccess && state.cart != null)
+                BlocProvider.of<CheckOutBloc>(contextA).add(
+                    DoUpdateCheckOutProgress(
+                        order: new Order(), status: "CART"));
+            },
+          ),
+          BlocListener<CheckOutBloc, CheckoutStates>(
+            listener: (contextA, state) {
+              if (state is AddressActive) {
+                pageController.animateToPage(1,
+                    duration: Duration(
+                      milliseconds: 500,
                     ),
-                    RaisedButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return BlocProvider(
-                              create: (context) => CheckOutBloc(),
-                              child: CheckoutOrdersMainPage(),
-                            );
-                          }),
-                        );
-                      },
-                      child: Text(
-                        "Checkout",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                    padding: EdgeInsets.all(16),
-                    shrinkWrap: true,
-                    itemCount: state.cart.products.length,
-                    itemBuilder: (BuildContext context, int index) => Padding(
-                      padding: const EdgeInsets.only(bottom:8.0),
-                      child: Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                    curve: Curves.easeIn);
+              }
+              if (state is PaymentActive)
+                pageController.animateToPage(2,
+                    duration: Duration(
+                      milliseconds: 500,
+                    ),
+                    curve: Curves.easeIn);
+              if (state is CartActive)
+                pageController.animateToPage(0,
+                    duration: Duration(
+                      milliseconds: 500,
+                    ),
+                    curve: Curves.easeIn);
+
+              if (state is InitialCheckOutSuccess) {
+                ///Empty the cart
+                BlocProvider.of<CartBloc>(contextA).add(ClearCart());
+
+                pageController.animateToPage(3,
+                    duration: Duration(
+                      milliseconds: 500,
+                    ),
+                    curve: Curves.easeIn);
+              }
+            },
+          )
+        ],
+        child: BlocBuilder<CheckOutBloc, CheckoutStates>(
+            builder: (contextA, state) {
+          return Container(
+            color: Colors.white,
+            child: PageView(
+              physics: new NeverScrollableScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              controller: pageController,
+              children: <Widget>[
+                BlocBuilder<CartBloc, CartStates>(
+                  builder: (context, state) {
+                    if (state is LoadCartSuccess && state.cart != null)
+                      return Stack(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      right: BorderSide(
-                                        color: Colors.grey[200]
-                                      ),
-                                      bottom: BorderSide(
-                                          color: Colors.grey[200]
-                                      ),
-                                      left: BorderSide(
-                                          color: Colors.grey[200]
-                                      ),
-                                      top: BorderSide(
-                                          color: Colors.grey[200]
-                                      )
-                                    )
-                                  ),
-
-                                  child: FadeInImage.memoryNetwork(
-                                    image: state.cart.products[index].thumbnail,
-                                    height: 120,
-                                    width: 100,
-                                    fit: BoxFit.cover,
-                                    placeholder: kTransparentImage,
-
-                                  ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                  IconButton(
+                                    icon: Icon(Icons.cancel),
+                                    onPressed: (){
+                                      cartCheckOutPopVisibility(true);
+                                    },
+                                  )
+                                ],),
+                                Text(
+                                  AppLocalizations.of(context)
+                                      .translate("shopping-bag"),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
                                 ),
                                 SizedBox(
-                                  width: 8,
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width - 145,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(state.cart.products[index].brand),
-                                      Text(
-                                        state.cart.products[index].nameEn,
-                                        softWrap: true,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(
-                                        "AED ${state.cart.products[index].price}",
-                                        style: TextStyle(fontWeight: FontWeight.w700),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 8.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            FlatButton(
-                                              padding: EdgeInsets.all(0),
-                                              onPressed: (){
-                                                BlocProvider.of<CartBloc>(context).add(
-                                                    DeleteCartItem(
-                                                        cart: state.cart,
-                                                        cartItem:
-                                                        state.cart.products[index]));
-                                              },
-                                              child: Text(
-                                                "Delete",
-                                                style: TextStyle(
-                                                    decoration:
-                                                        TextDecoration.underline,
-                                                    color: Colors.grey),
-                                              ),
-                                            ),
-                                            FlatButton(
-                                              onPressed: (){
-                                                BlocProvider.of<WishListBloc>(context)
-                                                    .add(AddToWishList(
-                                                    wishListItem: new WishListItem(
-                                                      product: state.cart.products[index],
-                                                    )));
-
-                                                BlocProvider.of<CartBloc>(context).add(
-                                                    DeleteCartItem(
-                                                        cart: state.cart,
-                                                        cartItem:
-                                                        state.cart.products[index]));
-                                              },
-                                              child: Text(
-                                                "Move to Wishlist",
-                                                style: TextStyle(
-                                                    decoration:
-                                                        TextDecoration.underline,
-                                                    color: Colors.grey),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                  height: 16,
                                 ),
 
+                                Expanded(child: CartItemsContainer(state.cart)),
+                                // if (state.cart != null) priceContainer(state.cart.cartPrice)
                               ],
                             ),
                           ),
-                    )),
-              )
-            ],
-          ),
-        );
-      else
-        return Container(
-          alignment: Alignment.center,
-          child: Column(
-            children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Container(
-                    height: 3,
-                    width: 80,
-                    color: Colors.grey,
-                  ),
+                          if (state.cart != null)
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Card(
+                                margin: EdgeInsets.all(0),
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
+                                        child: Text(
+                                          "TOTAL: ${AppLocalizations.of(context).translate('aed')} ${(state.cart.cartPrice - 0).toStringAsFixed(2)}",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
+                                        child: SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              50,
+                                          child: RaisedButton(
+                                            onPressed: () {
+                                              BlocProvider.of<LoginBloc>(
+                                                          context)
+                                                      .state is GuestUser
+                                                  ? Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              LoginMainPage()),
+                                                    )
+                                                  : BlocProvider.of<
+                                                          CheckOutBloc>(context)
+                                                      .add(
+                                                          DoUpdateCheckOutProgress(
+                                                              order:
+                                                                  new Order(),
+                                                              status:
+                                                                  "ADDRESS"));
+                                            },
+                                            child: Text(
+                                                AppLocalizations.of(context)
+                                                    .translate('checkout')),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    else
+                      return Container(
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.shopping_basket,
+                                size: 40,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  "Your Cart is Empty",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                  },
                 ),
-              ),
-              Center(child: Padding(
-                padding: const EdgeInsets.only(top:50.0),
-                child: Text("Your Cart is Empty !!",style: TextStyle(
-                  fontWeight: FontWeight.bold
-                ),),
-              )),
-            ],
-          ),
-        );
-    });
+                BlocProvider<AddressBloc>(
+                    create: (BuildContext context) =>
+                        AddressBloc()..add(LoadSavedAddress()),
+                    child: ChooseDeliveryAddress(cartCheckOutPopVisibility)),
+                BlocProvider<SavedCardBloc>(
+                    create: (BuildContext context) =>
+                        SavedCardBloc()..add(LoadSavedCards()),
+                    child: LiveStreamPaymentContainer(cartCheckOutPopVisibility)),
+                Container(
+                  alignment: Alignment.center,
+                  color: Colors.white,
+                  child: Center(
+                      child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text('ORDER SUCCESS'),
+                      RaisedButton(
+                        onPressed: () {
+                          checkOutStatus(true);
+                        },
+                        child: Text("Continue Watching"),
+                      )
+                    ],
+                  )),
+                ),
+              ],
+            ),
+          );
+        }));
   }
 }

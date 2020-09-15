@@ -11,6 +11,7 @@ import 'package:tienda/bloc/events/wishlist-events.dart';
 import 'package:tienda/bloc/states/wishlist-states.dart';
 
 import 'package:tienda/bloc/wishlist-bloc.dart';
+import 'package:tienda/loading-widget.dart';
 import 'package:tienda/model/wishlist.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -68,15 +69,7 @@ class _State extends State<WishListPage> {
               color: Colors.white,
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: Center(
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                  ),
-                ),
-              ),
+              child: Center(child: spinkit),
             );
           }
         }));

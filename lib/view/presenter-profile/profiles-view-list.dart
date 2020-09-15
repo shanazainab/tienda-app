@@ -1,54 +1,66 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:provider/provider.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tienda/app-language.dart';
-import 'package:tienda/bloc/events/live-stream-events.dart';
-import 'package:tienda/bloc/live-stream-bloc.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/presenter-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/presenter-states.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/presenter-category.dart';
-import 'package:tienda/view/live-stream/live-stream-screen.dart';
 import 'package:tienda/view/chat/presenter-direct-message.dart';
 import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/presenter-profile/presenter-profile-page.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class SellerProfilesListView extends StatelessWidget {
+class SellerProfileListView extends StatefulWidget {
+  @override
+  _SellerProfileListViewState createState() => _SellerProfileListViewState();
+}
+
+class _SellerProfileListViewState extends State<SellerProfileListView>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
+    print("PRESENTER LIST VIEW BUILD");
     var appLanguage = Provider.of<AppLanguage>(context);
 
     return BlocBuilder<PresenterBloc, PresenterStates>(
         builder: (context, state) {
       if (state is LoadPresenterListSuccess)
-        return Padding(
-          padding: const EdgeInsets.only(top: 16.0),
-          child: DefaultTabController(
-            length: state.presenterCategory.response.length,
-            child: Scaffold(
-              appBar: AppBar(
-                automaticallyImplyLeading: false,
-                elevation: 0,
-                bottom: TabBar(
-                  unselectedLabelStyle: TextStyle(color: Colors.grey),
-                  unselectedLabelColor: Colors.grey,
-                  labelStyle: TextStyle(color: Colors.lightBlue),
-                  labelColor: Colors.lightBlue,
-                  labelPadding: EdgeInsets.all(8),
-                  tabs: getAllCategories(
-                      state.presenterCategory.response, appLanguage),
+        return DefaultTabController(
+
+          length: state.presenterCategory.response.length,
+          child: Container(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 100,
                 ),
-              ),
-              body: TabBarView(
-                children: getTabBarViewWidgets(state.presenterCategory),
-              ),
+             TabBar(
+                    unselectedLabelStyle: TextStyle(color: Colors.grey),
+                    unselectedLabelColor: Colors.grey,
+                    labelStyle: TextStyle(color: Colors.black),
+                    labelColor: Colors.black,
+                    labelPadding: EdgeInsets.all(8),
+                    tabs: getAllCategories(
+                        state.presenterCategory.response, appLanguage),
+                  ),
+
+                Expanded(
+                  flex: 1,
+                  child: TabBarView(
+
+                    children: getTabBarViewWidgets(state.presenterCategory),
+                  ),
+                ),
+              ],
             ),
-          ),
+          )
         );
       else
         return Container();
@@ -69,6 +81,7 @@ class SellerProfilesListView extends StatelessWidget {
     List<Widget> views = new List();
     for (final cat in presenterCategory.response) {
       views.add(new ListView.builder(
+        padding: EdgeInsets.all(0),
           itemCount: cat.presenters.length,
           itemBuilder: (BuildContext context, int index) {
             return Padding(
@@ -101,8 +114,14 @@ class SellerProfilesListView extends StatelessWidget {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    PresenterProfilePage(cat
-                                                        .presenters[index].id)),
+                                                    PresenterProfilePage(
+                                                      presenterId: cat
+                                                          .presenters[index].id,
+                                                      presenterName: cat
+                                                          .presenters[index].name,
+                                                      profileImageURL: cat
+                                                          .presenters[index].profilePicture,
+                                                    )),
                                           );
                                   },
                                   child: ClipRRect(
@@ -111,60 +130,25 @@ class SellerProfilesListView extends StatelessWidget {
                                       height: 90,
                                       width: 70,
                                       decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                          border: cat.presenters[index].isLive
-                                              ? Border.all(
-                                                  color: Colors.lightBlue)
-                                              : null),
-                                      child: FadeInImage.memoryNetwork(
-                                        image:
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: CachedNetworkImage(
+                                        imageUrl:
                                             "${GlobalConfiguration().getString("imageURL")}/${cat.presenters[index].profilePicture}",
                                         height: 90,
                                         width: 70,
                                         fit: BoxFit.cover,
-                                        placeholder: kTransparentImage,
-                                      ),
-                                    ),
-                                  )
+                                        placeholder:          (context, url) => Container(
+                                          height: 90,
+                                          width: 70,
+                                          color: Colors.grey[200],
 
-//                                Container(
-//                                  decoration: BoxDecoration(
-//                                      image: DecorationImage(
-//                                        fit: BoxFit.cover,
-//                                          image: NetworkImage(
-//                                        "${GlobalConfiguration().getString("baseURL")}/${cat.presenters[index].profilePicture}",
-//                                      )),
-//                                      borderRadius: BorderRadius.circular(4),
-//                                      border: cat.presenters[index].isLive
-//                                          ? Border.all(color: Colors.lightBlue)
-//                                          : null),
-//                                  height: 90,
-//                                  width: 70,
-//                                ),
-                                  ),
-                              cat.presenters[index].isLive
-                                  ? Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: Card(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(2)),
-                                        color: Colors.lightBlue,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: Text(
-                                            AppLocalizations.of(context)
-                                                .translate("live")
-                                                .toUpperCase(),
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                color: Colors.white),
-                                          ),
+
                                         ),
-                                      ),
-                                    )
-                                  : Container()
+
+                                  ),
+                                    ),
+                                  ))
                             ],
                           ),
                         ),
@@ -194,72 +178,45 @@ class SellerProfilesListView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    cat.presenters[index].isLive
-                        ? RaisedButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4)),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => BlocProvider(
-                                            create: (BuildContext context) =>
-                                                LiveStreamBloc()
-                                                  ..add(JoinLive(cat
-                                                      .presenters[index].id)),
-                                            child: LiveStreamScreen(
-                                                cat.presenters[index]),
-                                          )));
-                            },
-                            color: Colors.blue,
-                            child: Text(
-                                AppLocalizations.of(context)
-                                    .translate("join")
-                                    .toUpperCase(),
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.white)),
-                          )
-                        : RaisedButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4)),
-                            onPressed: () {
-                              if (presenterCategory.membership != "premium") {
-                                ///show premium alert
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: Text('Go Premium'),
-                                        content: Text(
-                                            'Grab a premium membership to send messages'),
-                                        actions: <Widget>[
-                                          Center(
-                                            child: RaisedButton(
-                                              onPressed: () {},
-                                              child: Text('CONTINUE'),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    });
-                              } else
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          PresenterDirectMessage(
-                                              cat.presenters[index])),
+                    RaisedButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)),
+                      onPressed: () {
+                        if (presenterCategory.membership != "premium") {
+                          ///show premium alert
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('Go Premium'),
+                                  content: Text(
+                                      'Grab a premium membership to send messages'),
+                                  actions: <Widget>[
+                                    Center(
+                                      child: RaisedButton(
+                                        onPressed: () {},
+                                        child: Text('CONTINUE'),
+                                      ),
+                                    ),
+                                  ],
                                 );
-                            },
-                            color: Colors.grey,
-                            child: Text(
-                              AppLocalizations.of(context)
-                                  .translate("message")
-                                  .toUpperCase(),
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.white),
-                            ),
-                          )
+                              });
+                        } else
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PresenterDirectMessage(
+                                    cat.presenters[index])),
+                          );
+                      },
+                      color: Colors.grey,
+                      child: Text(
+                        AppLocalizations.of(context)
+                            .translate("message")
+                            .toUpperCase(),
+                        style: TextStyle(fontSize: 12, color: Colors.white),
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -269,4 +226,8 @@ class SellerProfilesListView extends StatelessWidget {
 
     return views;
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

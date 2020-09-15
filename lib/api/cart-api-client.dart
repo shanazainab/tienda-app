@@ -1,6 +1,7 @@
 import 'package:logger/logger.dart';
 import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
+import 'package:tienda/model/payment-card.dart';
 
 part 'cart-api-client.g.dart';
 
@@ -18,7 +19,7 @@ abstract class CartApiClient {
   Future<String> deleteFromCart(@Body() int productId);
 
   @POST("/checkout/")
-  Future<String> cartCheckout(@Body() int addressId);
+  Future<String> cartCheckout(@Body() int addressId,@Body() PaymentCard paymentCard,@Body() int cardId,@Body() int cvv);
 
   @POST("/change_cart_product_quantity/")
   Future<String> changeQuantity(@Body() int productId, @Body() int quantity);

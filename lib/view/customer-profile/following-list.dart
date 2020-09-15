@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:tienda/localization.dart';
@@ -87,57 +88,32 @@ class FollowingList extends StatelessWidget {
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       PresenterProfilePage(
-                                                          followedPresenters[
-                                                                  index]
-                                                              .id)),
+                                                        profileImageURL:    followedPresenters[
+                                                        index]
+                                                            .profilePicture,
+                                                        presenterName:    followedPresenters[
+                                                        index]
+                                                            .name,
+                                                        presenterId:    followedPresenters[
+                                                        index]
+                                                            .id,
+                                                       )),
                                             );
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 image: DecorationImage(
-                                                    image: NetworkImage(
-                                                  "${GlobalConfiguration().getString("imageURL")}/${followedPresenters[index].profilePicture}",
+                                                    image: CachedNetworkImageProvider(
+                                                  "${GlobalConfiguration().getString("imageURL")}/media/${followedPresenters[index].profilePicture}",
                                                 )),
                                                 borderRadius:
                                                     BorderRadius.circular(4),
-                                                border:
-                                                    followedPresenters[index]
-                                                            .isLive
-                                                        ? Border.all(
-                                                            color: Colors
-                                                                .lightBlue)
-                                                        : null),
+                                               ),
                                             height: 90,
                                             width: 70,
                                           ),
                                         ),
-                                        followedPresenters[index].isLive
-                                            ? Align(
-                                                alignment:
-                                                    Alignment.bottomCenter,
-                                                child: Card(
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              2)),
-                                                  color: Colors.lightBlue,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            2.0),
-                                                    child: Text(
-                                                      AppLocalizations.of(
-                                                              context)
-                                                          .translate("live")
-                                                          .toUpperCase(),
-                                                      style: TextStyle(
-                                                          fontSize: 10,
-                                                          color: Colors.white),
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            : Container()
+
                                       ],
                                     ),
                                   ),
@@ -168,12 +144,6 @@ class FollowingList extends StatelessWidget {
                                   )
                                 ],
                               ),
-                              if (index == 0)
-                                RaisedButton(
-                                  color: Colors.lightBlue,
-                                  onPressed: () {},
-                                  child: Text("message"),
-                                )
                             ],
                           )),
                 ],

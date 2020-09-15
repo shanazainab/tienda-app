@@ -22,19 +22,19 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
   int _selectedIndex = 0;
   CategoriesPage categoryPage = CategoriesPage();
   TiendaHomePage tiendaHomePage = TiendaHomePage();
   CustomerProfile customerProfile = CustomerProfile();
   SellerProfileViewsMain sellerProfileViewsMain = new SellerProfileViewsMain();
-  TabController tabController;
 
   @override
   void initState() {
     // TODO: implement initState
+
+    print("HOME BUILD");
     super.initState();
-    tabController = TabController(vsync: this, length: 4);
     ConnectivityBloc()..initializeConnectivityListener();
     OneSignalNotificationController().initializeListeners();
 
@@ -54,15 +54,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void _selectedTab(int index) {
-    //tabController.indexIsChanging;
-    tabController.animateTo(index,
-        curve: Curves.easeIn, duration: Duration(milliseconds: 500));
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   DateTime currentBackPressTime;
 
   @override
   Widget build(BuildContext context) {
+
     return WillPopScope(
       onWillPop: () {
         DateTime now = DateTime.now();
@@ -109,8 +110,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ],
         ),
         backgroundColor: Colors.white,
-        body: TabBarView(
-          controller: tabController,
+        body: IndexedStack(
+
+          index: _selectedIndex,
           children: [
             tiendaHomePage,
             sellerProfileViewsMain,
@@ -118,17 +120,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             customerProfile
           ],
         ),
-
-//        IndexedStack(
-//          index: _selectedIndex,
-//          children: [
-//            tiendaHomePage,
-//            new SellerProfileViewsMain(),
-//            categoryPage,
-//            customerProfile
-//          ],
-//        ),
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

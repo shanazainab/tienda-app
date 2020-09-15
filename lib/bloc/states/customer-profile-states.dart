@@ -16,6 +16,9 @@ class OfflineLoadCustomerDataSuccess extends CustomerProfileStates {
   OfflineLoadCustomerDataSuccess({this.customerDetails}) : super();
 }
 
+class NoCustomerData extends CustomerProfileStates {
+  NoCustomerData() : super();
+}
 class LoadCustomerProfileSuccess extends CustomerProfileStates {
   final Customer customerDetails;
   final File profileImage;

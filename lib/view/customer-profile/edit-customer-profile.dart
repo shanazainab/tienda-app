@@ -12,7 +12,6 @@ import 'package:tienda/bloc/events/customer-profile-events.dart';
 import 'package:tienda/bloc/states/customer-profile-states.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/customer.dart';
-import 'package:tienda/view/widgets/custom-app-bar.dart';
 import 'package:tienda/view/widgets/image-option-dialogue.dart';
 
 class EdiCustomerProfilePage extends StatefulWidget {
