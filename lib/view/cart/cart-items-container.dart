@@ -10,6 +10,7 @@ import 'package:tienda/bloc/loading-bloc.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
+import 'package:tienda/controller/real-time-controller.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/cart.dart';
 import 'package:tienda/model/wishlist.dart';
@@ -19,6 +20,8 @@ import 'package:transparent_image/transparent_image.dart';
 
 class CartItemsContainer extends StatelessWidget {
   final Cart cart;
+
+  final RealTimeController realTimeController = new RealTimeController();
 
   CartItemsContainer(this.cart);
 
@@ -35,7 +38,7 @@ class CartItemsContainer extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             OverlayService().addVideoTitleOverlay(
-                context, SingleProductPage(cart.products[index].id),false);
+                context, SingleProductPage(cart.products[index].id), false);
           },
           child: new Container(
               child: Column(
@@ -153,6 +156,34 @@ class CartItemsContainer extends StatelessWidget {
                   )
                 ],
               ),
+              StreamBuilder<Map<String, dynamic>>(
+                  stream: realTimeController.liveCheckOutStream,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                    var count;
+
+                    print("PRODUCT ID IN :${cart.products[index].id}");
+                    if (snapshot.data != null) {
+                      for (final productId in snapshot.data.keys.toList()) {
+                        print("PRODUCT KEY : $productId");
+                        if (productId == cart.products[index].id.toString()) {
+                          count = snapshot.data[productId];
+                        }
+                      }
+                      return count == null
+                          ? Container()
+                          : Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "$count added this product to cart",
+                                style: TextStyle(
+                                    color: Colors.redAccent,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            );
+                    } else
+                      return Container();
+                  }),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,

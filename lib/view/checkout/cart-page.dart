@@ -132,7 +132,9 @@ class _CartPageState extends State<CartPage> {
                 ),
             ],
           );
-        } else
+        } else {
+          BlocProvider.of<LoadingBloc>(context)
+            ..add(StopLoading());
           return Container(
             child: Center(
               child: Column(
@@ -153,6 +155,7 @@ class _CartPageState extends State<CartPage> {
               ),
             ),
           );
+        }
       },
     );
   }

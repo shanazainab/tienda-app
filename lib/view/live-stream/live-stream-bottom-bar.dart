@@ -38,19 +38,23 @@ class LiveStreamBottomBar extends StatelessWidget {
                 width: 3 * MediaQuery.of(context).size.width / 4,
                 height: 40,
                 child: TextField(
+                  minLines: 1,
+                  maxLines: 4,
+                  keyboardType: TextInputType.multiline,
                   focusNode: textFocusNode,
                   controller: textEditingController,
-                  onSubmitted: (value) {
-                    if (value != null && value.length != 0) {
-                      Logger().d(value);
-                      new RealTimeController()
-                          .emitLiveMessage(value, presenter.id);
-                      textEditingController.clear();
-                    }
-                  },
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                       filled: true,
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            if (textEditingController.text != null && textEditingController.text.length != 0) {
+                              new RealTimeController()
+                                  .emitLiveMessage(textEditingController.text, presenter.id);
+                              textEditingController.clear();
+                            }
+                          },
+                          icon: Icon(Icons.send)),
                       hintStyle: TextStyle(fontSize: 12, color: Colors.white),
                       contentPadding: EdgeInsets.only(
                           left: 16, top: 0, bottom: 0, right: 0),

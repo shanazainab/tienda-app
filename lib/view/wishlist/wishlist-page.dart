@@ -183,6 +183,7 @@ class _State extends State<WishListPage> {
                                   1;
                               BlocProvider.of<CartBloc>(context).add(
                                   AddCartItem(
+                                      isFromLiveStream: false,
                                       cartItem: wishList
                                           .wishListItems[index].product));
 

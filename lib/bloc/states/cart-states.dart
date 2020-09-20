@@ -32,6 +32,14 @@ class LoadCartFail extends CartStates {
   @override
   List<Object> get props => error;
 }
+class ProductAlreadyInCart extends CartStates {
+
+
+  ProductAlreadyInCart() : super();
+
+  @override
+  List<Object> get props => [];
+}
 
 class EmptyCart extends CartStates {
   EmptyCart() : super();

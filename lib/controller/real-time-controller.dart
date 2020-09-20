@@ -23,12 +23,22 @@ class RealTimeController {
   final unReadMessage = new BehaviorSubject<List<UnreadMessage>>();
   final liveReaction = new BehaviorSubject<bool>();
 
+  final liveAddCartStream = new BehaviorSubject<Map<String, dynamic>>();
+  final liveCheckOutStream = new BehaviorSubject<Map<String, dynamic>>();
+
   IO.Socket socket;
 
   RealTimeController._privateConstructor();
 
   static final RealTimeController _instance =
       RealTimeController._privateConstructor();
+
+  disposeLiveSubjectStreams() {
+    liveAddCartStream.close();
+    liveCheckOutStream.close();
+    liveReaction.close();
+    viewCountStream.close();
+  }
 
   factory RealTimeController() {
     return _instance;
@@ -125,13 +135,14 @@ class RealTimeController {
         Logger().d("LIVE_REACTION:$data ");
         liveReaction.sink.add(true);
       });
-      socket.on('added_product_to_cart', (data) {
-        Logger().d("ADDED PRODUCT TO THE CART:$data ");
-        liveReaction.sink.add(true);
+      socket.on('new_in_cart', (data) {
+        ///  ADDED PRODUCT TO THE CART:{in_cart: {8: 1}, room_name: PR-10}
+        Logger().d("ADDED PRODUCT TO THE CART:${data['in_cart']} ");
+        liveAddCartStream.sink.add(data['in_cart']);
       });
-      socket.on('product_checkout', (data) {
+      socket.on('new_checkout', (data) {
         Logger().d("PRODUCT CHECK OUT:$data ");
-        liveReaction.sink.add(true);
+        liveCheckOutStream.sink.add(data['checkouts']);
       });
 
       socket.on('new_live_message', (data) {

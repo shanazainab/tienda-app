@@ -8,6 +8,8 @@ import 'package:rxdart/rxdart.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/checkout-bloc.dart';
+import 'package:tienda/bloc/events/cart-events.dart';
+import 'package:tienda/bloc/events/checkout-events.dart';
 import 'package:tienda/bloc/events/live-stream-events.dart';
 import 'package:tienda/bloc/live-stream-bloc.dart';
 import 'package:tienda/bloc/live-stream-checkout-bloc.dart';
@@ -16,6 +18,7 @@ import 'package:tienda/bloc/states/live-stream-states.dart';
 import 'package:tienda/controller/real-time-controller.dart';
 import 'package:tienda/model/live-chat.dart';
 import 'package:tienda/model/live-response.dart';
+import 'package:tienda/model/order.dart';
 import 'package:tienda/model/presenter.dart';
 import 'package:tienda/video-overlays/constants.dart';
 import 'package:tienda/video-overlays/overlay_handler.dart';
@@ -24,7 +27,6 @@ import 'package:tienda/view/live-stream/cart-checkout-pop-up.dart';
 import 'package:tienda/view/live-stream/live-chat-container.dart';
 import 'package:tienda/view/live-stream/live-stream-bottom-bar.dart';
 import 'package:tienda/view/live-stream/presenter-profile-card.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:video_player/video_player.dart';
 
 class LiveStreamPIPMode extends StatefulWidget {
@@ -181,9 +183,8 @@ class _LiveStreamPIPModeState extends State<LiveStreamPIPMode> {
             opacity: overlayProvider.inPipMode ? 0 : 1,
             child: Stack(
               children: [
-
                 Positioned(
-                  top:60,
+                  top:20,
                   child: Container(
                     color: Colors.transparent,
                     width: MediaQuery.of(context).size.width,
@@ -256,6 +257,8 @@ class _LiveStreamPIPModeState extends State<LiveStreamPIPMode> {
                                   if (checkoutPanelController.isPanelOpen)
                                     checkoutPanelController.close();
                                   else {
+
+                                    BlocProvider.of<CartBloc>(context)..add(FetchCartData());
                                     checkoutPanelController.open();
                                   }
                                 },
@@ -270,6 +273,9 @@ class _LiveStreamPIPModeState extends State<LiveStreamPIPMode> {
                     ),
                   ),
                 ),
+
+
+
                 StreamBuilder<bool>(
                     stream: productsVisibility,
                     builder:
@@ -394,12 +400,14 @@ class _LiveStreamPIPModeState extends State<LiveStreamPIPMode> {
                     minHeight: 0,
                     controller: checkoutPanelController,
                     panel: BlocProvider(
-                      create: (context) => CheckOutBloc(),
+                      create: (context) => CheckOutBloc()..add(DoUpdateCheckOutProgress(
+                          status: "CART",
+                          order: new Order())),
                       child: CartCheckOutPopUp(context, (value) {
                         checkoutPanelController.close();
-                      }, (shouldClose) {
+                      },(shouldClose) {
                         if (shouldClose) checkoutPanelController.close();
-                      }),
+                      },widget.presenter.id),
                     )),
               ],
             ));

@@ -4,6 +4,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -28,6 +29,7 @@ import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/localization.dart';
+import 'package:tienda/myapp.dart';
 import 'package:tienda/video-overlays/overlay_handler.dart';
 import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/live-stream/shop-live-screen.dart';
@@ -48,7 +50,7 @@ final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await FlutterDownloader.initialize(debug: true);
   //
   // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   // sharedPreferences.clear();

@@ -9,6 +9,7 @@ import 'package:tienda/bloc/checkout-bloc.dart';
 import 'package:tienda/bloc/events/checkout-events.dart';
 import 'package:tienda/bloc/states/address-states.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
+import 'package:tienda/loading-widget.dart';
 import 'package:tienda/model/delivery-address.dart';
 import 'package:tienda/model/order.dart';
 import 'package:tienda/view/address/add-address-page.dart';
@@ -19,10 +20,11 @@ import 'package:tienda/view/login/login-main-page.dart';
 
 class ChooseDeliveryAddress extends StatelessWidget {
   final chosenAddress = new BehaviorSubject<int>();
+  final Order order;
 
   final CartCheckOutPopVisibility cartCheckOutPopVisibility;
 
-  ChooseDeliveryAddress(this.cartCheckOutPopVisibility);
+  ChooseDeliveryAddress(this.cartCheckOutPopVisibility,this.order);
 
   @override
   Widget build(BuildContext contextA) {
@@ -88,12 +90,13 @@ class ChooseDeliveryAddress extends StatelessWidget {
                                 if (chosenAddress.value == null) {
                                   Fluttertoast.showToast(
                                       msg: "Choose a delivery address");
-                                } else
+                                } else {
+                                 order.addressId = chosenAddress.value;
                                   BlocProvider.of<CheckOutBloc>(context).add(
                                       DoUpdateCheckOutProgress(
-                                          order: new Order(
-                                              addressId: chosenAddress.value),
+                                          order: order,
                                           status: "PAYMENT"));
+                                }
                               },
                               child: Text("CONTINUE"),
                             ),
@@ -109,7 +112,11 @@ class ChooseDeliveryAddress extends StatelessWidget {
           ],
         );
       else
-        return Container();
+        return Container(
+          child: Center(
+            child: spinkit,
+          ),
+        );
     }));
   }
 

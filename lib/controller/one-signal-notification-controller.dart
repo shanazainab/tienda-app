@@ -8,7 +8,9 @@ import 'package:tienda/model/home-screen-data-response.dart';
 import 'package:tienda/model/presenter.dart';
 import 'package:tienda/model/unread-messages.dart';
 import 'package:tienda/view/chat/presenter-direct-message.dart';
+import 'package:tienda/view/checkout/cart-page.dart';
 import 'package:tienda/view/live-stream/live-stream-pop-up.dart';
+import 'package:tienda/view/widgets/cart-reminder-dialogue.dart';
 
 import '../main.dart';
 
@@ -109,9 +111,14 @@ class OneSignalNotificationController {
                 notification.payload.additionalData['profile_picture']));
       }
     });
+
+    ///TODO:
+    ///cart_checkout
     OneSignal.shared
         .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
       if (result.notification.payload.additionalData['type'] == "live_stream") {
+
+
         liveNotOpenedStream.add(new Presenter(
             id: result.notification.payload.additionalData['presenter_id'],
             name: result.notification.payload.additionalData['name'],
@@ -129,6 +136,12 @@ class OneSignalNotificationController {
                   profilePicture: result.notification.payload
                       .additionalData['profile_picture']))),
         );
+      }
+      else if (result.notification.payload.additionalData['type'] ==
+          "cart_checkout") {
+        showDialog(
+            context: navigatorKey.currentState.overlay.context,
+            builder: (BuildContext context) => CartReminderDialogue());
       }
     });
   }

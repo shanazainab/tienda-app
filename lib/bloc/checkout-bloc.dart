@@ -8,11 +8,10 @@ import 'package:tienda/api/cart-api-client.dart';
 import 'package:tienda/bloc/events/checkout-events.dart';
 import 'package:tienda/bloc/states/checkout-states.dart';
 import 'package:dio/dio.dart';
+import 'package:tienda/controller/real-time-controller.dart';
 
 class CheckOutBloc extends Bloc<CheckoutEvents, CheckoutStates> {
   CheckOutBloc() : super(Loading());
-
-
 
   @override
   Stream<CheckoutStates> mapEventToState(CheckoutEvents event) async* {
@@ -23,12 +22,17 @@ class CheckOutBloc extends Bloc<CheckoutEvents, CheckoutStates> {
       yield* _mapDoCardCheckoutToStates(event);
     }
     if (event is DoUpdateCheckOutProgress) {
-      if (event.status == "CART")
-        yield CartActive(event.status, event.order);
-      else if (event.status == "ADDRESS")
-        yield AddressActive(event.status, event.order);
-      else if (event.status == "PAYMENT")
-        yield PaymentActive(event.status, event.order);
+      if (event.status == "CART"){
+        print("ORDER FROM CART: ${event.order.products}");
+        yield CartActive(event.status, event.order);}
+      else if (event.status == "ADDRESS"){
+        print("ORDER FROM ADDRESS: ${event.order.products}");
+
+        yield AddressActive(event.status, event.order);}
+      else if (event.status == "PAYMENT"){
+        print("ORDER FROM PAYMENT: ${event.order.products}");
+
+        yield PaymentActive(event.status, event.order);}
     }
   }
 
@@ -44,7 +48,10 @@ class CheckOutBloc extends Bloc<CheckoutEvents, CheckoutStates> {
         CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
     print("PAYMENT INITIATED");
 
-    await client.cartCheckout(event.addressId,event.card,event.cardId,event.cvv).then((response) {
+    await client
+        .cartCheckout(
+            event.order.addressId, event.card, event.cardId, event.cvv)
+        .then((response) {
       Logger().d("CART-CEHCKOUT-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
@@ -62,6 +69,14 @@ class CheckOutBloc extends Bloc<CheckoutEvents, CheckoutStates> {
     print("PAYMENT INITIATED");
 
     if (status == "success") {
+      ///do real time update for the checkout action
+
+      if (event.fromLiveStream) {
+        for (final product in event.order.products)
+          RealTimeController()
+              .emitCheckoutFromLive(product.id, event.presenterId);
+      }
+
       yield InitialCheckOutSuccess();
     }
   }

@@ -1,7 +1,14 @@
+import 'dart:isolate';
+import 'dart:ui';
+import 'dart:io' show Platform;
+
 import 'package:chewie/chewie.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:share/share.dart';
@@ -35,6 +42,7 @@ import 'package:tienda/view/products/customer-reviews-container.dart';
 import 'package:tienda/view/products/presenter-info-container.dart';
 import 'package:tienda/view/products/product-description-container.dart';
 import 'package:tienda/view/products/product-info-container.dart';
+import 'package:tienda/view/products/product-video-downloader.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:video_player/video_player.dart';
 
@@ -60,10 +68,18 @@ class _SingleProductPageState extends State<SingleProductPage> {
   double aspectRatio = 3 / 2;
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+
+  }
+
+  @override
   void initState() {
     // TODO: implement initState
 
     super.initState();
+
     singleProductBloc.add(FetchProductDetails(productId: widget.productId));
 
     addToCartStream.listen((value) {
@@ -103,9 +119,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
                                   );
                                 }),
                               );
-                              _controller
-                                  .pause()
-                                  .then((value) => _controller.dispose());
+                              _controller.pause();
 
                               Provider.of<OverlayHandlerProvider>(context,
                                       listen: false)
@@ -131,6 +145,8 @@ class _SingleProductPageState extends State<SingleProductPage> {
           BlocProvider.of<LoadingBloc>(context)..add(StopLoading());
           addToCartStream.sink.add(true);
         }
+        if (state is EmptyCart)
+          BlocProvider.of<LoadingBloc>(context)..add(StopLoading());
       },
       child: MultiBlocProvider(
         providers: [
@@ -193,6 +209,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
                                   state.product.quantity = 1;
                                   BlocProvider.of<CartBloc>(context).add(
                                       AddCartItem(
+                                          isFromLiveStream: false,
                                           cartItem: state.product,
                                           isLoggedIn:
                                               !(BlocProvider.of<LoginBloc>(
@@ -215,7 +232,6 @@ class _SingleProductPageState extends State<SingleProductPage> {
               } else
                 return Container(
                   height: 0,
-
                 );
             }),
           ),
@@ -247,6 +263,8 @@ class _SingleProductPageState extends State<SingleProductPage> {
                     //   ),
                     buildProductVideo(state.product),
                     if (!overlayProvider.inPipMode)
+                      buildProductVideoReactions(state.product),
+                    if (!overlayProvider.inPipMode)
                       buildProductDetails(state.product),
                   ],
                 );
@@ -259,6 +277,55 @@ class _SingleProductPageState extends State<SingleProductPage> {
             );
           }),
         ),
+      ),
+    );
+  }
+
+  buildProductVideoReactions(Product product) {
+    return Padding(
+      padding:
+          const EdgeInsets.only(left: 16.0, top: 16.0, right: 16, bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            children: [
+              Row(
+                children: <Widget>[
+                  Icon(
+                    FontAwesomeIcons.thumbsUp,
+                    size: 16,
+                  ),
+                  SizedBox(
+                    width: 2,
+                  ),
+                  Text(
+                    "1.2k",
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: 16,
+              ),
+              Row(
+                children: <Widget>[
+                  Icon(
+                    FontAwesomeIcons.comment,
+                    size: 16,
+                  ),
+                  SizedBox(
+                    width: 2,
+                  ),
+                  Text(
+                    "20",
+                  ),
+                ],
+              ),
+            ],
+          ),
+          ProductVideoDownloader(product)
+        ],
       ),
     );
   }
@@ -329,7 +396,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
                 IconButton(
                   icon: Icon(Icons.close),
                   onPressed: () {
-                    _controller.pause().then((value) => _controller.dispose());
+                    _controller.pause();
 
                     Provider.of<OverlayHandlerProvider>(context, listen: false)
                         .removeOverlay(context);

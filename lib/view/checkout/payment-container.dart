@@ -11,6 +11,7 @@ import 'package:tienda/bloc/saved-card-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/bloc/states/checkout-states.dart';
 import 'package:tienda/bloc/states/saved-cards-state.dart';
+import 'package:tienda/model/order.dart';
 import 'package:tienda/model/payment-card.dart';
 import 'package:tienda/view/utils/card-number-formatter.dart';
 
@@ -180,12 +181,12 @@ class _PaymentContainerState extends State<PaymentContainer> {
                                 const EdgeInsets.only(left: 16.0, right: 16.0),
                             child: Form(
                               key: _cvvKeys[index],
-
                               child: Row(
                                 children: [
                                   Text("CVV : "),
                                   SizedBox(
-                                    width: MediaQuery.of(context).size.width / 4,
+                                    width:
+                                        MediaQuery.of(context).size.width / 4,
                                     child: TextFormField(
                                       ///TODO: CVV VALIDATION
                                       obscureText: true,
@@ -377,13 +378,14 @@ class _PaymentContainerState extends State<PaymentContainer> {
   }
 
   void handlePayNowButton(int addressId) {
-
     if (_paymentMethod == "NEW-CARD") {
       if (_formKey.currentState.validate()) {
         FocusScope.of(context).unfocus();
 
-        BlocProvider.of<CheckOutBloc>(context)
-            .add(DoCartCheckout(addressId: addressId, card: paymentCard));
+        BlocProvider.of<CheckOutBloc>(context).add(DoCartCheckout(
+            fromLiveStream: false,
+            order: new Order(addressId: addressId),
+            card: paymentCard));
       }
     } else if (_paymentMethod.startsWith("SAVED-CARD")) {
       ///validate cvv
@@ -391,13 +393,15 @@ class _PaymentContainerState extends State<PaymentContainer> {
         FocusScope.of(context).unfocus();
 
         BlocProvider.of<CheckOutBloc>(context).add(DoCartCheckout(
-            addressId: addressId,
+            order: new Order(addressId: addressId),
             card: paymentCard,
+            fromLiveStream: false,
             cardId: cardId,
             cvv: int.parse(paymentCard.cvv)));
       }
     }
   }
+
   static String getCleanedNumber(String text) {
     RegExp regExp = new RegExp(r"[^0-9]");
     return text.replaceAll(regExp, '');

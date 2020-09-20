@@ -11,6 +11,8 @@ import MessagingAPI
 import SDKConfigurations
 import AnswerBotSDK
 import SupportSDK
+import flutter_downloader
+
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -49,8 +51,17 @@ import SupportSDK
 
 
     GeneratedPluginRegistrant.register(with: self)
+   // FlutterDownloaderPlugin.setPluginRegistrantCallback(registerPlugins)
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+    
+//    private func registerPlugins(registry: FlutterPluginRegistry) {
+//        if (!registry.hasPlugin("FlutterDownloaderPlugin")) {
+//           FlutterDownloaderPlugin.register(with: registry.registrar(forPlugin: "FlutterDownloaderPlugin"))
+//        }
+//    }
+    
     private func startZendeskChat(result: FlutterResult) {
 
         do {

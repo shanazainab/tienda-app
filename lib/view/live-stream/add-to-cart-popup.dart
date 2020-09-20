@@ -16,7 +16,6 @@ import 'package:tienda/bloc/states/loading-states.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/controller/real-time-controller.dart';
 import 'package:tienda/localization.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 typedef AddedToCart = Function(bool value);
 
@@ -26,6 +25,8 @@ class AddToCartPopUp extends StatelessWidget {
   final AddedToCart addedToCart;
 
   final int presenterId;
+
+  final RealTimeController realTimeController = new RealTimeController();
 
   AddToCartPopUp(this.contextA, this.addedToCart, this.presenterId);
 
@@ -178,6 +179,33 @@ class AddToCartPopUp extends StatelessWidget {
                   SizedBox(
                     height: 16,
                   ),
+
+                  ///ADD TO CART LIVE UPDATE
+                  StreamBuilder<Map<String, dynamic>>(
+                      stream: realTimeController.liveAddCartStream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                        var count;
+
+                        print("PRODUCT ID IN :${state.product.id}");
+                        if (snapshot.data != null) {
+                          for (final productId
+                              in snapshot.data.keys.toList()) {
+                            print("PRODUCT KEY : $productId");
+                            if(productId == state.product.id.toString()){
+                              count = snapshot.data[productId];
+                            }
+                          }
+                          return count == null?Container():Align(
+                            alignment: Alignment.center,
+                            child: Text("$count added this product to cart",style: TextStyle(
+                              color: Colors.redAccent,
+                              fontWeight: FontWeight.bold
+                            ),),
+                          );
+                        } else
+                          return Container();
+                      }),
                   SizedBox(
                       width: MediaQuery.of(context).size.width - 100,
                       child: BlocBuilder<LoadingBloc, LoadingStates>(
@@ -189,14 +217,15 @@ class AddToCartPopUp extends StatelessWidget {
                               BlocProvider.of<LoadingBloc>(context)
                                 ..add(StartLoading());
 
-                              new RealTimeController().emitAddToCartFromLive(
-                                  state.product.id, presenterId);
-                              BlocProvider.of<CartBloc>(context).add(
-                                  AddCartItem(
-                                      isLoggedIn:
-                                          !(BlocProvider.of<LoginBloc>(context)
-                                              .state is GuestUser),
-                                      cartItem: state.product, ));
+                              BlocProvider.of<CartBloc>(context)
+                                  .add(AddCartItem(
+                                presenterId: presenterId,
+                                isFromLiveStream: true,
+                                isLoggedIn:
+                                    !(BlocProvider.of<LoginBloc>(context).state
+                                        is GuestUser),
+                                cartItem: state.product,
+                              ));
                             },
                             child: Text("ADD TO CART"),
                           );

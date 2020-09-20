@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/api/cart-api-client.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
+import 'package:tienda/controller/real-time-controller.dart';
 import 'package:tienda/model/cart.dart';
 import 'package:tienda/model/product.dart';
 
@@ -78,6 +79,7 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
         case 200:
           cart = cartFromJson(response);
           break;
+
       }
     }).catchError((err) {
       if (err is DioError) {
@@ -107,23 +109,34 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
 
     Logger().d("LOGGED IN STATUS: ${event.isLoggedIn}");
     bool isLoggedIn = event.isLoggedIn;
+
+    String addCartStatus;
+
     if (isLoggedIn) {
       ///Update cart to backend
-      await callAddCartApi(event.cartItem);
+      addCartStatus = await callAddCartApi(event.cartItem);
     }
-    Cart cart = await callFetchCartApi();
-    if (cart != null) {
-      double cartPrice = 0.0;
-      for (final product in cart.products) {
-        cartPrice += product.quantity != null && product.quantity != 0
-            ? product.price * product.quantity
-            : product.price;
-      }
-      cart.cartPrice = cartPrice;
 
-      yield LoadCartSuccess(cart: cart);
+    if(event.isFromLiveStream && addCartStatus == "success"){
+      new RealTimeController()
+          .emitAddToCartFromLive(event.cartItem.id, event.presenterId);
+    }
 
-      updateCartLocally(cart);
+
+      Cart cart = await callFetchCartApi();
+      if (cart != null) {
+        double cartPrice = 0.0;
+        for (final product in cart.products) {
+          cartPrice += product.quantity != null && product.quantity != 0
+              ? product.price * product.quantity
+              : product.price;
+        }
+        cart.cartPrice = cartPrice;
+
+        yield LoadCartSuccess(cart: cart);
+
+        updateCartLocally(cart);
+
     }
   }
 
@@ -197,8 +210,9 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
         case 200:
           status = "success";
           break;
-        case 407:
-          status = "Enter Valid Number";
+        case 208:
+        status ="duplicate";
+          break;
       }
     }).catchError((err) {
       if (err is DioError) {

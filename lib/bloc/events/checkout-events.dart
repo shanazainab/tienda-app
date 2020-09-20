@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:tienda/model/order.dart';
 import 'package:tienda/model/payment-card.dart';
+import 'package:tienda/model/product.dart';
 
 abstract class CheckoutEvents {
   CheckoutEvents();
@@ -11,19 +12,30 @@ class Initialize extends CheckoutEvents {
 }
 
 class DoCartCheckout extends CheckoutEvents {
-  final int addressId;
+  final Order order;
   final PaymentCard card;
 
   final int cardId;
 
   final int cvv;
 
-  DoCartCheckout({this.addressId, this.card, this.cardId, this.cvv}) : super();
+  final bool fromLiveStream;
+  final int presenterId;
+
+  DoCartCheckout(
+      {this.order,
+      this.card,
+      this.cardId,
+      this.cvv,
+      this.fromLiveStream,
+      this.presenterId})
+      : super();
 }
 
 class DoUpdateCheckOutProgress extends CheckoutEvents {
-  final Order order;
   final String status;
+  final List<Product> products;
+  final Order order;
 
-  DoUpdateCheckOutProgress({this.status, this.order}) : super();
+  DoUpdateCheckOutProgress({this.order, this.status, this.products}) : super();
 }

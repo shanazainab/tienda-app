@@ -50,6 +50,7 @@
 		C59A26ABB1D2DD84461096A9 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		D2C1397824CE9D8B0082252A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D2ECFDFE24C021E800C206A3 /* bin */ = {isa = PBXFileReference; lastKnownFileType = folder; name = bin; path = ../../../flutter/bin; sourceTree = "<group>"; };
+		D2F604042513347100A25C55 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +68,7 @@
 		23D3F081D2FB9EDD429D077F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D2F604042513347100A25C55 /* libsqlite3.tbd */,
 				D2ECFDFE24C021E800C206A3 /* bin */,
 				9060F3AC5BCEF55C66FD2209 /* Pods_Runner.framework */,
 			);

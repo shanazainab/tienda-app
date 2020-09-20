@@ -29,7 +29,10 @@ class AddCartItem extends CartEvents {
 
   final bool isLoggedIn;
 
-  AddCartItem({this.cart, this.cartItem, this.isLoggedIn}) : super();
+  final bool isFromLiveStream;
+
+  final int presenterId;
+  AddCartItem({this.cart, this.cartItem, this.isLoggedIn,this.isFromLiveStream,this.presenterId}) : super();
 
   @override
   List<Object> get props => [cartItem];

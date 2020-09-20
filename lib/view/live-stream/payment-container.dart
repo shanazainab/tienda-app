@@ -7,10 +7,14 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/checkout-bloc.dart';
 import 'package:tienda/bloc/events/checkout-events.dart';
+import 'package:tienda/bloc/events/loading-events.dart';
+import 'package:tienda/bloc/loading-bloc.dart';
 import 'package:tienda/bloc/saved-card-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/bloc/states/checkout-states.dart';
+import 'package:tienda/bloc/states/loading-states.dart';
 import 'package:tienda/bloc/states/saved-cards-state.dart';
+import 'package:tienda/model/order.dart';
 import 'package:tienda/model/payment-card.dart';
 import 'package:tienda/view/live-stream/cart-checkout-pop-up.dart';
 import 'package:tienda/view/utils/card-number-formatter.dart';
@@ -18,7 +22,11 @@ import 'package:tienda/view/utils/card-number-formatter.dart';
 class LiveStreamPaymentContainer extends StatefulWidget {
   final CartCheckOutPopVisibility cartCheckOutPopVisibility;
 
-  LiveStreamPaymentContainer(this.cartCheckOutPopVisibility);
+  final int presenterId;
+  final Order order;
+
+  LiveStreamPaymentContainer(
+      this.cartCheckOutPopVisibility, this.presenterId, this.order);
 
   @override
   _LiveStreamPaymentContainerState createState() =>
@@ -60,9 +68,9 @@ class _LiveStreamPaymentContainerState
           }
         }
       },
-      child:
-          BlocBuilder<CheckOutBloc, CheckoutStates>(builder: (context, state) {
-        if (state is PaymentActive)
+      child: BlocBuilder<CheckOutBloc, CheckoutStates>(
+          builder: (context, checkoutState) {
+        if (checkoutState is PaymentActive)
           return Stack(
             children: <Widget>[
               Container(child: buildPaymentOptionBlock(contextA)),
@@ -84,14 +92,29 @@ class _LiveStreamPaymentContainerState
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: RaisedButton(
-                              onPressed: () {
-                                handlePayNowButton(state.order.addressId);
-                              },
-                              child: Text("PAY NOW"),
-                            ),
-                          ),
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: BlocBuilder<LoadingBloc, LoadingStates>(
+                                  builder: (context, state) {
+                                if (state is AppLoading) {
+                                  return RaisedButton(
+                                    onPressed: () {},
+                                    child: Container(
+                                      height: 10,
+                                      width: 10,
+                                      child: CircularProgressIndicator(
+                                        backgroundColor: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                  );
+                                } else
+                                  return RaisedButton(
+                                    onPressed: () {
+                                      handlePayNowButton(widget.order);
+                                    },
+                                    child: Text("PAY NOW"),
+                                  );
+                              })),
                         ],
                       ),
                     ),
@@ -112,7 +135,7 @@ class _LiveStreamPaymentContainerState
       child: ListView(
         shrinkWrap: true,
         physics: ScrollPhysics(),
-        padding: EdgeInsets.only(bottom:100),
+        padding: EdgeInsets.only(bottom: 100),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -418,13 +441,20 @@ class _LiveStreamPaymentContainerState
     );
   }
 
-  void handlePayNowButton(int addressId) {
+  void handlePayNowButton(Order order) {
+    BlocProvider.of<LoadingBloc>(context)..add(StartLoading());
+
+    print(order);
+
     if (_paymentMethod == "NEW-CARD") {
       if (_formKey.currentState.validate()) {
         FocusScope.of(context).unfocus();
 
-        BlocProvider.of<CheckOutBloc>(context)
-            .add(DoCartCheckout(addressId: addressId, card: paymentCard));
+        BlocProvider.of<CheckOutBloc>(context).add(DoCartCheckout(
+            fromLiveStream: true,
+            order: order,
+            card: paymentCard,
+            presenterId: widget.presenterId));
       }
     } else if (_paymentMethod.startsWith("SAVED-CARD")) {
       ///validate cvv
@@ -432,9 +462,11 @@ class _LiveStreamPaymentContainerState
         FocusScope.of(context).unfocus();
 
         BlocProvider.of<CheckOutBloc>(context).add(DoCartCheckout(
-            addressId: addressId,
+            order: order,
             card: paymentCard,
             cardId: cardId,
+            fromLiveStream: true,
+            presenterId: widget.presenterId,
             cvv: int.parse(paymentCard.cvv)));
       }
     }

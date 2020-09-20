@@ -14,10 +14,12 @@ import 'package:rxdart/rxdart.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/checkout-bloc.dart';
+import 'package:tienda/bloc/events/checkout-events.dart';
 import 'package:tienda/bloc/events/live-stream-events.dart';
 import 'package:tienda/bloc/live-stream-bloc.dart';
 import 'package:tienda/bloc/live-stream-checkout-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
+import 'package:tienda/bloc/states/checkout-states.dart';
 import 'package:tienda/bloc/states/live-stream-states.dart';
 import 'package:tienda/controller/real-time-controller.dart';
 import 'package:tienda/loading-widget.dart';
@@ -378,7 +380,7 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
                           checkoutPanelController.close();
                         }, (shouldClose) {
                           if (shouldClose) checkoutPanelController.close();
-                        }),
+                        },widget.presenter.id),
                       )),
                 ],
               );
