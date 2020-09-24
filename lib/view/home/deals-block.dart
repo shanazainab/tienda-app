@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -46,6 +47,14 @@ class DealsBlock extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: GestureDetector(
                   onTap: (){
+
+                    FirebaseAnalytics()
+                        .logEvent(name: "HOME_PAGE_CLICK", parameters: {
+                      'section_name': 'deals-of-the-day',
+                      'item_type': 'discount',
+                      'item_id': dealOfTheDayList[index].discount
+                    });
+
                     // Navigator.push(
                     //     context,
                     //     MaterialPageRoute(

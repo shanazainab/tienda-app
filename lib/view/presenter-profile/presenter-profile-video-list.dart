@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tienda/model/presenter.dart';
-import 'package:tienda/view/products/single-product-page.dart';
+import 'package:tienda/view/products/product-review-page.dart';
 
 class SellerProfileVideoList extends StatelessWidget {
   final GlobalKey pageViewGlobalKey;

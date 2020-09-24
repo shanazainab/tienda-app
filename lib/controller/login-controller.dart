@@ -71,6 +71,7 @@ class LoginController {
           status = body['registered'] ? "Existing User" : "New User";
           await FlutterSecureStorage().write(
               key: "session-id", value: response['headers']['set-cookie'][0]);
+
           ///initialize socket.io connection
           RealTimeController().initialize();
           callUpdateDeviceId();
@@ -90,7 +91,9 @@ class LoginController {
   }
 
   Future<String> signInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAccount googleUser = await GoogleSignIn().signIn().catchError((onError) {
+      Logger().e(onError);
+    });
 
     String status = "failed";
     if (googleUser != null) {
@@ -101,7 +104,11 @@ class LoginController {
         idToken: googleAuth?.idToken,
       );
       if (credential != null)
-        await FirebaseAuth.instance.signInWithCredential(credential);
+        await FirebaseAuth.instance
+            .signInWithCredential(credential)
+            .catchError((onError) {
+          Logger().e(onError);
+        });
       final FirebaseUser currentUser =
           await FirebaseAuth.instance.currentUser();
 
@@ -237,7 +244,6 @@ class LoginController {
     } else {
       Logger().d("REGISTERED CUSTOMER");
 
-
       isLoggedIn = true;
     }
 //    if (currentUser != null) isLoggedIn = true;
@@ -317,7 +323,6 @@ class LoginController {
 
           ///initialize socket.io connection
           RealTimeController().initialize();
-
 
           callUpdateDeviceId();
           break;

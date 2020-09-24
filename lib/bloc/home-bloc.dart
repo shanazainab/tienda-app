@@ -31,7 +31,7 @@ class HomeBloc extends Bloc<HomeEvents, HomeStates> {
     HomeApiClient homeApiClient =
         HomeApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
     await homeApiClient.getHomeScreenData().then((response) {
-      //log("HOME DATA RESPONSE:$response");
+      log("HOME DATA RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           homeScreenResponse = homeScreenResponseFromJson(response);

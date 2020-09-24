@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,6 +22,9 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
   PreferenceBloc preferenceBloc = new PreferenceBloc();
 
   String message = "Tell Us What You Are Looking for ";
+
+  List<int> preferredCategoriesId = new List();
+  List<String> preferredCategoriesNames = new List();
 
   Map<Category, bool> categoryPreferences = new HashMap();
 
@@ -83,6 +87,24 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                               itemBuilder: (BuildContext context, int index) =>
                                   GestureDetector(
                                 onTap: () {
+                                  ///add it to the list
+                                  if (preferredCategoriesId
+                                      .contains(state.categories[index].id)) {
+                                    preferredCategoriesId.removeWhere(
+                                        (element) =>
+                                            element ==
+                                            state.categories[index].id);
+                                    preferredCategoriesNames.removeWhere(
+                                        (element) =>
+                                            element ==
+                                            state.categories[index].nameEn);
+                                  } else {
+                                    preferredCategoriesNames
+                                        .add(state.categories[index].nameEn);
+                                    preferredCategoriesId
+                                        .add(state.categories[index].id);
+                                  }
+
                                   categoryPreferences.update(
                                       state.categories[index],
                                       (value) => !categoryPreferences[
@@ -229,6 +251,13 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
   }
 
   void handleNext(context) async {
+    ///log to firebase
+
+    for (final categoryName in preferredCategoriesNames) {
+      FirebaseAnalytics().logEvent(
+          name: "CATEGORY_PREF", parameters: {'category_id': categoryName});
+    }
+
     await Future.delayed(Duration(milliseconds: 500));
     BlocProvider.of<StartupBloc>(context)
         .add(UpdatePreferenceFlow("/categorySelectionPage"));

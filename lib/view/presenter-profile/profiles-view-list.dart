@@ -13,7 +13,6 @@ import 'package:tienda/model/presenter-category.dart';
 import 'package:tienda/view/chat/presenter-direct-message.dart';
 import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/presenter-profile/presenter-profile-page.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class SellerProfileListView extends StatefulWidget {
   @override

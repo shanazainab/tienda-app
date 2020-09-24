@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -207,6 +208,8 @@ class _CountryChoosePageState extends State<CountryChoosePage>
                                     appLanguage.appLocal == Locale('en')
                                         ? selectedCountry.nameEnglish
                                         : selectedCountry.nameArabic;
+                                currentLocationCountry =
+                                    selectedCountry.nameEnglish;
                                 panelController.close();
                               });
                             },
@@ -222,6 +225,12 @@ class _CountryChoosePageState extends State<CountryChoosePage>
   }
 
   void handleNext(BuildContext context) {
+    ///Log country of preference
+
+    FirebaseAnalytics().logEvent(
+        name: 'COUNTRY_PREF',
+        parameters: {'country_name': currentLocationCountry});
+
     if (currentCountry != "") {
       BlocProvider.of<StartupBloc>(context)
           .add(UpdatePreferenceFlow("/countryChoosePage"));

@@ -16,6 +16,7 @@ import 'package:tienda/model/product-list-response.dart' as PLR;
 import 'package:tienda/model/search-body.dart';
 import 'package:tienda/model/wishlist.dart';
 import 'package:tienda/video-overlays/overlay_service.dart';
+import 'package:tienda/view/products/product-review-page.dart';
 import 'package:tienda/view/products/single-product-page.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -36,7 +37,6 @@ class ProductListContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     var appLanguage = Provider.of<AppLanguage>(context);
 
     return Stack(
@@ -94,8 +94,7 @@ class ProductListContainer extends StatelessWidget {
             shrinkWrap: true,
             controller: scrollController
               ..addListener(() {
-                if (scrollController.offset >=
-                        20 &&
+                if (scrollController.offset >= 20 &&
                     !scrollController.position.outOfRange) {
                   showProductCount.sink.add(true);
                   debugPrint("reach the top");
@@ -128,12 +127,21 @@ class ProductListContainer extends StatelessWidget {
                           children: <Widget>[
                             GestureDetector(
                               onTap: () {
-
-                                OverlayService().addVideoTitleOverlay(context,SingleProductPage(
-                                    productListResponse
-                                        .products[index].id),false);
-
-
+                                productListResponse.products[index].lastVideo !=
+                                        "no-video"
+                                    ? OverlayService().addVideoTitleOverlay(
+                                        context,
+                                        ProductReviewPage(productListResponse
+                                            .products[index].id),
+                                        false)
+                                    : Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              SingleProductPage(
+                                                  productListResponse
+                                                      .products[index].id),
+                                        ));
                               },
                               child: FadeInImage.memoryNetwork(
                                 placeholder: kTransparentImage,
@@ -141,7 +149,7 @@ class ProductListContainer extends StatelessWidget {
                                     .products[index].thumbnail,
                                 width: MediaQuery.of(context).size.width / 2,
                                 height: 220,
-                                 fit: BoxFit.scaleDown,
+                                fit: BoxFit.scaleDown,
                               ),
                             ),
                             Expanded(

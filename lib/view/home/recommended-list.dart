@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/model/product.dart';
 import 'package:tienda/video-overlays/overlay_service.dart';
+import 'package:tienda/view/products/product-review-page.dart';
 import 'package:tienda/view/products/single-product-page.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -38,8 +41,23 @@ class RecommendedList extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: GestureDetector(
                       onTap: (){
-                        OverlayService().addVideoTitleOverlay(context,SingleProductPage(
-                            recommendedProducts[index].id),false);
+
+                        FirebaseAnalytics()
+                            .logEvent(name: "HOME_PAGE_CLICK", parameters: {
+                          'section_name': 'recommendation',
+                          'item_type': 'product',
+                          'item_id':  recommendedProducts[index].nameEn,
+                        });
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  SingleProductPage(
+                                      recommendedProducts[index].id),
+                            ));
+                        // OverlayService().addVideoTitleOverlay(context,ProductReviewPage(
+                        //     recommendedProducts[index].id),false);
 
                       },
                       child: Container(
@@ -53,13 +71,13 @@ class RecommendedList extends StatelessWidget {
                               child: Container(
                                 height: 120,
                                 width: 120,
-                                child: FadeInImage.memoryNetwork(
-                                  image:
+                                child: CachedNetworkImage(
+                                  imageUrl:
                                   recommendedProducts[index].thumbnail,
                                   height: 120,
                                   width: 120,
                                   fit: BoxFit.cover,
-                                  placeholder: kTransparentImage,
+                                //  placeholder: kTransparentImage,
 
                                 ),
                               ),

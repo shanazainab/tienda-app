@@ -51,6 +51,14 @@ class ProductListResponse {
     }
 
     return response;
+
+
+  }
+
+
+  @override
+  String toString() {
+    return 'ProductListResponse{products: $products}';
   }
 
   Map<String, dynamic> toJson() => {

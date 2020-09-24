@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,68 +43,61 @@ class TopCategories extends StatelessWidget {
           itemBuilder: (_, index) => Padding(
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
-              onTap: (){
+              onTap: () {
+                FirebaseAnalytics()
+                    .logEvent(name: "HOME_PAGE_CLICK", parameters: {
+                  'section_name': 'top-categories',
+                  'item_type': 'category',
+                  'item_id': topCategories[index].nameEn
+                });
+
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => MultiBlocProvider(
-                          providers: [
-                            BlocProvider<FilterBloc>(
-                              create: (BuildContext context) => FilterBloc(),
-                            ),
-                            BlocProvider(
-                              create: (BuildContext context) => ProductBloc()
-                                ..add(FetchProductList(
-                                    query: 'get_category',
-                                    searchBody: SearchBody(
-                                        category: topCategories[index].id))),
-                            )
-                          ],
-                          child: ProductListPage(
-                            titleInEnglish:topCategories[index].nameEn,
-                            titleInArabic: topCategories[index].nameEn,
-                            query: 'get_category',
-                            searchBody: new SearchBody(
-                                category: topCategories[index].id),
-                          ),
-                        )));
+                              providers: [
+                                BlocProvider<FilterBloc>(
+                                  create: (BuildContext context) =>
+                                      FilterBloc(),
+                                ),
+                                BlocProvider(
+                                  create: (BuildContext context) =>
+                                      ProductBloc()
+                                        ..add(FetchProductList(
+                                            query: 'get_category',
+                                            searchBody: SearchBody(
+                                                category:
+                                                    topCategories[index].id))),
+                                )
+                              ],
+                              child: ProductListPage(
+                                titleInEnglish: topCategories[index].nameEn,
+                                titleInArabic: topCategories[index].nameEn,
+                                query: 'get_category',
+                                searchBody: new SearchBody(
+                                    category: topCategories[index].id),
+                              ),
+                            )));
               },
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   border: Border(
-                    left: BorderSide(
-                      color: Colors.grey,
-                        width: 1
-                    ),
-                    bottom:BorderSide(
-                      color: Colors.grey,
-                        width: 1
-
-                    ),
-                    top: BorderSide(
-                      color: Colors.grey,
-                        width: 1
-
-                    ),
-                    right: BorderSide(
-                      color: Colors.grey,
-                      width: 1
-                    )
-                  ),
+                      left: BorderSide(color: Colors.grey, width: 1),
+                      bottom: BorderSide(color: Colors.grey, width: 1),
+                      top: BorderSide(color: Colors.grey, width: 1),
+                      right: BorderSide(color: Colors.grey, width: 1)),
                 ),
                 width: 10,
                 alignment: Alignment.center,
                 height: 20,
                 child: Padding(
-                  padding: const EdgeInsets.only(top:4.0,bottom: 4.0),
+                  padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
                   child: Text(
                     appLanguage.appLocal == Locale("en")
                         ? topCategories[index].nameEn
                         : topCategories[index].nameAr,
-                    style: TextStyle(
-                      fontSize: 12
-                    ),
+                    style: TextStyle(fontSize: 12),
                   ),
                 ),
               ),

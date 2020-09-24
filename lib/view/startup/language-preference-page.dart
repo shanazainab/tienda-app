@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,7 +31,7 @@ class _LanguagePreferencePageState extends State<LanguagePreferencePage> {
             height: 200,
             alignment: Alignment.center,
             child: Text(
-             AppLocalizations.of(context).translate("pick-your-language"),
+              AppLocalizations.of(context).translate("pick-your-language"),
               style: TextStyle(fontSize: 18),
             ),
           ),
@@ -51,8 +52,7 @@ class _LanguagePreferencePageState extends State<LanguagePreferencePage> {
                       },
                       selected: isEnglishSelected,
                       title: Text("English"),
-                      trailing:
-                          isEnglishSelected ? Icon(Icons.check) :null,
+                      trailing: isEnglishSelected ? Icon(Icons.check) : null,
                     ),
                     ListTile(
                       onTap: () {
@@ -61,30 +61,27 @@ class _LanguagePreferencePageState extends State<LanguagePreferencePage> {
                         });
                         appLanguage.changeLanguage(Locale("ar"));
                       },
-                      trailing:
-                          !isEnglishSelected ? Icon(Icons.check) : null,
+                      trailing: !isEnglishSelected ? Icon(Icons.check) : null,
                       selected: !isEnglishSelected,
                       title: Text("العربية"),
                     ),
                   ],
-                )
-                ),
+                )),
           ),
           Container(
-
             height: 100,
             alignment: Alignment.center,
             child: SizedBox(
               height: 46,
               width: MediaQuery.of(context).size.width - 100,
               child: RaisedButton(
-
                 onPressed: () {
                   handleNext(context);
                 },
-                child: Text(AppLocalizations.of(context).translate("continue"),style: TextStyle(
-                  color: Colors.white
-                ),),
+                child: Text(
+                  AppLocalizations.of(context).translate("continue"),
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ),
@@ -94,6 +91,14 @@ class _LanguagePreferencePageState extends State<LanguagePreferencePage> {
   }
 
   void handleNext(context) {
+    if (isEnglishSelected) {
+      FirebaseAnalytics()
+          .logEvent(name: 'LANGUAGE_PREF', parameters: {'lang_code': 'en'});
+    } else {
+      FirebaseAnalytics()
+          .logEvent(name: 'LANGUAGE_PREF', parameters: {'lang_code': 'ar'});
+    }
+
     BlocProvider.of<StartupBloc>(context)
         .add(UpdatePreferenceFlow("/languagePreferencePage"));
 

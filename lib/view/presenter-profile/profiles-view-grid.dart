@@ -1,14 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_parallax/flutter_parallax.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+
 import 'package:global_configuration/global_configuration.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:tienda/bloc/events/live-stream-events.dart';
-import 'package:tienda/bloc/live-stream-bloc.dart';
-import 'package:tienda/bloc/live-stream-checkout-bloc.dart';
+
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/presenter-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
@@ -18,32 +14,17 @@ import 'package:tienda/loading-widget.dart';
 import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/presenter-profile/presenter-profile-page.dart';
 
-class SellerProfilesGridView extends StatefulWidget {
-  @override
-  _State createState() => _State();
-}
-
-class _State extends State<SellerProfilesGridView>
-    with AutomaticKeepAliveClientMixin {
-  ScrollController scrollController = new ScrollController();
+class SellerProfilesGridView extends StatelessWidget {
+  final ScrollController scrollController = new ScrollController();
   final transformationController = TransformationController();
 
   final _opacityStream = BehaviorSubject<int>();
   final GlobalKey _globalKey = GlobalKey();
   final List<GlobalKey> _childGlobalKey = new List();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  int _rowCount = 20;
-  int _columnCount = 3;
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
 
     print("PRESENTER GRIDVIEW REBUILD");
     return BlocListener<PresenterBloc, PresenterStates>(
@@ -71,11 +52,7 @@ class _State extends State<SellerProfilesGridView>
                   scaleEnabled: true,
                   constrained: false,
                   onInteractionStart: (_) => print("Interaction Started"),
-                  onInteractionEnd: (details) {
-                    setState(() {
-                      transformationController.toScene(Offset.zero);
-                    });
-                  },
+                  onInteractionEnd: (details) {},
                   onInteractionUpdate: (details) {
                     final RenderBox referenceBox =
                         _globalKey.currentContext.findRenderObject();
@@ -107,7 +84,6 @@ class _State extends State<SellerProfilesGridView>
                         break;
                       }
                     }
-
                   },
                   child: Container(
                     child: SizedBox(
@@ -115,20 +91,14 @@ class _State extends State<SellerProfilesGridView>
                       height: MediaQuery.of(context).size.height,
                       child: GridView.builder(
                         shrinkWrap: false,
-                          cacheExtent:1500,
-
+                        cacheExtent: 1500,
                         addAutomaticKeepAlives: true,
-
-                        controller: scrollController
-                          ..addListener(() {
-
-                          }),
+                        controller: scrollController..addListener(() {}),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3, childAspectRatio: 1.4),
                         itemCount: state.presenters.length,
                         scrollDirection: Axis.horizontal,
                         padding: EdgeInsets.all(0),
-
                         itemBuilder: (BuildContext context, int index) =>
                             Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -169,18 +139,19 @@ class _State extends State<SellerProfilesGridView>
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             PresenterProfilePage(
-                                                                presenterId: state
-                                                                    .presenters[
-                                                                index]
-                                                                    .id,
-                                                            presenterName: state
-                                                                .presenters[
-                                                            index]
-                                                                .name,
-                                                                profileImageURL: state
-                                                                    .presenters[
-                                                                index]
-                                                                    .profilePicture,)),
+                                                              presenterId: state
+                                                                  .presenters[
+                                                                      index]
+                                                                  .id,
+                                                              presenterName: state
+                                                                  .presenters[
+                                                                      index]
+                                                                  .name,
+                                                              profileImageURL: state
+                                                                  .presenters[
+                                                                      index]
+                                                                  .profilePicture,
+                                                            )),
                                                   );
                                           },
                                           child: Card(
@@ -211,7 +182,6 @@ class _State extends State<SellerProfilesGridView>
                                                       "${GlobalConfiguration().getString("imageURL")}/${state.presenters[index].profilePicture}",
                                                   height: 450,
                                                   width: 350,
-
                                                   fit: BoxFit.cover,
                                                 ),
                                                 Align(
@@ -250,8 +220,4 @@ class _State extends State<SellerProfilesGridView>
       }),
     );
   }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +12,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:tienda/app-country.dart';
 import 'package:tienda/app-language.dart';
@@ -28,8 +30,8 @@ import 'package:tienda/bloc/preference-bloc.dart';
 import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
+import 'package:tienda/controller/db-controller.dart';
 import 'package:tienda/localization.dart';
-import 'package:tienda/myapp.dart';
 import 'package:tienda/video-overlays/overlay_handler.dart';
 import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/live-stream/shop-live-screen.dart';
@@ -50,20 +52,29 @@ final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  ///Flutter Downloader: To Run background task for product video offline support
   await FlutterDownloader.initialize(debug: true);
-  //
+
+  ///Initialize flutter SQLite
+  DBController().initializeDB();
+
   // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   // sharedPreferences.clear();
+
+  ///Enable Firebase analytics
+  FirebaseAnalytics analytics = FirebaseAnalytics();
+
   ///Enable firebase crash analytics
   Crashlytics.instance.enableInDevMode = true;
 
   // Pass all uncaught errors from the framework to Crashlytics.
-  FlutterError.onError = Crashlytics.instance.recordFlutterError;
+  //FlutterError.onError = Crashlytics.instance.recordFlutterError;
 
   ///To track bloc pattern states and transitions
-  // BlocSupervisor.delegate = await HydratedBlocDelegate.build();
   Bloc.observer = TrackBlocDelegate();
-  //HydratedBloc.storage = await HydratedStorage.build();
+
+  ///Bloc persistence with hydrated bloc
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: await getApplicationDocumentsDirectory(),
   );
@@ -78,45 +89,49 @@ Future<void> main() async {
   AppCountry appCountry = AppCountry();
   await appCountry.fetchCountry();
 
+  FirebaseAnalytics().logAppOpen();
+
   // await SystemChrome.setPreferredOrientations(
   //     [DeviceOrientation.portraitUp]);
 
-  runZoned<Future<void>>(() async {
-    runApp(MultiBlocProvider(
-      providers: [
-        BlocProvider<StartupBloc>(
-          lazy: false,
-          create: (BuildContext context) => StartupBloc()..add(AppStarted()),
-        ),
-        BlocProvider<PreferenceBloc>(
-          create: (BuildContext context) => PreferenceBloc(),
-        ),
-        BlocProvider<LoginBloc>(
-          lazy: false,
-          create: (BuildContext context) =>
-              LoginBloc()..add(CheckLoginStatus()),
-        ),
-        BlocProvider<WishListBloc>(
-          create: (BuildContext context) => WishListBloc(),
-        ),
-        BlocProvider<CustomerProfileBloc>(
-          create: (BuildContext context) =>
-              CustomerProfileBloc()..add(FetchCustomerProfile()),
-        ),
-        BlocProvider<LoadingBloc>(
-          create: (BuildContext context) =>
-          LoadingBloc()
-        ),
-        BlocProvider<CartBloc>(
-          create: (BuildContext context) => CartBloc()..add(FetchCartData()),
-        ),
-      ],
-      child: App(
-        appCountry: appCountry,
-        appLanguage: appLanguage,
+  // runZoned<Future<void>>(() async {
+  //
+  // }, onError: Crashlytics.instance.recordError);
+
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider<StartupBloc>(
+        lazy: false,
+        create: (BuildContext context) => StartupBloc()..add(AppStarted()),
       ),
-    ));
-  }, onError: Crashlytics.instance.recordError);
+      BlocProvider<PreferenceBloc>(
+        create: (BuildContext context) => PreferenceBloc(),
+      ),
+      BlocProvider<LoginBloc>(
+        lazy: false,
+        create: (BuildContext context) =>
+        LoginBloc()..add(CheckLoginStatus()),
+      ),
+      BlocProvider<WishListBloc>(
+        create: (BuildContext context) => WishListBloc(),
+      ),
+      BlocProvider<CustomerProfileBloc>(
+        create: (BuildContext context) =>
+        CustomerProfileBloc()..add(FetchCustomerProfile()),
+      ),
+      BlocProvider<LoadingBloc>(
+          create: (BuildContext context) =>
+              LoadingBloc()
+      ),
+      BlocProvider<CartBloc>(
+        create: (BuildContext context) => CartBloc()..add(FetchCartData()),
+      ),
+    ],
+    child: App(
+      appCountry: appCountry,
+      appLanguage: appLanguage,
+    ),
+  ));
 }
 
 class App extends StatelessWidget {
@@ -149,7 +164,10 @@ class App extends StatelessWidget {
             },
             navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
-
+            navigatorObservers: [
+              ///To track PageRoute transitions
+              FirebaseAnalyticsObserver(analytics: analytics),
+            ],
             localizationsDelegates: [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,

@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tienda/bloc/events/product-events.dart';
@@ -24,7 +25,9 @@ class FeaturedBrands extends StatelessWidget {
           Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                  AppLocalizations.of(context).translate('featured-brands').toUpperCase(),
+                  AppLocalizations.of(context)
+                      .translate('featured-brands')
+                      .toUpperCase(),
                   style: TextStyle(color: Colors.grey))),
           SizedBox(
             height: 100,
@@ -36,6 +39,13 @@ class FeaturedBrands extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: GestureDetector(
                       onTap: () {
+                        FirebaseAnalytics()
+                            .logEvent(name: "HOME_PAGE_CLICK", parameters: {
+                          'section_name': 'top_brands',
+                          'item_type': 'brand',
+                          'item_id': featuredBrand[index].brand,
+                        });
+
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -66,10 +76,12 @@ class FeaturedBrands extends StatelessWidget {
                           backgroundColor: Colors.black,
                           child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(featuredBrand[index].brand,
-                                textAlign: TextAlign.center,),
-                              ))),
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              featuredBrand[index].brand,
+                              textAlign: TextAlign.center,
+                            ),
+                          ))),
                     ),
                   );
                 }),

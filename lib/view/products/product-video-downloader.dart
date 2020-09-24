@@ -4,9 +4,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tienda/controller/db-controller.dart';
 import 'package:tienda/controller/download-controller.dart';
 import 'package:tienda/model/product.dart';
 
@@ -27,6 +29,10 @@ class _ProductVideoDownloaderState extends State<ProductVideoDownloader>
 
   DownloadController downloadController = new DownloadController();
 
+  bool isStatusClear = false;
+
+  String status;
+
   @override
   void dispose() {
     IsolateNameServer.removePortNameMapping('downloader_send_port');
@@ -37,10 +43,12 @@ class _ProductVideoDownloaderState extends State<ProductVideoDownloader>
   void initState() {
     // TODO: implement initState
     super.initState();
+
     _bindBackgroundIsolate();
 
     FlutterDownloader.registerCallback(downloadCallback);
     _prepare();
+
   }
 
   void _bindBackgroundIsolate() {
@@ -74,17 +82,19 @@ class _ProductVideoDownloaderState extends State<ProductVideoDownloader>
       Map<Permission, PermissionStatus> statuses = await [
         Permission.storage,
       ].request();
-      print(statuses[
-          Permission.storage]); // it should print PermissionStatus.granted
+      print(statuses[Permission.storage]);
     }
-
     String taskId = await FlutterDownloader.enqueue(
         url: widget.product.lastVideo,
         headers: {"auth": "test_for_sql_encoding"},
         savedDir: _localPath,
         showNotification: true,
         openFileFromNotification: true);
-
+    DBController().insertData(new DownloadTaskProgress(
+        productId: widget.product.id,
+        taskId: taskId,
+        storagePath: _localPath,
+        videoName: widget.product.nameEn));
     downloadProgress =
         new DownloadTaskProgress(productId: widget.product.id, taskId: taskId);
   }
@@ -103,11 +113,23 @@ class _ProductVideoDownloaderState extends State<ProductVideoDownloader>
   }
 
   _prepare() async {
+    status =
+        await DBController().checkDBForDownloadedProduct(widget.product.id);
+    Logger().e("DOWNLOAD STATUS:$status");
     String localPath = await _findLocalPath();
     _localPath = localPath + Platform.pathSeparator + 'Download';
+    final savedDir = Directory(localPath);
+    bool hasExisted = await savedDir.exists();
+    Logger().d("DIRECTORY EXIST : $hasExisted");
 
+    if (!hasExisted) {
+      savedDir.create();
+    }
     print("DOWNLOAD LOCATION PATH:$_localPath");
+    setState(() {});
+
   }
+
 
   Future<String> _findLocalPath() async {
     final directory = Platform.isAndroid
@@ -122,7 +144,7 @@ class _ProductVideoDownloaderState extends State<ProductVideoDownloader>
         stream: downloadController.downloadStream,
         builder: (BuildContext context,
             AsyncSnapshot<List<DownloadTaskProgress>> snapshot) {
-          if (snapshot.data != null) {
+          if (snapshot.data != null && status != null) {
             int progress;
             String taskId;
             for (final task in snapshot.data) {
@@ -130,92 +152,124 @@ class _ProductVideoDownloaderState extends State<ProductVideoDownloader>
                 progress = task.progress;
                 taskId = task.taskId;
 
-                if(progress == 100){
+                if (progress == 100 || progress == -1) {
                   ///TODO: ADD TO DB
-
+                  DBController().updateDB(new DownloadTaskProgress(
+                      productId: widget.product.id,
+                      taskId: taskId,
+                      storagePath: _localPath,
+                      videoName: widget.product.nameEn));
                 }
               }
             }
 
-            return progress != null
-                ? progress == 100
-                    ? GestureDetector(
-                        onTap: () {
-
-                          print("Tapped");
-                          _cancelDownload(taskId);
-                        },
-                        child: CircularPercentIndicator(
-                          radius: 30.0,
-                          lineWidth: 2.0,
-                          animateFromLastPercent: true,
-                          animation: true,
-                          percent: progress / 100,
-                          center: Icon(
-                            Icons.close,
-                            size: 16,
-                          ),
-                          circularStrokeCap: CircularStrokeCap.round,
-                          progressColor: Colors.pinkAccent,
-                        ),
-                      )
+            return status == "OFFLINE"
+                ? GestureDetector(
+                    onTap: () {
+                      ///Navigate to all downloads page
+                    },
+                    child: Card(
+                      color: Colors.grey,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 8.0, right: 8.0, top: 4, bottom: 4),
+                        child: Text(status),
+                      ),
+                    ))
+                : progress != null
+                    ? progress != 100 && progress != -1
+                        ? GestureDetector(
+                            onTap: () {
+                              print("Tapped");
+                              _cancelDownload(taskId);
+                            },
+                            child: CircularPercentIndicator(
+                              radius: 30.0,
+                              lineWidth: 2.0,
+                              animateFromLastPercent: true,
+                              animation: true,
+                              percent: progress / 100,
+                              center: Icon(
+                                Icons.close,
+                                size: 16,
+                              ),
+                              circularStrokeCap: CircularStrokeCap.round,
+                              progressColor: Colors.pinkAccent,
+                            ),
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              print("Tapped empty");
+                            },
+                            child: CircularPercentIndicator(
+                              radius: 30.0,
+                              lineWidth: 2.0,
+                              animateFromLastPercent: true,
+                              animation: true,
+                              percent: 1.0,
+                              center: Icon(
+                                Icons.done,
+                                size: 16,
+                              ),
+                              circularStrokeCap: CircularStrokeCap.round,
+                              progressColor: Colors.pinkAccent,
+                            ),
+                          )
                     : GestureDetector(
                         onTap: () {
-                          print("Tapped empty");
+                          print("Tapped");
 
+                          _requestDownload();
                         },
                         child: CircularPercentIndicator(
                           radius: 30.0,
                           lineWidth: 2.0,
                           animateFromLastPercent: true,
                           animation: true,
-                          percent: 1.0,
+                          percent: 0,
                           center: Icon(
-                            Icons.done,
+                            Icons.save_alt,
                             size: 16,
                           ),
                           circularStrokeCap: CircularStrokeCap.round,
                           progressColor: Colors.pinkAccent,
                         ),
-                      )
-                : GestureDetector(
+                      );
+          } else if (snapshot.data == null && status != null)
+            return status == "OFFLINE"
+                ? GestureDetector(
                     onTap: () {
-                      print("Tapped");
-
-                      _requestDownload();
+                      ///Navigate to all downloads page
                     },
-                    child: CircularPercentIndicator(
-                      radius: 30.0,
-                      lineWidth: 2.0,
-                      animateFromLastPercent: true,
-                      animation: true,
-                      percent: 0,
-                      center: Icon(
-                        Icons.save_alt,
-                        size: 16,
+                    child: Card(
+                      color: Colors.grey,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 8.0, right: 8.0, top: 4, bottom: 4),
+                        child: Text(status),
                       ),
-                      circularStrokeCap: CircularStrokeCap.round,
-                      progressColor: Colors.pinkAccent,
-                    ),
-                  );
-          } else
-            return GestureDetector(
-              onTap: () {
-                print("Tapped");
+                    ))
+                : status == "NOT-OFFLINE"
+                    ? GestureDetector(
+                        onTap: () {
+                          print("Tapped");
 
-                _requestDownload();
-              },
-              child: CircularPercentIndicator(
-                radius: 30.0,
-                lineWidth: 2.0,
-                animateFromLastPercent: true,
-                animation: true,
-                percent: 0,
-                center: Icon(Icons.save_alt, size: 16),
-                circularStrokeCap: CircularStrokeCap.round,
-                progressColor: Colors.pinkAccent,
-              ),
-            );
+                          _requestDownload();
+                        },
+                        child: CircularPercentIndicator(
+                          radius: 30.0,
+                          lineWidth: 2.0,
+                          animateFromLastPercent: true,
+                          animation: true,
+                          percent: 0,
+                          center: Icon(Icons.save_alt, size: 16),
+                          circularStrokeCap: CircularStrokeCap.round,
+                          progressColor: Colors.pinkAccent,
+                        ),
+                      )
+                    : Container();
+          else
+            return Container();
         });
   }
 }

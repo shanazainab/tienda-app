@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:logger/logger.dart';
 import 'package:tienda/model/presenter.dart';
 
-class Product extends Equatable {
+class Product{
   Product(
       {this.id,
       this.quantity,
@@ -154,12 +154,17 @@ class Product extends Equatable {
   }
 
   @override
-  // TODO: implement stringify
-  bool get stringify => true;
+  String toString() {
+    return 'Product{lastVideo: $lastVideo}';
+  }
 
-  @override
-  // TODO: implement props
-  List<Object> get props => [isWishListed];
+// @override
+  // // TODO: implement stringify
+  // bool get stringify => true;
+  //
+  // @override
+  // // TODO: implement props
+  // List<Object> get props => [isWishListed];
 }
 
 class Review {

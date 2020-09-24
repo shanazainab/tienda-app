@@ -15,7 +15,7 @@ import 'package:tienda/localization.dart';
 import 'package:tienda/model/cart.dart';
 import 'package:tienda/model/wishlist.dart';
 import 'package:tienda/video-overlays/overlay_service.dart';
-import 'package:tienda/view/products/single-product-page.dart';
+import 'package:tienda/view/products/product-review-page.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class CartItemsContainer extends StatelessWidget {
@@ -38,7 +38,7 @@ class CartItemsContainer extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             OverlayService().addVideoTitleOverlay(
-                context, SingleProductPage(cart.products[index].id), false);
+                context, ProductReviewPage(cart.products[index].id), false);
           },
           child: new Container(
               child: Column(

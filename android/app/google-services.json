@@ -8,34 +8,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:874733787854:android:1bc4119dff9a5c82374e9f",
+        "mobilesdk_app_id": "1:874733787854:android:50ef4a358c5fcfba374e9f",
         "android_client_info": {
           "package_name": "com.tienda.liveshop"
         }
       },
       "oauth_client": [
         {
-          "client_id": "874733787854-j050433ph0p9ps5irl57rdq9ief5on15.apps.googleusercontent.com",
+          "client_id": "874733787854-c9dm2fohsc4rg40s0ua0g35l8m0kqrsl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.tienda.liveshop",
             "certificate_hash": "d3ed4607eb856d0d0c1f3a2bb42870684e3dc199"
-          }
-        },
-        {
-          "client_id": "874733787854-j3tof3am2lhdl2qupib42m3nr25chdv4.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.tienda.liveshop",
-            "certificate_hash": "d21584c31f98179cfe8315fbb7ca113247dacd13"
-          }
-        },
-        {
-          "client_id": "874733787854-fk8kgcrq19j03ddp71kiklheff3gsd6g.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.tienda.liveshop",
-            "certificate_hash": "e31304aee6ab5dd5f2a6bc7c48a6984a1ff72863"
           }
         },
         {

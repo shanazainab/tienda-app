@@ -22,10 +22,11 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
   int _selectedIndex = 0;
   CategoriesPage categoryPage = CategoriesPage();
-  TiendaHomePage tiendaHomePage = TiendaHomePage();
+  HomeScreenData homeScreenData = HomeScreenData();
   CustomerProfile customerProfile = CustomerProfile();
   SellerProfileViewsMain sellerProfileViewsMain = new SellerProfileViewsMain();
 
@@ -33,7 +34,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
   void initState() {
     // TODO: implement initState
 
-    print("HOME BUILD");
     super.initState();
     ConnectivityBloc()..initializeConnectivityListener();
     OneSignalNotificationController().initializeListeners();
@@ -63,7 +63,9 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
 
+    print("HOME PAGE REBUILT");
     return WillPopScope(
       onWillPop: () {
         DateTime now = DateTime.now();
@@ -111,10 +113,20 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
         ),
         backgroundColor: Colors.white,
         body: IndexedStack(
-
           index: _selectedIndex,
           children: [
-            tiendaHomePage,
+            // Navigator(
+            //   key: GlobalKey<NavigatorState>(),
+            //   // Since this isn't the purpose of this sample, we're not using named
+            //   // routes. Because of that, the onGenerateRoute callback will be
+            //   // called only for the initial route.
+            //   onGenerateRoute: (settings) => MaterialPageRoute(
+            //     settings: settings,
+            //     builder: (context) => TiendaHomePage(),
+            //   ),
+            // ),
+
+            homeScreenData,
             sellerProfileViewsMain,
             categoryPage,
             customerProfile

@@ -35,9 +35,6 @@ PODS:
   - Firebase/DynamicLinks (6.31.1):
     - Firebase/CoreOnly
     - FirebaseDynamicLinks (~> 4.3.0)
-  - Firebase/MLVision (6.31.1):
-    - Firebase/CoreOnly
-    - FirebaseMLVision (~> 0.21.0)
   - Firebase/MLVisionBarcodeModel (6.31.1):
     - Firebase/CoreOnly
     - FirebaseMLVisionBarcodeModel (~> 0.21.0)
@@ -65,10 +62,6 @@ PODS:
     - Flutter
   - firebase_dynamic_links (0.1.0):
     - Firebase/DynamicLinks
-    - Flutter
-  - firebase_ml_vision (0.1.1):
-    - Firebase/Core
-    - Firebase/MLVision
     - Flutter
   - FirebaseAnalytics (6.8.0):
     - FirebaseCore (~> 6.10)
@@ -257,13 +250,9 @@ PODS:
     - Flutter
   - sms_autofill (0.0.1):
     - Flutter
-  - speech_to_text (0.0.1):
-    - Flutter
-    - Try
   - sqflite (0.0.1):
     - Flutter
     - FMDB (~> 2.7.2)
-  - Try (2.1.1)
   - video_player (0.0.1):
     - Flutter
   - wakelock (0.0.1):
@@ -305,7 +294,6 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
   - firebase_dynamic_links (from `.symlinks/plugins/firebase_dynamic_links/ios`)
-  - firebase_ml_vision (from `.symlinks/plugins/firebase_ml_vision/ios`)
   - Flutter (from `Flutter`)
   - flutter_downloader (from `.symlinks/plugins/flutter_downloader/ios`)
   - flutter_facebook_login (from `.symlinks/plugins/flutter_facebook_login/ios`)
@@ -325,7 +313,6 @@ DEPENDENCIES:
   - share (from `.symlinks/plugins/share/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sms_autofill (from `.symlinks/plugins/sms_autofill/ios`)
-  - speech_to_text (from `.symlinks/plugins/speech_to_text/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - video_player (from `.symlinks/plugins/video_player/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
@@ -372,7 +359,6 @@ SPEC REPOS:
     - Reachability
     - SDWebImage
     - SDWebImageWebPCoder
-    - Try
     - ZendeskAnswerBotProvidersSDK
     - ZendeskAnswerBotSDK
     - ZendeskChatProvidersSDK
@@ -400,8 +386,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_crashlytics/ios"
   firebase_dynamic_links:
     :path: ".symlinks/plugins/firebase_dynamic_links/ios"
-  firebase_ml_vision:
-    :path: ".symlinks/plugins/firebase_ml_vision/ios"
   Flutter:
     :path: Flutter
   flutter_downloader:
@@ -440,8 +424,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences/ios"
   sms_autofill:
     :path: ".symlinks/plugins/sms_autofill/ios"
-  speech_to_text:
-    :path: ".symlinks/plugins/speech_to_text/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
   video_player:
@@ -465,7 +447,6 @@ SPEC CHECKSUMS:
   firebase_core: 335c02abd48672b7c83c683df833d0488a72e73e
   firebase_crashlytics: cc468e94e5a637364aeeeec5c8a96d92ea75ec7b
   firebase_dynamic_links: 6aa278fc5e6e8cca17d5aa4c7aa46283f2b94749
-  firebase_ml_vision: 11344f4ad828cfa52939713deb3180ecfa3f1e3b
   FirebaseAnalytics: 0ca9aa2af7cc4dc92392b7a78bfc49feaa2eb60f
   FirebaseAuth: 09f086fae98643f1ef235674cf3ae171ce26f5ba
   FirebaseCore: 6fb954e350af0885803d5aa49865d15d9a6b264c
@@ -515,9 +496,7 @@ SPEC CHECKSUMS:
   share: 0b2c3e82132f5888bccca3351c504d0003b3b410
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sms_autofill: c461043483362c3f1709ee76eaae6eb570b31686
-  speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
   sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0
-  Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
   video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e
   wakelock: 0d4a70faf8950410735e3f61fb15d517c8a6efc4
   webview_flutter: d2b4d6c66968ad042ad94cbb791f5b72b4678a96

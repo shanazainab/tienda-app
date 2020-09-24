@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -38,7 +39,9 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
     return BlocListener<LoginBloc, LoginStates>(
         listener: (context, state) {
           if (state is LoginVerifyOTPSuccess) {
-            if (state.isNewUser)
+            if (state.isNewUser) {
+              ///Record Sign Up method
+              FirebaseAnalytics().logSignUp(signUpMethod: "PHONE-NUMBER");
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -46,7 +49,8 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
                           mobileNumber: widget.mobileNumber,
                         )),
               );
-            else {
+            } else {
+
               BlocProvider.of<LoginBloc>(context)..add(CheckLoginStatus());
               Navigator.pushReplacement(
                 context,

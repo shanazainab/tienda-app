@@ -105,15 +105,15 @@ class _SearchPageState extends State<SearchPage> {
               visualDensity: VisualDensity.compact,
               onPressed: () {
                 searchFocus.unfocus();
-                showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext bc) {
-                      return VoiceSearch(
-                        onVoiceInput: (input) {
-                          searchTextController.text = input;
-                        },
-                      );
-                    });
+                // showModalBottomSheet(
+                //     context: context,
+                //     builder: (BuildContext bc) {
+                //       return VoiceSearch(
+                //         onVoiceInput: (input) {
+                //           searchTextController.text = input;
+                //         },
+                //       );
+                //     });
               },
               icon: Icon(
                 Icons.keyboard_voice,
@@ -207,7 +207,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void handleImageSearchQuery(File image) {
-    new MLController().createImageLabels(image);
+    //new MLController().createImageLabels(image);
   }
 
   void handleProductSearch(String text) {

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -52,6 +53,17 @@ class FeaturedPresentersList extends StatelessWidget {
                     children: <Widget>[
                       GestureDetector(
                         onTap: () {
+
+                          ///Log section click
+                          ///Section name
+                          ///Item type
+                          /// Item id
+                          FirebaseAnalytics().logEvent(
+                              name: "HOME_PAGE_CLICK", parameters: {'section_name': 'top-presenters',
+                          'item_type':'presenter','item_id':featurePresenters[index].name});
+
+
+
                           bool isGuestUser = BlocProvider.of<LoginBloc>(context)
                               .state is GuestUser;
 

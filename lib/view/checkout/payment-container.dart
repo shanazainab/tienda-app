@@ -1,4 +1,5 @@
 import 'package:expandable/expandable.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -378,6 +379,12 @@ class _PaymentContainerState extends State<PaymentContainer> {
   }
 
   void handlePayNowButton(int addressId) {
+
+
+    ///Record analytical data
+
+    FirebaseAnalytics().logAddPaymentInfo();
+
     if (_paymentMethod == "NEW-CARD") {
       if (_formKey.currentState.validate()) {
         FocusScope.of(context).unfocus();

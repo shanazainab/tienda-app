@@ -32,6 +32,7 @@ import 'package:tienda/view/explore/refer-and-earn.dart';
 import 'package:tienda/view/home/home-page.dart';
 import 'package:tienda/view/order/orders-main-page.dart';
 import 'package:tienda/view/startup/country-list-card.dart';
+import 'package:tienda/view/watch-history/watch-history.dart';
 import 'package:tienda/view/widgets/network-state-wrapper.dart';
 import 'package:tienda/view/wishlist/wishlist-page.dart';
 
@@ -153,7 +154,6 @@ class CustomerProfile extends StatelessWidget {
                   );
               }),
             );
-
           }
         }));
   }
@@ -420,7 +420,7 @@ class CustomerProfile extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => WishListPage()),
+              MaterialPageRoute(builder: (context) => WatchHistory()),
             );
           },
           trailing: Icon(
