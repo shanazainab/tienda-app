@@ -1,9 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:tienda/bloc/events/follow-events.dart';
 import 'package:tienda/bloc/follow-bloc.dart';
+import 'package:tienda/bloc/states/follow-states.dart';
 import 'package:tienda/controller/real-time-controller.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/presenter.dart';
@@ -34,124 +36,95 @@ class _PresenterProfileCardState extends State<PresenterProfileCard> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        CircleAvatar(
-          radius: 15,
-          backgroundColor: Colors.grey[200],
-          backgroundImage: NetworkImage(
-              "${GlobalConfiguration().getString("imageURL")}/${widget.presenter.profilePicture}"),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Column(
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.grey[200],
+              backgroundImage: NetworkImage(
+                  "${GlobalConfiguration().getString("imageURL")}/${widget.presenter.profilePicture}"),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     widget.presenter.name,
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,color: Colors.black),
                   ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 2,
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        AppLocalizations.of(context)
-                            .translate("live")
-                            .toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 6,
-                      ),
-                      StreamBuilder<String>(
-                          stream: new RealTimeController().viewCountStream,
-                          builder: (BuildContext context,
-                              AsyncSnapshot<String> snapshot) {
-                            return Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.remove_red_eye,
-                                  size: 14,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                                Text(
-                                  snapshot.data != null ? snapshot.data : "",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            );
-                          })
-                    ],
-                  )
+                  BlocBuilder<FollowBloc, FollowStates>(
+                      cubit: followBloc,
+                      builder: (context, state) {
+                        if (state is ChangeFollowStatusSuccess) if (state
+                                .followersCount ==
+                            null)
+                          return Text(
+                            "${widget.presenter.followers} subscribers",
+                            style: TextStyle(
+                              color: Color(0xFF555555),
+                              fontSize: 13,
+                            ),
+                          );
+                        else
+                          return Text(
+                            "${state.followersCount} subscribers",
+                            style: TextStyle(
+                              color: Color(0xFF555555),
+                              fontSize: 13,
+                            ),
+                          );
+                        else
+                          return Text(
+                            "${widget.presenter.followers} subscribers",
+                            style: TextStyle(
+                              color: Color(0xFF555555),
+                              fontSize: 13,
+                            ),
+                          );
+                      })
                 ],
               ),
-              SizedBox(
-                width: 8,
-              ),
-              SizedBox(
-                height: 20,
-
-                child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
-                  child: RaisedButton(
-                      onPressed: () {
-                        setState(() {
-                          isFollowing = !isFollowing;
-                        });
-                        followBloc.add(ChangeFollowStatus(widget.presenter.id));
-                      },
-                      padding: EdgeInsets.only(top:2,bottom: 2,left: 4,right: 4),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            isFollowing ? 'Following' : 'Follow',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white,
-                            ),
-                          ),
-                          isFollowing
-                              ? Icon(
-                                  Icons.check,
-                                  size: 12,
-                                )
-                              : Container()
-                        ],
-                      )),
-                ),
-              )
-            ],
-          ),
+            ),
+          ],
         ),
+        GestureDetector(
+            onTap: () {
+              setState(() {
+                isFollowing = !isFollowing;
+              });
+              followBloc.add(ChangeFollowStatus(widget.presenter.id));
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  isFollowing ? 'FOLLOWING' : 'FOLLOW',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF398994),
+                  ),
+                ),
+                isFollowing
+                    ? Icon(
+                        Icons.check,
+                        size: 12,
+                        color: Color(0xFF398994),
+                      )
+                    : Container()
+              ],
+            ))
       ],
     );
   }

@@ -6,8 +6,7 @@ import 'overlay_handler.dart';
 
 class OverlayService {
 
-
-  addVideoTitleOverlay(BuildContext context, Widget widget,bool isLiveStream) {
+  addVideoTitleOverlay(BuildContext context, Widget widget,bool isLiveStream,fromRoot) {
     OverlayEntry overlayEntry = OverlayEntry(
       builder: (context) => VideoTitleOverlayWidget(
         onClear: () {
@@ -18,7 +17,6 @@ class OverlayService {
       ),
     );
 
-    Provider.of<OverlayHandlerProvider>(context, listen: false).insertOverlay(context, overlayEntry);
+    Provider.of<OverlayHandlerProvider>(context, listen: false).insertOverlay(context, overlayEntry,fromRoot);
   }
-
 }

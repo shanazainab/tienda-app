@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-
 abstract class FollowStates extends Equatable {
   FollowStates();
 
@@ -14,8 +13,9 @@ class Loading extends FollowStates {
 
 class ChangeFollowStatusSuccess extends FollowStates {
   final bool isFollowing;
+  final int followersCount;
 
-  ChangeFollowStatusSuccess(this.isFollowing) : super();
+  ChangeFollowStatusSuccess({this.isFollowing, this.followersCount}) : super();
 
   @override
   List<Object> get props => [isFollowing];

@@ -22,4 +22,6 @@ abstract class CustomerProfileApiClient {
   Future<String> updateProfilePicture(@Body() String encodedImage);
 
 
+  @POST("/change_phone_number/")
+  Future<String> changePhoneNumber(@Body() String phoneNumber);
 }

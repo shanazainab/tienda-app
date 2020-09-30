@@ -18,7 +18,6 @@ class LiveChatContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 190,
-      width: 3 * MediaQuery.of(context).size.width / 4 - 50,
       child: FadingEdgeScrollView.fromScrollView(
         child: ListView.builder(
           padding: EdgeInsets.only(top: 16),

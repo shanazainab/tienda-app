@@ -360,7 +360,7 @@ class _PresenterProfilePageState extends State<PresenterProfilePage> {
                                                     context,
                                                     ProductReviewPage(snapshot
                                                         .data[index].id),
-                                                    false);
+                                                    false,false);
                                               },
                                               child: FadeInImage.memoryNetwork(
                                                 image:

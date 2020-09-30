@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
-import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/controller/login-controller.dart';
-import 'package:tienda/view/home/tienda-home-page.dart';
-import 'package:tienda/view/home/home-page.dart';
+import 'package:tienda/view/home/home-screen.dart';
 import 'package:tienda/view/login/login-mobile-number-page.dart';
 
 import '../../localization.dart';
@@ -24,10 +21,8 @@ class LoginMainPage extends StatelessWidget {
         listener: (context, state) {
           if (state is GoogleSignInResponse &&
               state.response == GoogleSignInResponse.SUCCESS) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
+            Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => HomeScreen()));
+
           } else if (state is GoogleSignInResponse &&
               state.response == GoogleSignInResponse.FAILED) {
             Fluttertoast.showToast(

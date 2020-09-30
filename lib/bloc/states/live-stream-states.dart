@@ -1,4 +1,4 @@
-import 'package:tienda/model/live-response.dart' ;
+import 'package:tienda/model/live-response.dart';
 import 'package:tienda/model/product.dart';
 
 abstract class LiveStreamStates {
@@ -6,6 +6,7 @@ abstract class LiveStreamStates {
 }
 
 class Loading extends LiveStreamStates {}
+
 class InitializationSuccess extends LiveStreamStates {}
 
 class JoinLiveSuccess extends LiveStreamStates {
@@ -14,23 +15,26 @@ class JoinLiveSuccess extends LiveStreamStates {
   JoinLiveSuccess(this.liveResponse) : super();
 }
 
+class UpdateWishListProductsSuccess extends LiveStreamStates {
+  final List<Product> products;
+
+  UpdateWishListProductsSuccess(
+    this.products,
+  ) : super();
+}
+
 class NotAuthorized extends LiveStreamStates {
   NotAuthorized() : super();
 }
 
 class MessageReceived extends LiveStreamStates {
-  final String  body;
+  final String body;
   final String senderName;
   final String profileImage;
   final int timestamp;
 
-
-  MessageReceived(
-      this.body,
-      this.profileImage,
-      this.timestamp,
-      this.senderName
-      ) : super();
+  MessageReceived(this.body, this.profileImage, this.timestamp, this.senderName)
+      : super();
 }
 
 class ShowProductSuccess extends LiveStreamStates {

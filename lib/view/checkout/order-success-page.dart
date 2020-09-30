@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tienda/view/home/home-page.dart';
+import 'package:tienda/view/home/home-screen.dart';
 
 class OrderSuccessPage extends StatelessWidget {
   @override
@@ -19,7 +19,7 @@ class OrderSuccessPage extends StatelessWidget {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => HomePage()));
+                        builder: (BuildContext context) => HomeScreen()));
               },
               child: Text("Continue Shopping"),
             )

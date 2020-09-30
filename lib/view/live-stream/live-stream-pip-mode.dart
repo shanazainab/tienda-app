@@ -25,7 +25,7 @@ import 'package:tienda/video-overlays/overlay_handler.dart';
 import 'package:tienda/view/live-stream/add-to-cart-popup.dart';
 import 'package:tienda/view/live-stream/cart-checkout-pop-up.dart';
 import 'package:tienda/view/live-stream/live-chat-container.dart';
-import 'package:tienda/view/live-stream/live-stream-bottom-bar.dart';
+import 'package:tienda/view/live-stream/live-chat-panel.dart';
 import 'package:tienda/view/live-stream/presenter-profile-card.dart';
 import 'package:video_player/video_player.dart';
 
@@ -375,8 +375,7 @@ class _LiveStreamPIPModeState extends State<LiveStreamPIPMode> {
 
                 Align(
                   alignment: Alignment.bottomLeft,
-                  child: LiveStreamBottomBar(
-                    productsVisibility: productsVisibility,
+                  child: LiveChatPanel(
                     presenter: widget.presenter,
                   ),
                 ),

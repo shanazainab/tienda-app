@@ -33,7 +33,7 @@ import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/controller/db-controller.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/video-overlays/overlay_handler.dart';
-import 'package:tienda/view/home/home-page.dart';
+import 'package:tienda/view/home/home-screen.dart';
 import 'package:tienda/view/live-stream/shop-live-screen.dart';
 import 'package:tienda/view/startup/country-choose-page.dart';
 import 'package:tienda/view/startup/language-preference-page.dart';
@@ -162,6 +162,7 @@ class App extends StatelessWidget {
                 child: child,
               );
             },
+
             navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
             navigatorObservers: [
@@ -225,7 +226,7 @@ class App extends StatelessWidget {
             ///App wide theme
             theme: ThemeData(
                 fontFamily:
-                    appLanguage.appLocal != Locale('en') ? 'Cairo' : 'Roboto',
+                    appLanguage.appLocal != Locale('en') ? 'Cairo' : 'SFProDisplay',
                 textTheme: TextTheme(
                   headline1: TextStyle(
                     fontSize: 14,
@@ -269,7 +270,7 @@ class App extends StatelessWidget {
                   if (state is PreferenceFlowFetchComplete) {
                     switch (state.route) {
                       case '/homePage':
-                        return HomePage();
+                        return HomeScreen();
                       case '/welcomeScreen':
                         return WelcomeScreen();
                         break;

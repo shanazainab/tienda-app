@@ -10,7 +10,7 @@ import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/model/login-verify-request.dart';
-import 'package:tienda/view/home/home-page.dart';
+import 'package:tienda/view/home/home-screen.dart';
 import 'package:tienda/view/login/customer-details-page.dart';
 
 import '../../localization.dart';
@@ -42,9 +42,12 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
             if (state.isNewUser) {
               ///Record Sign Up method
               FirebaseAnalytics().logSignUp(signUpMethod: "PHONE-NUMBER");
+
+
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
+
                     builder: (context) => CustomerDetailsPage(
                           mobileNumber: widget.mobileNumber,
                         )),
@@ -52,10 +55,8 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
             } else {
 
               BlocProvider.of<LoginBloc>(context)..add(CheckLoginStatus());
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => HomePage()),
-              );
+              Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => HomeScreen()));
+
             }
           } else if (state is LogoutError) {
             Fluttertoast.showToast(

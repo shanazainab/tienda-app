@@ -70,7 +70,7 @@ class OrdersDetailsPage extends StatelessWidget {
                               child: GestureDetector(
                                 onTap: (){
                                   OverlayService().addVideoTitleOverlay(contextA,ProductReviewPage(
-                                      order.products[index].id),false);
+                                      order.products[index].id),false,false);
 
 
                                 },

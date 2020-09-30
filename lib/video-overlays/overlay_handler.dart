@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tienda/main.dart';
 
 class OverlayHandlerProvider with ChangeNotifier {
 
@@ -22,13 +23,14 @@ class OverlayHandlerProvider with ChangeNotifier {
   get overlayActive => overlayEntry != null;
   get aspectRatio => _aspectRatio;
 
-  insertOverlay(BuildContext context, OverlayEntry overlay) {
+  insertOverlay(BuildContext context, OverlayEntry overlay,bool fromRoot) {
     if(overlayEntry != null) {
       overlayEntry.remove();
     }
     overlayEntry = null;
     inPipMode = false;
-    Overlay.of(context).insert(overlay);
+    Overlay.of(context,rootOverlay: fromRoot).insert(overlay);
+
     overlayEntry = overlay;
   }
 

@@ -13,8 +13,6 @@ import 'package:tienda/bloc/states/follow-states.dart';
 class FollowBloc extends Bloc<FollowEvents, FollowStates> {
   FollowBloc() : super(Loading());
 
-
-
   @override
   Stream<FollowStates> mapEventToState(FollowEvents event) async* {
     if (event is ChangeFollowStatus) {
@@ -24,12 +22,12 @@ class FollowBloc extends Bloc<FollowEvents, FollowStates> {
 
   Stream<FollowStates> _mapChangeFollowToStates(
       ChangeFollowStatus event) async* {
-
-
     ///CHANGE-FOLLOW-STATUS-RESPONSE:{"status": 200, "info": "unfollowed successfully"}
     ///CHANGE-FOLLOW-STATUS-RESPONSE:{"status": 200, "info": "followed successfully"}
     final dio = Dio();
     bool isFollowing = false;
+    int followersCount;
+
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
     PresenterApiClient presenterApiClient = PresenterApiClient(dio,
@@ -44,17 +42,16 @@ class FollowBloc extends Bloc<FollowEvents, FollowStates> {
             isFollowing = false;
           else
             isFollowing = true;
-
+          followersCount = json.decode(response)['followers_count'];
           break;
       }
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
         Logger().e("CHANGE-FOLLOW-STATUS-ERROR:${error.response.data}");
-
       }
     });
-    yield ChangeFollowStatusSuccess(isFollowing);
-
+    yield ChangeFollowStatusSuccess(
+        followersCount: followersCount, isFollowing: isFollowing);
   }
 }

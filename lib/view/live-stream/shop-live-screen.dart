@@ -6,13 +6,16 @@ import 'package:tienda/bloc/events/live-stream-events.dart';
 import 'package:tienda/bloc/events/presenter-events.dart';
 import 'package:tienda/bloc/live-stream-bloc.dart';
 import 'package:tienda/bloc/live-stream-checkout-bloc.dart';
+import 'package:tienda/bloc/live-stream-product-bloc.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/presenter-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/presenter-states.dart';
 import 'package:tienda/loading-widget.dart';
+import 'package:tienda/main.dart';
 import 'package:tienda/model/presenter.dart';
 import 'package:tienda/video-overlays/overlay_service.dart';
+import 'package:tienda/view/live-stream/live-stream-new-design.dart';
 import 'package:tienda/view/live-stream/live-stream-pip-mode.dart';
 import 'package:tienda/view/live-stream/live-stream-screen.dart';
 import 'package:tienda/view/login/login-main-page.dart';
@@ -48,10 +51,10 @@ class _ShopLiveScreenState extends State<ShopLiveScreen> {
                   state.presenters.isNotEmpty)
                 return Container(
                   alignment: Alignment.center,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  child: ListView(
+                    // mainAxisSize: MainAxisSize.min,
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CarouselSlider(
                         options: CarouselOptions(
@@ -135,12 +138,17 @@ class _ShopLiveScreenState extends State<ShopLiveScreen> {
                   )
                       :
                   OverlayService().addVideoTitleOverlay(
-                      context,    MultiBlocProvider(
+                     context,    MultiBlocProvider(
                     providers: [
                       BlocProvider(
                         create: (BuildContext
                         context) =>
                             LiveStreamCheckoutBloc(),
+                      ),
+                      BlocProvider(
+                        create: (BuildContext
+                        context) =>
+                            LiveStreamProductBloc(),
                       ),
                       BlocProvider(
                           create: (BuildContext
@@ -149,32 +157,11 @@ class _ShopLiveScreenState extends State<ShopLiveScreen> {
                             ..add(JoinLive(presenter
                                 .id))),
                     ],
-                    child: LiveStreamPIPMode(
+                    child: LiveStreamNewDesign(
                         presenter),
-                  ),true);
+                  ),true,false);
 
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) =>
-                  //           MultiBlocProvider(
-                  //             providers: [
-                  //               BlocProvider(
-                  //                 create: (BuildContext
-                  //                 context) =>
-                  //                     LiveStreamCheckoutBloc(),
-                  //               ),
-                  //               BlocProvider(
-                  //                   create: (BuildContext
-                  //                   context) =>
-                  //                   LiveStreamBloc()
-                  //                     ..add(JoinLive(presenter
-                  //                         .id))),
-                  //             ],
-                  //             child: LiveStreamScreen(
-                  //                 presenter),
-                  //           )),
-                  // );
+
                 } else
                   isGuestUser
                       ? Navigator.push(

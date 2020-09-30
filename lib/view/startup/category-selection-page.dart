@@ -11,7 +11,7 @@ import 'package:tienda/bloc/preference-bloc.dart';
 import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/preference-states.dart';
 import 'package:tienda/model/category.dart';
-import 'package:tienda/view/home/home-page.dart';
+import 'package:tienda/view/home/home-screen.dart';
 
 class CategorySelectionPage extends StatefulWidget {
   @override
@@ -264,7 +264,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomePage()),
+      MaterialPageRoute(builder: (context) => HomeScreen()),
     );
   }
 }

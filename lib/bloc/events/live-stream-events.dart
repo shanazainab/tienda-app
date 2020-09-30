@@ -2,7 +2,6 @@ import 'package:tienda/model/product.dart';
 
 abstract class LiveStreamEvents {
   LiveStreamEvents();
-
 }
 
 class InitializeSocket extends LiveStreamEvents {
@@ -15,9 +14,10 @@ class MessageSend extends LiveStreamEvents {
   final int presenterId;
 
   MessageSend(
-      this.presenterId,
-      ) : super();
+    this.presenterId,
+  ) : super();
 }
+
 class JoinLive extends LiveStreamEvents {
   final int presenterId;
 
@@ -31,5 +31,13 @@ class ShowProduct extends LiveStreamEvents {
 
   ShowProduct(
     this.product,
+  ) : super();
+}
+
+class UpdateWishListProducts extends LiveStreamEvents {
+  final List<Product> products;
+
+  UpdateWishListProducts(
+    this.products,
   ) : super();
 }

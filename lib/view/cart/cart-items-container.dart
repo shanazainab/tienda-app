@@ -38,7 +38,7 @@ class CartItemsContainer extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             OverlayService().addVideoTitleOverlay(
-                context, ProductReviewPage(cart.products[index].id), false);
+                context, ProductReviewPage(cart.products[index].id), false,false);
           },
           child: new Container(
               child: Column(

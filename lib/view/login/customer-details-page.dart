@@ -8,7 +8,7 @@ import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/model/customer.dart';
-import 'package:tienda/view/home/home-page.dart';
+import 'package:tienda/view/home/home-screen.dart';
 
 class CustomerDetailsPage extends StatelessWidget {
   final String mobileNumber;
@@ -32,7 +32,7 @@ class CustomerDetailsPage extends StatelessWidget {
 
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => HomeScreen()),
             );
           }
         },

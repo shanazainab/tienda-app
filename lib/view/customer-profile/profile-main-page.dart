@@ -29,7 +29,7 @@ import 'package:tienda/view/explore/help.dart';
 import 'package:tienda/view/explore/memberships.dart';
 import 'package:tienda/view/customer-profile/profile-card.dart';
 import 'package:tienda/view/explore/refer-and-earn.dart';
-import 'package:tienda/view/home/home-page.dart';
+import 'package:tienda/view/home/home-screen.dart';
 import 'package:tienda/view/order/orders-main-page.dart';
 import 'package:tienda/view/startup/country-list-card.dart';
 import 'package:tienda/view/watch-history/watch-history.dart';
@@ -50,10 +50,8 @@ class CustomerProfile extends StatelessWidget {
             listener: (context, state) {
               if (state is LogoutSuccess) {
                 BlocProvider.of<LoginBloc>(context).add(CheckLoginStatus());
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
-                );
+                Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => HomeScreen()));
+
               }
               if (state is LoggedInUser) {
                 BlocProvider.of<CustomerProfileBloc>(context)

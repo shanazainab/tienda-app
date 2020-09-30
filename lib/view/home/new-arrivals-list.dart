@@ -52,7 +52,7 @@ class NewArrivalList extends StatelessWidget {
                           'item_id':  newArrivals[index].nameEn,
                         });
                         OverlayService().addVideoTitleOverlay(context,ProductReviewPage(
-                            newArrivals[index].id),false);
+                            newArrivals[index].id),false,false);
 
                       },
                       child: Container(

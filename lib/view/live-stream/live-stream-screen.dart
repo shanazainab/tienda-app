@@ -14,12 +14,10 @@ import 'package:rxdart/rxdart.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/checkout-bloc.dart';
-import 'package:tienda/bloc/events/checkout-events.dart';
 import 'package:tienda/bloc/events/live-stream-events.dart';
 import 'package:tienda/bloc/live-stream-bloc.dart';
 import 'package:tienda/bloc/live-stream-checkout-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
-import 'package:tienda/bloc/states/checkout-states.dart';
 import 'package:tienda/bloc/states/live-stream-states.dart';
 import 'package:tienda/controller/real-time-controller.dart';
 import 'package:tienda/loading-widget.dart';
@@ -27,7 +25,7 @@ import 'package:tienda/model/live-chat.dart';
 import 'package:tienda/model/presenter.dart';
 import 'package:tienda/view/live-stream/add-to-cart-popup.dart';
 import 'package:tienda/view/live-stream/cart-checkout-pop-up.dart';
-import 'package:tienda/view/live-stream/live-stream-bottom-bar.dart';
+import 'package:tienda/view/live-stream/live-chat-panel.dart';
 import 'package:tienda/view/live-stream/presenter-profile-card.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:video_player/video_player.dart';
@@ -350,8 +348,8 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
 
                   Positioned(
                     bottom: 10,
-                    child: LiveStreamBottomBar(
-                      productsVisibility: productsVisibility,
+                    child: LiveChatPanel(
+                     // productsVisibility: productsVisibility,
                       presenter: widget.presenter,
                     ),
                   ),

@@ -94,4 +94,24 @@ class _CustomerProfileApiClient implements CustomerProfileApiClient {
     final value = _result.data;
     return value;
   }
+
+  @override
+  Future<String> changePhoneNumber(String phoneNumber) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{'phone_number': phoneNumber};
+
+    final Response<String> _result = await _dio.request(
+        '/change_profile_picture/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    Logger().d("REQUEST:${_result.data}");
+    final value = _result.data;
+    return value;
+  }
 }

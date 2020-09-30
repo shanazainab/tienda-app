@@ -160,92 +160,92 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
           ),
         ],
         child: Scaffold(
-          bottomNavigationBar: SafeArea(
-            child: BlocBuilder<SingleProductBloc, ProductStates>(
-                builder: (context, state) {
-              if (state is FetchProductDetailsSuccess) {
-
-                FirebaseAnalytics()
-                    .logEvent(name: "VIDEO_VIEW", parameters: {
-                'presenter_name':state.product.presenter.name,
-                'category_name':state.product.presenter.categoryId,
-                'video_name':state.product.nameEn
-                });
-
-
-                return Consumer<OverlayHandlerProvider>(
-                    builder: (context, overlayProvider, _) {
-                  if (!overlayProvider.inPipMode)
-                    return Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: FlatButton(
-                            onPressed: () {
-                              ///ADD TO WISHLIST
-                              BlocProvider.of<WishListBloc>(context).add(
-                                  AddToWishList(
-                                      wishListItem: new WishListItem(
-                                          product: state.product)));
-                            },
-                            child: Text(
-                              AppLocalizations.of(context)
-                                  .translate('wishlist')
-                                  .toUpperCase(),
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ),
-                        Expanded(child: BlocBuilder<LoadingBloc, LoadingStates>(
-                            builder: (context, loadingState) {
-                          if (loadingState is AppLoading)
-                            return RaisedButton(
-                              onPressed: () {
-                                //do nothing
-                              },
-                              child: Container(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  backgroundColor: Colors.white,
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                            );
-                          else
-                            return RaisedButton(
-                                onPressed: () {
-                                  BlocProvider.of<LoadingBloc>(context)
-                                    ..add(StartLoading());
-
-                                  state.product.quantity = 1;
-                                  BlocProvider.of<CartBloc>(context).add(
-                                      AddCartItem(
-                                          isFromLiveStream: false,
-                                          cartItem: state.product,
-                                          isLoggedIn:
-                                              !(BlocProvider.of<LoginBloc>(
-                                                  context) is GuestUser)));
-                                },
-                                child: Text(AppLocalizations.of(context)
-                                    .translate('add-to-cart')
-                                    .toUpperCase()));
-                        })),
-                        SizedBox(
-                          width: 8,
-                        )
-                      ],
-                    );
-                  else
-                    return Container(
-                      height: 0,
-                    );
-                });
-              } else
-                return Container(
-                  height: 0,
-                );
-            }),
-          ),
+          // bottomNavigationBar: SafeArea(
+          //   child: BlocBuilder<SingleProductBloc, ProductStates>(
+          //       builder: (context, state) {
+          //     if (state is FetchProductDetailsSuccess) {
+          //
+          //       FirebaseAnalytics()
+          //           .logEvent(name: "VIDEO_VIEW", parameters: {
+          //       'presenter_name':state.product.presenter.name,
+          //       'category_name':state.product.presenter.categoryId,
+          //       'video_name':state.product.nameEn
+          //       });
+          //
+          //
+          //       return Consumer<OverlayHandlerProvider>(
+          //           builder: (context, overlayProvider, _) {
+          //         if (!overlayProvider.inPipMode)
+          //           return Row(
+          //             children: <Widget>[
+          //               Expanded(
+          //                 child: FlatButton(
+          //                   onPressed: () {
+          //                     ///ADD TO WISHLIST
+          //                     BlocProvider.of<WishListBloc>(context).add(
+          //                         AddToWishList(
+          //                             wishListItem: new WishListItem(
+          //                                 product: state.product)));
+          //                   },
+          //                   child: Text(
+          //                     AppLocalizations.of(context)
+          //                         .translate('wishlist')
+          //                         .toUpperCase(),
+          //                     style: TextStyle(color: Colors.black),
+          //                   ),
+          //                 ),
+          //               ),
+          //               Expanded(child: BlocBuilder<LoadingBloc, LoadingStates>(
+          //                   builder: (context, loadingState) {
+          //                 if (loadingState is AppLoading)
+          //                   return RaisedButton(
+          //                     onPressed: () {
+          //                       //do nothing
+          //                     },
+          //                     child: Container(
+          //                       height: 20,
+          //                       width: 20,
+          //                       child: CircularProgressIndicator(
+          //                         backgroundColor: Colors.white,
+          //                         strokeWidth: 2,
+          //                       ),
+          //                     ),
+          //                   );
+          //                 else
+          //                   return RaisedButton(
+          //                       onPressed: () {
+          //                         BlocProvider.of<LoadingBloc>(context)
+          //                           ..add(StartLoading());
+          //
+          //                         state.product.quantity = 1;
+          //                         BlocProvider.of<CartBloc>(context).add(
+          //                             AddCartItem(
+          //                                 isFromLiveStream: false,
+          //                                 cartItem: state.product,
+          //                                 isLoggedIn:
+          //                                     !(BlocProvider.of<LoginBloc>(
+          //                                         context) is GuestUser)));
+          //                       },
+          //                       child: Text(AppLocalizations.of(context)
+          //                           .translate('add-to-cart')
+          //                           .toUpperCase()));
+          //               })),
+          //               SizedBox(
+          //                 width: 8,
+          //               )
+          //             ],
+          //           );
+          //         else
+          //           return Container(
+          //             height: 0,
+          //           );
+          //       });
+          //     } else
+          //       return Container(
+          //         height: 0,
+          //       );
+          //   }),
+          // ),
           body: BlocBuilder<SingleProductBloc, ProductStates>(
               builder: (context, state) {
             if (state is FetchProductDetailsSuccess) {
@@ -498,6 +498,87 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
                   ),
                 )
               : Container(),
+          BlocBuilder<SingleProductBloc, ProductStates>(
+              builder: (context, state) {
+            if (state is FetchProductDetailsSuccess) {
+              FirebaseAnalytics().logEvent(name: "VIDEO_VIEW", parameters: {
+                'presenter_name': state.product.presenter.name,
+                'category_name': state.product.presenter.categoryId,
+                'video_name': state.product.nameEn
+              });
+
+              return Consumer<OverlayHandlerProvider>(
+                  builder: (context, overlayProvider, _) {
+                if (!overlayProvider.inPipMode)
+                  return Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: FlatButton(
+                          onPressed: () {
+                            ///ADD TO WISHLIST
+                            BlocProvider.of<WishListBloc>(context).add(
+                                AddToWishList(
+                                    wishListItem: new WishListItem(
+                                        product: state.product)));
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)
+                                .translate('wishlist')
+                                .toUpperCase(),
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ),
+                      Expanded(child: BlocBuilder<LoadingBloc, LoadingStates>(
+                          builder: (context, loadingState) {
+                        if (loadingState is AppLoading)
+                          return RaisedButton(
+                            onPressed: () {
+                              //do nothing
+                            },
+                            child: Container(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          );
+                        else
+                          return RaisedButton(
+                              onPressed: () {
+                                BlocProvider.of<LoadingBloc>(context)
+                                  ..add(StartLoading());
+
+                                state.product.quantity = 1;
+                                BlocProvider.of<CartBloc>(context).add(
+                                    AddCartItem(
+                                        isFromLiveStream: false,
+                                        cartItem: state.product,
+                                        isLoggedIn:
+                                            !(BlocProvider.of<LoginBloc>(
+                                                context) is GuestUser)));
+                              },
+                              child: Text(AppLocalizations.of(context)
+                                  .translate('add-to-cart')
+                                  .toUpperCase()));
+                      })),
+                      SizedBox(
+                        width: 8,
+                      )
+                    ],
+                  );
+                else
+                  return Container(
+                    height: 0,
+                  );
+              });
+            } else
+              return Container(
+                height: 0,
+              );
+          }),
           product.presenter.id != null
               ? Column(
                   children: [
@@ -624,4 +705,3 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
         sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
   }
 }
-

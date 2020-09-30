@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/api/login-api-client.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/controller/login-controller.dart';
@@ -9,13 +10,11 @@ import 'package:dio/dio.dart';
 class LoginBloc extends Bloc<LoginEvents, LoginStates> {
   LoginBloc() : super(LoginInitiated());
 
-
-
   @override
   Stream<LoginStates> mapEventToState(LoginEvents event) async* {
-    if (event is CheckLoginStatus){
-      yield* _doCheckLogin(event);}
-    else if (event is SendOTP)
+    if (event is CheckLoginStatus) {
+      yield* _doCheckLogin(event);
+    } else if (event is SendOTP)
       yield* _doLoginSendOTP(event);
     else if (event is VerifyOTP)
       yield* _doLoginVerifyOTP(event);
@@ -50,17 +49,23 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
   }
 
   Stream<LoginStates> _doLoginVerifyOTP(VerifyOTP event) async* {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
     final loginVerifyRequest = event.loginVerifyRequest;
     yield LoginInProgress();
 
     ///call backend api for login verify
 
     String status = await LoginController().verifyLoginOTP(loginVerifyRequest);
-    if (status == "Existing User")
+    if (status == "Existing User") {
+      sharedPreferences.setString('login-type', 'phone');
       yield LoginVerifyOTPSuccess(isNewUser: false);
-    if (status == "New User")
+    }
+    if (status == "New User") {
+      sharedPreferences.setString('login-type', 'phone');
+
       yield LoginVerifyOTPSuccess(isNewUser: true);
-    else
+    } else
       yield LoginVerifyOTPError(error: status);
   }
 
@@ -82,10 +87,13 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
   }
 
   Stream<LoginStates> _doGoogleSignIn(DoGoogleSignIn event) async* {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
     String status = await LoginController().signInWithGoogle();
     switch (status) {
       case "success":
         yield GoogleSignInResponse(response: GoogleSignInResponse.SUCCESS);
+        sharedPreferences.setString('login-type', 'google');
         break;
       case "failed":
         yield GoogleSignInResponse(response: GoogleSignInResponse.FAILED);
@@ -96,10 +104,14 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
   }
 
   Stream<LoginStates> _doFacebookSignIn(DoFacebookSignIn event) async* {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
     String status = await LoginController().signInWithFacebook();
     switch (status) {
       case "success":
         yield FacebookSignInResponse(response: FacebookSignInResponse.SUCCESS);
+        sharedPreferences.setString('login-type', 'facebook');
+
         break;
       case "failed":
         yield FacebookSignInResponse(response: FacebookSignInResponse.FAILED);

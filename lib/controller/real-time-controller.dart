@@ -49,6 +49,7 @@ class RealTimeController {
   }
 
   showLiveReaction(int presenterId) {
+
     socket.emit('react', {'reaction': 'love', 'room_name': "PR-$presenterId"});
   }
 
