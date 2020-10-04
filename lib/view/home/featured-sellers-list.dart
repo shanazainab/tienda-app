@@ -73,17 +73,28 @@ class FeaturedPresentersList extends StatelessWidget {
                                   MaterialPageRoute(
                                       builder: (context) => LoginMainPage()),
                                 )
-                              : Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          PresenterProfilePage(
-                                            presenterId: featurePresenters[index].id,
-                                            presenterName: featurePresenters[index].name,
-                                            profileImageURL: featurePresenters[index].profilePicture,
-                                              )),
+                              // : Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) =>
+                              //             PresenterProfilePage(
+                              //               presenterId: featurePresenters[index].id,
+                              //               presenterName: featurePresenters[index].name,
+                              //               profileImageURL: featurePresenters[index].profilePicture,
+                              //                 )),
+                              //
+                              //   );
+                              : Navigator.of(
+                            context,rootNavigator: true).push(
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    PresenterProfilePage(
+                                      presenterId: featurePresenters[index].id,
+                                      presenterName: featurePresenters[index].name,
+                                      profileImageURL: featurePresenters[index].profilePicture,
+                                    )),
 
-                                );
+                          );
                         },
                         child:
 

@@ -12,7 +12,6 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:tienda/app-country.dart';
 import 'package:tienda/app-language.dart';
@@ -29,10 +28,12 @@ import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/preference-bloc.dart';
 import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
+import 'package:tienda/bloc/unreadmessage-bloc.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/controller/db-controller.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/video-overlays/overlay_handler.dart';
+import 'package:tienda/video-overlays/overlay_service.dart';
 import 'package:tienda/view/home/home-screen.dart';
 import 'package:tienda/view/live-stream/shop-live-screen.dart';
 import 'package:tienda/view/startup/country-choose-page.dart';
@@ -42,13 +43,13 @@ import 'package:tienda/view/startup/welcome-screen.dart';
 import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/startup/category-selection-page.dart';
 import 'package:tienda/view/login/otp-verification-page.dart';
+import 'package:tienda/view/widgets/bottom-nav-bar.dart';
 import 'controller/real-time-controller.dart';
 
 ///Tienda : Video streaming e-commerce app
 ///Start date : May 17 2020
 ///Author: Shahana
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -109,23 +110,24 @@ Future<void> main() async {
       ),
       BlocProvider<LoginBloc>(
         lazy: false,
-        create: (BuildContext context) =>
-        LoginBloc()..add(CheckLoginStatus()),
+        create: (BuildContext context) => LoginBloc()..add(CheckLoginStatus()),
       ),
       BlocProvider<WishListBloc>(
         create: (BuildContext context) => WishListBloc(),
       ),
       BlocProvider<CustomerProfileBloc>(
         create: (BuildContext context) =>
-        CustomerProfileBloc()..add(FetchCustomerProfile()),
+            CustomerProfileBloc()..add(FetchCustomerProfile()),
       ),
       BlocProvider<LoadingBloc>(
-          create: (BuildContext context) =>
-              LoadingBloc()
-      ),
+          create: (BuildContext context) => LoadingBloc()),
       BlocProvider<CartBloc>(
         create: (BuildContext context) => CartBloc()..add(FetchCartData()),
       ),
+      BlocProvider<UnreadMessageHydratedBloc>(
+        create: (BuildContext context) =>  UnreadMessageHydratedBloc()),
+
+
     ],
     child: App(
       appCountry: appCountry,
@@ -225,8 +227,9 @@ class App extends StatelessWidget {
 
             ///App wide theme
             theme: ThemeData(
-                fontFamily:
-                    appLanguage.appLocal != Locale('en') ? 'Cairo' : 'SFProDisplay',
+                fontFamily: appLanguage.appLocal != Locale('en')
+                    ? 'Cairo'
+                    : 'SFProDisplay',
                 textTheme: TextTheme(
                   headline1: TextStyle(
                     fontSize: 14,
@@ -268,9 +271,13 @@ class App extends StatelessWidget {
                     return SplashScreen();
                   }
                   if (state is PreferenceFlowFetchComplete) {
+                    WidgetsBinding.instance
+                        .addPostFrameCallback((_) => _insertOverlay(context));
+
                     switch (state.route) {
                       case '/homePage':
                         return HomeScreen();
+
                       case '/welcomeScreen':
                         return WelcomeScreen();
                         break;
@@ -293,6 +300,15 @@ class App extends StatelessWidget {
             ),
           );
         }));
+  }
+
+  void _insertOverlay(BuildContext context) {
+    return OverlayService().addBottomNavigationBar(
+        context,
+        Positioned(
+            bottom: 16, left: 16, right: 16, child: BottomNavFloatingBar()),
+        true,
+        true);
   }
 }
 

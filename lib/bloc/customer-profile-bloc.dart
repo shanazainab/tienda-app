@@ -12,6 +12,13 @@ import 'package:tienda/bloc/states/customer-profile-states.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/customer.dart';
 
+
+
+
+
+
+
+
 class CustomerProfileBloc
     extends Bloc<CustomerProfileEvents, CustomerProfileStates> {
   CustomerProfileBloc() : super(Loading());

@@ -2,7 +2,7 @@ final Map<String, String> appSettingsDev = {
   "baseURL": "https://api.tienda.ae/v1",
   "imageURL": "https://api.tienda.ae",
 
-  "chatURL": "http://api.tienda.ae:8080/"
+  "chatURL": "https://dev.tienda.ae/v1"
 };
 
 final Map<String, String> appSettingsProd = {

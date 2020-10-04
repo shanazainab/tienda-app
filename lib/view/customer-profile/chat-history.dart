@@ -221,62 +221,6 @@ class _ChatHistoryState extends State<ChatHistory> {
                                         }
                                       })
 
-//                                      StreamBuilder<List<UnreadMessage>>(
-//                                          stream: RealTimeController()
-//                                              .unReadMessage,
-//                                          builder: (BuildContext context,
-//                                              AsyncSnapshot<List<UnreadMessage>>
-//                                                  unReadSnap) {
-//                                            if (unReadSnap.data != null &&
-//                                                unReadSnap.data.contains(
-//                                                    new UnreadMessage(
-//                                                        presenterId: snapshot
-//                                                            .data[index].id))) {
-//                                              return Column(
-//                                                crossAxisAlignment:
-//                                                    CrossAxisAlignment.end,
-//                                                mainAxisAlignment:
-//                                                    MainAxisAlignment.end,
-//                                                children: [
-//                                                  Text(Jiffy.unix(unReadSnap
-//                                                          .data[index]
-//                                                          .elapsedTime)
-//                                                      .fromNow()),
-//                                                  Padding(
-//                                                    padding:
-//                                                        const EdgeInsets.only(
-//                                                            top: 4.0),
-//                                                    child: CircleAvatar(
-//                                                      radius: 10,
-//                                                      backgroundColor:
-//                                                          Colors.redAccent,
-//                                                      child: Text(
-//                                                        unReadSnap.data[index]
-//                                                            .messages.length
-//                                                            .toString(),
-//                                                        style: TextStyle(
-//                                                            fontSize: 10,
-//                                                            color:
-//                                                                Colors.black),
-//                                                      ),
-//                                                    ),
-//                                                  )
-//                                                ],
-//                                              );
-//                                            } else {
-//                                              return Column(
-//                                                crossAxisAlignment:
-//                                                    CrossAxisAlignment.start,
-//                                                mainAxisAlignment:
-//                                                    MainAxisAlignment.start,
-//                                                children: [
-//                                                  Text(snapshot
-//                                                      .data[index].elapsedTime),
-//                                                ],
-//                                              );
-//                                            }
-//                                          })
-//
                                     ],
                                   ),
                                 ),

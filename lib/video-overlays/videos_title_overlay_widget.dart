@@ -78,7 +78,6 @@ class _VideoTitleOverlayWidgetState extends State<VideoTitleOverlayWidget> {
         else
           _onExitPipMode();
       }
-      print(height);
       return AnimatedPositioned(
         duration: Duration(milliseconds: 150),
         left: offset.dx,

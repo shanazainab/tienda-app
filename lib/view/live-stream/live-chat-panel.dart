@@ -8,6 +8,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:logger/logger.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tienda/controller/live-chat-container-controller.dart';
 import 'package:tienda/controller/real-time-controller.dart';
@@ -55,9 +56,8 @@ class _LiveChatPanelState extends State<LiveChatPanel> {
               : MediaQuery.of(context).size.height * 33 / 100;
 
           mheight = visible
-              ? MediaQuery.of(context).size.height * 50 / 100 /2
+              ? MediaQuery.of(context).size.height * 50 / 100 / 2
               : MediaQuery.of(context).size.height * 50 / 100;
-
         });
       },
     );
@@ -199,7 +199,8 @@ class _LiveChatPanelState extends State<LiveChatPanel> {
                         ),
                       );
                     else
-                      return Container();
+                      return Container(
+                      );
                   })),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

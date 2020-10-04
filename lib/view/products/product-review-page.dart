@@ -501,11 +501,11 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
           BlocBuilder<SingleProductBloc, ProductStates>(
               builder: (context, state) {
             if (state is FetchProductDetailsSuccess) {
-              FirebaseAnalytics().logEvent(name: "VIDEO_VIEW", parameters: {
-                'presenter_name': state.product.presenter.name,
-                'category_name': state.product.presenter.categoryId,
-                'video_name': state.product.nameEn
-              });
+              // FirebaseAnalytics().logEvent(name: "VIDEO_VIEW", parameters: {
+              //   'presenter_name': state.product.presenter.name,
+              //   'category_name': state.product.presenter.categoryId,
+              //   'video_name': state.product.nameEn
+              // });
 
               return Consumer<OverlayHandlerProvider>(
                   builder: (context, overlayProvider, _) {

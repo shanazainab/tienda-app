@@ -2,6 +2,7 @@ import 'package:logger/logger.dart';
 import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
 import 'package:tienda/model/customer.dart';
+
 part 'customer-profile-api-client.g.dart';
 
 @RestApi()
@@ -21,7 +22,10 @@ abstract class CustomerProfileApiClient {
   @POST("/change_profile_picture/")
   Future<String> updateProfilePicture(@Body() String encodedImage);
 
-
   @POST("/change_phone_number/")
   Future<String> changePhoneNumber(@Body() String phoneNumber);
+
+  @POST("/verify_update_phone_number/")
+  Future<String> verifyUpdatedPhoneNumber(
+      @Body() String phoneNumber, @Body() String otp);
 }

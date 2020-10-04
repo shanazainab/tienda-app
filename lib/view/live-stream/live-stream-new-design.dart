@@ -25,12 +25,10 @@ import 'package:tienda/bloc/live-stream-checkout-bloc.dart';
 import 'package:tienda/bloc/live-stream-product-bloc.dart';
 import 'package:tienda/bloc/loading-bloc.dart';
 import 'package:tienda/bloc/login-bloc.dart';
-import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/bloc/states/live-stream-states.dart';
 import 'package:tienda/bloc/states/loading-states.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
-import 'package:tienda/controller/live-chat-container-controller.dart';
 import 'package:tienda/controller/real-time-controller.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/live-response.dart';
@@ -39,7 +37,6 @@ import 'package:tienda/model/wishlist.dart';
 import 'package:tienda/video-overlays/constants.dart';
 import 'package:tienda/video-overlays/overlay_handler.dart';
 import 'package:tienda/view/live-stream/live-chat-panel.dart';
-import 'package:tienda/view/live-stream/live-stream-screen.dart';
 import 'package:tienda/view/live-stream/presenter-profile-card.dart';
 import 'package:video_player/video_player.dart';
 
@@ -693,10 +690,9 @@ class _LiveStreamNewDesignState extends State<LiveStreamNewDesign> {
                   child: SlidingUpPanel(
                     /// maxHeight: MediaQuery.of(context).size.height * 60 / 100,
                     backdropTapClosesPanel: true,
-                    margin: EdgeInsets.only(bottom: 70),
+                  //  margin: EdgeInsets.only(bottom: 70),
                     defaultPanelState: PanelState.CLOSED,
                     minHeight: 0,
-
                     controller: liveChatPanelController,
                     panel: LiveChatPanel(
                       presenter: widget.presenter,

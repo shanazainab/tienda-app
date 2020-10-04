@@ -52,9 +52,6 @@ class _ShopLiveScreenState extends State<ShopLiveScreen> {
                 return Container(
                   alignment: Alignment.center,
                   child: ListView(
-                    // mainAxisSize: MainAxisSize.min,
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CarouselSlider(
                         options: CarouselOptions(

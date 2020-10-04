@@ -19,6 +19,7 @@ class OfflineLoadCustomerDataSuccess extends CustomerProfileStates {
 class NoCustomerData extends CustomerProfileStates {
   NoCustomerData() : super();
 }
+
 class LoadCustomerProfileSuccess extends CustomerProfileStates {
   final Customer customerDetails;
   final File profileImage;
@@ -26,9 +27,17 @@ class LoadCustomerProfileSuccess extends CustomerProfileStates {
   LoadCustomerProfileSuccess({this.customerDetails, this.profileImage})
       : super();
 }
+
 class UpdateProfilePictureInProgress extends CustomerProfileStates {
   final Customer customerDetails;
 
-  UpdateProfilePictureInProgress({this.customerDetails})
-      : super();
+  UpdateProfilePictureInProgress({this.customerDetails}) : super();
+}
+
+class ChangePhoneNumberSuccess extends CustomerProfileStates {
+  ChangePhoneNumberSuccess() : super();
+}
+
+class VerifyPhoneNumberSuccess extends CustomerProfileStates {
+  VerifyPhoneNumberSuccess() : super();
 }

@@ -136,6 +136,13 @@ class RealTimeController {
         Logger().d("LIVE_REACTION:$data ");
         liveReaction.sink.add(true);
       });
+
+      socket.on('RECEIVED_PRODUCT', (data) {
+        Logger().d("RECEIVED_PRODUCT:$data ");
+
+      });
+
+
       socket.on('new_in_cart', (data) {
         ///  ADDED PRODUCT TO THE CART:{in_cart: {8: 1}, room_name: PR-10}
         Logger().d("ADDED PRODUCT TO THE CART:${data['in_cart']} ");
@@ -167,7 +174,7 @@ class RealTimeController {
         Logger().d("NEW_MESSAGE:$data ");
 
         Logger().d(
-            "TIMESTAMP DATE:${DateTime.fromMicrosecondsSinceEpoch(data['timestamp'])}");
+            "TIMESTAMP DATE:${DateTime.fromMicrosecondsSinceEpoch(data['timestamp'] * 1000)}");
         if (directMessageStream.value == null) {
           ///NEW_MESSAGE:{receiver_id: 50, body: dsadsd, timestamp: 1597646863657}
           ///{receiver_id: 50, body: terr, timestamp: 1597835356414, sender_id: 10}
@@ -176,7 +183,7 @@ class RealTimeController {
                 body: data['body'],
                 receiverId: data['receiver_id'],
                 createdAt:
-                    new DateTime.fromMicrosecondsSinceEpoch(data['timestamp']))
+                    new DateTime.fromMicrosecondsSinceEpoch(data['timestamp']* 1000))
           ]);
         } else {
           List<DirectMessage> chatMessages = new List();
@@ -184,7 +191,7 @@ class RealTimeController {
               body: data['body'],
               receiverId: data['receiver_id'],
               createdAt:
-                  new DateTime.fromMicrosecondsSinceEpoch(data['timestamp'])));
+                  new DateTime.fromMicrosecondsSinceEpoch(data['timestamp']* 1000)));
           chatMessages.addAll(directMessageStream.value);
 
           directMessageStream.sink.add(chatMessages);
@@ -242,7 +249,7 @@ class RealTimeController {
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
     ChatApiClient chatApiClient =
-        ChatApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
+        ChatApiClient(dio, baseUrl: GlobalConfiguration().getString("chatURL"));
     await chatApiClient.getChatMessages(presenterId).then((response) {
       log("GET-CHAT-MESSAGES-RESPONSE:$response");
       switch (json.decode(response)['status']) {
@@ -306,7 +313,7 @@ class RealTimeController {
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
     ChatApiClient chatApiClient =
-        ChatApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
+        ChatApiClient(dio, baseUrl: GlobalConfiguration().getString("chatURL"));
     await chatApiClient.getChats().then((response) {
       log("GET-CHATS-RESPONSE:$response");
       switch (json.decode(response)['status']) {
