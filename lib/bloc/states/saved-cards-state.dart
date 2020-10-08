@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
 import 'package:tienda/model/payment-card.dart';
-import 'package:tienda/model/delivery-address.dart';
 
 abstract class SavedCardStates {
   SavedCardStates();

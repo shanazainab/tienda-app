@@ -1,4 +1,6 @@
 import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -6,7 +8,6 @@ import 'package:logger/logger.dart';
 import 'package:tienda/api/address-api-client.dart';
 import 'package:tienda/bloc/events/address-events.dart';
 import 'package:tienda/bloc/states/address-states.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/model/delivery-address.dart';
 
 class AddressBloc extends Bloc<AddressEvents, AddressStates> {

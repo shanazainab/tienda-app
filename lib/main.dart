@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -12,15 +13,16 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-
 import 'package:tienda/app-country.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/app-settings.config.dart';
 import 'package:tienda/bloc-delegate.dart';
+import 'package:tienda/bloc/bottom-nav-bar-bloc.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/customer-profile-bloc.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/customer-profile-events.dart';
+import 'package:tienda/bloc/events/home-events.dart';
 import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/events/startup-events.dart';
 import 'package:tienda/bloc/loading-bloc.dart';
@@ -36,14 +38,17 @@ import 'package:tienda/video-overlays/overlay_handler.dart';
 import 'package:tienda/video-overlays/overlay_service.dart';
 import 'package:tienda/view/home/home-screen.dart';
 import 'package:tienda/view/live-stream/shop-live-screen.dart';
+import 'package:tienda/view/login/login-main-page.dart';
+import 'package:tienda/view/login/otp-verification-page.dart';
+import 'package:tienda/view/startup/category-selection-page.dart';
 import 'package:tienda/view/startup/country-choose-page.dart';
 import 'package:tienda/view/startup/language-preference-page.dart';
 import 'package:tienda/view/startup/splash-screen.dart';
 import 'package:tienda/view/startup/welcome-screen.dart';
-import 'package:tienda/view/login/login-main-page.dart';
-import 'package:tienda/view/startup/category-selection-page.dart';
-import 'package:tienda/view/login/otp-verification-page.dart';
 import 'package:tienda/view/widgets/bottom-nav-bar.dart';
+
+import 'bloc/events/presenter-events.dart';
+import 'bloc/presenter-bloc.dart';
 import 'controller/real-time-controller.dart';
 
 ///Tienda : Video streaming e-commerce app
@@ -92,12 +97,7 @@ Future<void> main() async {
 
   FirebaseAnalytics().logAppOpen();
 
-  // await SystemChrome.setPreferredOrientations(
-  //     [DeviceOrientation.portraitUp]);
-
-  // runZoned<Future<void>>(() async {
-  //
-  // }, onError: Crashlytics.instance.recordError);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   runApp(MultiBlocProvider(
     providers: [
@@ -124,10 +124,16 @@ Future<void> main() async {
       BlocProvider<CartBloc>(
         create: (BuildContext context) => CartBloc()..add(FetchCartData()),
       ),
+      BlocProvider<PresenterBloc>(
+        lazy: false,
+
+        create: (BuildContext context) => PresenterBloc()..add(LoadPopularPresenters()),
+      ),
+      BlocProvider<BottomNavBarBloc>(
+        create: (BuildContext context) => BottomNavBarBloc()),
+
       BlocProvider<UnreadMessageHydratedBloc>(
-        create: (BuildContext context) =>  UnreadMessageHydratedBloc()),
-
-
+          create: (BuildContext context) => UnreadMessageHydratedBloc()),
     ],
     child: App(
       appCountry: appCountry,
@@ -178,8 +184,6 @@ class App extends StatelessWidget {
             ],
 
             locale: model.appLocal,
-
-            ///Page transition effects can be added here
             supportedLocales: [
               const Locale('en', ''),
               const Locale('ar', ''),
@@ -236,7 +240,6 @@ class App extends StatelessWidget {
                   ),
                   headline2: TextStyle(
                     fontSize: 20,
-                    color: Colors.black,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -244,20 +247,25 @@ class App extends StatelessWidget {
                   elevation: 0,
                   brightness: Brightness.light,
                   color: Colors.white,
+                  iconTheme: IconThemeData(
+                      color: Color(0xff555555)
+                  ),
                   textTheme: TextTheme(
-                      title: TextStyle(color: Colors.grey, fontSize: 14)),
-                  iconTheme: IconThemeData(color: Color(0xffC0C0C0)),
+                    title: TextStyle(
+                      color: Color(0xff555555)
+                    )
+                  )
                 ),
-                accentColor: Colors.black,
+                accentColor: Color(0xffc30045),
                 buttonTheme: ButtonThemeData(
-                  buttonColor: Colors.black,
+                  buttonColor: Color(0xff50C0A8),
                   padding: EdgeInsets.all(8.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
                   textTheme: ButtonTextTheme.accent,
                   colorScheme: Theme.of(context).colorScheme.copyWith(
-                        secondary: Color(0xffC0C0C0),
+                        secondary: Colors.white,
                       ),
                 )),
 
@@ -302,6 +310,8 @@ class App extends StatelessWidget {
         }));
   }
 
+  ///Bottom Navigation bar is added as an overlay widget
+  ///inorder to support pip mode overlay from live stream or product review video
   void _insertOverlay(BuildContext context) {
     return OverlayService().addBottomNavigationBar(
         context,
@@ -312,7 +322,7 @@ class App extends StatelessWidget {
   }
 }
 
-///disable scroll glow
+///Disable scroll glow
 class ScrollWithNoGlowBehaviour extends ScrollBehavior {
   @override
   Widget buildViewportChrome(

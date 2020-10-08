@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tienda/bloc/address-bloc.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
@@ -9,7 +8,7 @@ import 'package:tienda/bloc/checkout-bloc.dart';
 import 'package:tienda/bloc/events/checkout-events.dart';
 import 'package:tienda/bloc/states/address-states.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
-import 'package:tienda/loading-widget.dart';
+import 'package:tienda/view/widgets/loading-widget.dart';
 import 'package:tienda/model/delivery-address.dart';
 import 'package:tienda/model/order.dart';
 import 'package:tienda/view/address/add-address-page.dart';
@@ -114,7 +113,7 @@ class ChooseDeliveryAddress extends StatelessWidget {
       else
         return Container(
           child: Center(
-            child: spinkit,
+            child: spinKit,
           ),
         );
     }));

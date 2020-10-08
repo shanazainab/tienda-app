@@ -139,62 +139,6 @@ class _SingleProductPageState extends State<SingleProductPage> {
                 ),
               ],
             ),
-            // bottomNavigationBar: SafeArea(
-            //   child: BlocBuilder<SingleProductBloc, ProductStates>(
-            //       builder: (context, state) {
-            //     if (state is FetchProductDetailsSuccess) {
-            //       return Row(
-            //         children: <Widget>[
-            //           Expanded(
-            //             child: FlatButton(
-            //               onPressed: () {
-            //                 ///ADD TO WISHLIST
-            //                 BlocProvider.of<WishListBloc>(context).add(
-            //                     AddToWishList(
-            //                         wishListItem: new WishListItem(
-            //                             product: state.product)));
-            //               },
-            //               child: Text(
-            //                 AppLocalizations.of(context)
-            //                     .translate('wishlist')
-            //                     .toUpperCase(),
-            //                 style: TextStyle(color: Colors.black),
-            //               ),
-            //             ),
-            //           ),
-            //           Expanded(
-            //             child: RaisedButton(
-            //                 onPressed: () {
-            //                   ///Log event to firebase
-            //                   FirebaseAnalytics().logAddToCart(
-            //                       itemId: state.product.id.toString(),
-            //                       itemName: state.product.nameEn,
-            //                       itemCategory:
-            //                           state.product.categoryId.toString(),
-            //                       quantity: 1);
-            //
-            //                   state.product.quantity = 1;
-            //                   BlocProvider.of<CartBloc>(context).add(
-            //                       AddCartItem(
-            //                           cartItem: state.product,
-            //                           isLoggedIn:
-            //                               !(BlocProvider.of<LoginBloc>(context)
-            //                                   is GuestUser)));
-            //                   addToCartStream.sink.add(true);
-            //                 },
-            //                 child: Text(AppLocalizations.of(context)
-            //                     .translate('add-to-cart')
-            //                     .toUpperCase())),
-            //           ),
-            //           SizedBox(
-            //             width: 8,
-            //           )
-            //         ],
-            //       );
-            //     } else
-            //       return Container();
-            //   }),
-            // ),
             body: BlocBuilder<SingleProductBloc, ProductStates>(
                 builder: (context, state) {
               if (state is FetchProductDetailsSuccess) {
@@ -202,7 +146,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
                   color: Colors.white,
                   child: ListView(
                     shrinkWrap: true,
-                    padding: EdgeInsets.all(0),
+                    padding: EdgeInsets.only(bottom: 100),
                     controller: scrollController,
                     children: [
                       CarouselSlider.builder(

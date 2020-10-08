@@ -4,7 +4,6 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:logger/logger.dart';
 import 'package:tienda/bloc/events/presenter-message-events.dart';
-import 'package:tienda/bloc/states/live-stream-states.dart';
 import 'package:tienda/bloc/states/presenter-message-states.dart';
 import 'package:tienda/bloc/unreadmessage-bloc.dart';
 import 'package:tienda/controller/real-time-controller.dart';

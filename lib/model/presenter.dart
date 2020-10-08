@@ -5,6 +5,8 @@
 import 'dart:convert';
 
 import 'package:logger/logger.dart';
+import 'package:tienda/model/category.dart';
+import 'package:tienda/model/country.dart';
 import 'package:tienda/model/product.dart';
 
 Presenter presenterFromJson(String str) => Presenter.fromJson(json.decode(str));
@@ -12,23 +14,25 @@ Presenter presenterFromJson(String str) => Presenter.fromJson(json.decode(str));
 String presenterToJson(Presenter data) => json.encode(data.toJson());
 
 class Presenter {
-  Presenter({
-    this.id,
-    this.name,
-    this.profilePicture,
-    this.headerProfile,
-    this.bio,
-    this.followers,
-    this.isLive,
-    this.categoryId,
-    this.shortDescription,
-    this.videos,
-    this.popularVideos,
-    this.featuredProducts,
-    this.isFollowed,
-    this.products,
-    this.streamUrl
-  });
+  Presenter(
+      {this.id,
+      this.name,
+      this.profilePicture,
+      this.headerProfile,
+      this.bio,
+      this.followers,
+      this.isLive,
+      this.categoryId,
+      this.shortDescription,
+      this.videos,
+      this.popularVideos,
+      this.featuredProducts,
+      this.isFollowed,
+      this.products,
+      this.streamUrl,
+      this.country,
+      this.interests});
+
   int products;
 
   int id;
@@ -45,6 +49,8 @@ class Presenter {
   List<Product> featuredProducts;
   bool isFollowed;
   String streamUrl;
+  Country country;
+  List<Category> interests;
 
   factory Presenter.fromJson(Map<String, dynamic> json) {
     Presenter presenter;
@@ -65,9 +71,16 @@ class Presenter {
         popularVideos: json["popular_videos"] != null
             ? List<dynamic>.from(json["popular_videos"].map((x) => x))
             : null,
-        featuredProducts: json["featured_products"]!=null?List<Product>.from(
-            json["featured_products"].map((x) => Product.fromJson(x))):null,
+        featuredProducts: json["featured_products"] != null
+            ? List<Product>.from(
+                json["featured_products"].map((x) => Product.fromJson(x)))
+            : null,
         isFollowed: json["is_followed"],
+        country: json["country"] != null?Country.fromJson(json['country']):null,
+        interests: json["interests"] != null
+            ? List<Category>.from(
+                json["interests"].map((x) => Category.fromJson(x)))
+            : null,
       );
     } catch (err) {
       Logger().e(err);
@@ -77,8 +90,8 @@ class Presenter {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-    "products": products,
-    "name": name,
+        "products": products,
+        "name": name,
         "profile_picture": profilePicture,
         "header_profile": headerProfile,
         "bio": bio,
@@ -87,9 +100,10 @@ class Presenter {
         "category_id": categoryId,
         "short_description": shortDescription,
         "videos": videos,
-    "m3u8_url":streamUrl,
+        "m3u8_url": streamUrl,
         "popular_videos": List<dynamic>.from(popularVideos.map((x) => x)),
         "featured_products": List<dynamic>.from(featuredProducts.map((x) => x)),
         "is_followed": isFollowed,
+        "interests": List<dynamic>.from(interests.map((x) => x)),
       };
 }

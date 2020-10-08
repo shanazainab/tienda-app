@@ -22,28 +22,19 @@ PODS:
     - FBSDKLoginKit/Login (= 5.15.1)
   - FBSDKLoginKit/Login (5.15.1):
     - FBSDKCoreKit (~> 5.0)
-  - Firebase/Analytics (6.31.1):
+  - Firebase/Analytics (6.34.0):
     - Firebase/Core
-  - Firebase/Auth (6.31.1):
+  - Firebase/Auth (6.34.0):
     - Firebase/CoreOnly
-    - FirebaseAuth (~> 6.9.0)
-  - Firebase/Core (6.31.1):
+    - FirebaseAuth (~> 6.9.2)
+  - Firebase/Core (6.34.0):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (= 6.8.0)
-  - Firebase/CoreOnly (6.31.1):
-    - FirebaseCore (= 6.10.1)
-  - Firebase/DynamicLinks (6.31.1):
+    - FirebaseAnalytics (= 6.9.0)
+  - Firebase/CoreOnly (6.34.0):
+    - FirebaseCore (= 6.10.4)
+  - Firebase/DynamicLinks (6.34.0):
     - Firebase/CoreOnly
-    - FirebaseDynamicLinks (~> 4.3.0)
-  - Firebase/MLVisionBarcodeModel (6.31.1):
-    - Firebase/CoreOnly
-    - FirebaseMLVisionBarcodeModel (~> 0.21.0)
-  - Firebase/MLVisionLabelModel (6.31.1):
-    - Firebase/CoreOnly
-    - FirebaseMLVisionLabelModel (~> 0.21.0)
-  - Firebase/MLVisionTextModel (6.31.1):
-    - Firebase/CoreOnly
-    - FirebaseMLVisionTextModel (~> 0.21.0)
+    - FirebaseDynamicLinks (~> 4.3.1)
   - firebase_analytics (0.0.1):
     - Firebase/Analytics (~> 6.0)
     - Firebase/Core
@@ -63,60 +54,36 @@ PODS:
   - firebase_dynamic_links (0.1.0):
     - Firebase/DynamicLinks
     - Flutter
-  - FirebaseAnalytics (6.8.0):
+  - FirebaseAnalytics (6.9.0):
     - FirebaseCore (~> 6.10)
-    - FirebaseInstallations (~> 1.6)
-    - GoogleAppMeasurement (= 6.8.0)
+    - FirebaseInstallations (~> 1.7)
+    - GoogleAppMeasurement (= 6.9.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 6.7)
     - GoogleUtilities/MethodSwizzler (~> 6.7)
     - GoogleUtilities/Network (~> 6.7)
     - "GoogleUtilities/NSData+zlib (~> 6.7)"
     - nanopb (~> 1.30906.0)
-  - FirebaseAuth (6.9.0):
+  - FirebaseAuth (6.9.2):
     - FirebaseCore (~> 6.10)
     - GoogleUtilities/AppDelegateSwizzler (~> 6.7)
     - GoogleUtilities/Environment (~> 6.7)
     - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseCore (6.10.1):
+  - FirebaseCore (6.10.4):
     - FirebaseCoreDiagnostics (~> 1.6)
     - GoogleUtilities/Environment (~> 6.7)
     - GoogleUtilities/Logger (~> 6.7)
-  - FirebaseCoreDiagnostics (1.6.0):
-    - GoogleDataTransport (~> 7.2)
+  - FirebaseCoreDiagnostics (1.7.0):
+    - GoogleDataTransport (~> 7.4)
     - GoogleUtilities/Environment (~> 6.7)
     - GoogleUtilities/Logger (~> 6.7)
     - nanopb (~> 1.30906.0)
-  - FirebaseDynamicLinks (4.3.0):
+  - FirebaseDynamicLinks (4.3.1):
     - FirebaseCore (~> 6.10)
   - FirebaseInstallations (1.7.0):
     - FirebaseCore (~> 6.10)
     - GoogleUtilities/Environment (~> 6.7)
     - GoogleUtilities/UserDefaults (~> 6.7)
     - PromisesObjC (~> 1.2)
-  - FirebaseMLCommon (0.21.0):
-    - FirebaseCore (~> 6.9)
-    - FirebaseInstallations (~> 1.5)
-    - GoogleToolboxForMac/Logger (~> 2.1)
-    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
-    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
-    - GoogleUtilities/UserDefaults (~> 6.0)
-    - GTMSessionFetcher/Core (~> 1.1)
-    - Protobuf (~> 3.12)
-  - FirebaseMLVision (0.21.0):
-    - FirebaseCore (~> 6.9)
-    - FirebaseMLCommon (~> 0.21)
-    - GoogleAPIClientForREST/Core (~> 1.3)
-    - GoogleAPIClientForREST/Vision (~> 1.3)
-    - GoogleToolboxForMac/Logger (~> 2.1)
-    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
-    - GTMSessionFetcher/Core (~> 1.1)
-    - Protobuf (~> 3.12)
-  - FirebaseMLVisionBarcodeModel (0.21.0):
-    - FirebaseMLVision (~> 0.21)
-  - FirebaseMLVisionLabelModel (0.21.0):
-    - FirebaseMLVision (~> 0.21)
-  - FirebaseMLVisionTextModel (0.21.0):
-    - FirebaseMLVision (~> 0.21)
   - Flutter (1.0.0)
   - flutter_downloader (0.0.1):
     - Flutter
@@ -147,18 +114,13 @@ PODS:
   - google_sign_in (0.0.1):
     - Flutter
     - GoogleSignIn (~> 5.0)
-  - GoogleAPIClientForREST/Core (1.4.3):
-    - GTMSessionFetcher (>= 1.1.7)
-  - GoogleAPIClientForREST/Vision (1.4.3):
-    - GoogleAPIClientForREST/Core
-    - GTMSessionFetcher (>= 1.1.7)
-  - GoogleAppMeasurement (6.8.0):
+  - GoogleAppMeasurement (6.9.0):
     - GoogleUtilities/AppDelegateSwizzler (~> 6.7)
     - GoogleUtilities/MethodSwizzler (~> 6.7)
     - GoogleUtilities/Network (~> 6.7)
     - "GoogleUtilities/NSData+zlib (~> 6.7)"
     - nanopb (~> 1.30906.0)
-  - GoogleDataTransport (7.3.0):
+  - GoogleDataTransport (7.5.0):
     - nanopb (~> 1.30906.0)
   - GoogleMaps (3.10.0):
     - GoogleMaps/Maps (= 3.10.0)
@@ -169,18 +131,6 @@ PODS:
     - AppAuth (~> 1.2)
     - GTMAppAuth (~> 1.0)
     - GTMSessionFetcher/Core (~> 1.1)
-  - GoogleToolboxForMac/DebugUtils (2.2.2):
-    - GoogleToolboxForMac/Defines (= 2.2.2)
-  - GoogleToolboxForMac/Defines (2.2.2)
-  - GoogleToolboxForMac/Logger (2.2.2):
-    - GoogleToolboxForMac/Defines (= 2.2.2)
-  - "GoogleToolboxForMac/NSData+zlib (2.2.2)":
-    - GoogleToolboxForMac/Defines (= 2.2.2)
-  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.2.2)":
-    - GoogleToolboxForMac/DebugUtils (= 2.2.2)
-    - GoogleToolboxForMac/Defines (= 2.2.2)
-    - "GoogleToolboxForMac/NSString+URLArguments (= 2.2.2)"
-  - "GoogleToolboxForMac/NSString+URLArguments (2.2.2)"
   - GoogleUtilities/AppDelegateSwizzler (6.7.2):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -240,8 +190,7 @@ PODS:
     - Flutter
   - "permission_handler (5.0.1+1)":
     - Flutter
-  - PromisesObjC (1.2.10)
-  - Protobuf (3.13.0)
+  - PromisesObjC (1.2.11)
   - Reachability (3.2)
   - SDWebImage/Core (5.9.0)
   - SDWebImageWebPCoder (0.6.1):
@@ -262,36 +211,10 @@ PODS:
     - Flutter
   - webview_flutter (0.0.1):
     - Flutter
-  - ZendeskAnswerBotProvidersSDK (2.1.0):
-    - ZendeskSupportProvidersSDK (~> 5.1.0)
-  - ZendeskAnswerBotSDK (2.1.0):
-    - ZendeskAnswerBotProvidersSDK (~> 2.1.0)
-    - ZendeskMessagingSDK (~> 3.7.0)
-  - ZendeskChatProvidersSDK (2.8.0)
-  - ZendeskChatSDK (2.8.0):
-    - ZendeskChatProvidersSDK (~> 2.8.0)
-    - ZendeskMessagingSDK (~> 3.7.0)
-  - ZendeskCommonUISDK (5.1.0):
-    - ZendeskSDKConfigurationsSDK (~> 1.1.6)
-  - ZendeskCoreSDK (2.4.1)
-  - ZendeskMessagingAPISDK (3.7.0):
-    - ZendeskSDKConfigurationsSDK (~> 1.1.6)
-  - ZendeskMessagingSDK (3.7.0):
-    - ZendeskCommonUISDK (~> 5.1.0)
-    - ZendeskMessagingAPISDK (~> 3.7.0)
-  - ZendeskSDKConfigurationsSDK (1.1.6)
-  - ZendeskSupportProvidersSDK (5.1.0):
-    - ZendeskCoreSDK (~> 2.4.1)
-  - ZendeskSupportSDK (5.1.0):
-    - ZendeskMessagingSDK (~> 3.7.0)
-    - ZendeskSupportProvidersSDK (~> 5.1.0)
 
 DEPENDENCIES:
   - connectivity (from `.symlinks/plugins/connectivity/ios`)
   - device_info (from `.symlinks/plugins/device_info/ios`)
-  - Firebase/MLVisionBarcodeModel
-  - Firebase/MLVisionLabelModel
-  - Firebase/MLVisionTextModel
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -321,9 +244,6 @@ DEPENDENCIES:
   - video_player (from `.symlinks/plugins/video_player/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
   - webview_flutter (from `.symlinks/plugins/webview_flutter/ios`)
-  - ZendeskAnswerBotSDK
-  - ZendeskChatSDK
-  - ZendeskSupportSDK
 
 SPEC REPOS:
   trunk:
@@ -339,18 +259,11 @@ SPEC REPOS:
     - FirebaseCoreDiagnostics
     - FirebaseDynamicLinks
     - FirebaseInstallations
-    - FirebaseMLCommon
-    - FirebaseMLVision
-    - FirebaseMLVisionBarcodeModel
-    - FirebaseMLVisionLabelModel
-    - FirebaseMLVisionTextModel
     - FMDB
-    - GoogleAPIClientForREST
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleMaps
     - GoogleSignIn
-    - GoogleToolboxForMac
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
@@ -359,21 +272,9 @@ SPEC REPOS:
     - nanopb
     - OneSignal
     - PromisesObjC
-    - Protobuf
     - Reachability
     - SDWebImage
     - SDWebImageWebPCoder
-    - ZendeskAnswerBotProvidersSDK
-    - ZendeskAnswerBotSDK
-    - ZendeskChatProvidersSDK
-    - ZendeskChatSDK
-    - ZendeskCommonUISDK
-    - ZendeskCoreSDK
-    - ZendeskMessagingAPISDK
-    - ZendeskMessagingSDK
-    - ZendeskSDKConfigurationsSDK
-    - ZendeskSupportProvidersSDK
-    - ZendeskSupportSDK
 
 EXTERNAL SOURCES:
   connectivity:
@@ -442,28 +343,23 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
-  Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
+  Crashlytics: 9220f5bc89e7a618df411b4f639389dbfb0e03d2
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
-  Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
+  Fabric: ea977e3cd9c20425516d3dafd3bf8c941c51223f
   FBSDKCoreKit: 1d5acf7c9d7a2f92bb1a242dc60cae5b7adb91df
   FBSDKLoginKit: f1ea8026a58b52d30c9f2e6a58ca7d813619fb83
-  Firebase: 658370fa0181826a74b7cfca8d68c5856ca749ae
+  Firebase: c23a36d9e4cdf7877dfcba8dd0c58add66358999
   firebase_analytics: 9118044ffb98bee71d84733fc594f5134fe4bc1b
   firebase_auth: af8784c4d8d87c36f730a305f97bfbcb24db024b
   firebase_core: 335c02abd48672b7c83c683df833d0488a72e73e
   firebase_crashlytics: cc468e94e5a637364aeeeec5c8a96d92ea75ec7b
   firebase_dynamic_links: 6aa278fc5e6e8cca17d5aa4c7aa46283f2b94749
-  FirebaseAnalytics: 0ca9aa2af7cc4dc92392b7a78bfc49feaa2eb60f
-  FirebaseAuth: 09f086fae98643f1ef235674cf3ae171ce26f5ba
-  FirebaseCore: 6fb954e350af0885803d5aa49865d15d9a6b264c
-  FirebaseCoreDiagnostics: 7415bfb3883b3500c5a95c42b6ba66baae78f600
-  FirebaseDynamicLinks: bab0682388b983f9b0044a1fb555606ddb0e9b7e
+  FirebaseAnalytics: 3bb096873ee0d7fa4b6c70f5e9166b6da413cc7f
+  FirebaseAuth: c92d49ada7948d1a23466e3db17bc4c2039dddc3
+  FirebaseCore: d3a978a3cfa3240bf7e4ba7d137fdf5b22b628ec
+  FirebaseCoreDiagnostics: 770ac5958e1372ce67959ae4b4f31d8e127c3ac1
+  FirebaseDynamicLinks: 6eac37d86910382eafb6315d952cc44c9e176094
   FirebaseInstallations: 466c7b4d1f58fe16707693091da253726a731ed2
-  FirebaseMLCommon: d218d75dd1c6c4e447f731ac22da56b88cb79431
-  FirebaseMLVision: 68dd092b4c52a7ac163ec0d4f541d5711fc9fec6
-  FirebaseMLVisionBarcodeModel: 394cd61c52dc03558088caf82b0dade8028f57d5
-  FirebaseMLVisionLabelModel: c6922e607cf4549b14981c80bf0d69eb51a2b547
-  FirebaseMLVisionTextModel: e9f3cba0f31022ae9dd3d246aff9849075cacd98
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_downloader: 058b9c41564a90500f67f3e432e3524613a7fd83
   flutter_facebook_login: cfb5659f686b1c575ef205c6b6fd20db9679d3c4
@@ -476,12 +372,10 @@ SPEC CHECKSUMS:
   geolocator: f7622e0e7e2a24718285b73916d60c4a54b9f5b6
   google_maps_flutter: df4e7de95264aa0a2f11aac0fc7e313acb8ffc7e
   google_sign_in: 6bd214b9c154f881422f5fe27b66aaa7bbd580cc
-  GoogleAPIClientForREST: e2d95a611ac06a90d143c93bfd8597719f8b0938
-  GoogleAppMeasurement: ecc30d0ab5b66d7d18e85ce1b8e2b345db60626d
-  GoogleDataTransport: e85fb700c9b027079ce182c3d08e12e0f9618bb4
+  GoogleAppMeasurement: a6a3a066369828db64eda428cb2856dc1cdc7c4e
+  GoogleDataTransport: 445302b7da4216da63071a4c29e7023f47192e5a
   GoogleMaps: 8c080862ff2748ece9929471b30feb56a6c5079d
   GoogleSignIn: 7137d297ddc022a7e0aa4619c86d72c909fa7213
-  GoogleToolboxForMac: 800648f8b3127618c1b59c7f97684427630c5ea3
   GoogleUtilities: 7f2f5a07f888cdb145101d6042bc4422f57e70b3
   GTMAppAuth: 4deac854479704f348309e7b66189e604cf5e01e
   GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
@@ -495,8 +389,7 @@ SPEC CHECKSUMS:
   onesignal_flutter: 129551f13dc887d88aaf837e2cd823e1926e8159
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   permission_handler: eac8e15b4a1a3fba55b761d19f3f4e6b005d15b6
-  PromisesObjC: b14b1c6b68e306650688599de8a45e49fae81151
-  Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
+  PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   SDWebImage: 62ae4a18473520c67b79e9724c31a63599cc9423
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
@@ -507,18 +400,7 @@ SPEC CHECKSUMS:
   video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e
   wakelock: 0d4a70faf8950410735e3f61fb15d517c8a6efc4
   webview_flutter: d2b4d6c66968ad042ad94cbb791f5b72b4678a96
-  ZendeskAnswerBotProvidersSDK: 1676564ebcbd22d2999f4d7d03b2453a7d085cbb
-  ZendeskAnswerBotSDK: 2926dbc024a2c2ab8fb8c472b1751336720b6113
-  ZendeskChatProvidersSDK: 69642e44186cda671bf6a93a98f0db45525bc033
-  ZendeskChatSDK: 207f63e262fa52c82d326b70cc88439b7b48c6da
-  ZendeskCommonUISDK: fff44133c8bf74ef6407c31c7cab56084c58dbf4
-  ZendeskCoreSDK: 2dc9457ae01d024ca02f60f6134ad1ad90136c29
-  ZendeskMessagingAPISDK: 64543aaa24e63a6eefe44d0dd6909e55edfe1cc5
-  ZendeskMessagingSDK: 7b7f4818ce6420f5881d1774115cc5525b2686d2
-  ZendeskSDKConfigurationsSDK: 2fa9413915db85c993f58ad8f7902bea0b6090a5
-  ZendeskSupportProvidersSDK: 209011ffad4cbd256839444571defad1b83006f2
-  ZendeskSupportSDK: 95aea2ab473768d8b01fa837002415fb93f8c3e0
 
-PODFILE CHECKSUM: a7188a24465df33655652369373b52d11d114a59
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
 
 COCOAPODS: 1.9.3

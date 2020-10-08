@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -9,20 +10,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/api/customer-profile-api-client.dart';
 import 'package:tienda/bloc/events/customer-profile-events.dart';
 import 'package:tienda/bloc/states/customer-profile-states.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/model/customer.dart';
-
-
-
-
-
-
-
+import 'package:tienda/model/watch-history.dart';
 
 class CustomerProfileBloc
     extends Bloc<CustomerProfileEvents, CustomerProfileStates> {
   CustomerProfileBloc() : super(Loading());
-
 
   @override
   Stream<CustomerProfileStates> mapEventToState(
@@ -43,6 +36,10 @@ class CustomerProfileBloc
 
     if (event is UpdateProfilePicture) {
       yield* _mapUpdateProfilePictureToStates(event);
+    }
+
+    if (event is LoadWatchHistory) {
+      yield* _mapLoadWatchHistoryToStates(event);
     }
   }
 
@@ -91,6 +88,40 @@ class CustomerProfileBloc
       updateCustomerProfileLocally(customer);
       yield LoadCustomerProfileSuccess(customerDetails: customer);
     }
+  }
+
+  Stream<CustomerProfileStates> _mapLoadWatchHistoryToStates(
+      LoadWatchHistory event) async* {
+    final dio = new Dio();
+    String value = await FlutterSecureStorage().read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
+    CustomerProfileApiClient customerProfileApiClient =
+        CustomerProfileApiClient(dio,
+            baseUrl: GlobalConfiguration().getString("baseURL"));
+
+    List<WatchHistory> watchHistory;
+
+    await customerProfileApiClient.getWatchHistory().then((response) {
+      Logger().d("WATCH-HISTORY-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          watchHistory = List<WatchHistory>.from(json
+              .decode(response)['history']
+              .map((x) => WatchHistory.fromJson(x)));
+          break;
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+
+        Logger().e("WATCH-HISTORY-ERROR:", error);
+      }
+    });
+
+    if(watchHistory != null)
+      yield LoadWatchHistorySuccess(watchHistory);
+
+
   }
 
   Stream<CustomerProfileStates> _mapEditCustomerProfileToStates(
@@ -169,7 +200,8 @@ class CustomerProfileBloc
     Customer customer = await callFetchCustomerProfileApi();
 
     if (customer != null) {
-      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
       sharedPreferences.setInt('customer-id', customer.id);
       sharedPreferences.setString('customer-name', customer.fullName);
       updateCustomerProfileLocally(customer);
@@ -177,17 +209,14 @@ class CustomerProfileBloc
     } else {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
-      if(sharedPreferences.containsKey("customer")) {
+      if (sharedPreferences.containsKey("customer")) {
         Customer customer = Customer.fromJson(
             json.decode(sharedPreferences.getString("customer")));
         yield LoadCustomerProfileSuccess(customerDetails: customer);
-      }
-      else{
+      } else {
         yield NoCustomerData();
-
       }
     }
-
   }
 
   Future<void> updateCustomerProfileLocally(Customer customer) async {

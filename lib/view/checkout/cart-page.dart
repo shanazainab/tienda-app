@@ -64,9 +64,10 @@ class _CartPageState extends State<CartPage> {
                 ),
               ),
               if (state.cart != null)
-                Align(
-                  alignment: Alignment.bottomCenter,
+                Positioned(
+                  bottom: 100,
                   child: Card(
+                    elevation: 0,
                     margin: EdgeInsets.all(0),
                     child: Container(
                       width: MediaQuery.of(context).size.width,

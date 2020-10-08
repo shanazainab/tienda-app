@@ -11,7 +11,7 @@ import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/filter-bloc.dart';
 import 'package:tienda/bloc/product-bloc.dart';
 import 'package:tienda/bloc/states/category-states.dart';
-import 'package:tienda/loading-widget.dart';
+import 'package:tienda/view/widgets/loading-widget.dart';
 import 'package:tienda/model/category.dart';
 import 'package:tienda/model/search-body.dart';
 import 'package:tienda/view/products/product-list-page.dart';
@@ -108,8 +108,7 @@ class _CategoriesPageState extends State<CategoriesPage>
                                                               index
                                                           ? Border(
                                                               right: BorderSide(
-                                                                  color: Colors
-                                                                      .blue,
+                                                                  color: Color(0xffff2e63),
                                                                   width: 4))
                                                           : null),
                                                   height: 50,
@@ -250,7 +249,7 @@ class _CategoriesPageState extends State<CategoriesPage>
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
                   child: Center(
-                    child: spinkit
+                    child: spinKit
                   ),
                 );
             }));

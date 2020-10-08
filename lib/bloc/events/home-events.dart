@@ -6,3 +6,4 @@ abstract class HomeEvents {
 class FetchHomeData extends HomeEvents {
   FetchHomeData() : super();
 }
+

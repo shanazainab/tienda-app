@@ -1,14 +1,10 @@
 import 'dart:async';
-
 import 'dart:ui';
 
 import 'package:badges/badges.dart';
-
 import 'package:flare_flutter/flare_actor.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -20,7 +16,7 @@ import 'package:tienda/bloc/live-stream-checkout-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/bloc/states/live-stream-states.dart';
 import 'package:tienda/controller/real-time-controller.dart';
-import 'package:tienda/loading-widget.dart';
+import 'package:tienda/view/widgets/loading-widget.dart';
 import 'package:tienda/model/live-chat.dart';
 import 'package:tienda/model/presenter.dart';
 import 'package:tienda/view/live-stream/add-to-cart-popup.dart';
@@ -387,7 +383,7 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
                 child: Center(
-                  child: spinkit,
+                  child: spinKit,
                 ),
               );
           })),

@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '10.0'
+# platform :ios, '9.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -32,18 +32,6 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-
-
-  pod 'ZendeskAnswerBotSDK' # AnswerBot only on the Unified SDK
-  pod 'ZendeskChatSDK'      # Chat only on the Unified SDK
-  pod 'ZendeskSupportSDK'   # Support only on the Unified SDK
-
-
-  pod 'Firebase/MLVisionBarcodeModel'
-  pod 'Firebase/MLVisionLabelModel'
-  pod 'Firebase/MLVisionTextModel'
-
-
 end
 
 post_install do |installer|

@@ -1,11 +1,11 @@
+import 'package:chewie/chewie.dart';
+import 'package:chewie/src/chewie_player.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/model/product.dart';
 import 'package:video_player/video_player.dart';
-import 'package:chewie/chewie.dart';
-import 'package:chewie/src/chewie_player.dart';
 
 class ProductVideoContent extends StatefulWidget {
   final Product product;

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:tienda/view/widgets/bottom-nav-bar.dart';
 
 class OverlayHandlerProvider with ChangeNotifier {
   OverlayEntry overlayEntry;
   OverlayEntry mainOverlayEntry;
 
+
+
   double _aspectRatio = 1.77;
   bool inPipMode = false;
+  bool inFullScreenMode = false;
 
   enablePip(double aspect) {
     inPipMode = true;
@@ -14,6 +16,19 @@ class OverlayHandlerProvider with ChangeNotifier {
     print("$inPipMode enablePip");
     notifyListeners();
   }
+
+  enableFullScreen(double aspect) {
+    inFullScreenMode = true;
+    _aspectRatio = aspect;
+    print("$inFullScreenMode enableFullScreen");
+    notifyListeners();
+  }
+  disableFullScreen() {
+    inFullScreenMode = false;
+    print("$inFullScreenMode disableFullScreen");
+    notifyListeners();
+  }
+
 
   disablePip() {
     inPipMode = false;
@@ -33,7 +48,8 @@ class OverlayHandlerProvider with ChangeNotifier {
       }
       overlayEntry = null;
       inPipMode = false;
-      Overlay.of(context, rootOverlay: false).insert(overlay);
+      inFullScreenMode = false;
+      Overlay.of(context, rootOverlay: true).insert(overlay);
       mainOverlayEntry = overlay;
     } else {
       if (overlayEntry != null) {
@@ -41,7 +57,9 @@ class OverlayHandlerProvider with ChangeNotifier {
       }
       overlayEntry = null;
       inPipMode = false;
-      Overlay.of(context, rootOverlay: false)
+      inFullScreenMode = false;
+
+      Overlay.of(context, rootOverlay: true,)
           .insert(overlay, below: mainOverlayEntry);
       overlayEntry = overlay;
     }

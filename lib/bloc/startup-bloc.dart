@@ -1,11 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/bloc/states/startup-states.dart';
-import 'package:tienda/controller/login-controller.dart';
 
 import 'events/startup-events.dart';
 

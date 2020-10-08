@@ -5,7 +5,6 @@ import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/events/filter-events.dart';
 import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/filter-bloc.dart';
-
 import 'package:tienda/bloc/product-bloc.dart';
 import 'package:tienda/bloc/states/filter-states.dart';
 import 'package:tienda/bloc/states/product-states.dart';
@@ -14,10 +13,9 @@ import 'package:tienda/bloc/wishlist-bloc.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/product-list-response.dart' as PLR;
 import 'package:tienda/model/search-body.dart';
-
-import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/filter/product-filter.dart';
 import 'package:tienda/view/filter/product-sort.dart';
+import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/products/product-list-container.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 

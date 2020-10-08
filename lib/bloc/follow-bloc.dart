@@ -1,13 +1,12 @@
 import 'dart:convert';
 
-import 'package:flutter/rendering.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
 import 'package:tienda/api/presenter-api-client.dart';
 import 'package:tienda/bloc/events/follow-events.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/bloc/states/follow-states.dart';
 
 class FollowBloc extends Bloc<FollowEvents, FollowStates> {

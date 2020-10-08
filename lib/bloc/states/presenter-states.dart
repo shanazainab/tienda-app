@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:tienda/model/presenter-category.dart';
 import 'package:tienda/model/presenter.dart';
 
@@ -17,6 +16,11 @@ class LoadPresenterListSuccess extends PresenterStates {
   LoadPresenterListSuccess(this.presenterCategory, this.presenters) : super();
 }
 
+class LoadPopularPresentersSuccess extends PresenterStates {
+  final List<Presenter> presenters;
+
+  LoadPopularPresentersSuccess({this.presenters}) : super();
+}
 class LoadPresenterDetailsSuccess extends PresenterStates {
   final Presenter presenter;
 

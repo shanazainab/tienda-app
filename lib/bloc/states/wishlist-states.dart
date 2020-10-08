@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:tienda/model/wishlist.dart';
 
 abstract class WishListStates {

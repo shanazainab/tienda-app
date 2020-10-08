@@ -90,8 +90,6 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>UIMainStoryboardFile - 3</key>
-	<string>Main</string>
 	<key>UIRequiresPersistentWiFi</key>
 	<true/>
 	<key>UIStatusBarHidden</key>

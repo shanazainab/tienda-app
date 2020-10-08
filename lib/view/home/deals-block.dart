@@ -1,13 +1,8 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:tienda/bloc/events/product-events.dart';
-import 'package:tienda/bloc/filter-bloc.dart';
-import 'package:tienda/bloc/product-bloc.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/product.dart';
-import 'package:tienda/view/products/product-list-page.dart';
 
 import '../../app-language.dart';
 
@@ -21,17 +16,15 @@ class DealsBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     var appLanguage = Provider.of<AppLanguage>(context);
 
-    return Container(
+    return Padding(
+      padding: const EdgeInsets.only(left:12,right:12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(AppLocalizations.of(context).translate('deals-of-the-day').toUpperCase(),
-            style: TextStyle(
-              color: Colors.grey
-            ),),
+          Text(
+            AppLocalizations.of(context).translate('deals-of-the-day'),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
           SizedBox(
              height: 4,
@@ -44,7 +37,7 @@ class DealsBlock extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (BuildContext context,int index){
               return Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(right:8.0),
                 child: GestureDetector(
                   onTap: (){
 
@@ -111,7 +104,7 @@ class DealsBlock extends StatelessWidget {
             ,
           )
         ],
-      )
+      ),
     );
   }
 }

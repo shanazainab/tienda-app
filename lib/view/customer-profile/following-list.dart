@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:tienda/localization.dart';
 import 'package:tienda/model/presenter.dart';
 import 'package:tienda/view/presenter-profile/presenter-profile-page.dart';
 
@@ -91,9 +90,6 @@ class FollowingList extends StatelessWidget {
                                                         profileImageURL:    followedPresenters[
                                                         index]
                                                             .profilePicture,
-                                                        presenterName:    followedPresenters[
-                                                        index]
-                                                            .name,
                                                         presenterId:    followedPresenters[
                                                         index]
                                                             .id,

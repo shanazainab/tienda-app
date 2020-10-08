@@ -9,21 +9,14 @@ import 'package:tienda/bloc/events/checkout-events.dart';
 import 'package:tienda/bloc/events/loading-events.dart';
 import 'package:tienda/bloc/events/saved-card-events.dart';
 import 'package:tienda/bloc/loading-bloc.dart';
-import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/saved-card-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/bloc/states/checkout-states.dart';
-import 'package:tienda/bloc/states/loading-states.dart';
-import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/controller/real-time-controller.dart';
-import 'package:tienda/loading-widget.dart';
 import 'package:tienda/model/order.dart';
-import 'package:tienda/view/cart/cart-items-container.dart';
 import 'package:tienda/view/live-stream/live-stream-cart-container.dart';
 import 'package:tienda/view/live-stream/payment-container.dart';
-import 'package:tienda/view/login/login-main-page.dart';
 
-import '../../localization.dart';
 import 'choose-delivery-address.dart';
 
 typedef CheckOutStatus = Function(bool done);

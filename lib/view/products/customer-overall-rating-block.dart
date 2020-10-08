@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
-import 'package:tienda/bloc/events/review-events.dart';
-import 'package:tienda/bloc/review-bloc.dart';
 import 'package:tienda/localization.dart';
-import 'package:tienda/model/review-request.dart';
 
 class CustomerOverallRatingBlock extends StatefulWidget {
   final int productId;

@@ -1,4 +1,3 @@
-
 import 'package:tienda/model/home-screen-data-response.dart';
 
 abstract class HomeStates {
@@ -14,6 +13,8 @@ class LoadDataSuccess extends HomeStates {
 
   LoadDataSuccess(this.homeScreenResponse) : super();
 }
+
+
 
 class LoadDataFail extends HomeStates {
   final dynamic error;

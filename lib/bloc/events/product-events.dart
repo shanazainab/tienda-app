@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:tienda/model/product-list-response.dart';
 import 'package:tienda/model/product.dart';
 import 'package:tienda/model/search-body.dart';

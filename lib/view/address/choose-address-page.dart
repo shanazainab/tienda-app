@@ -5,9 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_webservice/places.dart';
 import "package:google_maps_webservice/geocoding.dart";
-
+import 'package:google_maps_webservice/places.dart';
 import 'package:tienda/bloc/address-bloc.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/delivery-address.dart';

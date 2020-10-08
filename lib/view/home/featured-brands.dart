@@ -17,18 +17,14 @@ class FeaturedBrands extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Padding(
+      padding: const EdgeInsets.only(left: 12, right: 12),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                  AppLocalizations.of(context)
-                      .translate('featured-brands')
-                      .toUpperCase(),
-                  style: TextStyle(color: Colors.grey))),
+          Text(AppLocalizations.of(context).translate('featured-brands'),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
           SizedBox(
             height: 100,
             child: ListView.builder(
@@ -73,13 +69,16 @@ class FeaturedBrands extends StatelessWidget {
                       },
                       child: CircleAvatar(
                           radius: 50,
-                          backgroundColor: Colors.black,
+                          backgroundColor: index / 2 == 0
+                              ? Color(0xFFE7F3FC)
+                              : Color(0xFFEFE8FB),
                           child: Center(
                               child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               featuredBrand[index].brand,
                               textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.grey),
                             ),
                           ))),
                     ),

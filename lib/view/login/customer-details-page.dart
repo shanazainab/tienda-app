@@ -2,7 +2,9 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:tienda/bloc/bottom-nav-bar-bloc.dart';
 import 'package:tienda/bloc/customer-profile-bloc.dart';
+import 'package:tienda/bloc/events/bottom-nav-bar-events.dart';
 import 'package:tienda/bloc/events/customer-profile-events.dart';
 import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
@@ -30,10 +32,11 @@ class CustomerDetailsPage extends StatelessWidget {
             BlocProvider.of<CustomerProfileBloc>(context)
                 .add(FetchCustomerProfile());
 
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
-            );
+            BlocProvider.of<BottomNavBarBloc>(context)
+                .add(ChangeBottomNavBarIndex(0));
+            BlocProvider.of<LoginBloc>(context)..add(CheckLoginStatus());
+            Navigator.of(context, rootNavigator: true).pushReplacement(
+                MaterialPageRoute(builder: (context) => HomeScreen()));
           }
         },
         child: Scaffold(

@@ -1,12 +1,12 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
 import 'package:tienda/api/search-api-client.dart';
 import 'package:tienda/bloc/states/search-states.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/model/search-history-response.dart';
 import 'package:tienda/model/suggestion-response.dart';
 

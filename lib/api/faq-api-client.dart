@@ -1,5 +1,5 @@
-import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
+import 'package:retrofit/http.dart';
 
 part 'faq-api-client.g.dart';
 

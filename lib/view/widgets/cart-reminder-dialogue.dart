@@ -1,14 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:global_configuration/global_configuration.dart';
-import 'package:tienda/bloc/events/live-stream-events.dart';
-import 'package:tienda/bloc/live-stream-bloc.dart';
-import 'package:tienda/bloc/live-stream-checkout-bloc.dart';
-import 'package:tienda/controller/one-signal-notification-controller.dart';
-import 'package:tienda/model/presenter.dart';
 import 'package:tienda/view/checkout/cart-page.dart';
-import 'package:tienda/view/live-stream/live-stream-screen.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class CartReminderDialogue extends StatelessWidget {
 

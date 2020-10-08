@@ -9,9 +9,8 @@ import 'package:tienda/bloc/connectivity-bloc.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/wishlist-events.dart';
 import 'package:tienda/bloc/states/wishlist-states.dart';
-
 import 'package:tienda/bloc/wishlist-bloc.dart';
-import 'package:tienda/loading-widget.dart';
+import 'package:tienda/view/widgets/loading-widget.dart';
 import 'package:tienda/model/wishlist.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -69,7 +68,7 @@ class _State extends State<WishListPage> {
               color: Colors.white,
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: Center(child: spinkit),
+              child: Center(child: spinKit),
             );
           }
         }));

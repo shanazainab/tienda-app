@@ -1,4 +1,5 @@
 import 'package:tienda/model/live-response.dart';
+import 'package:tienda/model/presenter-review-response.dart';
 import 'package:tienda/model/product.dart';
 
 abstract class LiveStreamStates {
@@ -41,4 +42,18 @@ class ShowProductSuccess extends LiveStreamStates {
   final Product product;
 
   ShowProductSuccess(this.product) : super();
+}
+
+class GetReviewsSuccess extends LiveStreamStates {
+  final PresenterReviewResponse presenterReviewResponse;
+
+  GetReviewsSuccess(this.presenterReviewResponse) : super();
+}
+
+class SubmitReviewSuccess extends LiveStreamStates {
+  SubmitReviewSuccess() : super();
+}
+
+class GetReviewsNotAllowed extends LiveStreamStates {
+  GetReviewsNotAllowed() : super();
 }

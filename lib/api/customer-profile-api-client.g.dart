@@ -101,8 +101,7 @@ class _CustomerProfileApiClient implements CustomerProfileApiClient {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{'phone_number': phoneNumber};
 
-    final Response<String> _result = await _dio.request(
-        '/change_phone_number/',
+    final Response<String> _result = await _dio.request('/change_phone_number/',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -116,10 +115,11 @@ class _CustomerProfileApiClient implements CustomerProfileApiClient {
   }
 
   @override
-  Future<String> verifyUpdatedPhoneNumber(String phoneNumber, String otp) async {
+  Future<String> verifyUpdatedPhoneNumber(
+      String phoneNumber, String otp) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{'phone_number': phoneNumber,"totp":otp};
+    final _data = <String, dynamic>{'phone_number': phoneNumber, "totp": otp};
 
     final Response<String> _result = await _dio.request(
         '/verify_update_phone_number/',
@@ -131,6 +131,24 @@ class _CustomerProfileApiClient implements CustomerProfileApiClient {
             baseUrl: baseUrl),
         data: _data);
     Logger().d("REQUEST:${_result.data}");
+    final value = _result.data;
+    return value;
+  }
+
+  @override
+  Future<String> getWatchHistory() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final Response<String> _result = await _dio.request('/get_watch_history/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+
     final value = _result.data;
     return value;
   }

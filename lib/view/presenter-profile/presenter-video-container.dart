@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tienda/model/presenter.dart';
-import 'package:tienda/view/products/product-review-page.dart';
 
-class SellerProfileVideoList extends StatelessWidget {
-  final GlobalKey pageViewGlobalKey;
-  final Presenter presenter;
+class PresenterVideoContainer extends StatelessWidget {
+  final List videos;
 
-  SellerProfileVideoList(this.presenter, this.pageViewGlobalKey);
+  PresenterVideoContainer(this.videos);
 
   @override
   Widget build(BuildContext context) {

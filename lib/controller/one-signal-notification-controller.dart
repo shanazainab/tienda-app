@@ -4,11 +4,9 @@ import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tienda/controller/real-time-controller.dart';
 import 'package:tienda/model/chat-history-response.dart';
-import 'package:tienda/model/home-screen-data-response.dart';
 import 'package:tienda/model/presenter.dart';
 import 'package:tienda/model/unread-messages.dart';
 import 'package:tienda/view/chat/presenter-direct-message.dart';
-import 'package:tienda/view/checkout/cart-page.dart';
 import 'package:tienda/view/live-stream/live-stream-pop-up.dart';
 import 'package:tienda/view/widgets/cart-reminder-dialogue.dart';
 

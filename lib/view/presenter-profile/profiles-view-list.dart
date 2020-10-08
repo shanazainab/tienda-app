@@ -116,8 +116,6 @@ class _SellerProfileListViewState extends State<SellerProfileListView>
                                                     PresenterProfilePage(
                                                       presenterId: cat
                                                           .presenters[index].id,
-                                                      presenterName: cat
-                                                          .presenters[index].name,
                                                       profileImageURL: cat
                                                           .presenters[index].profilePicture,
                                                     )),

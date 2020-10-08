@@ -2,23 +2,22 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:tienda/bloc/events/live-events.dart';
+import 'package:tienda/bloc/events/preference-events.dart';
 import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/events/search-events.dart';
 import 'package:tienda/bloc/filter-bloc.dart';
+import 'package:tienda/bloc/live-contents-bloc.dart';
+import 'package:tienda/bloc/preference-bloc.dart';
 import 'package:tienda/bloc/product-bloc.dart';
 import 'package:tienda/bloc/search-bloc.dart';
 import 'package:tienda/bloc/states/search-states.dart';
-import 'package:tienda/controller/ml-controller.dart';
-
-import 'package:tienda/localization.dart';
 import 'package:tienda/model/search-body.dart';
 import 'package:tienda/view/products/product-list-page.dart';
 import 'package:tienda/view/search/search-autocomplete.dart';
-import 'package:tienda/view/widgets/image-option-dialogue.dart';
-
 import 'package:tienda/view/search/search-home-container.dart';
-import 'package:tienda/view/search/voice-search.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -34,11 +33,16 @@ class _SearchPageState extends State<SearchPage> {
 
   PanelController panelController = new PanelController();
 
+  PreferenceBloc preferenceBloc = new PreferenceBloc();
+
+  LiveContentsBloc liveContentsBloc = new LiveContentsBloc();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
+    preferenceBloc.add(FetchPreferredCategoryList());
     searchTextController.addListener(() {
       print("TEXT INPUT:${searchTextController.text}");
       if (searchTextController.text.length > 1)
@@ -46,6 +50,7 @@ class _SearchPageState extends State<SearchPage> {
       if (searchTextController.text.length < 1)
         searchBloc..add(StopSuggestions());
     });
+    liveContentsBloc.add(LoadLiveVideoList());
   }
 
   @override
@@ -61,7 +66,7 @@ class _SearchPageState extends State<SearchPage> {
           brightness: Brightness.light,
           elevation: 0,
           title: Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+            padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
             child: TextField(
               focusNode: searchFocus,
               controller: searchTextController,
@@ -72,79 +77,46 @@ class _SearchPageState extends State<SearchPage> {
                 handleProductSearch(value);
               },
               decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(8),
                   filled: true,
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.grey,
-                    size: 16,
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.only(left: 10.0, right: 8.0),
+                    child: SvgPicture.asset(
+                      "assets/svg/search.svg",
+                      height: 20,
+                      width: 20,
+                    ),
                   ),
+                  // prefix:SvgPicture.asset(
+                  //   "assets/svg/search.svg",
+                  //   height: 20,
+                  //   width: 20,
+                  // ) ,
+
                   prefixIconConstraints: BoxConstraints(
-                    minHeight: 32,
-                    minWidth: 32,
+                    minHeight: 20,
+                    minWidth: 20,
                   ),
                   enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[200])),
+                      borderRadius: BorderRadius.circular(3),
+                      borderSide: BorderSide(color: Color(0xffeef2f3))),
                   isDense: true,
-                  fillColor: Colors.grey[200],
+                  fillColor: Color(0xffeef2f3),
                   focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[200])),
-                  focusColor: Colors.grey[200],
-                  hintText: AppLocalizations.of(context)
-                      .translate("search-for-brands-and-products"),
-                  hintStyle: TextStyle(fontSize: 12),
+                      borderRadius: BorderRadius.circular(3),
+                      borderSide: BorderSide(color: Color(0xffeef2f3))),
+                  focusColor: Color(0xffeef2f3),
+                  hintText: 'Presenters, Products, Categories',
+                  hintStyle: TextStyle(
+                    fontFamily: 'Roboto',
+                    color: Color(0xff010d10),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.normal,
+                    letterSpacing: 0,
+                  ),
                   border: InputBorder.none),
             ),
           ),
-          actions: <Widget>[
-            IconButton(
-              constraints: BoxConstraints.tight(Size.square(40)),
-              padding: EdgeInsets.all(0),
-              visualDensity: VisualDensity.compact,
-              onPressed: () {
-                searchFocus.unfocus();
-                // showModalBottomSheet(
-                //     context: context,
-                //     builder: (BuildContext bc) {
-                //       return VoiceSearch(
-                //         onVoiceInput: (input) {
-                //           searchTextController.text = input;
-                //         },
-                //       );
-                //     });
-              },
-              icon: Icon(
-                Icons.keyboard_voice,
-                size: 22,
-              ),
-            ),
-            IconButton(
-              constraints: BoxConstraints.tight(Size.square(40)),
-              padding: EdgeInsets.all(0),
-              visualDensity: VisualDensity.compact,
-              onPressed: () {
-                searchFocus.unfocus();
-                showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext bc) {
-                      return ImageOptionDialogue(
-                        selectedImage: (image) {
-                          handleImageSearchQuery(image);
-                        },
-                      );
-                    });
-              },
-              icon: Icon(
-                Icons.camera_alt,
-                size: 22,
-              ),
-            ),
-            SizedBox(
-              width: 8,
-            )
-          ],
         ),
         body: BlocListener<SearchBloc, SearchStates>(
           cubit: searchBloc,
@@ -157,6 +129,8 @@ class _SearchPageState extends State<SearchPage> {
           child: Stack(
             children: <Widget>[
               SearchHomeContainer(
+                preferenceBloc,
+                liveContentsBloc,
                 onScroll: (status) {
                   print("CALLBACK RECEIVED");
 
@@ -189,7 +163,7 @@ class _SearchPageState extends State<SearchPage> {
                         child: SlidingUpPanel(
                           controller: panelController,
                           minHeight: 0,
-                          maxHeight: 250,
+                          maxHeight: MediaQuery.of(context).size.height,
                           slideDirection: SlideDirection.DOWN,
                           panel: SearchAutoComplete(new List(), (value) {
                             if (true) {

@@ -3,7 +3,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
-import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/app-language.dart';
@@ -130,8 +129,10 @@ class _CustomerProfileCardState extends State<CustomerProfileCard> {
               : CircleAvatar(
                   radius: 30,
                   backgroundColor: Color(0xfff2f2e4),
-                  backgroundImage: CachedNetworkImageProvider(
-                      "${GlobalConfiguration().getString("imageURL")}/${widget.customerDetails.profilePicture}")),
+                  child: CachedNetworkImage(
+                    imageUrl:"${GlobalConfiguration().getString("imageURL")}/${widget.customerDetails.profilePicture}" ,
+                    fit: BoxFit.contain,
+                  ),),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
             child: Text("${widget.customerDetails.fullName}",

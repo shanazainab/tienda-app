@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tienda/bloc/address-bloc.dart';
 import 'package:tienda/bloc/events/address-events.dart';
 import 'package:tienda/bloc/states/address-states.dart';
-import 'package:tienda/loading-widget.dart';
+import 'package:tienda/view/widgets/loading-widget.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/delivery-address.dart';
 import 'package:tienda/view/address/add-address-page.dart';
@@ -47,7 +47,7 @@ class SavedAddressPage extends StatelessWidget {
                     else
                       return Container(
                           height: 400,
-                          child: Center(child: spinkit));
+                          child: Center(child: spinKit));
                   }),
                 ],
               ),

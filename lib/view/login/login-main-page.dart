@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tienda/bloc/bottom-nav-bar-bloc.dart';
+import 'package:tienda/bloc/events/bottom-nav-bar-events.dart';
 import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/controller/login-controller.dart';
 import 'package:tienda/view/home/home-screen.dart';
 import 'package:tienda/view/login/login-mobile-number-page.dart';
+import 'package:tienda/view/widgets/loading-widget.dart';
 
 import '../../localization.dart';
 
@@ -16,13 +19,16 @@ class LoginMainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return BlocListener<LoginBloc, LoginStates>(
         listener: (context, state) {
           if (state is GoogleSignInResponse &&
               state.response == GoogleSignInResponse.SUCCESS) {
-            Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => HomeScreen()));
+            BlocProvider.of<BottomNavBarBloc>(context)
+                .add(ChangeBottomNavBarIndex(0));
 
+            BlocProvider.of<LoginBloc>(context).add(CheckLoginStatus());
+            Navigator.of(context, rootNavigator: true).pushReplacement(
+                MaterialPageRoute(builder: (context) => HomeScreen()));
           } else if (state is GoogleSignInResponse &&
               state.response == GoogleSignInResponse.FAILED) {
             Fluttertoast.showToast(
@@ -41,15 +47,22 @@ class LoginMainPage extends StatelessWidget {
             brightness: Brightness.light,
             backgroundColor: Colors.transparent,
           ),
+          bottomNavigationBar:
+              BlocBuilder<LoginBloc, LoginStates>(builder: (context, state) {
+            if (state is SocialAccountLoginProgress)
+              return linearProgress;
+            else
+              return Container(
+                height: 0,
+              );
+          }),
           body: Stack(
             children: <Widget>[
               Container(
-                child: Center(
-                  child: Text(""),
-                ),
+                child: Text(""),
               ),
               Container(
-                alignment: Alignment.bottomCenter,
+                alignment: Alignment.center,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 24.0, right: 24.0),
                   child: Column(
@@ -77,7 +90,8 @@ class LoginMainPage extends StatelessWidget {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(AppLocalizations.of(context).translate('continue-with-phone-number')),
+                                child: Text(AppLocalizations.of(context)
+                                    .translate('continue-with-phone-number')),
                               ),
                             ],
                           ),
@@ -105,7 +119,8 @@ class LoginMainPage extends StatelessWidget {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(AppLocalizations.of(context).translate('continue-with-google')),
+                                child: Text(AppLocalizations.of(context)
+                                    .translate('continue-with-google')),
                               ),
                             ],
                           ),
@@ -133,7 +148,8 @@ class LoginMainPage extends StatelessWidget {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10.0),
-                                child: Text(AppLocalizations.of(context).translate('continue-with-facebook')),
+                                child: Text(AppLocalizations.of(context)
+                                    .translate('continue-with-facebook')),
                               ),
                             ],
                           ),

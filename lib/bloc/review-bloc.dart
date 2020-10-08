@@ -1,15 +1,14 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tienda/api/orders-api-client.dart';
 import 'package:tienda/api/review-api-client.dart';
 import 'package:tienda/bloc/events/review-events.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/bloc/states/review-states.dart';
 import 'package:tienda/model/product.dart';
 

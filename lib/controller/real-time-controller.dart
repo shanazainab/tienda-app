@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
@@ -11,7 +12,6 @@ import 'package:tienda/api/chat-api-client.dart';
 import 'package:tienda/model/chat-history-response.dart';
 import 'package:tienda/model/get-chat-message-response.dart';
 import 'package:tienda/model/live-chat.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/model/unread-messages.dart';
 
 class RealTimeController {
@@ -207,6 +207,7 @@ class RealTimeController {
   }
 
   emitAddToCartFromLive(int productId, int presenterId) {
+    print("EMITTED");
     socket.emit('added_product_to_cart',
         {'product_id': productId, 'presenter_id': presenterId});
   }

@@ -1,11 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tienda/api/login-api-client.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/controller/login-controller.dart';
+
 import 'events/login-events.dart';
-import 'package:dio/dio.dart';
 
 class LoginBloc extends Bloc<LoginEvents, LoginStates> {
   LoginBloc() : super(LoginInitiated());
@@ -88,7 +86,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
 
   Stream<LoginStates> _doGoogleSignIn(DoGoogleSignIn event) async* {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-
+    yield SocialAccountLoginProgress();
     String status = await LoginController().signInWithGoogle();
     switch (status) {
       case "success":

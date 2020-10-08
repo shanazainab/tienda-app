@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:tienda/model/customer.dart';
 
 abstract class CustomerProfileEvents {
@@ -31,19 +32,26 @@ class ChangePhoneNumber extends CustomerProfileEvents {
 
   ChangePhoneNumber({this.phoneNumber}) : super();
 }
+
 class VerifyPhoneNumber extends CustomerProfileEvents {
   final String phoneNumber;
   final String otp;
 
-  VerifyPhoneNumber({this.phoneNumber,this.otp}) : super();
+  VerifyPhoneNumber({this.phoneNumber, this.otp}) : super();
 }
+
 class ChangeEmail extends CustomerProfileEvents {
   final String phoneNumber;
 
   ChangeEmail({this.phoneNumber}) : super();
 }
+
 class VerifyEmail extends CustomerProfileEvents {
   final String phoneNumber;
 
   VerifyEmail({this.phoneNumber}) : super();
+}
+
+class LoadWatchHistory extends CustomerProfileEvents {
+  LoadWatchHistory() : super();
 }

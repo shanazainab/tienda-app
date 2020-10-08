@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:tienda/model/delivery-address.dart';
 
 abstract class AddressStates {

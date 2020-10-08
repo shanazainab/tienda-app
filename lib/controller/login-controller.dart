@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:device_info/device_info.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -16,7 +18,6 @@ import 'package:tienda/api/login-api-client.dart';
 import 'package:tienda/controller/real-time-controller.dart';
 import 'package:tienda/model/customer.dart';
 import 'package:tienda/model/login-request.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/model/login-verify-request.dart';
 
 class LoginController {

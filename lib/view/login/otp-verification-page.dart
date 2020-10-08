@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sms_autofill/sms_autofill.dart';
+import 'package:tienda/bloc/bottom-nav-bar-bloc.dart';
+import 'package:tienda/bloc/events/bottom-nav-bar-events.dart';
 import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
@@ -53,9 +55,10 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
                         )),
               );
             } else {
-
+              BlocProvider.of<BottomNavBarBloc>(context)
+                  .add(ChangeBottomNavBarIndex(0));
               BlocProvider.of<LoginBloc>(context)..add(CheckLoginStatus());
-              Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => HomeScreen()));
+              Navigator.of(context, rootNavigator: true).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
 
             }
           } else if (state is LogoutError) {

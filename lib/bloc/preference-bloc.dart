@@ -1,12 +1,12 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/api/preference-api-client.dart';
 import 'package:tienda/bloc/states/preference-states.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/model/category.dart';
 import 'package:tienda/model/country.dart';
 

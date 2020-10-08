@@ -1,9 +1,6 @@
-import 'dart:isolate';
 import 'dart:ui';
-import 'dart:io' show Platform;
 
 import 'package:chewie/chewie.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +17,6 @@ import 'package:tienda/bloc/events/review-events.dart';
 import 'package:tienda/bloc/events/wishlist-events.dart';
 import 'package:tienda/bloc/loading-bloc.dart';
 import 'package:tienda/bloc/login-bloc.dart';
-
 import 'package:tienda/bloc/review-bloc.dart';
 import 'package:tienda/bloc/single-product-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
@@ -28,7 +24,7 @@ import 'package:tienda/bloc/states/loading-states.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/product-states.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
-import 'package:tienda/loading-widget.dart';
+import 'package:tienda/view/widgets/loading-widget.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/product.dart';
 import 'package:tienda/model/wishlist.dart';
@@ -160,92 +156,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
           ),
         ],
         child: Scaffold(
-          // bottomNavigationBar: SafeArea(
-          //   child: BlocBuilder<SingleProductBloc, ProductStates>(
-          //       builder: (context, state) {
-          //     if (state is FetchProductDetailsSuccess) {
-          //
-          //       FirebaseAnalytics()
-          //           .logEvent(name: "VIDEO_VIEW", parameters: {
-          //       'presenter_name':state.product.presenter.name,
-          //       'category_name':state.product.presenter.categoryId,
-          //       'video_name':state.product.nameEn
-          //       });
-          //
-          //
-          //       return Consumer<OverlayHandlerProvider>(
-          //           builder: (context, overlayProvider, _) {
-          //         if (!overlayProvider.inPipMode)
-          //           return Row(
-          //             children: <Widget>[
-          //               Expanded(
-          //                 child: FlatButton(
-          //                   onPressed: () {
-          //                     ///ADD TO WISHLIST
-          //                     BlocProvider.of<WishListBloc>(context).add(
-          //                         AddToWishList(
-          //                             wishListItem: new WishListItem(
-          //                                 product: state.product)));
-          //                   },
-          //                   child: Text(
-          //                     AppLocalizations.of(context)
-          //                         .translate('wishlist')
-          //                         .toUpperCase(),
-          //                     style: TextStyle(color: Colors.black),
-          //                   ),
-          //                 ),
-          //               ),
-          //               Expanded(child: BlocBuilder<LoadingBloc, LoadingStates>(
-          //                   builder: (context, loadingState) {
-          //                 if (loadingState is AppLoading)
-          //                   return RaisedButton(
-          //                     onPressed: () {
-          //                       //do nothing
-          //                     },
-          //                     child: Container(
-          //                       height: 20,
-          //                       width: 20,
-          //                       child: CircularProgressIndicator(
-          //                         backgroundColor: Colors.white,
-          //                         strokeWidth: 2,
-          //                       ),
-          //                     ),
-          //                   );
-          //                 else
-          //                   return RaisedButton(
-          //                       onPressed: () {
-          //                         BlocProvider.of<LoadingBloc>(context)
-          //                           ..add(StartLoading());
-          //
-          //                         state.product.quantity = 1;
-          //                         BlocProvider.of<CartBloc>(context).add(
-          //                             AddCartItem(
-          //                                 isFromLiveStream: false,
-          //                                 cartItem: state.product,
-          //                                 isLoggedIn:
-          //                                     !(BlocProvider.of<LoginBloc>(
-          //                                         context) is GuestUser)));
-          //                       },
-          //                       child: Text(AppLocalizations.of(context)
-          //                           .translate('add-to-cart')
-          //                           .toUpperCase()));
-          //               })),
-          //               SizedBox(
-          //                 width: 8,
-          //               )
-          //             ],
-          //           );
-          //         else
-          //           return Container(
-          //             height: 0,
-          //           );
-          //       });
-          //     } else
-          //       return Container(
-          //         height: 0,
-          //       );
-          //   }),
-          // ),
+
           body: BlocBuilder<SingleProductBloc, ProductStates>(
               builder: (context, state) {
             if (state is FetchProductDetailsSuccess) {
@@ -284,7 +195,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
             }
             return Container(
               child: Center(
-                child: spinkit,
+                child: spinKit,
               ),
             );
           }),
@@ -470,7 +381,7 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
     return Container(
       child: ListView(
         shrinkWrap: true,
-        padding: EdgeInsets.all(0),
+        padding: EdgeInsets.only(bottom: 100),
         controller: scrollController,
         children: [
           ProductInfoContainer(product),

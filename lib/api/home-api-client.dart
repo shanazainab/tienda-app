@@ -1,5 +1,5 @@
-import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
+import 'package:retrofit/http.dart';
 
 part 'home-api-client.g.dart';
 
@@ -10,5 +10,6 @@ abstract class HomeApiClient {
   @GET("/main_screen_data/")
   Future<String> getHomeScreenData();
 
-
+  @GET("/get_live_streams/")
+  Future<String> getLiveContents();
 }

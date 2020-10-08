@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
 import 'package:tienda/api/home-api-client.dart';
 import 'package:tienda/bloc/states/home-states.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/model/home-screen-data-response.dart';
 
 import 'events/home-events.dart';
@@ -21,6 +21,8 @@ class HomeBloc extends Bloc<HomeEvents, HomeStates> {
     if (event is FetchHomeData) {
       yield* _mapFetchHomeDataToStates(event);
     }
+
+
   }
 
   Stream<HomeStates> _mapFetchHomeDataToStates(FetchHomeData event) async* {

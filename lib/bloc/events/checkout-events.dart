@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:tienda/model/order.dart';
 import 'package:tienda/model/payment-card.dart';
 import 'package:tienda/model/product.dart';

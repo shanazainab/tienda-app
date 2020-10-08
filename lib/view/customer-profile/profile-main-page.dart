@@ -7,32 +7,34 @@ import 'package:provider/provider.dart';
 import 'package:tienda/app-country.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/address-bloc.dart';
+import 'package:tienda/bloc/bottom-nav-bar-bloc.dart';
+import 'package:tienda/bloc/customer-profile-bloc.dart';
 import 'package:tienda/bloc/events/address-events.dart';
-import 'package:tienda/bloc/events/login-events.dart';
+import 'package:tienda/bloc/events/bottom-nav-bar-events.dart';
 import 'package:tienda/bloc/events/customer-profile-events.dart';
+import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/events/order-events.dart';
 import 'package:tienda/bloc/events/preference-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
-import 'package:tienda/bloc/customer-profile-bloc.dart';
 import 'package:tienda/bloc/orders-bloc.dart';
 import 'package:tienda/bloc/preference-bloc.dart';
-import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/customer-profile-states.dart';
+import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/preference-states.dart';
 import 'package:tienda/controller/customer-care-controller.dart';
-import 'package:tienda/loading-widget.dart';
+import 'package:tienda/view/widgets/loading-widget.dart';
 import 'package:tienda/view/address/saved-address-page.dart';
+import 'package:tienda/view/customer-library/customer-library.dart';
 import 'package:tienda/view/customer-profile/bottom-container.dart';
 import 'package:tienda/view/customer-profile/customer-login-menu.dart';
+import 'package:tienda/view/customer-profile/profile-card.dart';
 import 'package:tienda/view/customer-profile/saved-card-page.dart';
 import 'package:tienda/view/explore/help.dart';
 import 'package:tienda/view/explore/memberships.dart';
-import 'package:tienda/view/customer-profile/profile-card.dart';
 import 'package:tienda/view/explore/refer-and-earn.dart';
 import 'package:tienda/view/home/home-screen.dart';
 import 'package:tienda/view/order/orders-main-page.dart';
 import 'package:tienda/view/startup/country-list-card.dart';
-import 'package:tienda/view/watch-history/watch-history.dart';
 import 'package:tienda/view/widgets/network-state-wrapper.dart';
 import 'package:tienda/view/wishlist/wishlist-page.dart';
 
@@ -49,9 +51,12 @@ class CustomerProfile extends StatelessWidget {
           BlocListener<LoginBloc, LoginStates>(
             listener: (context, state) {
               if (state is LogoutSuccess) {
-                BlocProvider.of<LoginBloc>(context).add(CheckLoginStatus());
-                Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(builder: (context) => HomeScreen()));
+                BlocProvider.of<BottomNavBarBloc>(context)
+                    .add(ChangeBottomNavBarIndex(0));
 
+                BlocProvider.of<LoginBloc>(context).add(CheckLoginStatus());
+                Navigator.of(context, rootNavigator: true).pushReplacement(
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
               }
               if (state is LoggedInUser) {
                 BlocProvider.of<CustomerProfileBloc>(context)
@@ -148,7 +153,7 @@ class CustomerProfile extends StatelessWidget {
                   return Container(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
-                    child: Center(child: spinkit),
+                    child: Center(child: spinKit),
                   );
               }),
             );
@@ -412,13 +417,17 @@ class CustomerProfile extends StatelessWidget {
             ],
           ),
           title: Text(
-            "Watch History",
+            "Library",
             style: TextStyle(),
           ),
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => WatchHistory()),
+              MaterialPageRoute(
+                  builder: (context) => BlocProvider(
+                      create: (BuildContext context) =>
+                          CustomerProfileBloc()..add(LoadWatchHistory()),
+                      child: CustomerLibrary())),
             );
           },
           trailing: Icon(

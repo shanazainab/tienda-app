@@ -3,19 +3,12 @@ import 'dart:ui';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
-import 'package:logger/logger.dart';
-import 'package:lottie/lottie.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:tienda/controller/live-chat-container-controller.dart';
 import 'package:tienda/controller/real-time-controller.dart';
-import 'package:tienda/localization.dart';
 import 'package:tienda/model/live-chat.dart';
 import 'package:tienda/model/presenter.dart';
-import 'package:tienda/view/live-stream/live-chat-container.dart';
 
 typedef ClosePanel = Function(bool shouldClose);
 
@@ -67,7 +60,9 @@ class _LiveChatPanelState extends State<LiveChatPanel> {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       color: Colors.white,
-      duration: Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+
+      duration: Duration(milliseconds: 400),
       height: mheight == null
           ? MediaQuery.of(context).size.height * 50 / 100
           : mheight,
@@ -118,7 +113,8 @@ class _LiveChatPanelState extends State<LiveChatPanel> {
             height: 8,
           ),
           AnimatedContainer(
-              duration: Duration(milliseconds: 250),
+              duration: Duration(milliseconds: 400),
+              curve: Curves.easeOut,
               height: height == null
                   ? MediaQuery.of(context).size.height * 33 / 100
                   : height,

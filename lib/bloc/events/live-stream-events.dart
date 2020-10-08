@@ -1,3 +1,4 @@
+import 'package:tienda/model/presenter-review.dart';
 import 'package:tienda/model/product.dart';
 
 abstract class LiveStreamEvents {
@@ -39,5 +40,23 @@ class UpdateWishListProducts extends LiveStreamEvents {
 
   UpdateWishListProducts(
     this.products,
+  ) : super();
+}
+
+class GetReviews extends LiveStreamEvents {
+  final int presenterId;
+
+  GetReviews(
+    this.presenterId,
+  ) : super();
+}
+
+class SubmitReview extends LiveStreamEvents {
+  final int presenterId;
+  final PresenterReview presenterReview;
+
+  SubmitReview(
+    this.presenterId,
+      this.presenterReview
   ) : super();
 }

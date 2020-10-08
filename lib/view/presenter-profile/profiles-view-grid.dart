@@ -1,16 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:global_configuration/global_configuration.dart';
 import 'package:rxdart/rxdart.dart';
-
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/presenter-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/bloc/states/presenter-states.dart';
-import 'package:tienda/loading-widget.dart';
-
+import 'package:tienda/view/widgets/loading-widget.dart';
 import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/presenter-profile/presenter-profile-page.dart';
 
@@ -143,10 +140,6 @@ class SellerProfilesGridView extends StatelessWidget {
                                                                   .presenters[
                                                                       index]
                                                                   .id,
-                                                              presenterName: state
-                                                                  .presenters[
-                                                                      index]
-                                                                  .name,
                                                               profileImageURL: state
                                                                   .presenters[
                                                                       index]
@@ -216,7 +209,7 @@ class SellerProfilesGridView extends StatelessWidget {
                     ),
                   )));
         else
-          return Container(color: Colors.black, child: spinkit);
+          return Container(color: Colors.black, child: spinKit);
       }),
     );
   }

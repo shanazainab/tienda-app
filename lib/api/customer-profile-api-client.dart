@@ -1,6 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:retrofit/http.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/model/customer.dart';
 
 part 'customer-profile-api-client.g.dart';
@@ -28,4 +28,8 @@ abstract class CustomerProfileApiClient {
   @POST("/verify_update_phone_number/")
   Future<String> verifyUpdatedPhoneNumber(
       @Body() String phoneNumber, @Body() String otp);
+
+  @GET("/get_watch_history/")
+  Future<String> getWatchHistory();
+
 }

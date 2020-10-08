@@ -2,12 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tienda/bloc/events/saved-card-events.dart';
-
 import 'package:tienda/bloc/saved-card-bloc.dart';
-
 import 'package:tienda/bloc/states/saved-cards-state.dart';
-import 'package:tienda/loading-widget.dart';
-
+import 'package:tienda/view/widgets/loading-widget.dart';
 import 'package:tienda/model/payment-card.dart';
 
 class SavedCardPage extends StatelessWidget {
@@ -45,7 +42,7 @@ class SavedCardPage extends StatelessWidget {
                             child: Center(child: Text("No Saved Cards !!")),
                           );
                         else
-                          return Center(child: spinkit);
+                          return Center(child: spinKit);
                       }),
                 ],
               ),

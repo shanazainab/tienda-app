@@ -16,3 +16,7 @@ class LoadLivePresenter extends PresenterEvents {
 
   LoadLivePresenter() : super();
 }
+
+class LoadPopularPresenters extends PresenterEvents {
+  LoadPopularPresenters() : super();
+}

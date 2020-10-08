@@ -1,6 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:retrofit/http.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/model/search-body.dart';
 
 part 'search-api-client.g.dart';

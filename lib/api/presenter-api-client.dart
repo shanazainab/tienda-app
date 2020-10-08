@@ -1,5 +1,6 @@
-import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
+import 'package:retrofit/http.dart';
+
 part 'presenter-api-client.g.dart';
 
 @RestApi()
@@ -22,4 +23,6 @@ abstract class PresenterApiClient {
   @GET("/get_live_presenters/")
   Future<String> getLivePresenters();
 
+  @GET("/get_featured_presenters/")
+  Future<String> getPopularPresenters();
 }

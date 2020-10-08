@@ -1,26 +1,18 @@
 import 'package:rxdart/rxdart.dart';
 
-class Controls {
-  bool show;
-  bool isPlaying;
 
-  bool showProgress;
+class FullScreenVideoControls {
+  FullScreenVideoControls._privateConstructor();
 
-  Controls({this.show, this.isPlaying, this.showProgress});
-}
+  static final FullScreenVideoControls _instance = FullScreenVideoControls._privateConstructor();
 
-class VideoControls {
-  VideoControls._privateConstructor();
-
-  static final VideoControls _instance = VideoControls._privateConstructor();
-
-  factory VideoControls() {
+  factory FullScreenVideoControls() {
     return _instance;
   }
 
-  final controls = new BehaviorSubject<Controls>();
+  final showFullScreen = new BehaviorSubject<bool>();
 
-  updateControls(Controls newControls) {
-    controls.sink.add(newControls);
+  updateVideoView(bool show) {
+    showFullScreen.sink.add(show);
   }
 }

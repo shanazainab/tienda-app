@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:equatable/equatable.dart';
 import 'package:logger/logger.dart';
 import 'package:tienda/model/presenter.dart';
 

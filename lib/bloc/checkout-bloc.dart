@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -7,7 +8,6 @@ import 'package:logger/logger.dart';
 import 'package:tienda/api/cart-api-client.dart';
 import 'package:tienda/bloc/events/checkout-events.dart';
 import 'package:tienda/bloc/states/checkout-states.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/controller/real-time-controller.dart';
 
 class CheckOutBloc extends Bloc<CheckoutEvents, CheckoutStates> {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
@@ -7,7 +8,6 @@ import 'package:tienda/api/preference-api-client.dart';
 import 'package:tienda/bloc/events/category-events.dart';
 import 'package:tienda/bloc/states/category-states.dart';
 import 'package:tienda/model/category.dart';
-import 'package:dio/dio.dart';
 
 class CategoryBlock extends Bloc<CategoryEvents, CategoryStates> {
   CategoryBlock() : super(Loading());

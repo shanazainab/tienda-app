@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:tienda/model/order.dart';
 
 abstract class CheckoutStates {

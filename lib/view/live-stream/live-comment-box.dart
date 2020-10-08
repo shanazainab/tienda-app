@@ -1,13 +1,12 @@
 import 'dart:ui';
-import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
-import 'package:jiffy/jiffy.dart';
 
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/app-language.dart';
-
 import 'package:tienda/controller/real-time-controller.dart';
 import 'package:tienda/model/live-chat.dart';
 

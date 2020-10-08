@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/checkout-bloc.dart';
@@ -25,29 +26,26 @@ class CustomAppBar extends StatelessWidget {
 
   final bool extend;
 
-  CustomAppBar(
-      {this.title,
-      this.extend,
-      this.showCart,
-      this.showNotification,
-      this.showWishList,
-      this.showLogo,
-      this.showSearch,
-      this.bottom});
+  CustomAppBar({this.title,
+    this.extend,
+    this.showCart,
+    this.showNotification,
+    this.showWishList,
+    this.showLogo,
+    this.showSearch,
+    this.bottom});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       brightness: Brightness.light,
       backgroundColor:
-          extend != null && extend ? Colors.transparent : Colors.white,
+      extend != null && extend ? Colors.transparent : Colors.white,
       elevation: 0,
-      title: Text(
-        title,
-        style: TextStyle(fontSize: showLogo?20:14,color: Colors.grey),
-      ),
+      title: showLogo ? SvgPicture.asset("assets/svg/tienda.svg",
+          height: 24, width: 84) : Text(title),
       centerTitle: false,
- automaticallyImplyLeading: showLogo?false:true,
+      automaticallyImplyLeading: showLogo ? false : true,
       bottom: bottom != null ? bottom : null,
       actions: <Widget>[
         if (showSearch)
@@ -61,10 +59,13 @@ class CustomAppBar extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => SearchPage()),
               );
             },
-            icon: Icon(
-              Icons.search,
+            icon: SvgPicture.asset(
+              "assets/svg/search.svg",
             ),
           ),
+        SizedBox(
+          width: 8,
+        ),
 //        if (showNotification != null && showNotification)
 //          IconButton(
 //            constraints: BoxConstraints.tight(Size.square(40)),
@@ -86,18 +87,20 @@ class CustomAppBar extends StatelessWidget {
             constraints: BoxConstraints.tight(Size.square(40)),
             padding: EdgeInsets.all(0),
             onPressed: () {
-              BlocProvider.of<LoginBloc>(context).state is GuestUser
+              BlocProvider
+                  .of<LoginBloc>(context)
+                  .state is GuestUser
                   ? Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginMainPage()),
-                    )
+                context,
+                MaterialPageRoute(builder: (context) => LoginMainPage()),
+              )
                   : Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => WishListPage()),
-                    );
+                context,
+                MaterialPageRoute(builder: (context) => WishListPage()),
+              );
             },
             icon: Icon(
-                FontAwesomeIcons.heart,
+              FontAwesomeIcons.heart,
               size: 20,
             ),
           ),
@@ -118,7 +121,7 @@ class CustomAppBar extends StatelessWidget {
                 );
               },
               icon:
-                  BlocBuilder<CartBloc, CartStates>(builder: (context, state) {
+              BlocBuilder<CartBloc, CartStates>(builder: (context, state) {
                 if (state is AddToCartSuccess) {
                   return Badge(
                     badgeContent: Text(

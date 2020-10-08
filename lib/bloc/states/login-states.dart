@@ -79,3 +79,7 @@ class LoggedInUser extends LoginStates {
 class GuestUser extends LoginStates {
   GuestUser() : super();
 }
+class SocialAccountLoginProgress extends LoginStates {
+  SocialAccountLoginProgress() : super();
+}
+

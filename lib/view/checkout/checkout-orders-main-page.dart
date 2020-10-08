@@ -11,8 +11,8 @@ import 'package:tienda/bloc/saved-card-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
 import 'package:tienda/bloc/states/checkout-states.dart';
 import 'package:tienda/model/order.dart';
-import 'package:tienda/view/checkout/cart-page.dart';
 import 'package:tienda/view/checkout/address-container.dart';
+import 'package:tienda/view/checkout/cart-page.dart';
 import 'package:tienda/view/checkout/order-success-page.dart';
 import 'package:tienda/view/checkout/payment-container.dart';
 

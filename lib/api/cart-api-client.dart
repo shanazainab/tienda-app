@@ -1,6 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:retrofit/http.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/model/payment-card.dart';
 
 part 'cart-api-client.g.dart';

@@ -1,7 +1,6 @@
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:tienda/bloc/states/login-states.dart';
 
 class DownloadTaskProgress {
   String taskId;

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:tienda/model/customer.dart';
+import 'package:tienda/model/watch-history.dart';
 
 abstract class CustomerProfileStates {
   CustomerProfileStates();
@@ -40,4 +41,10 @@ class ChangePhoneNumberSuccess extends CustomerProfileStates {
 
 class VerifyPhoneNumberSuccess extends CustomerProfileStates {
   VerifyPhoneNumberSuccess() : super();
+}
+class LoadWatchHistorySuccess extends CustomerProfileStates {
+
+  List<WatchHistory> watchHistory;
+
+  LoadWatchHistorySuccess(this.watchHistory) : super();
 }

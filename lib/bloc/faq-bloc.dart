@@ -1,12 +1,12 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
 import 'package:tienda/api/faq-api-client.dart';
 import 'package:tienda/bloc/events/faq-events.dart';
 import 'package:tienda/bloc/states/faq-states.dart';
-import 'package:dio/dio.dart';
 import 'package:tienda/model/faq.dart';
 
 class FAQBloc extends Bloc<FAQEvents, FAQStates> {

@@ -5,7 +5,6 @@
 import 'dart:convert';
 
 import 'package:logger/logger.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:tienda/model/product.dart';
 
 ProductListResponse productListResponseFromJson(String str) =>

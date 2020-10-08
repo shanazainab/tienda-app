@@ -3,10 +3,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/model/product.dart';
-import 'package:tienda/video-overlays/overlay_service.dart';
-import 'package:tienda/view/products/product-review-page.dart';
 import 'package:tienda/view/products/single-product-page.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 import '../../app-language.dart';
 import '../../localization.dart';
@@ -20,17 +17,14 @@ class RecommendedList extends StatelessWidget {
   Widget build(BuildContext context) {
     var appLanguage = Provider.of<AppLanguage>(context);
 
-    return Container(
+    return Padding(
+      padding: const EdgeInsets.only(left:12,right:12),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(AppLocalizations.of(context).translate('recommended-for-you').toUpperCase(),
-                  style: TextStyle(
-                      color: Colors.grey,
-                      ))),
+          Text(AppLocalizations.of(context).translate('recommended-for-you'),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
           SizedBox(
             height:appLanguage.appLocal == Locale('en')?190:240,
             child: ListView.builder(

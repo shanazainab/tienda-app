@@ -1,16 +1,13 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:logger/logger.dart';
-import 'package:mime_type/mime_type.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/api/customer-profile-api-client.dart';
 import 'package:tienda/bloc/events/customer-profile-events.dart';
 import 'package:tienda/bloc/states/customer-profile-states.dart';
-import 'package:dio/dio.dart';
-import 'package:tienda/model/customer.dart';
 
 class EditCustomerProfileBloc
     extends Bloc<CustomerProfileEvents, CustomerProfileStates> {

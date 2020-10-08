@@ -1,5 +1,6 @@
-import 'package:retrofit/http.dart';
 import 'package:dio/dio.dart';
+import 'package:retrofit/http.dart';
+
 part 'orders-api-client.g.dart';
 
 @RestApi()
