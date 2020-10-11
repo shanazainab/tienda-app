@@ -1,10 +1,6 @@
-import 'package:equatable/equatable.dart';
 
-abstract class StartupStates extends Equatable {
+abstract class StartupStates   {
   StartupStates();
-
-  @override
-  List<Object> get props => null;
 }
 
 class Initialized extends StartupStates {

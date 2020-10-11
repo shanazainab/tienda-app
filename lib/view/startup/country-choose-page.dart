@@ -40,6 +40,7 @@ class _CountryChoosePageState extends State<CountryChoosePage>
     preferenceBloc.add(FetchCountryList());
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
+      vsync: this
     )..repeat(reverse: true);
     _offsetAnimation = Tween<Offset>(
       begin: Offset.zero,

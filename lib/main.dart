@@ -13,6 +13,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda/app-country.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/app-settings.config.dart';
@@ -65,8 +66,8 @@ Future<void> main() async {
   ///Initialize flutter SQLite
   DBController().initializeDB();
 
-  // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  // sharedPreferences.clear();
+//   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+//   sharedPreferences.clear();
 
   ///Enable Firebase analytics
   FirebaseAnalytics analytics = FirebaseAnalytics();

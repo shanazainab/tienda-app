@@ -46,6 +46,7 @@ class _SingleProductPageState extends State<SingleProductPage> {
   ScrollController scrollController = new ScrollController();
   final CarouselController _controller = CarouselController();
 
+
   @override
   void initState() {
     // TODO: implement initState

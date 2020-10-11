@@ -51,10 +51,16 @@ class _CheckoutOrdersMainPageState extends State<CheckoutOrdersMainPage> {
             appBar: AppBar(
               elevation: 0,
               brightness: Brightness.light,
-              title: Text(
-                '',
-                style: TextStyle(color: Colors.black, fontSize: 14),
-              ),
+              title:BlocBuilder<CheckOutBloc, CheckoutStates>(
+    builder: (context, state) {
+    if (state is CartActive)
+      return Text(
+        'Shopping Bag ()',
+        style: TextStyle(color: Colors.black, fontSize: 14),
+      );
+    else
+      return Text('');
+    }),
             ),
             body: MultiBlocListener(
                 listeners: [

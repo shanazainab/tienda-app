@@ -17,7 +17,7 @@ class StartupBloc extends Bloc<StartupEvents, StartupStates> {
       yield* _mapAppStartedToState();
     }
     if (event is UpdatePreferenceFlow) {
-      _updateThePreferenceFlow(event.route);
+      yield* _updateThePreferenceFlow(event.route);
     }
   }
 
@@ -46,7 +46,7 @@ class StartupBloc extends Bloc<StartupEvents, StartupStates> {
     yield PreferenceFlowFetchComplete(route);
   }
 
-  Future<void> _updateThePreferenceFlow(String route) async {
+  Stream<StartupStates> _updateThePreferenceFlow(String route) async* {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     Map<String, dynamic> prefMap =
@@ -55,5 +55,10 @@ class StartupBloc extends Bloc<StartupEvents, StartupStates> {
     prefMap.update(route, (value) => true);
 
     prefs.setString("preference-flow", json.encode(prefMap));
+    if(route == '/categorySelectionPage'){
+
+      print("-----------------------------ROUTE $route EQUAL");
+      yield PreferenceFlowFetchComplete('/homePage');}
+
   }
 }
