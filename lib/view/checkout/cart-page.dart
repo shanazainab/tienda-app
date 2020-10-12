@@ -18,6 +18,7 @@ import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/model/order.dart';
 import 'package:tienda/view/cart/cart-items-container.dart';
+import 'package:tienda/view/checkout/tienda-points-redeem-container.dart';
 import 'package:tienda/view/login/login-main-page.dart';
 
 class CartPage extends StatefulWidget {
@@ -43,94 +44,87 @@ class _CartPageState extends State<CartPage> {
         if (state is LoadCartSuccess && state.cart != null) {
           BlocProvider.of<LoadingBloc>(context)..add(StopLoading());
 
-          return Stack(
+          return Column(
             children: <Widget>[
-              Container(
-                child: ListView(
-                  padding: EdgeInsets.only(bottom: 100, left: 16, right: 16),
-                  children: <Widget>[
-                    Text(
-                      AppLocalizations.of(context).translate("shopping-bag"),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                    ),
+              TiendaPointsRedeemContainer(),
 
-                    SizedBox(
-                      height: 30,
-                    ),
+              Expanded(
+                child: ListView(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.only(bottom: 100, left: 16, right: 16,top:20),
+                  children: <Widget>[
+
                     CartItemsContainer(state.cart),
+                    if (state.cart != null)
+                      Card(
+                        elevation: 0,
+                        margin: EdgeInsets.all(0),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  "TOTAL: ${AppLocalizations.of(context).translate('aed')} ${(state.cart.cartPrice - 0).toStringAsFixed(2)}",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: SizedBox(
+                                    width: MediaQuery.of(context).size.width - 50,
+                                    child: BlocBuilder<LoadingBloc, LoadingStates>(
+                                        builder: (context, state) {
+                                          if (state is AppLoading) {
+                                            return RaisedButton(
+                                              onPressed: () {
+                                                //Do nothing
+                                              },
+                                              child: Container(
+                                                height: 20,
+                                                width: 20,
+                                                child: CircularProgressIndicator(
+                                                  backgroundColor: Colors.white,
+                                                  strokeWidth: 2,
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            return RaisedButton(
+                                              onPressed: () {
+                                                BlocProvider.of<LoginBloc>(context)
+                                                    .state is GuestUser
+                                                    ? Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          LoginMainPage()),
+                                                )
+                                                    : BlocProvider.of<CheckOutBloc>(
+                                                    context)
+                                                    .add(DoUpdateCheckOutProgress(
+                                                    order: new Order(),
+                                                    status: "ADDRESS"));
+                                              },
+                                              child: Text(AppLocalizations.of(context)
+                                                  .translate('checkout')),
+                                            );
+                                          }
+                                        })),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     // if (state.cart != null) priceContainer(state.cart.cartPrice)
                   ],
                 ),
               ),
-              if (state.cart != null)
-                Positioned(
-                  bottom: 100,
-                  child: Card(
-                    elevation: 0,
-                    margin: EdgeInsets.all(0),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              "TOTAL: ${AppLocalizations.of(context).translate('aed')} ${(state.cart.cartPrice - 0).toStringAsFixed(2)}",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: SizedBox(
-                                width: MediaQuery.of(context).size.width - 50,
-                                child: BlocBuilder<LoadingBloc, LoadingStates>(
-                                    builder: (context, state) {
-                                  if (state is AppLoading) {
-                                    return RaisedButton(
-                                      onPressed: () {
-                                        //Do nothing
-                                      },
-                                      child: Container(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          backgroundColor: Colors.white,
-                                          strokeWidth: 2,
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return RaisedButton(
-                                      onPressed: () {
-                                        BlocProvider.of<LoginBloc>(context)
-                                                .state is GuestUser
-                                            ? Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        LoginMainPage()),
-                                              )
-                                            : BlocProvider.of<CheckOutBloc>(
-                                                    context)
-                                                .add(DoUpdateCheckOutProgress(
-                                                    order: new Order(),
-                                                    status: "ADDRESS"));
-                                      },
-                                      child: Text(AppLocalizations.of(context)
-                                          .translate('checkout')),
-                                    );
-                                  }
-                                })),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+
             ],
           );
         } else {

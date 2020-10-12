@@ -67,7 +67,9 @@ class _ProductReviewPageState extends State<ProductReviewPage> {
 
   @override
   void dispose() {
+    chewieController.pause();
     _controller.dispose();
+    chewieController.dispose();
     super.dispose();
   }
 

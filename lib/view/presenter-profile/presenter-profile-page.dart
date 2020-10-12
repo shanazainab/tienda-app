@@ -14,7 +14,7 @@ import 'package:tienda/bloc/presenter-bloc.dart';
 import 'package:tienda/bloc/states/follow-states.dart';
 import 'package:tienda/bloc/states/presenter-states.dart';
 import 'package:tienda/model/product.dart';
-import 'package:tienda/view/presenter-profile/presenter-bio-container.dart';
+//import 'package:tienda/view/presenter-profile/presenter-bio-container.dart';
 import 'package:tienda/view/presenter-profile/presenter-video-container.dart';
 
 import '../../localization.dart';
@@ -517,8 +517,8 @@ class _PresenterProfilePageState extends State<PresenterProfilePage>
                                               ),
                                               Center(
                                                 child: [
-                                                  PresenterBioContainer(
-                                                      state.presenter),
+//                                                  PresenterBioContainer(
+//                                                      state.presenter),
                                                   PresenterVideoContainer(
                                                       state.presenter
                                                           .popularVideos)
