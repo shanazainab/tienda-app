@@ -33,7 +33,7 @@ class CustomerDetailsPage extends StatelessWidget {
                 .add(FetchCustomerProfile());
 
             BlocProvider.of<BottomNavBarBloc>(context)
-                .add(ChangeBottomNavBarIndex(0));
+                .add(ChangeBottomNavBarState(0,false));
             BlocProvider.of<LoginBloc>(context)..add(CheckLoginStatus());
             Navigator.of(context, rootNavigator: true).pushReplacement(
                 MaterialPageRoute(builder: (context) => HomeScreen()));

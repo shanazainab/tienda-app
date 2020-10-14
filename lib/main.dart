@@ -37,6 +37,7 @@ import 'package:tienda/controller/db-controller.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/video-overlays/overlay_handler.dart';
 import 'package:tienda/video-overlays/overlay_service.dart';
+import 'package:tienda/view/home/home-screen-data.dart';
 import 'package:tienda/view/home/home-screen.dart';
 import 'package:tienda/view/live-stream/shop-live-screen.dart';
 import 'package:tienda/view/login/login-main-page.dart';
@@ -48,8 +49,10 @@ import 'package:tienda/view/startup/splash-screen.dart';
 import 'package:tienda/view/startup/welcome-screen.dart';
 import 'package:tienda/view/widgets/bottom-nav-bar.dart';
 
+import 'bloc/events/bottom-nav-bar-events.dart';
 import 'bloc/events/presenter-events.dart';
 import 'bloc/presenter-bloc.dart';
+import 'bloc/states/bottom-nav-bar-states.dart';
 import 'controller/real-time-controller.dart';
 
 ///Tienda : Video streaming e-commerce app
@@ -66,8 +69,8 @@ Future<void> main() async {
   ///Initialize flutter SQLite
   DBController().initializeDB();
 
-//   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-//   sharedPreferences.clear();
+  // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  // sharedPreferences.clear();
 
   ///Enable Firebase analytics
   FirebaseAnalytics analytics = FirebaseAnalytics();
@@ -127,12 +130,11 @@ Future<void> main() async {
       ),
       BlocProvider<PresenterBloc>(
         lazy: false,
-
-        create: (BuildContext context) => PresenterBloc()..add(LoadPopularPresenters()),
+        create: (BuildContext context) =>
+            PresenterBloc()..add(LoadPopularPresenters()),
       ),
       BlocProvider<BottomNavBarBloc>(
-        create: (BuildContext context) => BottomNavBarBloc()),
-
+          create: (BuildContext context) => BottomNavBarBloc()),
       BlocProvider<UnreadMessageHydratedBloc>(
           create: (BuildContext context) => UnreadMessageHydratedBloc()),
     ],
@@ -245,18 +247,12 @@ class App extends StatelessWidget {
                   ),
                 ),
                 appBarTheme: AppBarTheme(
-                  elevation: 0,
-                  brightness: Brightness.light,
-                  color: Colors.white,
-                  iconTheme: IconThemeData(
-                      color: Color(0xff555555)
-                  ),
-                  textTheme: TextTheme(
-                    title: TextStyle(
-                      color: Color(0xff555555)
-                    )
-                  )
-                ),
+                    elevation: 0,
+                    brightness: Brightness.light,
+                    color: Colors.white,
+                    iconTheme: IconThemeData(color: Color(0xff555555)),
+                    textTheme:
+                        TextTheme(title: TextStyle(color: Color(0xff555555)))),
                 accentColor: Color(0xffc30045),
                 buttonTheme: ButtonThemeData(
                   buttonColor: Color(0xff50C0A8),
@@ -269,7 +265,9 @@ class App extends StatelessWidget {
                         secondary: Colors.white,
                       ),
                 )),
-
+            routes: {
+              '/homePageData': (context) => HomeScreenData(),
+            },
             home: Directionality(
               textDirection: appLanguage.appLocal != Locale('en')
                   ? TextDirection.rtl
@@ -280,8 +278,8 @@ class App extends StatelessWidget {
                     return SplashScreen();
                   }
                   if (state is PreferenceFlowFetchComplete) {
-                    WidgetsBinding.instance
-                        .addPostFrameCallback((_) => _insertOverlay(context));
+                    WidgetsBinding.instance.addPostFrameCallback(
+                        (_) => _insertOverlay(context, state.route));
 
                     switch (state.route) {
                       case '/homePage':
@@ -313,7 +311,11 @@ class App extends StatelessWidget {
 
   ///Bottom Navigation bar is added as an overlay widget
   ///inorder to support pip mode overlay from live stream or product review video
-  void _insertOverlay(BuildContext context) {
+  void _insertOverlay(BuildContext context, String route) {
+    if (route != '/homePage') {
+      BlocProvider.of<BottomNavBarBloc>(context)
+          .add(ChangeBottomNavBarState(0, true));
+    }
     return OverlayService().addBottomNavigationBar(
         context,
         Positioned(

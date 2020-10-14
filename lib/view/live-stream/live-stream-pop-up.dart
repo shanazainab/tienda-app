@@ -10,7 +10,7 @@ import 'package:tienda/view/live-stream/live-stream-screen.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class LiveStreamPopUp extends StatelessWidget {
-  LiveNotification liveNotification;
+  final LiveNotification liveNotification;
 
   LiveStreamPopUp(this.liveNotification);
 

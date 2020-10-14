@@ -37,8 +37,8 @@ class CartCheckOutPopUp extends StatelessWidget {
 
   final int presenterId;
 
-  CartCheckOutPopUp(this.contextA, this.checkOutStatus,
-      this.cartCheckOutPopVisibility, this.presenterId);
+  CartCheckOutPopUp({this.contextA, this.checkOutStatus,
+      this.cartCheckOutPopVisibility, this.presenterId});
 
   @override
   Widget build(BuildContext context) {

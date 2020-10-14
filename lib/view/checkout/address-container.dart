@@ -70,7 +70,7 @@ class OrderAddressContainer extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                            "TOTAL: AED ${state.cart.cartPrice - 0}",
+                            "TOTAL: AED ${state.cart.summary.totalPrice - state.cart.summary.discountPrice}",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),

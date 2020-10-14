@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +16,6 @@ import 'package:tienda/model/product.dart';
 
 class CartBloc extends Bloc<CartEvents, CartStates> {
   CartBloc() : super(Initialized());
-
 
   @override
   Stream<CartStates> mapEventToState(CartEvents event) async* {
@@ -38,6 +38,10 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
     if (event is ClearCart) {
       yield* _mapEmptyCartToStates(event);
     }
+
+    if (event is ApplyCoupon) {
+      yield* _mapApplyCouponToStates(event);
+    }
   }
 
   Stream<CartStates> _mapEmptyCartToStates(ClearCart event) async* {
@@ -54,14 +58,9 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
         cart = null;
         yield EmptyCart();
       } else {
-        double cartPrice = 0.0;
-        for (final product in cart.products) {
-          cartPrice += product.price;
-        }
-        cart.cartPrice = cartPrice;
-
         yield LoadCartSuccess(cart: cart);
       }
+
       updateCartLocally(cart);
     }
   }
@@ -74,12 +73,11 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
     final client =
         CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.getCart().then((response) {
-      Logger().d("GET-CART-RESPONSE:$response");
+      log("GET-CART-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           cart = cartFromJson(response);
           break;
-
       }
     }).catchError((err) {
       if (err is DioError) {
@@ -117,26 +115,16 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
       addCartStatus = await callAddCartApi(event.cartItem);
     }
 
-    if(event.isFromLiveStream && addCartStatus == "success"){
+    if (event.isFromLiveStream && addCartStatus == "success") {
       new RealTimeController()
           .emitAddToCartFromLive(event.cartItem.id, event.presenterId);
     }
 
+    Cart cart = await callFetchCartApi();
+    if (cart != null) {
+      yield LoadCartSuccess(cart: cart);
 
-      Cart cart = await callFetchCartApi();
-      if (cart != null) {
-        double cartPrice = 0.0;
-        for (final product in cart.products) {
-          cartPrice += product.quantity != null && product.quantity != 0
-              ? product.price * product.quantity
-              : product.price;
-        }
-        cart.cartPrice = cartPrice;
-
-        yield LoadCartSuccess(cart: cart);
-
-        updateCartLocally(cart);
-
+      updateCartLocally(cart);
     }
   }
 
@@ -150,17 +138,36 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
     }
     Cart cart = await callFetchCartApi();
     if (cart != null) {
-      double cartPrice = 0.0;
-      for (final product in cart.products) {
-        cartPrice += product.quantity != null && product.quantity != 0
-            ? product.price * product.quantity
-            : product.price;
-      }
-      cart.cartPrice = cartPrice;
-
       yield LoadCartSuccess(cart: cart);
 
       updateCartLocally(cart);
+    }
+  }
+
+  Stream<CartStates> _mapApplyCouponToStates(ApplyCoupon event) async* {
+    final dio = Dio();
+    String value = await FlutterSecureStorage().read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
+    Cart cart;
+    final client =
+        CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
+    await client.applyCoupon(event.couponCode).then((response) {
+      log("APPLY-COUPON-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          cart = cartFromJson(response);
+
+          break;
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+        Logger().e("APPLY-COUPON-ERROR:", error);
+      }
+    });
+
+    if (cart != null) {
+      yield LoadCartSuccess(cart: cart);
     }
   }
 
@@ -173,7 +180,6 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
       await callDeleteCartAPI(event.cartItem);
     }
     Cart cart = await callFetchCartApi();
-    // flutter: │ 🐛 GET-CART-RESPONSE:{"status": 200, "cart": [], "summary": {"total_price": 0, "number_of_items": 0, "cart_status": "empty"}}
 
     if (cart.products.isEmpty) {
       SharedPreferences sharedPreferences =
@@ -182,14 +188,6 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
       cart = null;
       yield EmptyCart();
     } else {
-      double cartPrice = 0.0;
-      for (final product in cart.products) {
-        cartPrice += product.quantity != null && product.quantity != 0
-            ? product.price * product.quantity
-            : product.price;
-      }
-      cart.cartPrice = cartPrice;
-
       yield LoadCartSuccess(cart: cart);
     }
 
@@ -211,7 +209,7 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
           status = "success";
           break;
         case 208:
-        status ="duplicate";
+          status = "duplicate";
           break;
       }
     }).catchError((err) {
@@ -219,7 +217,6 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
         DioError error = err;
         Logger().e("ADD-CART-ERROR:", error);
         Logger().e("ADD-CART-ERROR:", error.request.data);
-
       }
     });
 

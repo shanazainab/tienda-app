@@ -21,7 +21,7 @@ import 'package:tienda/model/presenter.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 import 'package:tienda/view/widgets/loading-widget.dart';
 import 'package:tienda/video-overlays/overlay_service.dart';
-import 'package:tienda/view/live-stream/live-stream-new-design.dart';
+import 'package:tienda/view/live-stream/live-stream-screen.dart';
 import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/presenter-profile/presenter-profile-page.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -51,19 +51,22 @@ class _ShopLiveScreenState extends State<ShopLiveScreen> {
             showCart: false,
             showNotification: false,
             showWishList: false,
+            extend: false,
           ),
         ),
         body: Container(
           color: Colors.white,
+          height: MediaQuery.of(context).size.height,
           child: BlocBuilder<LiveContentsBloc, LiveStates>(
               builder: (context, state) {
             if (state is LoadLiveVideoListSuccess &&
                 state.liveContents.isNotEmpty) {
               return ListView(
+                shrinkWrap: true,
+                padding: EdgeInsets.only(left:16,right:16,top:100),
                 physics: ScrollPhysics(),
                 children: [
                   Container(
-                    margin: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(8)),
                         boxShadow: [
@@ -176,20 +179,18 @@ class _ShopLiveScreenState extends State<ShopLiveScreen> {
                   SizedBox(
                     height: 40,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left:16.0),
-                    child: Text("Today",
-                        style: const TextStyle(
-                            color: const Color(0xff000000),
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13.0),
-                        textAlign: TextAlign.left),
-                  ),
+                  Text("Today",
+                      style: const TextStyle(
+                          color: const Color(0xff000000),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13.0),
+                      textAlign: TextAlign.left),
                   SizedBox(
                     height: 8,
                   ),
                   ListView.builder(
                     shrinkWrap: true,
+                    padding: EdgeInsets.all(0),
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: state.liveContents.length,
                     itemBuilder: (BuildContext context, int index) =>
@@ -202,9 +203,7 @@ class _ShopLiveScreenState extends State<ShopLiveScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
-                            SizedBox(
-                              width: 8,
-                            ),
+
                             ClipRRect(
                               borderRadius: BorderRadius.circular(3),
                               child: Container(
@@ -223,7 +222,7 @@ class _ShopLiveScreenState extends State<ShopLiveScreen> {
                               width: 10,
                             ),
                             Container(
-                              width: MediaQuery.of(context).size.width - 170,
+                              width: MediaQuery.of(context).size.width - 200,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -270,48 +269,32 @@ class _ShopLiveScreenState extends State<ShopLiveScreen> {
 
     print("CHECK ISGUESTUSER: ${BlocProvider.of<LoginBloc>(context).state}");
 
-    if (liveContent.presenter.isLive) {
-      isGuestUser
-          ? Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LoginMainPage()),
-            )
-          : OverlayService().addVideoTitleOverlay(
-              context,
-              MultiBlocProvider(
-                providers: [
-                  BlocProvider(
-                    create: (BuildContext context) => LiveStreamCheckoutBloc(),
-                  ),
-                  BlocProvider(
-                    create: (BuildContext context) => LiveStreamProductBloc(),
-                  ),
-                  BlocProvider(
-                    create: (BuildContext context) => FollowBloc(),
-                  ),
-                  BlocProvider(
-                      create: (BuildContext context) => PresenterBloc()),
-                  BlocProvider(
-                      create: (BuildContext context) => LiveStreamBloc()
-                        ..add(JoinLive(liveContent.presenter.id))),
-                ],
-                child: LiveStreamNewDesign(liveContent.presenter),
-              ),
-              true,
-              false);
-    } else
-      isGuestUser
-          ? Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LoginMainPage()),
-            )
-          : Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PresenterProfilePage(
-                        profileImageURL: liveContent.presenter.profilePicture,
-                        presenterId: liveContent.presenter.id,
-                      )),
-            );
+    isGuestUser
+        ? Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => LoginMainPage()),
+          )
+        : OverlayService().addVideoTitleOverlay(
+            context,
+            MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (BuildContext context) => LiveStreamCheckoutBloc(),
+                ),
+                BlocProvider(
+                  create: (BuildContext context) => LiveStreamProductBloc(),
+                ),
+                BlocProvider(
+                  create: (BuildContext context) => FollowBloc(),
+                ),
+                BlocProvider(create: (BuildContext context) => PresenterBloc()),
+                BlocProvider(
+                    create: (BuildContext context) => LiveStreamBloc()
+                      ..add(JoinLive(liveContent.presenter.id))),
+              ],
+              child: LiveStreamScreen(liveContent.presenter),
+            ),
+            true,
+            false);
   }
 }

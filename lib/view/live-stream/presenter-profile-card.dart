@@ -46,7 +46,7 @@ class _PresenterProfileCardState extends State<PresenterProfileCard> {
               radius: 20,
               backgroundColor: Colors.grey[200],
               backgroundImage: CachedNetworkImageProvider(
-                  "${GlobalConfiguration().getString("imageURL")}/${widget.presenter.profilePicture}"),
+                  "${GlobalConfiguration().getString("imageURL")}/media/${widget.presenter.profilePicture}"),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 12.0),

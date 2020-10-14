@@ -24,7 +24,7 @@ class LoginMainPage extends StatelessWidget {
           if (state is GoogleSignInResponse &&
               state.response == GoogleSignInResponse.SUCCESS) {
             BlocProvider.of<BottomNavBarBloc>(context)
-                .add(ChangeBottomNavBarIndex(0));
+                .add(ChangeBottomNavBarState(0,false));
 
             BlocProvider.of<LoginBloc>(context).add(CheckLoginStatus());
             Navigator.of(context, rootNavigator: true).pushReplacement(

@@ -32,6 +32,7 @@ class _LiveChatPanelState extends State<LiveChatPanel> {
   final TextEditingController textEditingController =
       new TextEditingController();
 
+  final FocusNode focusNode = new FocusNode();
   double height;
   double mheight;
 
@@ -39,14 +40,15 @@ class _LiveChatPanelState extends State<LiveChatPanel> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     KeyboardVisibilityNotification().addNewListener(
       onChange: (bool visible) {
         print("FROM PANEL: $visible");
 
         setState(() {
           height = visible
-              ? MediaQuery.of(context).size.height * 33 / 100 / 4
-              : MediaQuery.of(context).size.height * 33 / 100;
+              ? MediaQuery.of(context).size.height * 40 / 100 / 2 - 40
+              : MediaQuery.of(context).size.height * 40 / 100;
 
           mheight = visible
               ? MediaQuery.of(context).size.height * 50 / 100 / 2
@@ -59,10 +61,14 @@ class _LiveChatPanelState extends State<LiveChatPanel> {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      color: Colors.white,
-      curve: Curves.easeOut,
+      decoration: BoxDecoration(
+         borderRadius: BorderRadius.only(topRight: Radius.circular(12),
+        topLeft: Radius.circular(12) ),
+        color: Colors.white,
 
-      duration: Duration(milliseconds: 400),
+      ),
+      curve: Curves.easeOut,
+      duration: Duration(milliseconds: 200),
       height: mheight == null
           ? MediaQuery.of(context).size.height * 50 / 100
           : mheight,
@@ -113,10 +119,10 @@ class _LiveChatPanelState extends State<LiveChatPanel> {
             height: 8,
           ),
           AnimatedContainer(
-              duration: Duration(milliseconds: 400),
+              duration: Duration(milliseconds: 200),
               curve: Curves.easeOut,
               height: height == null
-                  ? MediaQuery.of(context).size.height * 33 / 100
+                  ? MediaQuery.of(context).size.height * 40 / 100
                   : height,
               child: StreamBuilder<List<LiveChat>>(
                   stream: realTimeController.liveChatStream,
@@ -195,8 +201,7 @@ class _LiveChatPanelState extends State<LiveChatPanel> {
                         ),
                       );
                     else
-                      return Container(
-                      );
+                      return Container();
                   })),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -209,8 +214,9 @@ class _LiveChatPanelState extends State<LiveChatPanel> {
                   child: TextField(
                     minLines: 1,
                     maxLines: 4,
+
                     keyboardType: TextInputType.multiline,
-                    focusNode: textFocusNode,
+                    focusNode: focusNode,
                     controller: textEditingController,
                     decoration: InputDecoration(
                         filled: true,

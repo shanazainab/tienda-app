@@ -1,4 +1,6 @@
-class Country {
+import 'package:equatable/equatable.dart';
+
+class Country extends Equatable{
   String countryCode;
   int id;
   String nameArabic;
@@ -31,4 +33,13 @@ class Country {
     data['thumbnail'] = this.thumbnail;
     return data;
   }
+
+  @override
+  String toString() {
+    return 'Country{countryCode: $countryCode, id: $id, nameArabic: $nameArabic, nameEnglish: $nameEnglish, thumbnail: $thumbnail}';
+  }
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [countryCode];
 }

@@ -2,24 +2,19 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/app-language.dart';
 import 'package:tienda/bloc/cart-bloc.dart';
-import 'package:tienda/bloc/checkout-bloc.dart';
 import 'package:tienda/bloc/connectivity-bloc.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
-import 'package:tienda/bloc/events/checkout-events.dart';
 import 'package:tienda/bloc/events/loading-events.dart';
 import 'package:tienda/bloc/loading-bloc.dart';
-import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/cart-states.dart';
-import 'package:tienda/bloc/states/loading-states.dart';
-import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/localization.dart';
-import 'package:tienda/model/order.dart';
 import 'package:tienda/view/cart/cart-items-container.dart';
+import 'package:tienda/view/checkout/price-details-container.dart';
 import 'package:tienda/view/checkout/tienda-points-redeem-container.dart';
-import 'package:tienda/view/login/login-main-page.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -27,6 +22,8 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  TextEditingController textEditingController = new TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -44,92 +41,104 @@ class _CartPageState extends State<CartPage> {
         if (state is LoadCartSuccess && state.cart != null) {
           BlocProvider.of<LoadingBloc>(context)..add(StopLoading());
 
-          return Column(
+          return ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.only(bottom: 100, top: 20),
+            physics: ScrollPhysics(),
             children: <Widget>[
-              TiendaPointsRedeemContainer(),
-
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 16),
+                child: TiendaPointsRedeemContainer(),
+              ),
+              SizedBox(
+                height: 20,
+              ),
               Expanded(
                 child: ListView(
+                  physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  padding: EdgeInsets.only(bottom: 100, left: 16, right: 16,top:20),
                   children: <Widget>[
-
                     CartItemsContainer(state.cart),
-                    if (state.cart != null)
-                      Card(
-                        elevation: 0,
-                        margin: EdgeInsets.all(0),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  "TOTAL: ${AppLocalizations.of(context).translate('aed')} ${(state.cart.cartPrice - 0).toStringAsFixed(2)}",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: SizedBox(
-                                    width: MediaQuery.of(context).size.width - 50,
-                                    child: BlocBuilder<LoadingBloc, LoadingStates>(
-                                        builder: (context, state) {
-                                          if (state is AppLoading) {
-                                            return RaisedButton(
-                                              onPressed: () {
-                                                //Do nothing
-                                              },
-                                              child: Container(
-                                                height: 20,
-                                                width: 20,
-                                                child: CircularProgressIndicator(
-                                                  backgroundColor: Colors.white,
-                                                  strokeWidth: 2,
-                                                ),
-                                              ),
-                                            );
-                                          } else {
-                                            return RaisedButton(
-                                              onPressed: () {
-                                                BlocProvider.of<LoginBloc>(context)
-                                                    .state is GuestUser
-                                                    ? Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          LoginMainPage()),
-                                                )
-                                                    : BlocProvider.of<CheckOutBloc>(
-                                                    context)
-                                                    .add(DoUpdateCheckOutProgress(
-                                                    order: new Order(),
-                                                    status: "ADDRESS"));
-                                              },
-                                              child: Text(AppLocalizations.of(context)
-                                                  .translate('checkout')),
-                                            );
-                                          }
-                                        })),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+
                     // if (state.cart != null) priceContainer(state.cart.cartPrice)
                   ],
                 ),
               ),
-
+              SizedBox(
+                height: 20,
+              ),
+              ExpansionTile(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(
+                          "assets/icons/coupon 1.png",
+                          height: 24,
+                          width: 24,
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          'Apply Coupon',
+                          style: TextStyle(
+                            color: Color(0xff282828),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    state.cart.summary.isCoupon
+                        ? Text(
+                            '- AED 120.00',
+                            style: TextStyle(
+                              color: Color(0xff282828),
+                              fontSize: 13,
+                            ),
+                          )
+                        : Container(),
+                  ],
+                ),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 38,
+                            child: TextFormField(
+                              controller: textEditingController,
+                              decoration:
+                                  InputDecoration(border: OutlineInputBorder()),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        RaisedButton(
+                          onPressed: () {
+                            BlocProvider.of<CartBloc>(context)
+                                .add(ApplyCoupon(textEditingController.text));
+                          },
+                          child: Text("APPLY"),
+                        )
+                      ],
+                    ),
+                  ),
+                  state.cart.summary.isCoupon
+                      ? Text("Coupon Applied!")
+                      : Text("No Coupon Applied")
+                ],
+              )
             ],
           );
         } else {
-          BlocProvider.of<LoadingBloc>(context)
-            ..add(StopLoading());
+          BlocProvider.of<LoadingBloc>(context)..add(StopLoading());
           return Container(
             child: Center(
               child: Column(
@@ -152,105 +161,6 @@ class _CartPageState extends State<CartPage> {
           );
         }
       },
-    );
-  }
-
-  priceContainer(double cartPrice) {
-    return Container(
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(
-              height: 8,
-            ),
-            Text(
-              AppLocalizations.of(context).translate('price-details'),
-              style: TextStyle(fontWeight: FontWeight.w700),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of(context).translate('cart-total'),
-                ),
-                Text(
-                    "${AppLocalizations.of(context).translate('aed')} $cartPrice"),
-              ],
-            ),
-            SizedBox(
-              height: 4,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of(context).translate('cart-discount'),
-                ),
-                Text("${AppLocalizations.of(context).translate('aed')} ${0}"),
-              ],
-            ),
-            SizedBox(
-              height: 4,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of(context).translate('order-total'),
-                ),
-                Text(
-                    "${AppLocalizations.of(context).translate('aed')} $cartPrice"),
-              ],
-            ),
-            SizedBox(
-              height: 4,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of(context).translate('delivery-charge'),
-                ),
-                Text(
-                  AppLocalizations.of(context).translate('free'),
-                  style: TextStyle(color: Colors.green),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 4,
-            ),
-            Divider(),
-            SizedBox(
-              height: 4,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  AppLocalizations.of(context).translate('total'),
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-                Text(
-                    "${AppLocalizations.of(context).translate('aed')} $cartPrice",
-                    style: TextStyle(fontWeight: FontWeight.w700)),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 

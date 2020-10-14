@@ -56,11 +56,16 @@ class _CartApiClient implements CartApiClient {
   }
 
   @override
-  Future<String> cartCheckout(int addressId,PaymentCard paymentCard,int cardId,int cvv) async {
+  Future<String> cartCheckout(
+      int addressId, PaymentCard paymentCard, int cardId, int cvv) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{'address_id': addressId ,"card":paymentCard.toJson(),if(cardId !=null)"card_id":cardId,
-      if(cvv !=null)"cvv":cvv};
+    final _data = <String, dynamic>{
+      'address_id': addressId,
+      "card": paymentCard.toJson(),
+      if (cardId != null) "card_id": cardId,
+      if (cvv != null) "cvv": cvv
+    };
 
     print("DATA: $_data");
 
@@ -104,6 +109,26 @@ class _CartApiClient implements CartApiClient {
     };
     final Response<String> _result = await _dio.request(
         '/change_cart_product_quantity/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
+    Logger().e("CART CHECKOUT REQUEST: ${_result.request.data}");
+    return value;
+  }
+
+  @override
+  Future<String> applyCoupon(String coupon) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{
+      'coupon': coupon,
+    };
+    final Response<String> _result = await _dio.request('/redeem_coupon/',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',

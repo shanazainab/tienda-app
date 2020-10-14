@@ -52,7 +52,7 @@ class CustomerProfile extends StatelessWidget {
             listener: (context, state) {
               if (state is LogoutSuccess) {
                 BlocProvider.of<BottomNavBarBloc>(context)
-                    .add(ChangeBottomNavBarIndex(0));
+                    .add(ChangeBottomNavBarState(0,false));
 
                 BlocProvider.of<LoginBloc>(context).add(CheckLoginStatus());
                 Navigator.of(context, rootNavigator: true).pushReplacement(

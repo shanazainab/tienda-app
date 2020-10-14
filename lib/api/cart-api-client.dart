@@ -23,4 +23,7 @@ abstract class CartApiClient {
 
   @POST("/change_cart_product_quantity/")
   Future<String> changeQuantity(@Body() int productId, @Body() int quantity);
+
+  @POST("/redeem_coupon/")
+  Future<String> applyCoupon(@Body() String coupon);
 }

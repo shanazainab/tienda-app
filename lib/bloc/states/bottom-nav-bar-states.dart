@@ -1,9 +1,11 @@
 abstract class BottomNavBarStates {
+
   BottomNavBarStates();
 }
 
-class ChangeBottomNavBarIndexSuccess extends BottomNavBarStates {
+class ChangeBottomNavBarStatusSuccess extends BottomNavBarStates {
   int index;
+  bool hide;
 
-  ChangeBottomNavBarIndexSuccess(this.index) : super();
+  ChangeBottomNavBarStatusSuccess(this.index,this.hide) : super();
 }

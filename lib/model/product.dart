@@ -26,7 +26,10 @@ class Product{
       this.isReviewed,
       this.discount,
       this.presenter,
+        this.colors,
+        this.sizes,
       this.isPurchased,
+        this.coupon,
       this.brand,this.isReturnable,this.lastVideo,this.isRated});
 
   int id;
@@ -50,11 +53,13 @@ class Product{
   bool isReviewed;
   bool isPurchased;
   bool isRated;
-
+  List<ProductColor> colors;
+  List<ProductSize> sizes;
   String lastVideo;
   bool isReturnable;
   int quantity;
   int discount;
+  Coupon coupon;
 
   Presenter presenter;
 
@@ -68,6 +73,7 @@ class Product{
               : null,
           nameAr: json["name_ar"],
           nameEn: json["name_en"],
+          coupon: json["coupon"]!=null?Coupon.fromJson(json["coupon"]):null,
           categoryId: json["category_id"],
           subCategoryId: json["sub_category_id"],
           thirdCategoryId: json["third_category_id"],
@@ -75,6 +81,8 @@ class Product{
           thumbnail: json["thumbnail"],
           isAvailable: json["is_available"],
           sellerId: json["seller_id"],
+          colors: json["colors"] != null?List<ProductColor>.from(json["colors"].map((x) => ProductColor.fromJson(x))):null,
+          sizes: json["sizes"]!= null?List<ProductSize>.from(json["sizes"].map((x) => ProductSize.fromJson(x))):null,
           totalReviews: json["total_reviews"],
           discount: json["discount"],
           isReviewed: json["is_reviewed"],
@@ -209,7 +217,25 @@ class Review {
     return 'Review{images: $images, fileImages: $fileImages}';
   }
 }
+class ProductColor {
+  ProductColor({
+    this.colorHex,
+    this.id,
+  });
 
+  String colorHex;
+  int id;
+
+  factory ProductColor.fromJson(Map<String, dynamic> json) => ProductColor(
+    colorHex: json["color_hex"],
+    id: json["id"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "color_hex": colorHex,
+    "id": id,
+  };
+}
 class Image {
   Image({
     this.image,
@@ -224,6 +250,60 @@ class Image {
   Map<String, dynamic> toJson() => {
         "image": image,
       };
+}
+class ProductSize {
+  ProductSize({
+    this.size,
+    this.id,
+  });
+
+  String size;
+  int id;
+
+  factory ProductSize.fromJson(Map<String, dynamic> json) => ProductSize(
+    size: json["size"],
+    id: json["id"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "size": size,
+    "id": id,
+  };
+}
+class Coupon {
+  Coupon({
+    this.id,
+    this.name,
+    this.description,
+    this.type,
+    this.value,
+    this.code,
+  });
+
+  int id;
+  String name;
+  String description;
+  String type;
+  String value;
+  String code;
+
+  factory Coupon.fromJson(Map<String, dynamic> json) => Coupon(
+    id: json["id"],
+    name: json["name"],
+    description: json["description"],
+    type: json["type"],
+    value: json["value"],
+    code: json["code"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "description": description,
+    "type": type,
+    "value": value,
+    "code": code,
+  };
 }
 
 class Spec {

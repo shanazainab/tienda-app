@@ -37,7 +37,6 @@ class SingleProductBloc extends Bloc<ProductEvents, ProductStates> {
     await productApiClient
         .getProductDetailsByCategory(event.productId.toString())
         .then((response) {
-      Logger().d("GET-PRODUCT-DETAILS-RESPONSE:$response");
 
       log("GET-PRODUCT-DETAILS-RESPONSE:$response");
 

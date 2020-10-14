@@ -3,8 +3,10 @@ abstract class BottomNavBarEvents {
   BottomNavBarEvents();
 }
 
-class ChangeBottomNavBarIndex extends BottomNavBarEvents {
-  int index;
+class ChangeBottomNavBarState extends BottomNavBarEvents {
+  int newIndex;
+  bool hide;
+  
 
-  ChangeBottomNavBarIndex(this.index) : super();
+  ChangeBottomNavBarState(this.newIndex,this.hide) : super();
 }

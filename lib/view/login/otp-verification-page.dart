@@ -45,31 +45,23 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
               ///Record Sign Up method
               FirebaseAnalytics().logSignUp(signUpMethod: "PHONE-NUMBER");
 
-
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-
                     builder: (context) => CustomerDetailsPage(
                           mobileNumber: widget.mobileNumber,
                         )),
               );
             } else {
               BlocProvider.of<BottomNavBarBloc>(context)
-                  .add(ChangeBottomNavBarIndex(0));
+                  .add(ChangeBottomNavBarState(0, false));
               BlocProvider.of<LoginBloc>(context)..add(CheckLoginStatus());
-              Navigator.of(context, rootNavigator: true).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
-
+              Navigator.of(context, rootNavigator: true).pushReplacement(
+                  MaterialPageRoute(builder: (context) => HomeScreen()));
             }
-          } else if (state is LogoutError) {
-            Fluttertoast.showToast(
-                msg: state.error,
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                fontSize: 16.0);
+          } else if (state is LoginVerifyOTPError) {
+            errorController.add(ErrorAnimationType.shake);
+
           }
         },
         child: Scaffold(
@@ -78,6 +70,15 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
             backgroundColor: Colors.white,
             brightness: Brightness.light,
             elevation: 0,
+            title: Text("Verification code",
+                style: TextStyle(
+                  fontFamily: 'SFProDisplay',
+                  color: Color(0xff282828),
+                  fontSize: 19,
+                  fontWeight: FontWeight.w400,
+                  fontStyle: FontStyle.normal,
+                  letterSpacing: 0,
+                )),
           ),
           bottomNavigationBar:
               BlocBuilder<LoginBloc, LoginStates>(builder: (context, state) {
@@ -99,64 +100,96 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Align(
-                      alignment: Alignment.topLeft,
+                      alignment: Alignment.center,
                       child: Text(
-                        AppLocalizations.of(context)
-                            .translate('enter-otp-sent-to-your-mobile'),
-                        style: TextStyle(fontSize: 16),
-                      )),
+                          "Please type verification code sent  to ${widget.mobileNumber}",
+                          style: TextStyle(
+                            fontFamily: 'SFProDisplay',
+                            color: Color(0xff000000),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            fontStyle: FontStyle.normal,
+                            letterSpacing: 0,
+                          ))),
                   SizedBox(
                     height: 20,
                   ),
 
                   ///OTP Pin enter field
-                  PinCodeTextField(
-                    length: 4,
-                    textInputType: TextInputType.number,
-                    autoFocus: true,
-                    obsecureText: false,
-                    animationType: AnimationType.fade,
-                    pinTheme: PinTheme(
-                      shape: PinCodeFieldShape.underline,
-                      borderRadius: BorderRadius.circular(5),
-                      fieldHeight: 50,
-                      fieldWidth: 40,
-                      inactiveColor: Colors.grey[200],
-                      activeColor: Colors.black,
-                      selectedColor: Colors.grey[200],
-                      activeFillColor: Colors.white,
+                  SizedBox(
+                    width: 150,
+                    child: PinCodeTextField(
+                      length: 4,
+                      textInputType: TextInputType.number,
+                      autoFocus: true,
+                      obsecureText: false,
+                      animationType: AnimationType.fade,
+
+                      textStyle: TextStyle(
+                        fontFamily: 'NunitoSans',
+                        color: Color(0xff000000),
+                        fontSize: 24,
+                        fontWeight: FontWeight.w300,
+                        fontStyle: FontStyle.normal,
+                        letterSpacing: 0,
+                      ),
+                      pinTheme: PinTheme(
+                        shape: PinCodeFieldShape.box,
+                        borderRadius: BorderRadius.circular(5),
+                        fieldHeight: 40,
+                        fieldWidth: 33,
+                        inactiveColor: Colors.grey[200],
+                        activeColor: Colors.black,
+                        selectedColor: Colors.grey[200],
+                        activeFillColor: Colors.white,
+                      ),
+                      animationDuration: Duration(milliseconds: 300),
+                      backgroundColor: Colors.white,
+                      enableActiveFill: false,
+                      autoDismissKeyboard: true,
+                      errorAnimationController: errorController,
+                      controller: textEditingController,
+                      onCompleted: (v) {
+                        print("Completed");
+                        otp = v;
+                        setState(() {});
+                      },
+                      onChanged: (value) {
+                        print(value);
+                      },
+                      beforeTextPaste: (text) {
+                        print("Allowing to paste $text");
+                        return true;
+                      },
                     ),
-                    animationDuration: Duration(milliseconds: 300),
-                    backgroundColor: Colors.white,
-                    enableActiveFill: false,
-                    autoDismissKeyboard: true,
-                    errorAnimationController: errorController,
-                    controller: textEditingController,
-                    onCompleted: (v) {
-                      print("Completed");
-                      otp = v;
-                      setState(() {});
-                    },
-                    onChanged: (value) {
-                      print(value);
-                    },
-                    beforeTextPaste: (text) {
-                      print("Allowing to paste $text");
-                      return true;
-                    },
                   ),
 
                   ///Verify button
 
                   Padding(
                     padding: const EdgeInsets.only(top: 16.0),
-                    child: RaisedButton(
-                      color: otp?.length != 4 ? Colors.grey : Colors.black,
-                      onPressed: () {
-                        handleVerify();
-                      },
-                      child: Text(
-                          AppLocalizations.of(context).translate('verify')),
+                    child: ButtonTheme(
+                      height: 44,
+                      minWidth: MediaQuery.of(context).size.width - 120,
+                      child: RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(2)),
+                        color: otp?.length != 4
+                            ? Colors.grey[200]
+                            : Color(0xff2cdab3),
+                        onPressed: () {
+                          handleVerify();
+                        },
+                        child: Text("Verify",
+                            style: TextStyle(
+                              color:
+                                  otp == null ? Colors.grey : Color(0xfff6f6f6),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              fontStyle: FontStyle.normal,
+                              letterSpacing: 0,
+                            )),
+                      ),
                     ),
                   )
                 ],

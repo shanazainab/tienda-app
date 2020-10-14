@@ -73,7 +73,7 @@ class _PaymentContainerState extends State<PaymentContainer> {
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: Text(
-                              "AED ${cartState.cart.cartPrice - 0}",
+                              "AED ${cartState.cart.summary.totalPrice - 0}",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),

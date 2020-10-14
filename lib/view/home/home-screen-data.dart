@@ -24,10 +24,8 @@ import 'featured-brands.dart';
 class HomeScreenData extends StatefulWidget {
   const HomeScreenData({
     Key key,
-    @required this.controller,
   }) : super(key: key);
 
-  final PageController controller;
 
   @override
   _HomeScreenDataState createState() => _HomeScreenDataState();
@@ -80,7 +78,6 @@ class _HomeScreenDataState extends State<HomeScreenData>
                               color: Color(0xFFFFDC98),
                             );
                           },
-                          controller: widget.controller,
                         ),
                         align: IndicatorAlign.bottom,
                         length: state.homeScreenResponse.liveStreams.length,

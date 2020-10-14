@@ -52,7 +52,7 @@ class TopCategories extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   BlocProvider.of<BottomNavBarBloc>(context)
-                      .add(ChangeBottomNavBarIndex(1));
+                      .add(ChangeBottomNavBarState(1,true));
                 },
                 child: Text("See All".toUpperCase(),
                     style: TextStyle(

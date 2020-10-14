@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
+import 'package:tienda/bloc/bottom-nav-bar-bloc.dart';
 import 'package:tienda/bloc/checkout-bloc.dart';
 import 'package:tienda/bloc/connectivity-bloc.dart';
+import 'package:tienda/bloc/events/bottom-nav-bar-events.dart';
 import 'package:tienda/bloc/events/live-events.dart';
 import 'package:tienda/bloc/events/live-stream-events.dart';
 import 'package:tienda/bloc/events/startup-events.dart';
 import 'package:tienda/bloc/live-contents-bloc.dart';
 import 'package:tienda/bloc/live-stream-bloc.dart';
-import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/controller/one-signal-notification-controller.dart';
 import 'package:tienda/view/categories/categories-page.dart';
 import 'package:tienda/view/checkout/checkout-orders-main-page.dart';
@@ -42,7 +43,8 @@ class _HomeScreenState extends State<HomeScreen>
     // TODO: implement initState
 
     super.initState();
-
+    BlocProvider.of<BottomNavBarBloc>(context)
+        .add(ChangeBottomNavBarState(0, false));
     appflows = [
       BlocProvider(
         create: (context) => LiveContentsBloc()..add(LoadLiveVideoList()),
@@ -89,9 +91,9 @@ class _HomeScreenState extends State<HomeScreen>
         DateTime now = DateTime.now();
         if (currentBackPressTime == null ||
             now.difference(currentBackPressTime) > Duration(seconds: 2)) {
+          BlocProvider.of<BottomNavBarBloc>(context)
+              .add(ChangeBottomNavBarState(0, false));
           currentBackPressTime = now;
-          Fluttertoast.showToast(
-              msg: 'Tap back again to exit', gravity: ToastGravity.BOTTOM);
           return Future.value(false);
         }
         return Future.value(true);
@@ -112,6 +114,4 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
-
-
 }
