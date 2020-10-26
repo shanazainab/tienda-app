@@ -16,6 +16,24 @@ class _LiveStreamApiClient implements LiveStreamApiClient {
   String baseUrl;
 
   @override
+  Future<String> getOngoingLiveStreams() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+
+    final Response<String> _result = await _dio.request('/get_live_streams/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
+    return value;
+  }
+
+  @override
   Future<String> joinTheLive(int presenterId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -39,7 +57,8 @@ class _LiveStreamApiClient implements LiveStreamApiClient {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
 
-    final Response<String> _result = await _dio.request('/get_presenter_review_box/$presenterId',
+    final Response<String> _result = await _dio.request(
+        '/get_presenter_review_box/$presenterId',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -52,12 +71,14 @@ class _LiveStreamApiClient implements LiveStreamApiClient {
   }
 
   @override
-  Future<String> reviewPresenter(int presenterId, PresenterReview presenterReview) async {
+  Future<String> reviewPresenter(
+      int presenterId, PresenterReview presenterReview) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = presenterReview.toJson();
 
-    final Response<String> _result = await _dio.request('/review_presenter/$presenterId',
+    final Response<String> _result = await _dio.request(
+        '/review_presenter/$presenterId',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'POST',
@@ -69,4 +90,21 @@ class _LiveStreamApiClient implements LiveStreamApiClient {
     return value;
   }
 
+  @override
+  Future<String> getAllLiveStreams() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+
+    final Response<String> _result = await _dio.request('/get_all_streams/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
+    return value;
+  }
 }

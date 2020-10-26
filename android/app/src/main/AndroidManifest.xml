@@ -24,6 +24,8 @@
 
         android:label="@string/app_name">
 
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDBMARSuk2l-TxaUBlHY3m5RVb7bN2C08c"/>
 
         <provider
             android:name="androidx.work.impl.WorkManagerInitializer"
@@ -80,7 +82,10 @@
             <meta-data
                 android:name="io.flutter.embedding.android.SplashScreenDrawable"
                 android:resource="@drawable/launch_background" />
-
+            <meta-data
+                android:name="io.flutter.embedding.android.SplashScreenDrawable"
+                android:resource="@drawable/launch_background"
+                />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

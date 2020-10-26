@@ -86,3 +86,12 @@ class ApplyCoupon extends CartEvents {
   @override
   List<Object> get props => [];
 }
+
+class RemoveCoupon extends CartEvents {
+  final String couponCode;
+
+  RemoveCoupon(this.couponCode) : super();
+
+  @override
+  List<Object> get props => [];
+}

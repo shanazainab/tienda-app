@@ -33,6 +33,19 @@ class DeliveryAddress {
   String addressType;
   bool isDefault;
 
+  // "",
+  // "",
+  // "",
+  // "",
+  // "",
+  // "",
+  // "apartment",
+  // "building_name",
+  // "floor",
+  // "",
+  // "",
+  // "",
+  // "
   factory DeliveryAddress.fromJson(Map<String, dynamic> json) =>
       DeliveryAddress(
         id: json["id"],
@@ -68,6 +81,11 @@ class DeliveryAddress {
         "customer_id": customerId,
         "comment": comment,
         "address_type": addressType,
-        "is_default": isDefault,
+        "is_default": isDefault == null?false:isDefault,
       };
+
+  @override
+  String toString() {
+    return 'DeliveryAddress{id: $id, fullName: $fullName, country: $country, city: $city, longAddress: $longAddress, phoneNumber: $phoneNumber, mapLat: $mapLat, mapLong: $mapLong, apartment: $apartment, buildingName: $buildingName, floor: $floor, customerId: $customerId, comment: $comment, addressType: $addressType, isDefault: $isDefault}';
+  }
 }

@@ -10,6 +10,5 @@ abstract class HomeApiClient {
   @GET("/main_screen_data/")
   Future<String> getHomeScreenData();
 
-  @GET("/get_live_streams/")
-  Future<String> getLiveContents();
+
 }

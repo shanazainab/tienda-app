@@ -7,7 +7,7 @@ import 'package:tienda/model/chat-history-response.dart';
 import 'package:tienda/model/presenter.dart';
 import 'package:tienda/model/unread-messages.dart';
 import 'package:tienda/view/chat/presenter-direct-message.dart';
-import 'package:tienda/view/live-stream/live-stream-pop-up.dart';
+import 'package:tienda/view/live-stream/widget/notification/live-stream-pop-up.dart';
 import 'package:tienda/view/widgets/cart-reminder-dialogue.dart';
 
 import '../main.dart';
@@ -23,14 +23,13 @@ class LiveNotification {
 }
 
 class OneSignalNotificationController {
-  final liveNotOpenedStream = new BehaviorSubject<Presenter>();
-  final liveNotReceivedStream = new BehaviorSubject<LiveNotification>();
+  ///Handle only latest value
+  final liveNotificationOpnStreamController = new BehaviorSubject<Presenter>();
+  final liveNotificationRecvStreamController = new BehaviorSubject<LiveNotification>();
 
   OneSignalNotificationController._privateConstructor();
-
   static final OneSignalNotificationController _instance =
       OneSignalNotificationController._privateConstructor();
-
   factory OneSignalNotificationController() {
     return _instance;
   }
@@ -70,11 +69,11 @@ class OneSignalNotificationController {
       ///handle live stream
       ///"custom": "{"a":{"presenter_id":10,"name":"Bella","profile_picture":"/media/sampleone.jpg","type":"live_stream"},"i":"a82b55da-ef56-42ab-96a4-d71aef04627f"}",
       if (notification.payload.additionalData['type'] == "live_stream") {
-//        liveNotReceivedStream.add(LiveNotification(
-//            presenterId: notification.payload.additionalData['presenter_id'],
-//            imageURL: notification.payload.additionalData['profile_picture'],
-//            description: "some random text message",
-//            presenterName: notification.payload.additionalData['name']));
+       liveNotificationRecvStreamController.add(LiveNotification(
+           presenterId: notification.payload.additionalData['presenter_id'],
+           imageURL: notification.payload.additionalData['profile_picture'],
+           description: "some random text message",
+           presenterName: notification.payload.additionalData['name']));
 
         ///show dialog
         showDialog(
@@ -115,9 +114,8 @@ class OneSignalNotificationController {
     OneSignal.shared
         .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
       if (result.notification.payload.additionalData['type'] == "live_stream") {
-
-
-        liveNotOpenedStream.add(new Presenter(
+        
+        liveNotificationOpnStreamController.add(new Presenter(
             id: result.notification.payload.additionalData['presenter_id'],
             name: result.notification.payload.additionalData['name'],
             profilePicture:

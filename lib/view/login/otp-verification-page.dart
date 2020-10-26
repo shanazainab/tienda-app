@@ -7,15 +7,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 import 'package:tienda/bloc/bottom-nav-bar-bloc.dart';
+import 'package:tienda/bloc/cart-bloc.dart';
+import 'package:tienda/bloc/customer-profile-bloc.dart';
 import 'package:tienda/bloc/events/bottom-nav-bar-events.dart';
+import 'package:tienda/bloc/events/cart-events.dart';
+import 'package:tienda/bloc/events/customer-profile-events.dart';
 import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/model/login-verify-request.dart';
-import 'package:tienda/view/home/home-screen.dart';
+import 'package:tienda/view/home/page/main-screen.dart';
 import 'package:tienda/view/login/customer-details-page.dart';
-
-import '../../localization.dart';
 
 class OTPVerificationPage extends StatefulWidget {
   final String mobileNumber;
@@ -44,7 +46,12 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
             if (state.isNewUser) {
               ///Record Sign Up method
               FirebaseAnalytics().logSignUp(signUpMethod: "PHONE-NUMBER");
-
+              BlocProvider.of<BottomNavBarBloc>(context)
+                  .add(ChangeBottomNavBarState(0, false));
+              BlocProvider.of<LoginBloc>(context)..add(CheckLoginStatus());
+              BlocProvider.of<CartBloc>(context)..add(FetchCartData());
+              BlocProvider.of<CustomerProfileBloc>(context)
+                ..add(FetchCustomerProfile());
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -56,143 +63,152 @@ class _OTPVerificationPageState extends State<OTPVerificationPage>
               BlocProvider.of<BottomNavBarBloc>(context)
                   .add(ChangeBottomNavBarState(0, false));
               BlocProvider.of<LoginBloc>(context)..add(CheckLoginStatus());
+              BlocProvider.of<CustomerProfileBloc>(context)
+                ..add(FetchCustomerProfile());
+              BlocProvider.of<CartBloc>(context)..add(FetchCartData());
+
               Navigator.of(context, rootNavigator: true).pushReplacement(
-                  MaterialPageRoute(builder: (context) => HomeScreen()));
+                  MaterialPageRoute(builder: (context) => MainScreen()));
             }
           } else if (state is LoginVerifyOTPError) {
             errorController.add(ErrorAnimationType.shake);
-
           }
         },
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            brightness: Brightness.light,
-            elevation: 0,
-            title: Text("Verification code",
-                style: TextStyle(
-                  fontFamily: 'SFProDisplay',
-                  color: Color(0xff282828),
-                  fontSize: 19,
-                  fontWeight: FontWeight.w400,
-                  fontStyle: FontStyle.normal,
-                  letterSpacing: 0,
-                )),
-          ),
-          bottomNavigationBar:
-              BlocBuilder<LoginBloc, LoginStates>(builder: (context, state) {
-            if (state is LoginInProgress)
-              return LinearProgressIndicator();
-            else
-              return Container(
-                height: 0,
-              );
-          }),
-          body: Container(
-            alignment: Alignment.topCenter,
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 50, left: 16.0, right: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                          "Please type verification code sent  to ${widget.mobileNumber}",
-                          style: TextStyle(
-                            fontFamily: 'SFProDisplay',
-                            color: Color(0xff000000),
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
-                            letterSpacing: 0,
-                          ))),
-                  SizedBox(
-                    height: 20,
-                  ),
-
-                  ///OTP Pin enter field
-                  SizedBox(
-                    width: 150,
-                    child: PinCodeTextField(
-                      length: 4,
-                      textInputType: TextInputType.number,
-                      autoFocus: true,
-                      obsecureText: false,
-                      animationType: AnimationType.fade,
-
-                      textStyle: TextStyle(
-                        fontFamily: 'NunitoSans',
-                        color: Color(0xff000000),
-                        fontSize: 24,
-                        fontWeight: FontWeight.w300,
-                        fontStyle: FontStyle.normal,
-                        letterSpacing: 0,
-                      ),
-                      pinTheme: PinTheme(
-                        shape: PinCodeFieldShape.box,
-                        borderRadius: BorderRadius.circular(5),
-                        fieldHeight: 40,
-                        fieldWidth: 33,
-                        inactiveColor: Colors.grey[200],
-                        activeColor: Colors.black,
-                        selectedColor: Colors.grey[200],
-                        activeFillColor: Colors.white,
-                      ),
-                      animationDuration: Duration(milliseconds: 300),
-                      backgroundColor: Colors.white,
-                      enableActiveFill: false,
-                      autoDismissKeyboard: true,
-                      errorAnimationController: errorController,
-                      controller: textEditingController,
-                      onCompleted: (v) {
-                        print("Completed");
-                        otp = v;
-                        setState(() {});
-                      },
-                      onChanged: (value) {
-                        print(value);
-                      },
-                      beforeTextPaste: (text) {
-                        print("Allowing to paste $text");
-                        return true;
-                      },
-                    ),
-                  ),
-
-                  ///Verify button
-
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: ButtonTheme(
-                      height: 44,
-                      minWidth: MediaQuery.of(context).size.width - 120,
-                      child: RaisedButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(2)),
-                        color: otp?.length != 4
-                            ? Colors.grey[200]
-                            : Color(0xff2cdab3),
-                        onPressed: () {
-                          handleVerify();
-                        },
-                        child: Text("Verify",
+        child: GestureDetector(
+          onTap: () {
+            print("TAP");
+            FocusScope.of(context).unfocus();
+          },
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              brightness: Brightness.light,
+              elevation: 0,
+              title: Text("Verification code",
+                  style: TextStyle(
+                    fontFamily: 'SFProDisplay',
+                    color: Color(0xff282828),
+                    fontSize: 19,
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.normal,
+                    letterSpacing: 0,
+                  )),
+            ),
+            bottomNavigationBar:
+                BlocBuilder<LoginBloc, LoginStates>(builder: (context, state) {
+              if (state is LoginInProgress)
+                return LinearProgressIndicator();
+              else
+                return Container(
+                  height: 0,
+                );
+            }),
+            body: Container(
+              alignment: Alignment.topCenter,
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 50, left: 16.0, right: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                            "Please type verification code sent  to ${widget.mobileNumber}",
                             style: TextStyle(
-                              color:
-                                  otp == null ? Colors.grey : Color(0xfff6f6f6),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
+                              fontFamily: 'SFProDisplay',
+                              color: Color(0xff000000),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
                               fontStyle: FontStyle.normal,
                               letterSpacing: 0,
-                            )),
+                            ))),
+                    SizedBox(
+                      height: 20,
+                    ),
+
+                    ///OTP Pin enter field
+                    SizedBox(
+                      width: 150,
+                      child: PinCodeTextField(
+                        length: 4,
+                        textInputType: TextInputType.number,
+                        autoFocus: true,
+                        obsecureText: false,
+                        animationType: AnimationType.fade,
+                        textStyle: TextStyle(
+                          fontFamily: 'NunitoSans',
+                          color: Color(0xff000000),
+                          fontSize: 24,
+                          fontWeight: FontWeight.w300,
+                          fontStyle: FontStyle.normal,
+                          letterSpacing: 0,
+                        ),
+                        pinTheme: PinTheme(
+                          shape: PinCodeFieldShape.box,
+                          borderRadius: BorderRadius.circular(5),
+                          fieldHeight: 40,
+                          fieldWidth: 33,
+                          inactiveColor: Colors.grey[200],
+                          activeColor: Colors.black,
+                          selectedColor: Colors.grey[200],
+                          activeFillColor: Colors.white,
+                        ),
+                        animationDuration: Duration(milliseconds: 300),
+                        backgroundColor: Colors.white,
+                        enableActiveFill: false,
+                        autoDismissKeyboard: true,
+                        errorAnimationController: errorController,
+                        controller: textEditingController,
+                        onCompleted: (v) {
+                          print("Completed");
+                          otp = v;
+                          setState(() {});
+                        },
+                        onChanged: (value) {
+                          print(value);
+                        },
+                        beforeTextPaste: (text) {
+                          print("Allowing to paste $text");
+                          return true;
+                        },
                       ),
                     ),
-                  )
-                ],
+
+                    ///Verify button
+
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: ButtonTheme(
+                        height: 44,
+                        minWidth: MediaQuery.of(context).size.width - 120,
+                        child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(2)),
+                          color: otp?.length != 4
+                              ? Colors.grey[200]
+                              : Color(0xff2cdab3),
+                          onPressed: () {
+                            handleVerify();
+                          },
+                          child: Text("Verify",
+                              style: TextStyle(
+                                color: otp == null
+                                    ? Colors.grey
+                                    : Color(0xfff6f6f6),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                fontStyle: FontStyle.normal,
+                                letterSpacing: 0,
+                              )),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),

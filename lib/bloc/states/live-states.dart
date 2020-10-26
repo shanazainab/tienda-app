@@ -1,4 +1,4 @@
-import 'package:tienda/model/live-contents.dart';
+import 'package:tienda/model/live-video.dart';
 
 abstract class LiveStates {
   LiveStates();
@@ -8,9 +8,17 @@ class Loading extends LiveStates {
   Loading() : super();
 }
 
-class LoadLiveVideoListSuccess extends LiveStates {
-  final List<LiveContent> liveContents;
-  final LiveContent featuredLiveContent;
+class LoadCurrentLiveVideoListSuccess extends LiveStates {
+  final List<LiveVideo> liveVideos;
+  final LiveVideo featuredLiveContent;
 
-  LoadLiveVideoListSuccess({this.liveContents,this.featuredLiveContent}) : super();
+
+  LoadCurrentLiveVideoListSuccess({this.liveVideos,this.featuredLiveContent}) : super();
+}
+class LoadAllLiveVideoListSuccess extends LiveStates {
+  final List<LiveVideo> liveVideos;
+  final LiveVideo featuredLiveContent;
+  final Map<DateTime,List<LiveVideo>> groupedLiveContent;
+
+  LoadAllLiveVideoListSuccess({this.liveVideos,this.featuredLiveContent,this.groupedLiveContent}) : super();
 }

@@ -14,18 +14,19 @@ class SearchBody {
   static const String PRICE_LOW_HIGH = "price_low_high";
   static const String RATING_HIGH_LOW = "rating_high_low";
 
-  SearchBody({
-    this.priceGt,
-    this.priceLt,
-    this.category,
-    this.sortBy,
-    this.brands,
-  });
+  SearchBody(
+      {this.priceGt,
+      this.priceLt,
+      this.category,
+      this.sortBy,
+      this.brands,
+      this.categoryType});
 
   int priceGt;
   int priceLt;
   int category;
   String sortBy;
+  String categoryType;
   List<String> brands = new List();
 
   factory SearchBody.fromJson(Map<String, dynamic> json) => SearchBody(
@@ -33,6 +34,7 @@ class SearchBody {
         priceLt: json["price_lt"],
         category: json["category"],
         sortBy: json["sort_by"],
+        categoryType: json["cat_type"],
         brands: List<String>.from(json["brands"].map((x) => x)),
       );
 
@@ -41,6 +43,7 @@ class SearchBody {
         if (priceLt != null) "price_lt": priceLt,
         if (category != null) "category": category,
         if (sortBy != null) "sort_by": sortBy,
+        if (categoryType != null) "cat_type": categoryType,
         if (brands != null && brands.isNotEmpty)
           "brands": List<dynamic>.from(brands.map((x) => x)),
       };

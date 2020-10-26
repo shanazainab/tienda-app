@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-final spinKit = SpinKitDoubleBounce(
-  color: Colors.grey,
+final spinKit = SpinKitFadingCircle(
+  color: Color(0xffc30045),
   size: 30,
 );
 final linearProgress = LinearProgressIndicator(

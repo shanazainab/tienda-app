@@ -33,10 +33,10 @@ class _PresenterInfoContainerState extends State<PresenterInfoContainer> {
       padding: EdgeInsets.all(16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
@@ -59,47 +59,65 @@ class _PresenterInfoContainerState extends State<PresenterInfoContainer> {
                   cubit: followBloc,
                   builder: (context, substate) {
                     if (substate is ChangeFollowStatusSuccess)
-                      return OutlineButton(
-                        color: Colors.black,
-                        borderSide: BorderSide(
-                            color: Colors.black
-                        ),
-                        onPressed: () {
+                      return GestureDetector(
+                        onTap: () {
                           followBloc
                               .add(ChangeFollowStatus(widget.presenter.id));
                         },
                         child: substate.isFollowing
                             ? Row(
-                              children: [
-                                Text("Following",style: TextStyle(
-                                ),),
-                                Icon(Icons.check,
-                                size: 14,)
-                              ],
-                            )
-                            : Text(AppLocalizations.of(context)
-                                .translate("follow")),
+                                children: [
+                                  Text(
+                                    "Following",
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF398994),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.check,
+                                    size: 12,
+                                    color: Color(0xFF398994),
+                                  )
+                                ],
+                              )
+                            : Text(
+                                AppLocalizations.of(context)
+                                    .translate("follow"),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF398994),
+                                ),
+                              ),
                       );
-                    return OutlineButton(
-                      color: Colors.black,
-                      borderSide: BorderSide(
-                        color: Colors.black
-                      ),
-                      onPressed: () {
-                        followBloc.add(ChangeFollowStatus(widget.presenter.id));
-                      },
-                      child: widget.presenter.isFollowed
-                          ? Row(
-                        children: [
-                          Text("Following",style: TextStyle(
-                          ),),
-                          Icon(Icons.check,
-                            size: 14,)
-                        ],
-                      )
-                          : Text(
-                              AppLocalizations.of(context).translate("follow")),
-                    );
+                    return widget.presenter.isFollowed
+                        ? Row(
+                            children: [
+                              Text(
+                                "Following",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF398994),
+                                ),
+                              ),
+                              Icon(
+                                Icons.check,
+                                size: 12,
+                                color: Color(0xFF398994),
+                              )
+                            ],
+                          )
+                        : Text(
+                            AppLocalizations.of(context).translate("follow"),
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF398994),
+                            ),
+                          );
                   })
             ],
           ),

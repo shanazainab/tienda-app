@@ -51,8 +51,13 @@ class _LanguagePreferencePageState extends State<LanguagePreferencePage> {
                         appLanguage.changeLanguage(Locale("en"));
                       },
                       selected: isEnglishSelected,
-                      title: Text("English"),
-                      trailing: isEnglishSelected ? Icon(Icons.check) : null,
+                      title: Text(
+                        "English",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      trailing: isEnglishSelected
+                          ? Icon(Icons.check, color: Color(0xff50C0A8))
+                          : null,
                     ),
                     ListTile(
                       onTap: () {
@@ -61,9 +66,9 @@ class _LanguagePreferencePageState extends State<LanguagePreferencePage> {
                         });
                         appLanguage.changeLanguage(Locale("ar"));
                       },
-                      trailing: !isEnglishSelected ? Icon(Icons.check) : null,
+                      trailing: !isEnglishSelected ? Icon(Icons.check,color: Color(0xff50C0A8)) : null,
                       selected: !isEnglishSelected,
-                      title: Text("العربية"),
+                      title: Text("العربية", style: TextStyle(color: Colors.black),),
                     ),
                   ],
                 )),

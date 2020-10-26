@@ -11,7 +11,7 @@ import 'package:tienda/bloc/preference-bloc.dart';
 import 'package:tienda/bloc/startup-bloc.dart';
 import 'package:tienda/bloc/states/preference-states.dart';
 import 'package:tienda/model/category.dart';
-import 'package:tienda/view/home/home-screen.dart';
+import 'package:tienda/view/home/page/main-screen.dart';
 
 class CategorySelectionPage extends StatefulWidget {
   @override
@@ -158,7 +158,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                                                         null &&
                                                     categoryPreferences[
                                                         state.categories[index]]
-                                                ? Colors.lightBlue
+                                                ? Color(0xff50C0A8)
                                                 : Colors.black,
                                           ),
                                         ),
@@ -264,7 +264,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
+      MaterialPageRoute(builder: (context) => MainScreen()),
     );
   }
 }

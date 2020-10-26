@@ -137,7 +137,25 @@ class _CartApiClient implements CartApiClient {
             baseUrl: baseUrl),
         data: _data);
     final value = _result.data;
-    Logger().e("CART CHECKOUT REQUEST: ${_result.request.data}");
+    return value;
+  }
+
+  @override
+  Future<String> removeAppliedCoupon(String couponCode) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{
+      'coupon': couponCode,
+    };
+    final Response<String> _result = await _dio.request('/remove_coupon/',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'POST',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = _result.data;
     return value;
   }
 }

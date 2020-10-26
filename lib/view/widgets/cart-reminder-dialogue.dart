@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tienda/view/checkout/cart-page.dart';
+import 'package:tienda/view/cart/page/cart-page.dart';
 
 class CartReminderDialogue extends StatelessWidget {
 

@@ -11,59 +11,82 @@ import 'package:tienda/bloc/states/checkout-states.dart';
 import 'package:tienda/controller/real-time-controller.dart';
 
 class CheckOutBloc extends Bloc<CheckoutEvents, CheckoutStates> {
-  CheckOutBloc() : super(Loading());
+  CheckOutBloc() : super(DoCartCheckoutUpdateSuccess(checkOutStatus: 'CART'));
 
   @override
   Stream<CheckoutStates> mapEventToState(CheckoutEvents event) async* {
-    if (event is Initialize) {
-      yield Loading();
-    }
-    if (event is DoCartCheckout) {
+    if (event is DoCartCheckoutProgressUpdate) {
       yield* _mapDoCardCheckoutToStates(event);
-    }
-    if (event is DoUpdateCheckOutProgress) {
-      if (event.status == "CART"){
-        print("ORDER FROM CART: ${event.order.products}");
-        yield CartActive(event.status, event.order);}
-      else if (event.status == "ADDRESS"){
-        print("ORDER FROM ADDRESS: ${event.order.products}");
-
-        yield AddressActive(event.status, event.order);}
-      else if (event.status == "PAYMENT"){
-        print("ORDER FROM PAYMENT: ${event.order.products}");
-
-        yield PaymentActive(event.status, event.order);}
     }
   }
 
   Stream<CheckoutStates> _mapDoCardCheckoutToStates(
-      DoCartCheckout event) async* {
-    String status;
+      DoCartCheckoutProgressUpdate event) async* {
+    if (event.checkOutStatus == 'CART') {
+      yield DoCartCheckoutUpdateSuccess(
+          presenterId: event.presenterId,
+          fromLiveStream: event.fromLiveStream,
+          checkOutStatus: event.checkOutStatus,
+          deliveryAddress: event.deliveryAddress,
+          card: event.card);
+    } else if (event.checkOutStatus == 'ADDRESS') {
+      yield DoCartCheckoutUpdateSuccess(
+          presenterId: event.presenterId,
+          fromLiveStream: event.fromLiveStream,
+          checkOutStatus: event.checkOutStatus,
+          deliveryAddress: event.deliveryAddress,
+          card: event.card);
+    } else if (event.checkOutStatus == "PAYMENT") {
+      yield DoCartCheckoutUpdateSuccess(
+          presenterId: event.presenterId,
+          fromLiveStream: event.fromLiveStream,
+          deliveryAddress: event.deliveryAddress,
+          checkOutStatus: event.checkOutStatus,
+          card: event.card);
+    } else if (event.checkOutStatus == "PROCESS-PAYMENT") {
+      String status = await callCheckOutApi(event);
 
-    print("PAYMENT INITIATED");
+      if (status == "success")
+        yield DoCartCheckoutUpdateSuccess(
+            presenterId: event.presenterId,
+            deliveryAddress: event.deliveryAddress,
+            fromLiveStream: event.fromLiveStream,
+            checkOutStatus: 'SUCCESS',
+            card: event.card);
+      else
+        yield DoCartCheckoutUpdateSuccess(
+            presenterId: event.presenterId,
+            deliveryAddress: event.deliveryAddress,
+            fromLiveStream: event.fromLiveStream,
+            checkOutStatus: 'ERROR',
+            card: event.card);
+    }
+
+  }
+
+  Future<String> callCheckOutApi(DoCartCheckoutProgressUpdate event) async {
+    String status;
     final dio = Dio();
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
     final client =
         CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
-    print("PAYMENT INITIATED");
-
     await client
-        .cartCheckout(
-            event.order.addressId, event.card, event.cardId, event.cvv)
+        .cartCheckout(event.deliveryAddress.id, event.card, event.card.id,
+            int.parse(event.card.cvv))
         .then((response) {
       Logger().d("CART-CEHCKOUT-RESPONSE:$response");
       switch (json.decode(response)['status']) {
         case 200:
           status = "success";
           break;
-        case 407:
+        case 400:
           status = "Enter Valid Number";
       }
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        Logger().e("CART-CEHCKOUT-ERROR:", error);
+        Logger().e("CART-CHECKOUT-ERROR:", error);
       }
     });
     print("PAYMENT INITIATED");
@@ -72,12 +95,11 @@ class CheckOutBloc extends Bloc<CheckoutEvents, CheckoutStates> {
       ///do real time update for the checkout action
 
       if (event.fromLiveStream) {
-        for (final product in event.order.products)
+        for (final product in event.products)
           RealTimeController()
               .emitCheckoutFromLive(product.id, event.presenterId);
       }
-
-      yield InitialCheckOutSuccess();
     }
+    return status;
   }
 }

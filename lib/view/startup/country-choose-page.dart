@@ -2,6 +2,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -38,10 +39,9 @@ class _CountryChoosePageState extends State<CountryChoosePage>
     // TODO: implement initState
     super.initState();
     preferenceBloc.add(FetchCountryList());
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this
-    )..repeat(reverse: true);
+    _controller =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this)
+          ..repeat(reverse: true);
     _offsetAnimation = Tween<Offset>(
       begin: Offset.zero,
       end: const Offset(0.0, 1.5),
@@ -53,9 +53,9 @@ class _CountryChoosePageState extends State<CountryChoosePage>
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     _controller.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -116,8 +116,7 @@ class _CountryChoosePageState extends State<CountryChoosePage>
                             alignment: Alignment.center,
                             height: 200,
                             child: Text(
-                              AppLocalizations.of(context)
-                                  .translate('choose-your-country'),
+                              'Choose Our Store',
                               style: TextStyle(fontSize: 18),
                             ),
                           ),
@@ -199,6 +198,9 @@ class _CountryChoosePageState extends State<CountryChoosePage>
                           builder: (context, state) {
                         if (state is LoadCountryListSuccess)
                           return CountryListCard(
+                            onClose: () {
+                              panelController.close();
+                            },
                             countries: state.countries,
                             function: (selectedCountry) {
                               appCountry.changeCountry(selectedCountry);
@@ -240,13 +242,20 @@ class _CountryChoosePageState extends State<CountryChoosePage>
   }
 
   Future<String> getTheCurrentLocation() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    List<Placemark> placeMark = await Geolocator()
-        .placemarkFromCoordinates(position.latitude, position.longitude);
+    Logger().d("CURRENT:::LOCATION:");
 
-    Logger().d("CURRENT:::LOCATION::${placeMark[0].country}");
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      final coordinates =
+          new Coordinates(position.latitude, position.longitude);
 
-    return placeMark[0].country;
+      List<Address> addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+
+      return addresses[0].countryName;
+    } catch (e) {
+      Logger().e(e);
+    }
   }
 }

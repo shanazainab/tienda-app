@@ -3,12 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tienda/bloc/bottom-nav-bar-bloc.dart';
+import 'package:tienda/bloc/cart-bloc.dart';
+import 'package:tienda/bloc/customer-profile-bloc.dart';
 import 'package:tienda/bloc/events/bottom-nav-bar-events.dart';
+import 'package:tienda/bloc/events/cart-events.dart';
+import 'package:tienda/bloc/events/customer-profile-events.dart';
 import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/controller/login-controller.dart';
-import 'package:tienda/view/home/home-screen.dart';
+import 'package:tienda/view/home/page/main-screen.dart';
 import 'package:tienda/view/login/login-mobile-number-page.dart';
 import 'package:tienda/view/widgets/loading-widget.dart';
 
@@ -23,12 +27,18 @@ class LoginMainPage extends StatelessWidget {
         listener: (context, state) {
           if (state is GoogleSignInResponse &&
               state.response == GoogleSignInResponse.SUCCESS) {
-            BlocProvider.of<BottomNavBarBloc>(context)
-                .add(ChangeBottomNavBarState(0,false));
 
-            BlocProvider.of<LoginBloc>(context).add(CheckLoginStatus());
+           ///Sequence task to be done after successful login
+            BlocProvider.of<BottomNavBarBloc>(context)
+                .add(ChangeBottomNavBarState(0, false));
+            BlocProvider.of<LoginBloc>(context)..add(CheckLoginStatus());
+            BlocProvider.of<CartBloc>(context)..add(FetchCartData());
+            BlocProvider.of<CustomerProfileBloc>(context)
+              ..add(FetchCustomerProfile());
+            ///
+
             Navigator.of(context, rootNavigator: true).pushReplacement(
-                MaterialPageRoute(builder: (context) => HomeScreen()));
+                MaterialPageRoute(builder: (context) => MainScreen()));
           } else if (state is GoogleSignInResponse &&
               state.response == GoogleSignInResponse.FAILED) {
             Fluttertoast.showToast(

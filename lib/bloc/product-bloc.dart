@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,8 +14,6 @@ import 'package:tienda/model/search-body.dart';
 
 class ProductBloc extends Bloc<ProductEvents, ProductStates> {
   ProductBloc() : super(Loading());
-
-
 
   @override
   Stream<ProductStates> mapEventToState(ProductEvents event) async* {
@@ -38,20 +35,17 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
     }
   }
 
-
   Stream<ProductStates> _mapFetchFilteredProductListToStates(
       FetchFilteredProductList event) async* {
-
     yield Loading();
     ProductListResponse productListResponse;
 
-    productListResponse = await callProductSearchByQuery(
-        event.query,"", event.searchBody);
-    print("productListResponse:$productListResponse");
+    productListResponse =
+        await callProductSearchByQuery(event.query, "", event.searchBody);
+    Logger().d("FETCH FILTERED PRODUCT LIST:$productListResponse");
     if (productListResponse != null)
       yield UpdateProductListSuccess(productListResponse);
   }
-
 
   Future<ProductListResponse> callProductSearchByQuery(
       String query, String pageNumber, SearchBody searchBody) async {
@@ -63,7 +57,6 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
     final client = SearchApiClient(dio,
         baseUrl: GlobalConfiguration().getString("baseURL"));
     await client.searchProducts(query, pageNumber, searchBody).then((response) {
-
       switch (json.decode(response)['status']) {
         case 200:
           productListResponse =
@@ -73,7 +66,7 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
     }).catchError((err) {
       if (err is DioError) {
         DioError error = err;
-        Logger().e("PRODUCT-SEARCH-ERROR:", error.response.data);
+        Logger().e("PRODUCT-SEARCH-API-ERROR:", error.response.data);
       }
     });
     return productListResponse;
@@ -94,20 +87,19 @@ class ProductBloc extends Bloc<ProductEvents, ProductStates> {
 
     productListResponse = await callProductSearchByQuery(
         event.query, event.pageNumber, event.searchBody);
-    log("FETCH PRODUCT RESPONSE:${productListResponse.products}");
+    Logger().d("FETCH PRODUCT LIST RESPONSE:$productListResponse");
     if (productListResponse != null)
       yield LoadProductListSuccess(productListResponse);
   }
 
   Stream<ProductStates> _mapFetchMoreProductListToStates(
       FetchMoreProductList event) async* {
-
     ProductListResponse productListResponse;
 
     productListResponse = await callProductSearchByQuery(
         event.query, event.pageNumber, event.searchBody);
 
-    Logger().d("PRODUCT LIST RESPONSE:$productListResponse");
+    Logger().d("FETCH PRODUCT MORE LIST RESPONSE:$productListResponse");
 
     List<Product> products = new List();
 

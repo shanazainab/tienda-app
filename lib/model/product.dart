@@ -28,6 +28,7 @@ class Product{
       this.presenter,
         this.colors,
         this.sizes,
+        this.features,
       this.isPurchased,
         this.coupon,
       this.brand,this.isReturnable,this.lastVideo,this.isRated});
@@ -48,6 +49,8 @@ class Product{
   bool isWishListed;
   List<String> images;
   List<Spec> specs;
+  List<Spec> features;
+
   List<Review> reviews;
   Map<String, int> ratings;
   bool isReviewed;
@@ -85,6 +88,9 @@ class Product{
           sizes: json["sizes"]!= null?List<ProductSize>.from(json["sizes"].map((x) => ProductSize.fromJson(x))):null,
           totalReviews: json["total_reviews"],
           discount: json["discount"],
+          features: json["features"] != null
+              ? List<Spec>.from(json["features"].map((x) => Spec.fromJson(x)))
+              : null,
           isReviewed: json["is_reviewed"],
           isPurchased: json["is_purchased"],
           overallRating: json["overall_rating"] != null

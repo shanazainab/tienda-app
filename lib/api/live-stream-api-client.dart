@@ -18,4 +18,11 @@ abstract class LiveStreamApiClient {
 
   @POST("/review_presenter/{presenterId}")
   Future<String> reviewPresenter(@Path("presenterId") int presenterId,@Body() PresenterReview presenterReview);
+
+  @GET("/get_live_streams/")
+  Future<String> getOngoingLiveStreams();
+
+  @GET("/get_all_streams/")
+  Future<String> getAllLiveStreams();
+
 }

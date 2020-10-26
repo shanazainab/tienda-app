@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda/video-overlays/constants.dart';
 
@@ -57,7 +58,14 @@ class _VideoTitleOverlayWidgetState extends State<VideoTitleOverlayWidget> {
         width = oldWidth - 32.0;
         height = Constants.VIDEO_TITLE_HEIGHT_PIP;
         print(oldHeight - height - Constants.BOTTOM_PADDING_PIP);
-        offset = Offset(16, oldHeight - height - Constants.BOTTOM_PADDING_PIP);
+        Logger()
+            .d("VIEW PADDING :${MediaQuery.of(context).viewPadding.bottom}");
+
+        offset = Offset(
+            16,
+            oldHeight -
+                height -
+                (MediaQuery.of(context).viewPadding.bottom + 56));
       });
     });
   }

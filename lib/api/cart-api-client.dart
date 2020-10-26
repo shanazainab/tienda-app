@@ -26,4 +26,7 @@ abstract class CartApiClient {
 
   @POST("/redeem_coupon/")
   Future<String> applyCoupon(@Body() String coupon);
+
+  @POST("/remove_coupon/")
+  Future<String> removeAppliedCoupon(@Body() String couponCode);
 }

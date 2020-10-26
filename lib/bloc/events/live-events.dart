@@ -2,6 +2,9 @@ abstract class LiveEvents {
   LiveEvents();
 }
 
-class LoadLiveVideoList extends LiveEvents {
-  LoadLiveVideoList() : super();
+class LoadCurrentLiveVideoList extends LiveEvents {
+  LoadCurrentLiveVideoList() : super();
+}
+class LoadAllLiveStreamList extends LiveEvents {
+  LoadAllLiveStreamList() : super();
 }

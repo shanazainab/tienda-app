@@ -10,7 +10,7 @@ import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/login-bloc.dart';
 import 'package:tienda/bloc/states/login-states.dart';
 import 'package:tienda/model/customer.dart';
-import 'package:tienda/view/home/home-screen.dart';
+import 'package:tienda/view/home/page/main-screen.dart';
 
 class CustomerDetailsPage extends StatelessWidget {
   final String mobileNumber;
@@ -36,7 +36,7 @@ class CustomerDetailsPage extends StatelessWidget {
                 .add(ChangeBottomNavBarState(0,false));
             BlocProvider.of<LoginBloc>(context)..add(CheckLoginStatus());
             Navigator.of(context, rootNavigator: true).pushReplacement(
-                MaterialPageRoute(builder: (context) => HomeScreen()));
+                MaterialPageRoute(builder: (context) => MainScreen()));
           }
         },
         child: Scaffold(

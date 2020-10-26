@@ -11,10 +11,10 @@ import 'package:tienda/bloc/events/product-events.dart';
 import 'package:tienda/bloc/filter-bloc.dart';
 import 'package:tienda/bloc/product-bloc.dart';
 import 'package:tienda/bloc/states/category-states.dart';
-import 'package:tienda/view/widgets/loading-widget.dart';
 import 'package:tienda/model/category.dart';
 import 'package:tienda/model/search-body.dart';
-import 'package:tienda/view/products/product-list-page.dart';
+import 'package:tienda/view/products/search-result/product-list-page.dart';
+import 'package:tienda/view/widgets/loading-widget.dart';
 
 class CategoriesPage extends StatefulWidget {
   @override
@@ -196,6 +196,7 @@ class _CategoriesPageState extends State<CategoriesPage>
                                                 ///DEVELOPER NOTE: expansion_tile.dart has been
                                                 /// edited to fit the requirement
                                                 ///Keep track on version update
+                                                ///hide border and wrap elements
 
                                                 child: ExpansionTile(
                                                   leading: CircleAvatar(
@@ -277,6 +278,7 @@ class _CategoriesPageState extends State<CategoriesPage>
                                 ..add(FetchProductList(
                                     query: 'get_category',
                                     searchBody: SearchBody(
+                                      categoryType: 'third',
                                         category: thirdLevelCategory[i].id))),
                             )
                           ],
@@ -285,6 +287,7 @@ class _CategoriesPageState extends State<CategoriesPage>
                             titleInArabic: thirdLevelCategory[i].nameAr,
                             query: 'get_category',
                             searchBody: new SearchBody(
+                              categoryType: 'third',
                                 category: thirdLevelCategory[i].id),
                           ),
                         )));

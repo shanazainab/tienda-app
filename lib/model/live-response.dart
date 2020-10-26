@@ -18,6 +18,8 @@ class LiveResponse {
       this.isLive,
       this.products,
       this.url,
+      this.title,
+      this.reactions,
       this.m3u8URL,
       this.isFollowed});
 
@@ -27,6 +29,8 @@ class LiveResponse {
   String url;
   String m3u8URL;
   bool isFollowed;
+  String title;
+  int reactions;
 
   factory LiveResponse.fromJson(Map<String, dynamic> json) => LiveResponse(
       status: json["status"],
@@ -34,6 +38,8 @@ class LiveResponse {
       products:
           List<Product>.from(json["products"].map((x) => Product.fromJson(x))),
       url: json["url"],
+      title: json['title'],
+      reactions: json['reactions'],
       m3u8URL: json['m3u8_url'],
       isFollowed: json['is_followed']);
 
@@ -42,6 +48,8 @@ class LiveResponse {
         "is_live": isLive,
         "products": List<dynamic>.from(products.map((x) => x.toJson())),
         "url": url,
+        "title": title,
+        "reactions": reactions,
         "m3u8_url": m3u8URL,
         "is_followed": isFollowed
       };

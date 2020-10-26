@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:page_indicator/page_indicator.dart';
@@ -18,54 +19,9 @@ class WelcomeScreen extends StatelessWidget {
       body: Center(
           child: Stack(
         children: <Widget>[
-          Container(
-            height: 3 * MediaQuery.of(context).size.height / 4 + 60,
-            child: PageIndicatorContainer(
-              child: PageView(
-                children: <Widget>[
-                  Container(
-                    color: Colors.grey[200],
-                    child: Center(
-                      child: Text(
-                        "DISCOVER",
-                        style: TextStyle(fontSize: 24),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    color: Colors.grey[200],
-                    child: Center(
-                      child: Text(
-                        "TIENDA",
-                        style: TextStyle(fontSize: 24),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    color: Colors.grey[200],
-                    child: Center(
-                      child: Text(
-                        "FEATURES",
-                        style: TextStyle(fontSize: 24),
-                      ),
-                    ),
-                  ),
-                ],
-                //  controller: controller,
-              ),
-              align: IndicatorAlign.bottom,
-              length: 3,
-              indicatorSpace: 20.0,
-              padding: const EdgeInsets.all(10),
-              indicatorColor: Colors.white,
-              indicatorSelectorColor: Colors.black,
-              shape: IndicatorShape.circle(size: 8),
-              // shape: IndicatorShape.roundRectangleShape(size: Size.square(12),cornerSize: Size.square(3)),
-              // shape: IndicatorShape.oval(size: Size(12, 8)),
-            ),
-          ),
+
           Padding(
-            padding: const EdgeInsets.only(bottom:26.0),
+            padding: const EdgeInsets.only(bottom: 26.0),
             child: Align(
               alignment: Alignment.bottomCenter,
               child: SizedBox(

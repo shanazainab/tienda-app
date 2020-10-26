@@ -59,7 +59,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
       sharedPreferences.setString('login-type', 'phone');
       yield LoginVerifyOTPSuccess(isNewUser: false);
     }
-    if (status == "New User") {
+    else if (status == "New User") {
       sharedPreferences.setString('login-type', 'phone');
 
       yield LoginVerifyOTPSuccess(isNewUser: true);

@@ -11,11 +11,9 @@ import 'package:tienda/model/delivery-address.dart';
 class AddAddressPage extends StatefulWidget {
   final bool isEditMode;
 
-  final bool fromCheckOut;
-
   final DeliveryAddress deliveryAddress;
 
-  AddAddressPage({this.deliveryAddress, this.isEditMode, this.fromCheckOut});
+  AddAddressPage({this.deliveryAddress, this.isEditMode});
 
   @override
   _AddAddressPageState createState() => _AddAddressPageState();
@@ -41,135 +39,126 @@ class _AddAddressPageState extends State<AddAddressPage> {
 
   @override
   Widget build(BuildContext contextA) {
-    return BlocListener<AddressBloc, AddressStates>(
-      listener: (context, state) {
-        if (state is LoadAddressSuccess &&
-            (widget.fromCheckOut == null || !widget.fromCheckOut))
-          Navigator.of(context).pop();
-        else if (state is LoadAddressSuccess && widget.fromCheckOut)
-          Navigator.of(context).pop();
-      },
-      child: Scaffold(
-          appBar: AppBar(
-            elevation: 0,
-            brightness: Brightness.light,
-            title: Text(AppLocalizations.of(context)
-                .translate("add-address")
-                .toUpperCase()),
-          ),
-          bottomNavigationBar: BlocBuilder<AddressBloc, AddressStates>(
-              builder: (context, state) {
-            if (state is Loading)
-              return LinearProgressIndicator();
-            else
-              return Container(
-                height: 0,
-                width: 0,
-              );
-          }),
-          body: GestureDetector(
-            onTap: () {
-              FocusScope.of(context).unfocus();
-            },
-            child: Container(
-              color: Colors.white,
-              child: BlocBuilder<AddressBloc, AddressStates>(
-                  builder: (context, state) {
-                return Form(
-                  key: _formKey,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            "${widget.deliveryAddress.longAddress}",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
+    return Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          brightness: Brightness.light,
+          title: Text(AppLocalizations.of(context)
+              .translate("add-address")
+              .toUpperCase()),
+        ),
+        bottomNavigationBar: BlocBuilder<AddressBloc, AddressStates>(
+            builder: (context, state) {
+          if (state is Loading)
+            return LinearProgressIndicator();
+          else
+            return Container(
+              height: 0,
+              width: 0,
+            );
+        }),
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Container(
+            color: Colors.white,
+            child: BlocBuilder<AddressBloc, AddressStates>(
+                builder: (context, state) {
+              return Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          "${widget.deliveryAddress.longAddress}",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
                         ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        contactInfoWidget(),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        locationInfoWidget(),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        personalInstructionWidget(),
-                        Container(
-                          color: Colors.white,
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(AppLocalizations.of(context)
-                                      .translate("set-as-default")),
-                                  Switch(
-                                    value: widget.isEditMode
-                                        ? widget.deliveryAddress.isDefault
-                                        : isSwitched,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        isSwitched = value;
-                                        widget.deliveryAddress.isDefault =
-                                            isSwitched;
-                                      });
-                                    },
-                                    activeTrackColor:
-                                        Colors.black.withOpacity(0.1),
-                                    activeColor: Colors.black,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              Center(
-                                child: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width - 100,
-                                  child: RaisedButton(
-                                    onPressed: () {
-                                      FocusScope.of(context).unfocus();
-                                      if (BlocProvider.of<AddressBloc>(context)
-                                          .state is Loading) {
-                                      } else
-                                        handleSaveAddress(context);
-                                    },
-                                    child: Text(
-                                      widget.isEditMode
-                                          ? AppLocalizations.of(context)
-                                              .translate("update")
-                                              .toUpperCase()
-                                          : AppLocalizations.of(context)
-                                              .translate("save-address")
-                                              .toUpperCase(),
-                                    ),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      contactInfoWidget(),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      locationInfoWidget(),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      personalInstructionWidget(),
+                      Container(
+                        color: Colors.white,
+                        child: Column(
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(AppLocalizations.of(context)
+                                    .translate("set-as-default")),
+                                Switch(
+                                  value: widget.isEditMode
+                                      ? widget.deliveryAddress.isDefault
+                                      : isSwitched,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isSwitched = value;
+                                      widget.deliveryAddress.isDefault =
+                                          isSwitched;
+                                    });
+                                  },
+                                  activeTrackColor:
+                                      Colors.black.withOpacity(0.1),
+                                  activeColor: Colors.black,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Center(
+                              child: SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width - 100,
+                                child: RaisedButton(
+                                  onPressed: () {
+                                    FocusScope.of(context).unfocus();
+                                    if (BlocProvider.of<AddressBloc>(context)
+                                        .state is Loading) {
+                                    } else
+                                      handleSaveAddress(context);
+                                  },
+                                  child: Text(
+                                    widget.isEditMode
+                                        ? AppLocalizations.of(context)
+                                            .translate("update")
+                                            .toUpperCase()
+                                        : AppLocalizations.of(context)
+                                            .translate("save-address")
+                                            .toUpperCase(),
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                );
-              }),
-            ),
-          )),
-    );
+                ),
+              );
+            }),
+          ),
+        ));
   }
 
   contactInfoWidget() {

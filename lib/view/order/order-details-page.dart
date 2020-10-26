@@ -8,7 +8,7 @@ import 'package:tienda/video-overlays/overlay_service.dart';
 import 'package:tienda/view/order/order-cancel-page.dart';
 import 'package:tienda/view/order/order-tracking-page.dart';
 import 'package:tienda/view/order/order-tracking-time-line.dart';
-import 'package:tienda/view/products/product-review-page.dart';
+import 'package:tienda/view/products/video/product-video-page.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class OrdersDetailsPage extends StatelessWidget {
@@ -69,7 +69,7 @@ class OrdersDetailsPage extends StatelessWidget {
                               padding: const EdgeInsets.only(left: 8.0),
                               child: GestureDetector(
                                 onTap: (){
-                                  OverlayService().addVideoTitleOverlay(contextA,ProductReviewPage(
+                                  OverlayService().addVideoTitleOverlay(contextA,ProductVideoPage(
                                       order.products[index].id),false,false);
 
 

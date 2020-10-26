@@ -13,6 +13,7 @@ import 'package:tienda/controller/one-signal-notification-controller.dart';
 import 'package:tienda/controller/real-time-controller.dart';
 import 'package:tienda/model/get-chat-message-response.dart';
 import 'package:tienda/model/presenter.dart';
+import 'package:tienda/view/widgets/loading-widget.dart';
 
 class PresenterDirectMessage extends StatefulWidget {
   final Presenter presenter;
@@ -27,7 +28,6 @@ class _PresenterDirectMessageState extends State<PresenterDirectMessage> {
   RealTimeController realTimeController = new RealTimeController();
 
   TextEditingController messageTextController = new TextEditingController();
-  FocusNode _focusNode = new FocusNode();
   String customerName;
   int customerId;
 
@@ -51,10 +51,6 @@ class _PresenterDirectMessageState extends State<PresenterDirectMessage> {
       List<DirectMessage> messages = value;
 
       Logger().d("DIRECT MESSAGE:$messages");
-      // if (messages.length > 1) {
-      //   messages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-      // }
-      // messages.reversed.toList();
       log(messages.toString());
       Map<String, List<DirectMessage>> groupedMessages = new HashMap();
 
@@ -82,9 +78,8 @@ class _PresenterDirectMessageState extends State<PresenterDirectMessage> {
       onWillPop: () {
         changeNotificationType(OSNotificationDisplayType.notification);
 
-        // realTimeController.updateUnreadMessages(widget.presenter.id);
         realTimeController.clearDirectMessageStream();
-
+        groupedMessageStream.drain();
         return Future.value(true);
       },
       child: Scaffold(
@@ -422,9 +417,7 @@ class _PresenterDirectMessageState extends State<PresenterDirectMessage> {
                   );
                 } else {
                   return Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
+                    child: spinKit
                   );
                 }
               })),

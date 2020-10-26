@@ -42,6 +42,10 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
     if (event is ApplyCoupon) {
       yield* _mapApplyCouponToStates(event);
     }
+
+    if (event is RemoveCoupon) {
+      yield* _mapRemoveCouponToStates(event);
+    }
   }
 
   Stream<CartStates> _mapEmptyCartToStates(ClearCart event) async* {
@@ -169,6 +173,40 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
     if (cart != null) {
       yield LoadCartSuccess(cart: cart);
     }
+  }
+
+  Stream<CartStates> _mapRemoveCouponToStates(RemoveCoupon event) async* {
+    final dio = Dio();
+    String value = await FlutterSecureStorage().read(key: "session-id");
+    dio.options.headers["Cookie"] = value;
+    final client =
+        CartApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
+    await client.removeAppliedCoupon(event.couponCode).then((response) {
+      log("REMOVE-COUPON-RESPONSE:$response");
+      switch (json.decode(response)['status']) {
+        case 200:
+          break;
+      }
+    }).catchError((err) {
+      if (err is DioError) {
+        DioError error = err;
+        Logger().e("REMOVE-COUPON-ERROR:", error);
+      }
+    });
+
+    Cart cart = await callFetchCartApi();
+
+    if (cart.products.isEmpty) {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      sharedPreferences.remove('cart');
+      cart = null;
+      yield EmptyCart();
+    } else {
+      yield LoadCartSuccess(cart: cart);
+    }
+
+    updateCartLocally(cart);
   }
 
   Stream<CartStates> _mapDeleteCartItemToStates(DeleteCartItem event) async* {

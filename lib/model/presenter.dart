@@ -4,36 +4,36 @@
 
 import 'dart:convert';
 
-import 'package:logger/logger.dart';
 import 'package:tienda/model/category.dart';
-import 'package:tienda/model/country.dart';
 import 'package:tienda/model/product.dart';
+
+import 'country.dart';
 
 Presenter presenterFromJson(String str) => Presenter.fromJson(json.decode(str));
 
 String presenterToJson(Presenter data) => json.encode(data.toJson());
 
 class Presenter {
-  Presenter(
-      {this.id,
-      this.name,
-      this.profilePicture,
-      this.headerProfile,
-      this.bio,
-      this.followers,
-      this.isLive,
-      this.categoryId,
-      this.shortDescription,
-      this.videos,
-      this.popularVideos,
-      this.featuredProducts,
-      this.isFollowed,
-      this.products,
-      this.streamUrl,
-      this.country,
-      this.interests});
-
-  int products;
+  Presenter({
+    this.id,
+    this.name,
+    this.profilePicture,
+    this.headerProfile,
+    this.bio,
+    this.followers,
+    this.isLive,
+    this.categoryId,
+    this.country,
+    this.shortDescription,
+    this.countryId,
+    this.streamUrl,
+    this.m3U8Url,
+    this.interests,
+    this.featuredProducts,
+    this.products,
+    this.videos,
+    this.isFollowed,
+  });
 
   int id;
   String name;
@@ -43,54 +43,49 @@ class Presenter {
   int followers;
   bool isLive;
   int categoryId;
-  String shortDescription;
-  int videos;
-  List<dynamic> popularVideos;
-  List<Product> featuredProducts;
-  bool isFollowed;
-  String streamUrl;
   Country country;
+  String shortDescription;
+  int countryId;
+  String streamUrl;
+  String m3U8Url;
   List<Category> interests;
+  List<Product> featuredProducts;
+  int products;
+  List<Video> videos;
+  bool isFollowed;
 
-  factory Presenter.fromJson(Map<String, dynamic> json) {
-    Presenter presenter;
-    try {
-      presenter = Presenter(
+  factory Presenter.fromJson(Map<String, dynamic> json) => Presenter(
         id: json["id"],
         name: json["name"],
         profilePicture: json["profile_picture"],
         headerProfile: json["header_profile"],
         bio: json["bio"],
-        products: json["products"],
         followers: json["followers"],
         isLive: json["is_live"],
         categoryId: json["category_id"],
+        country:
+            json["country"] != null ? Country.fromJson(json["country"]) : null,
         shortDescription: json["short_description"],
-        videos: json["videos"],
-        streamUrl: json["m3u8_url"],
-        popularVideos: json["popular_videos"] != null
-            ? List<dynamic>.from(json["popular_videos"].map((x) => x))
+        countryId: json["country_id"],
+        streamUrl: json["stream_url"],
+        m3U8Url: json["m3u8_url"],
+        interests: json["interests"] != null
+            ? List<Category>.from(
+                json["interests"].map((x) => Category.fromJson(x)))
             : null,
         featuredProducts: json["featured_products"] != null
             ? List<Product>.from(
                 json["featured_products"].map((x) => Product.fromJson(x)))
             : null,
-        isFollowed: json["is_followed"],
-        country: json["country"] != null?Country.fromJson(json['country']):null,
-        interests: json["interests"] != null
-            ? List<Category>.from(
-                json["interests"].map((x) => Category.fromJson(x)))
+        products: json["products"],
+        videos: json["videos"] != null
+            ? List<Video>.from(json["videos"].map((x) => Video.fromJson(x)))
             : null,
+        isFollowed: json["is_followed"],
       );
-    } catch (err) {
-      Logger().e(err);
-    }
-    return presenter;
-  }
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "products": products,
         "name": name,
         "profile_picture": profilePicture,
         "header_profile": headerProfile,
@@ -98,12 +93,33 @@ class Presenter {
         "followers": followers,
         "is_live": isLive,
         "category_id": categoryId,
+        "country": country.toJson(),
         "short_description": shortDescription,
-        "videos": videos,
-        "m3u8_url": streamUrl,
-        "popular_videos": List<dynamic>.from(popularVideos.map((x) => x)),
-        "featured_products": List<dynamic>.from(featuredProducts.map((x) => x)),
+        "country_id": countryId,
+        "stream_url": streamUrl,
+        "m3u8_url": m3U8Url,
+        "interests": List<dynamic>.from(interests.map((x) => x.toJson())),
+        "featured_products":
+            List<Product>.from(featuredProducts.map((x) => x.toJson())),
+        "products": products,
+        "videos": List<dynamic>.from(videos.map((x) => x.toJson())),
         "is_followed": isFollowed,
-        "interests": List<dynamic>.from(interests.map((x) => x)),
       };
+}
+
+class Video {
+  Video({this.id, this.lastVideo, this.thumbnail});
+
+  int id;
+  String lastVideo;
+  String thumbnail;
+
+  factory Video.fromJson(Map<String, dynamic> json) => Video(
+        id: json["id"],
+        lastVideo: json["last_video"],
+        thumbnail: json["thumbnail"],
+      );
+
+  Map<String, dynamic> toJson() =>
+      {"id": id, "last_video": lastVideo, "thumbnail": thumbnail};
 }

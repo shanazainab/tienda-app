@@ -34,23 +34,6 @@ class _HomeApiClient implements HomeApiClient {
 
   }
 
-  @override
-  Future<String> getLiveContents() async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-
-    final Response<String> _result = await _dio.request('/get_live_streams/',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'GET',
-            headers: <String, dynamic>{},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data);
-    final value = _result.data;
-    return value;
-  }
 
 
 

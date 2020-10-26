@@ -23,7 +23,6 @@ import 'package:tienda/bloc/cart-bloc.dart';
 import 'package:tienda/bloc/customer-profile-bloc.dart';
 import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/customer-profile-events.dart';
-import 'package:tienda/bloc/events/home-events.dart';
 import 'package:tienda/bloc/events/login-events.dart';
 import 'package:tienda/bloc/events/startup-events.dart';
 import 'package:tienda/bloc/loading-bloc.dart';
@@ -37,9 +36,9 @@ import 'package:tienda/controller/db-controller.dart';
 import 'package:tienda/localization.dart';
 import 'package:tienda/video-overlays/overlay_handler.dart';
 import 'package:tienda/video-overlays/overlay_service.dart';
-import 'package:tienda/view/home/home-screen-data.dart';
-import 'package:tienda/view/home/home-screen.dart';
-import 'package:tienda/view/live-stream/shop-live-screen.dart';
+import 'package:tienda/view/home/page/home-screen.dart';
+import 'package:tienda/view/home/page/main-screen.dart';
+import 'package:tienda/view/live-stream/page/live-main-page.dart';
 import 'package:tienda/view/login/login-main-page.dart';
 import 'package:tienda/view/login/otp-verification-page.dart';
 import 'package:tienda/view/startup/category-selection-page.dart';
@@ -52,7 +51,6 @@ import 'package:tienda/view/widgets/bottom-nav-bar.dart';
 import 'bloc/events/bottom-nav-bar-events.dart';
 import 'bloc/events/presenter-events.dart';
 import 'bloc/presenter-bloc.dart';
-import 'bloc/states/bottom-nav-bar-states.dart';
 import 'controller/real-time-controller.dart';
 
 ///Tienda : Video streaming e-commerce app
@@ -169,9 +167,7 @@ class App extends StatelessWidget {
           return MaterialApp(
             builder: (context, child) {
               return ScrollConfiguration(
-                behavior: ScrollWithNoGlowBehaviour(),
-                child: child,
-              );
+                  behavior: ScrollWithNoGlowBehaviour(), child: child);
             },
 
             navigatorKey: navigatorKey,
@@ -195,7 +191,7 @@ class App extends StatelessWidget {
               switch (settings.name) {
                 case '/shopLiveStream':
                   return PageTransition(
-                      child: ShopLiveScreen(),
+                      child: LiveMainPage(),
                       duration: Duration(milliseconds: 500),
                       type: PageTransitionType.downToUp);
                   break;
@@ -266,7 +262,7 @@ class App extends StatelessWidget {
                       ),
                 )),
             routes: {
-              '/homePageData': (context) => HomeScreenData(),
+              '/homePageData': (context) => HomeScreen(),
             },
             home: Directionality(
               textDirection: appLanguage.appLocal != Locale('en')
@@ -283,7 +279,7 @@ class App extends StatelessWidget {
 
                     switch (state.route) {
                       case '/homePage':
-                        return HomeScreen();
+                        return MainScreen();
 
                       case '/welcomeScreen':
                         return WelcomeScreen();
@@ -319,7 +315,7 @@ class App extends StatelessWidget {
     return OverlayService().addBottomNavigationBar(
         context,
         Positioned(
-            bottom: 16, left: 16, right: 16, child: BottomNavFloatingBar()),
+            bottom: 0, left: 16, right: 16, child: BottomNavFloatingBar()),
         true,
         true);
   }

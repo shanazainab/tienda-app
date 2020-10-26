@@ -10,8 +10,8 @@ import 'package:tienda/bloc/events/cart-events.dart';
 import 'package:tienda/bloc/events/wishlist-events.dart';
 import 'package:tienda/bloc/states/wishlist-states.dart';
 import 'package:tienda/bloc/wishlist-bloc.dart';
-import 'package:tienda/view/widgets/loading-widget.dart';
 import 'package:tienda/model/wishlist.dart';
+import 'package:tienda/view/widgets/loading-widget.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../../localization.dart';

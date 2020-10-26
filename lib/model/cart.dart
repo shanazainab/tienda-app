@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 import 'package:tienda/model/product.dart';
 
@@ -46,22 +45,32 @@ class Summary {
     this.numberOfItems,
     this.cartStatus,
     this.isCoupon,
+    this.couponDiscount,
+    this.cartPrice,
     this.appliedCoupon,
   });
 
   double totalPrice;
+  double cartPrice;
+
   double discountPrice;
+  double couponDiscount;
+
   int numberOfItems;
   String cartStatus;
   bool isCoupon;
   Coupon appliedCoupon;
 
+  ///"total_price": 283.12, "discount_price": 0.0, "coupon_discount": 0, "number_of_items": 4,
   factory Summary.fromJson(Map<String, dynamic> json) {
     Summary summary;
     try {
       summary = Summary(
-        totalPrice: json["total_price"].toDouble(),
-        discountPrice: json["discount_price"],
+        cartPrice: json["cart_price"].toDouble(),
+
+        totalPrice: json["order_price"].toDouble(),
+        discountPrice: json["discount_price"].toDouble(),
+        couponDiscount: json["coupon_discount"].toDouble(),
         numberOfItems: json["number_of_items"],
         cartStatus: json["cart_status"],
         isCoupon: json["is_coupon"],

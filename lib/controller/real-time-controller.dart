@@ -12,6 +12,8 @@ import 'package:tienda/api/chat-api-client.dart';
 import 'package:tienda/model/chat-history-response.dart';
 import 'package:tienda/model/get-chat-message-response.dart';
 import 'package:tienda/model/live-chat.dart';
+import 'package:tienda/model/live-reaction.dart';
+import 'package:tienda/model/product.dart';
 import 'package:tienda/model/unread-messages.dart';
 
 class RealTimeController {
@@ -21,10 +23,11 @@ class RealTimeController {
   final directMessageStream = new BehaviorSubject<List<DirectMessage>>();
   final allMessageStream = new BehaviorSubject<List<Message>>();
   final unReadMessage = new BehaviorSubject<List<UnreadMessage>>();
-  final liveReaction = new BehaviorSubject<bool>();
+  final liveReaction = new BehaviorSubject<LiveReaction>();
 
   final liveAddCartStream = new BehaviorSubject<Map<String, dynamic>>();
   final liveCheckOutStream = new BehaviorSubject<Map<String, dynamic>>();
+  final mentionedProductStream = new BehaviorSubject<Product>();
 
   IO.Socket socket;
 
@@ -34,10 +37,17 @@ class RealTimeController {
       RealTimeController._privateConstructor();
 
   disposeLiveSubjectStreams() {
-    liveAddCartStream.close();
-    liveCheckOutStream.close();
-    liveReaction.close();
-    viewCountStream.close();
+    liveAddCartStream.drain();
+    liveCheckOutStream.drain();
+    liveReaction.drain();
+    viewCountStream.drain();
+    liveChatStream.drain();
+    mentionedProductStream.drain();
+  }
+
+  disposeDirectMessageStreams() {
+    allMessageStream.drain();
+    unReadMessage.drain();
   }
 
   factory RealTimeController() {
@@ -48,13 +58,13 @@ class RealTimeController {
     unReadMessage.sink.add(cachedMessages);
   }
 
-  showLiveReaction(int presenterId) {
-
-    socket.emit('react', {'reaction': 'love', 'room_name': "PR-$presenterId"});
-  }
-
   stopLiveReaction() {
-    liveReaction.sink.add(false);
+    liveReaction.sink.add(LiveReaction(
+      showReaction: false,
+      reactionCount: liveReaction.value.reactionCount,
+      roomName: liveReaction.value.roomName,
+      reaction: liveReaction.value.reaction,
+    ));
   }
 
   addToAllMessageStream(Message message) {
@@ -107,7 +117,7 @@ class RealTimeController {
   }
 
   clearDirectMessageStream() {
-    directMessageStream.add(null);
+    directMessageStream.drain();
   }
 
   initialize() async {
@@ -115,8 +125,11 @@ class RealTimeController {
 
     String value = await FlutterSecureStorage().read(key: "session-id");
 
+    Logger().e(value);
+    log(value);
+
     if (value != null) {
-      socket = IO.io('http://167.179.93.235:3000/', <String, dynamic>{
+      socket = IO.io('https://socket.tienda.ae/', <String, dynamic>{
         'transports': ['websocket'],
         'extraHeaders': {'session': value} // optional
       });
@@ -127,24 +140,30 @@ class RealTimeController {
 
       socket.on('new_user', (data) {
         ///NEW_USER_EVENT:{viewers: 1, room_name: PR-10}
-        viewCountStream.sink.add(data['viewers'].toString());
-
         Logger().d("NEW_USER_EVENT:$data ");
+        viewCountStream.sink.add(data['viewers'].toString());
       });
 
       socket.on('new_reaction', (data) {
         Logger().d("LIVE_REACTION:$data ");
-        liveReaction.sink.add(true);
+
+        ///TODO:PRODUCTION:: LIMIT THE REACTION AMOUNT IF THE STREAM IS OVERLOADED, TOO MANY USERS CASE NEED TO TAKE CARE
+        ///TODO:liveReaction.interval(Duration(second: 3))
+        liveReaction.sink.add(new LiveReaction(
+            showReaction: true,
+            reaction: data['reaction'],
+            roomName: data['room_name'],
+            reactionCount: data['reaction_count']));
       });
 
       socket.on('RECEIVED_PRODUCT', (data) {
         Logger().d("RECEIVED_PRODUCT:$data ");
-
+        Product product = Product.fromJson(data['product']);
+        Logger().d(product);
+        mentionedProductStream.sink.add(Product.fromJson(data['product']));
       });
 
-
       socket.on('new_in_cart', (data) {
-        ///  ADDED PRODUCT TO THE CART:{in_cart: {8: 1}, room_name: PR-10}
         Logger().d("ADDED PRODUCT TO THE CART:${data['in_cart']} ");
         liveAddCartStream.sink.add(data['in_cart']);
       });
@@ -153,11 +172,26 @@ class RealTimeController {
         liveCheckOutStream.sink.add(data['checkouts']);
       });
 
+      socket.on('PREV_MESSAGES', (data) {
+        log("PREV_MESSAGES:$data ");
+
+        List<LiveChat> chats = new List();
+
+        for (final prevMessage in data['prev_messages']) {
+          chats.add(new LiveChat(
+              prevMessage['message'],
+              prevMessage['user_name'],
+              prevMessage['profile_picture'],
+              DateTime.parse(prevMessage['created_at']).millisecondsSinceEpoch,
+              prevMessage['is_premium'] == 0 ? false : true));
+        }
+        liveChatStream.sink.add(chats.reversed.toList());
+      });
       socket.on('new_live_message', (data) {
         Logger().d("NEW_LIVE_MESSAGE_EVENT:$data ");
 
         if (liveChatStream.value == null) {
-          liveChatStream.add([
+          liveChatStream.sink.add([
             new LiveChat(data['body'], data['sender_name'],
                 data['sender_profile'], data['sent_at'], data['is_premium'])
           ]);
@@ -167,14 +201,12 @@ class RealTimeController {
               data['sender_profile'], data['sent_at'], data['is_premium']));
           chats.addAll(liveChatStream.value);
 
-          liveChatStream.add(chats);
+          liveChatStream.sink.add(chats);
         }
       });
       socket.on('new_message', (data) {
         Logger().d("NEW_MESSAGE:$data ");
 
-        Logger().d(
-            "TIMESTAMP DATE:${DateTime.fromMicrosecondsSinceEpoch(data['timestamp'] * 1000)}");
         if (directMessageStream.value == null) {
           ///NEW_MESSAGE:{receiver_id: 50, body: dsadsd, timestamp: 1597646863657}
           ///{receiver_id: 50, body: terr, timestamp: 1597835356414, sender_id: 10}
@@ -182,16 +214,16 @@ class RealTimeController {
             new DirectMessage(
                 body: data['body'],
                 receiverId: data['receiver_id'],
-                createdAt:
-                    new DateTime.fromMicrosecondsSinceEpoch(data['timestamp']* 1000))
+                createdAt: new DateTime.fromMicrosecondsSinceEpoch(
+                    data['timestamp'] * 1000))
           ]);
         } else {
           List<DirectMessage> chatMessages = new List();
           chatMessages.add(new DirectMessage(
               body: data['body'],
               receiverId: data['receiver_id'],
-              createdAt:
-                  new DateTime.fromMicrosecondsSinceEpoch(data['timestamp']* 1000)));
+              createdAt: new DateTime.fromMicrosecondsSinceEpoch(
+                  data['timestamp'] * 1000)));
           chatMessages.addAll(directMessageStream.value);
 
           directMessageStream.sink.add(chatMessages);
@@ -201,13 +233,20 @@ class RealTimeController {
           lastMessage: data['body'],
           id: data['sender_id'],
         ));
-        Logger().d("NEW_MESSAGE:$data ");
       });
     }
   }
 
+  emitLiveReaction(int presenterId) {
+    Logger().d("EMITTED $presenterId");
+    socket.emit('react', {
+      'reaction': 'love',
+      'room_name': "PR-$presenterId",
+      'presenter_id': presenterId
+    });
+  }
+
   emitAddToCartFromLive(int productId, int presenterId) {
-    print("EMITTED");
     socket.emit('added_product_to_cart',
         {'product_id': productId, 'presenter_id': presenterId});
   }
@@ -233,7 +272,6 @@ class RealTimeController {
     });
 
     if (directMessageStream.value == null) {
-      ///NEW_MESSAGE:{receiver_id: 50, body: dsadsd, timestamp: 1597646863657}
       directMessageStream.sink.add([chatMessage]);
     } else {
       List<DirectMessage> chatMessages = new List();
@@ -250,7 +288,7 @@ class RealTimeController {
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
     ChatApiClient chatApiClient =
-        ChatApiClient(dio, baseUrl: GlobalConfiguration().getString("chatURL"));
+        ChatApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
     await chatApiClient.getChatMessages(presenterId).then((response) {
       log("GET-CHAT-MESSAGES-RESPONSE:$response");
       switch (json.decode(response)['status']) {
@@ -262,16 +300,6 @@ class RealTimeController {
           for (final message in getChatMessageResponse.messages) {
             chatMessages.add(message);
           }
-          //
-          // ///testing message
-          // chatMessages.add(new DirectMessage(
-          //   createdAt: new DateTime(2020, 9, 1),
-          //   chatType: "customer_presenter",
-          //   receiverId: 10,
-          //   userId: 50,
-          //   body: "old message",
-          // ));
-
           directMessageStream.sink.add(chatMessages.reversed.toList());
           break;
         case 404:
@@ -314,7 +342,7 @@ class RealTimeController {
     String value = await FlutterSecureStorage().read(key: "session-id");
     dio.options.headers["Cookie"] = value;
     ChatApiClient chatApiClient =
-        ChatApiClient(dio, baseUrl: GlobalConfiguration().getString("chatURL"));
+        ChatApiClient(dio, baseUrl: GlobalConfiguration().getString("baseURL"));
     await chatApiClient.getChats().then((response) {
       log("GET-CHATS-RESPONSE:$response");
       switch (json.decode(response)['status']) {

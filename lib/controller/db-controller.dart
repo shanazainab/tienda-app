@@ -16,9 +16,14 @@ class DBController {
   factory DBController() {
     return _instance;
   }
+
   final offlineVideos = new BehaviorSubject<List<DownloadTaskProgress>>();
 
   String get path => 'tiendaDB.db';
+
+  dispose() {
+    offlineVideos.drain();
+  }
 
   initializeDB() async {
     Logger().e("Initializing DB");

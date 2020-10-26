@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tienda/localization.dart';
-import 'package:tienda/view/customer-profile/premium-payment-page.dart';
+import 'package:tienda/view/customer-profile/payment/premium-payment-page.dart';
 import 'package:tienda/view/widgets/custom-app-bar.dart';
 
 class Memberships extends StatelessWidget {

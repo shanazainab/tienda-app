@@ -10,3 +10,9 @@ class ChangeBottomNavBarState extends BottomNavBarEvents {
 
   ChangeBottomNavBarState(this.newIndex,this.hide) : super();
 }
+
+class Render extends BottomNavBarEvents {
+
+
+  Render() : super();
+}

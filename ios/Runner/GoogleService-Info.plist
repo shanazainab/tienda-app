@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>874733787854-t0qffsmrc4impkqgd31b3e1h053l59ke.apps.googleusercontent.com</string>
+	<string>874733787854-n8doov9ef18vnq0mlq1th0688u1ooull.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.874733787854-t0qffsmrc4impkqgd31b3e1h053l59ke</string>
+	<string>com.googleusercontent.apps.874733787854-n8doov9ef18vnq0mlq1th0688u1ooull</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>874733787854-fk8kgcrq19j03ddp71kiklheff3gsd6g.apps.googleusercontent.com</string>
+	<string>874733787854-c9dm2fohsc4rg40s0ua0g35l8m0kqrsl.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyAknJmm6PbGPDRjQcjcjX_MBGQ_iYDy4yo</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.beuniquegroup.tienda</string>
+	<string>com.beunique.tienda</string>
 	<key>PROJECT_ID</key>
 	<string>tienda-b2527</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:874733787854:ios:3fc22294cc4e9838374e9f</string>
+	<string>1:874733787854:ios:bdb5701d69b51458374e9f</string>
 	<key>DATABASE_URL</key>
 	<string>https://tienda-b2527.firebaseio.com</string>
 </dict>
