@@ -136,6 +136,7 @@ Future<void> main() async {
       BlocProvider<UnreadMessageHydratedBloc>(
           create: (BuildContext context) => UnreadMessageHydratedBloc()),
     ],
+
     child: App(
       appCountry: appCountry,
       appLanguage: appLanguage,
